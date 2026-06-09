@@ -40,6 +40,14 @@ async function NavBar() {
           <Link href="/protected" className="font-semibold tracking-tight">
             {dict.app.name}
           </Link>
+          {verified && (
+            <Link
+              href="/protected/events"
+              className="text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {dict.nav.eventsLink}
+            </Link>
+          )}
           <Link
             href="/protected/neighborhoods"
             className="text-muted-foreground hover:text-foreground hover:underline"

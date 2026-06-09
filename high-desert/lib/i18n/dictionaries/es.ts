@@ -27,6 +27,7 @@ export const es: Dictionary = {
     verifyLink: "Verificar",
     reviewLink: "Revisiones",
     neighborhoodLink: "Vecindario",
+    eventsLink: "Eventos",
   },
 
   landing: {
@@ -120,6 +121,48 @@ export const es: Dictionary = {
       "Nos has dicho que ninguno de los vecindarios listados encaja. Un vecino del equipo te contactará para ayudarte a ubicarte. Aún puedes elegir un vecindario aquí en cualquier momento.",
     backHome: "Volver al inicio",
     errorGeneric: "No pudimos guardar eso. Inténtalo de nuevo.",
+  },
+
+  events: {
+    listTitle: "Eventos del vecindario",
+    listIntro:
+      "Próximos encuentros, los más cercanos primero. Los eventos de tu vecindario aparecen primero, luego el resto de Redmond.",
+    create: "Crear evento",
+    inYourNeighborhood: "En tu vecindario",
+    acrossRedmond: "En todo Redmond",
+    upcomingTitle: "Próximos eventos",
+    empty: "Aún no hay eventos próximos. Sé quien cree el primero.",
+    allRedmond: "Todo Redmond",
+    hostedBy: "Organizado por {name}",
+    whenLabel: "Cuándo",
+    whereLabel: "Dónde",
+    capacityLabel: "Cupos limitados",
+    capacityValue: "{count} cupos",
+    noLocation: "Lugar por anunciar",
+    backToEvents: "← Todos los eventos",
+    newTitle: "Crear un evento",
+    newIntro:
+      "Organiza un encuentro del vecindario. Hazlo sencillo: un título, cuándo y dónde.",
+    fieldTitle: "Título",
+    fieldTitlePlaceholder: "p. ej. Limpieza de la cuadra en el parque",
+    fieldWhen: "Fecha y hora",
+    fieldWhere: "Lugar",
+    fieldWherePlaceholder: "p. ej. Parque Sam Johnson, refugio principal",
+    fieldNeighborhood: "Vecindario",
+    fieldCapacity: "¿Limitar cuántos pueden asistir? (opcional)",
+    fieldCapacityPlaceholder: "Sin límite",
+    fieldDetails: "Detalles (opcional)",
+    fieldDetailsPlaceholder:
+      "Qué esperar, qué llevar, cómo encontrar al grupo…",
+    submit: "Crear evento",
+    submitting: "Creando…",
+    titleRequired: "Por favor añade un título.",
+    whenRequired: "Por favor elige una fecha y hora.",
+    errorGeneric: "No pudimos crear el evento. Inténtalo de nuevo.",
+    gateTitle: "Verifícate para participar en los eventos del vecindario",
+    gateBody:
+      "Los eventos del vecindario son para residentes verificados de Redmond. Verifica tu residencia para ver y crear encuentros.",
+    gateCta: "Verifica tu residencia",
   },
 
   verify: {

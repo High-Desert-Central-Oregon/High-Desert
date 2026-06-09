@@ -31,6 +31,21 @@ export type NeighborhoodRequest = {
   resolved_by: string | null;
 };
 
+export type EventStatus = "active" | "cancelled";
+
+export type EventRow = {
+  id: string;
+  creator_id: string;
+  neighborhood_id: string | null;
+  title: string;
+  body: string | null;
+  starts_at: string;
+  location: string | null;
+  capacity: number | null;
+  status: EventStatus;
+  created_at: string;
+};
+
 export type DocKind = "terms" | "privacy";
 
 export type DocumentRow = {

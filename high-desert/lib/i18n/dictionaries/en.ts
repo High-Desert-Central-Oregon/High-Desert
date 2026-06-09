@@ -29,6 +29,7 @@ export const en = {
     verifyLink: "Verify",
     reviewLink: "Reviews",
     neighborhoodLink: "Neighborhood",
+    eventsLink: "Events",
   },
 
   landing: {
@@ -121,6 +122,48 @@ export const en = {
       "You've told us none of the listed neighborhoods fit. A neighbor on the team will follow up to help place you. You can still pick a neighborhood here any time.",
     backHome: "Back to home",
     errorGeneric: "We couldn't save that. Please try again.",
+  },
+
+  events: {
+    listTitle: "Neighborhood events",
+    listIntro:
+      "Upcoming gatherings, soonest first. Events in your neighborhood come first, then the rest of Redmond.",
+    create: "Create event",
+    inYourNeighborhood: "In your neighborhood",
+    acrossRedmond: "Across Redmond",
+    upcomingTitle: "Upcoming events",
+    empty: "No upcoming events yet. Be the first to create one.",
+    allRedmond: "All of Redmond",
+    hostedBy: "Hosted by {name}",
+    whenLabel: "When",
+    whereLabel: "Where",
+    capacityLabel: "Limited spots",
+    capacityValue: "{count} spots",
+    noLocation: "Location to be announced",
+    backToEvents: "← All events",
+    newTitle: "Create an event",
+    newIntro:
+      "Host a neighborhood gathering. Keep it simple — a title, when, and where.",
+    fieldTitle: "Title",
+    fieldTitlePlaceholder: "e.g. Block cleanup at the park",
+    fieldWhen: "Date and time",
+    fieldWhere: "Location",
+    fieldWherePlaceholder: "e.g. Sam Johnson Park, main shelter",
+    fieldNeighborhood: "Neighborhood",
+    fieldCapacity: "Limit how many can come? (optional)",
+    fieldCapacityPlaceholder: "No limit",
+    fieldDetails: "Details (optional)",
+    fieldDetailsPlaceholder:
+      "What to expect, what to bring, how to find the group…",
+    submit: "Create event",
+    submitting: "Creating…",
+    titleRequired: "Please add a title.",
+    whenRequired: "Please choose a date and time.",
+    errorGeneric: "We couldn't create the event. Please try again.",
+    gateTitle: "Verify to join neighborhood events",
+    gateBody:
+      "Neighborhood events are for verified Redmond residents. Verify your residency to see and create gatherings.",
+    gateCta: "Verify your residency",
   },
 
   verify: {
