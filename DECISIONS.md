@@ -7,6 +7,43 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-09 — Local Exchange refined: two-layer scope, Compass review
+
+**Decision.** Local Exchange will live on **High Desert** (name pending,
+confirming this week). Redmond Compass reviewed the concept and was positive —
+the separation of civic-participation exchange from commercial discovery aligns
+with both platforms' lanes. Scope is now two deliberate layers:
+
+- **Committed (post-beta):** a **non-monetary needs exchange** ("I have firewood
+  / I need firewood," mutual-aid flavored) and **tradespeople trade-for-trade**
+  (barter of services, no money). These share one listing primitive (offer/ask
+  with a category), reused the way the event primitive was — not two parallel
+  systems.
+- **Later, community-voted:** a **commercial (monetary) marketplace** as an
+  added layer on top, gated behind a governance vote — not built until the cohort
+  approves it.
+
+**Disciplines unchanged from the original entry:** verified members only,
+neighborhood-scoped, chronological + proximity — no ranking, featured listings,
+or ads (invariant 7); no platform fee or cut; trust is the mutual
+completed-exchange "would do this again" acknowledgment tied to one real listing,
+never ratings/scores/leaderboards; disputes via existing appealable,
+separation-of-duties moderation.
+
+**Prior rejections unchanged:** star ratings / reputation scores
+(perception-extraction; flatten relational trust into gameable proxies),
+invite-tree collective banning (collective punishment; contradicts Step 8 due
+process), in-app currency (deferred — requires legal review + member vote),
+personality screening (unimplementable + stigmatizing), dating/friend-matching
+(outside civic scope).
+
+Documentation updated: Pattern 25 (confidence raised from tentative `·` to
+moderate `∗` for the committed non-monetary core; commercial layer marked
+vote-conditional in the solution text); SPEC.md post-beta roadmap split into
+the committed and vote-gated entries.
+
+---
+
 ## 2026-06-09 — Roadmap (post-beta): verified-resident Local Exchange
 
 Verified-resident **Local Exchange** — a neighborhood-scoped board for goods,

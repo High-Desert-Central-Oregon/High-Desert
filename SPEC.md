@@ -108,8 +108,15 @@ version, historical archive, multi-community expansion.
 **Post-beta roadmap (not in the current build).** Named future directions whose disciplines are
 already decided, kept here so the build doesn't drift into them by accident.
 
-- **Local Exchange** — verified-resident goods/services/skill board; see Pattern Language and
-  DECISIONS. Deliberate scope decision, post-beta.
+- **Local Exchange — non-monetary core** *(committed, post-beta)* — neighborhood-scoped
+  needs exchange ("I have / I need") and tradespeople trade-for-trade (barter of services,
+  no money), sharing one listing primitive (offer/ask with category). Verified members only;
+  chronological + proximity; no platform fee/cut, no ranking, no ratings. See Pattern 25
+  and DECISIONS.
+- **Local Exchange — commercial layer** *(later, community-voted)* — monetary marketplace
+  as an added layer on top, gated behind a governance vote; not built until the cohort
+  approves it. Same disciplines; commercial scope requires the community to decide when and
+  whether to widen. See Pattern 25 and DECISIONS.
 
 ---
 
