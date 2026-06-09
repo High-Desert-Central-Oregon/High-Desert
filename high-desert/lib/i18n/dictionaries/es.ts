@@ -165,6 +165,27 @@ export const es: Dictionary = {
     gateCta: "Verifica tu residencia",
   },
 
+  rsvp: {
+    formHeading: "¿Asistirás?",
+    statusGoing: "Voy a ir",
+    statusMaybe: "Tal vez",
+    bringingLabel: "¿Llevarás algo? (opcional)",
+    bringingPlaceholder: "p. ej. sillas plegables, una bandeja de verduras",
+    submit: "Confirmar asistencia",
+    update: "Actualizar asistencia",
+    saving: "Guardando…",
+    saved: "Tu asistencia está registrada.",
+    cancel: "Cancelar mi asistencia",
+    cancelling: "Cancelando…",
+    errorGeneric: "No pudimos guardar tu asistencia. Inténtalo de nuevo.",
+    heading: "Quién asistirá",
+    goingCount: "Asisten ({count})",
+    maybeCount: "Tal vez ({count})",
+    noneYet: "Aún no hay confirmaciones. Sé quien confirme primero.",
+    spotsTaken: "{going} de {capacity} cupos ocupados",
+    bringingTag: "lleva {item}",
+  },
+
   verify: {
     title: "Verifica que vives en Redmond",
     intro:

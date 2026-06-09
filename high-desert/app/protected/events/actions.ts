@@ -3,9 +3,10 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getMyProfile } from "@/lib/auth";
+import { getCurrentUser, getMyProfile } from "@/lib/auth";
 
 export type EventFormState = { error: string } | null;
+export type RsvpState = { ok: true } | { error: string } | null;
 
 /**
  * Create a neighborhood gathering. Verified members only — checked here for a
@@ -59,4 +60,70 @@ export async function createEvent(
 
   revalidatePath("/protected/events");
   redirect(`/protected/events/${data.id}`);
+}
+
+/**
+ * RSVP to an event (going / maybe), optionally noting what you're bringing. One
+ * row per member per event (DB unique constraint), so this is an upsert keyed on
+ * (event_id, user_id). Verified-only — checked here and enforced by RLS
+ * (rs_insert / rs_update both pin the row to auth.uid()). The bringing field is
+ * light coordination only, never a discussion thread (P12).
+ */
+export async function setRsvp(
+  _prev: RsvpState,
+  formData: FormData,
+): Promise<RsvpState> {
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
+  if (!profile.verified) return { error: "forbidden" };
+
+  const eventId = String(formData.get("event_id") ?? "").trim();
+  const status = String(formData.get("status") ?? "").trim();
+  const bringing = String(formData.get("bringing") ?? "").trim();
+
+  if (!eventId) return { error: "bad-event" };
+  if (status !== "going" && status !== "maybe") return { error: "bad-status" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("event_rsvps").upsert(
+    {
+      event_id: eventId,
+      user_id: profile.id,
+      status,
+      bringing: bringing.length > 0 ? bringing : null,
+    },
+    { onConflict: "event_id,user_id" },
+  );
+
+  if (error) return { error: "rsvp-failed" };
+
+  revalidatePath(`/protected/events/${eventId}`);
+  return { ok: true };
+}
+
+/**
+ * Withdraw an RSVP. Deletes the member's own row (rs_delete: user_id =
+ * auth.uid()) — changing your mind is a routine, effortless action (invariant 10).
+ */
+export async function cancelRsvp(
+  _prev: RsvpState,
+  formData: FormData,
+): Promise<RsvpState> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/auth/login");
+
+  const eventId = String(formData.get("event_id") ?? "").trim();
+  if (!eventId) return { error: "bad-event" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("event_rsvps")
+    .delete()
+    .eq("event_id", eventId)
+    .eq("user_id", user.id);
+
+  if (error) return { error: "cancel-failed" };
+
+  revalidatePath(`/protected/events/${eventId}`);
+  return { ok: true };
 }

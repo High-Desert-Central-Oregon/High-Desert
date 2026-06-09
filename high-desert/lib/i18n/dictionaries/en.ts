@@ -166,6 +166,27 @@ export const en = {
     gateCta: "Verify your residency",
   },
 
+  rsvp: {
+    formHeading: "Will you come?",
+    statusGoing: "I'm going",
+    statusMaybe: "Maybe",
+    bringingLabel: "Bringing something? (optional)",
+    bringingPlaceholder: "e.g. folding chairs, a veggie tray",
+    submit: "RSVP",
+    update: "Update RSVP",
+    saving: "Saving…",
+    saved: "Your RSVP is saved.",
+    cancel: "Cancel my RSVP",
+    cancelling: "Cancelling…",
+    errorGeneric: "We couldn't save your RSVP. Please try again.",
+    heading: "Who's coming",
+    goingCount: "Going ({count})",
+    maybeCount: "Maybe ({count})",
+    noneYet: "No RSVPs yet. Be the first.",
+    spotsTaken: "{going} of {capacity} spots taken",
+    bringingTag: "bringing {item}",
+  },
+
   verify: {
     title: "Verify that you live in Redmond",
     intro:

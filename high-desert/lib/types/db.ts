@@ -46,6 +46,17 @@ export type EventRow = {
   created_at: string;
 };
 
+export type RsvpStatus = "going" | "maybe";
+
+export type EventRsvp = {
+  id: string;
+  event_id: string;
+  user_id: string;
+  status: RsvpStatus;
+  bringing: string | null;
+  created_at: string;
+};
+
 export type DocKind = "terms" | "privacy";
 
 export type DocumentRow = {

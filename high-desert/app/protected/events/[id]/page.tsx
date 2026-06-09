@@ -4,12 +4,53 @@ import { notFound, redirect } from "next/navigation";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedNotice } from "../verified-notice";
+import { RsvpForm } from "./rsvp-form";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatEventDateTime } from "@/lib/events";
 import { t } from "@/lib/i18n";
-import type { EventRow } from "@/lib/types/db";
+import type { Dictionary } from "@/lib/i18n";
+import type { EventRow, RsvpStatus } from "@/lib/types/db";
+
+type RsvpRow = {
+  user_id: string;
+  status: RsvpStatus;
+  bringing: string | null;
+};
+
+/** One status group of attendees, with what each is bringing (light coordination). */
+function AttendeeList({
+  heading,
+  rows,
+  names,
+  dict,
+}: {
+  heading: string;
+  rows: RsvpRow[];
+  names: Map<string, string>;
+  dict: Dictionary;
+}) {
+  if (rows.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-2">
+      <h3 className="text-sm font-medium text-muted-foreground">{heading}</h3>
+      <ul className="flex flex-col gap-1.5">
+        {rows.map((r) => (
+          <li key={r.user_id} className="text-sm">
+            <span className="font-medium">{names.get(r.user_id) ?? "—"}</span>
+            {r.bringing && (
+              <span className="text-muted-foreground">
+                {" "}
+                — {t(dict.rsvp.bringingTag, { item: r.bringing })}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export const metadata = {
   title: "Event · High Desert",
@@ -55,6 +96,30 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   ]);
 
   const neighborhoodLabel = nb?.name ?? dict.events.allRedmond;
+
+  // RSVPs for this event, oldest first (chronological — invariant 7). Verified
+  // members can read them (rs_read); names are resolved in a second query.
+  const { data: rsvpData } = await supabase
+    .from("event_rsvps")
+    .select("user_id, status, bringing")
+    .eq("event_id", event.id)
+    .order("created_at", { ascending: true })
+    .returns<RsvpRow[]>();
+
+  const rsvps = rsvpData ?? [];
+  const rsvpNames = new Map<string, string>();
+  const rsvpUserIds = [...new Set(rsvps.map((r) => r.user_id))];
+  if (rsvpUserIds.length > 0) {
+    const { data: people } = await supabase
+      .from("profiles")
+      .select("id, display_name")
+      .in("id", rsvpUserIds);
+    for (const p of people ?? []) rsvpNames.set(p.id, p.display_name);
+  }
+
+  const going = rsvps.filter((r) => r.status === "going");
+  const maybe = rsvps.filter((r) => r.status === "maybe");
+  const myRsvp = rsvps.find((r) => r.user_id === profile.id) ?? null;
 
   return (
     <article lang={locale} className="flex flex-col gap-6">
@@ -128,6 +193,48 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           {event.body}
         </div>
       )}
+
+      {/* Coordination: RSVP + who's coming. Light coordination, not a discussion
+          surface — there is no reply or comment affordance (P12). */}
+      <RsvpForm
+        eventId={event.id}
+        initialStatus={myRsvp?.status ?? null}
+        initialBringing={myRsvp?.bringing ?? null}
+        dict={dict}
+      />
+
+      <section className="flex flex-col gap-4">
+        <div className="flex items-baseline justify-between gap-2">
+          <h2 className="font-medium">{dict.rsvp.heading}</h2>
+          {event.capacity != null && (
+            <span className="text-sm text-muted-foreground">
+              {t(dict.rsvp.spotsTaken, {
+                going: going.length,
+                capacity: event.capacity,
+              })}
+            </span>
+          )}
+        </div>
+
+        {rsvps.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{dict.rsvp.noneYet}</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <AttendeeList
+              heading={t(dict.rsvp.goingCount, { count: going.length })}
+              rows={going}
+              names={rsvpNames}
+              dict={dict}
+            />
+            <AttendeeList
+              heading={t(dict.rsvp.maybeCount, { count: maybe.length })}
+              rows={maybe}
+              names={rsvpNames}
+              dict={dict}
+            />
+          </div>
+        )}
+      </section>
     </article>
   );
 }
