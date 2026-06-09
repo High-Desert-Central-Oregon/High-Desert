@@ -66,7 +66,7 @@ export function ReviewRow({
           {methodLabel} · {submittedAt}
         </p>
         {error && (
-          <p className="mt-1 text-destructive" role="alert">
+          <p className="mt-1 text-red-700 dark:text-red-400" role="alert">
             {error}
           </p>
         )}

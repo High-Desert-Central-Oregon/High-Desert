@@ -39,7 +39,7 @@ export function ProposalForm({
   return (
     <form action={action} className="flex flex-col gap-5">
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       )}

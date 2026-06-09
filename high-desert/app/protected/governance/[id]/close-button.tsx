@@ -25,7 +25,7 @@ export function CloseButton({
     <div className="flex flex-col gap-2 rounded-lg border border-dashed p-4">
       <p className="text-xs text-muted-foreground">{dict.governance.closeHint}</p>
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       )}

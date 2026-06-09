@@ -81,7 +81,7 @@ export function TermsGate({
           </p>
 
           {state?.error && (
-            <p className="text-sm text-destructive" role="alert">
+            <p className="text-sm text-red-700 dark:text-red-400" role="alert">
               {dict.welcome.errorGeneric}
             </p>
           )}

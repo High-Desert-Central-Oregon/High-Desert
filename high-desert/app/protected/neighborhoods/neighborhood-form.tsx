@@ -73,7 +73,7 @@ export function NeighborhoodForm({
       )}
       {/* Error banner */}
       {state && "error" in state && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {dict.neighborhoods.errorGeneric}
         </p>
       )}

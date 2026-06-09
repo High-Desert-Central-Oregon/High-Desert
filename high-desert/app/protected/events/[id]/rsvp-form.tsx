@@ -46,7 +46,7 @@ export function RsvpForm({
       <h2 className="font-medium">{dict.rsvp.formHeading}</h2>
 
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
         </p>
       )}
@@ -111,7 +111,7 @@ export function RsvpForm({
           <button
             type="submit"
             disabled={cancelling}
-            className="text-sm text-muted-foreground underline-offset-2 hover:text-destructive hover:underline disabled:opacity-50"
+            className="text-sm text-muted-foreground underline-offset-2 hover:text-red-700 dark:hover:text-red-400 hover:underline disabled:opacity-50"
           >
             {cancelling ? dict.rsvp.cancelling : dict.rsvp.cancel}
           </button>

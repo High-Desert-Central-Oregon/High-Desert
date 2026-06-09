@@ -49,7 +49,7 @@ async function NavBar() {
   const verified = profile?.verified ?? false;
 
   return (
-    <nav className="flex h-16 w-full justify-center border-b">
+    <nav lang={locale} className="flex h-16 w-full justify-center border-b">
       <div className="flex w-full max-w-3xl items-center justify-between gap-3 p-3 px-5 text-sm">
         <div className="flex items-center gap-4">
           <Link href="/protected" className="font-semibold tracking-tight">

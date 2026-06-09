@@ -70,6 +70,10 @@ export const es: Dictionary = {
       "No pudimos enviar el enlace. Revisa la dirección e inténtalo de nuevo.",
     privacyNote:
       "Usamos tu correo solo para iniciar tu sesión. Verás los Términos y la Privacidad al continuar.",
+    errorBody:
+      "Algo salió mal al iniciar tu sesión. Por favor intenta el enlace de nuevo.",
+    errorCode: "Código de error: {code}",
+    backToSignIn: "Volver a iniciar sesión",
   },
 
   welcome: {

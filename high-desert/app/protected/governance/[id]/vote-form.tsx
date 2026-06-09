@@ -43,7 +43,11 @@ export function VoteForm({
       </div>
 
       {error && (
-        <p role="alert" className="text-sm text-destructive">
+        <p
+          id="vote-error"
+          role="alert"
+          className="text-sm text-red-700 dark:text-red-400"
+        >
           {error}
         </p>
       )}
@@ -56,7 +60,10 @@ export function VoteForm({
       <form action={action} className="flex flex-col gap-4">
         <input type="hidden" name="proposal_id" value={proposalId} />
 
-        <fieldset className="flex flex-col gap-2">
+        <fieldset
+          className="flex flex-col gap-2"
+          aria-describedby={error ? "vote-error" : undefined}
+        >
           <legend className="sr-only">{dict.governance.voteHeading}</legend>
           {CHOICES.map((c) => (
             <label

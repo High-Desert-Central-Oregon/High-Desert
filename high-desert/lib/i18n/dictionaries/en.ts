@@ -65,6 +65,10 @@ export const en = {
     errorGeneric: "We couldn't send the link. Check the address and try again.",
     privacyNote:
       "We use your email only to sign you in. See our Terms & Privacy after you continue.",
+    errorBody:
+      "Something went wrong while signing you in. Please try the link again.",
+    errorCode: "Error code: {code}",
+    backToSignIn: "Back to sign in",
   },
 
   welcome: {
