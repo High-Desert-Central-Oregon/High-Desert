@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High Desert — Prototype Build Spec v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#ece3d2; --bone-2:#f4eee0; --bone-3:#f8f4ea;
+    --sage:#a4ae93; --sage-deep:#6f7a5e; --sage-pale:#cdd3bd;
+    --juniper:#2d3a2a; --juniper-2:#3c4c38;
+    --basalt:#24231d; --basalt-soft:#46443b;
+    --rust:#a4512a; --rust-2:#c46a3e; --rust-pale:#e4c4ad;
+    --line:#d7cdb8; --line-2:#c8bda3;
+    --shadow:0 1px 0 rgba(36,35,29,.04), 0 18px 40px -28px rgba(45,58,42,.45);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bone); color:var(--basalt); font-family:"DM Sans",system-ui,sans-serif; line-height:1.62; font-size:16.5px; letter-spacing:.005em; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1020px; margin:0 auto; padding:0 30px;}
+  a{color:var(--rust); text-decoration:none;} a:hover{text-decoration:underline; text-underline-offset:3px;}
+  h1,h2,h3,h4{font-family:"Playfair Display",Georgia,serif; font-weight:700; line-height:1.13; color:var(--juniper); letter-spacing:-.01em;}
+  code,pre,.mono{font-family:"DM Mono",monospace;}
+
+  header.hero{
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(164,81,42,.16), transparent 55%),
+      radial-gradient(110% 80% at 6% 0%, rgba(111,122,94,.22), transparent 50%),
+      linear-gradient(180deg,#2d3a2a 0%, #283626 60%, #243121 100%);
+    color:var(--bone-3); border-bottom:3px solid var(--rust); position:relative; overflow:hidden;
+  }
+  header.hero::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 84px);}
+  .hero .wrap{padding:60px 30px 54px; position:relative; z-index:1;}
+  .eyebrow{font-family:"DM Mono",monospace; font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--sage-pale);}
+  .hero h1{color:var(--bone-3); font-size:clamp(36px,6vw,64px); margin:.28em 0 .14em; font-weight:800;}
+  .hero h1 em{font-style:italic; font-weight:500; color:var(--rust-pale);}
+  .hero .lede{font-size:clamp(16px,2vw,19px); max-width:64ch; color:#e7e0cf; line-height:1.55;}
+  .hero .meta{margin-top:24px; display:flex; flex-wrap:wrap; gap:10px 22px; font-family:"DM Mono",monospace; font-size:12.5px; letter-spacing:.06em; color:var(--sage-pale);}
+  .hero .meta b{color:var(--bone-3); font-weight:500;}
+
+  nav.toc{position:sticky; top:0; z-index:30; background:rgba(236,227,210,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--line-2);}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:4px; padding:10px 30px;}
+  nav.toc a{font-family:"DM Mono",monospace; font-size:11.5px; letter-spacing:.03em; color:var(--basalt-soft); padding:6px 11px; border-radius:20px; white-space:nowrap;}
+  nav.toc a:hover{background:var(--juniper); color:var(--bone-3); text-decoration:none;}
+
+  section{padding:48px 0 6px;}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
+  .sec-num{font-family:"DM Mono",monospace; font-size:13px; color:var(--rust); letter-spacing:.1em;}
+  h2{font-size:clamp(24px,3.4vw,32px);}
+  .sec-intro{max-width:74ch; color:var(--basalt-soft); margin:8px 0 22px; font-size:15.5px;}
+  h3{font-size:20px; margin:26px 0 8px;}
+  p{margin:0 0 12px;}
+
+  .card{background:var(--bone-2); border:1px solid var(--line); border-radius:9px; padding:20px 24px; margin-bottom:14px; box-shadow:var(--shadow);}
+  .card h4{margin:0 0 7px; font-size:18px;}
+  .card .src{font-family:"DM Mono",monospace; font-size:10.5px; letter-spacing:.05em; color:var(--sage-deep); display:block; margin-bottom:3px;}
+  .card p{font-size:14.5px; color:var(--basalt-soft); margin:0 0 8px;}
+  .card .tie{font-family:"DM Mono",monospace; font-size:11px; color:var(--rust); letter-spacing:.02em; margin-top:6px;}
+  .card .tie b{color:var(--sage-deep); font-weight:500;}
+
+  /* in / out */
+  .inout{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:6px 0 8px;}
+  .inout .col{border-radius:9px; padding:18px 20px; border:1px solid var(--line); box-shadow:var(--shadow);}
+  .inout .in{background:rgba(111,122,94,.12); border-left:4px solid var(--sage-deep);}
+  .inout .out{background:var(--bone-2); border-left:4px solid var(--line-2);}
+  .inout h4{margin:0 0 10px; font-size:16px;}
+  .inout ul{margin:0; padding-left:18px;} .inout li{font-size:14px; margin-bottom:7px; color:var(--basalt-soft);}
+  .inout .in li b{color:var(--juniper);} 
+
+  /* code */
+  pre{background:#23301f; color:#e7e0cf; border:1px solid var(--juniper-2); border-left:4px solid var(--rust); border-radius:8px; padding:16px 18px; overflow-x:auto; font-size:13px; line-height:1.6; margin:10px 0 16px;}
+  pre .c{color:var(--sage-pale); font-style:italic;}
+  pre .k{color:var(--rust-pale);}
+  code{background:rgba(111,122,94,.16); border:1px solid var(--line); border-radius:4px; padding:1px 6px; font-size:13px; color:var(--juniper-2);}
+
+  /* tables */
+  table{width:100%; border-collapse:collapse; margin:8px 0 18px; font-size:14px; box-shadow:var(--shadow); border-radius:8px; overflow:hidden;}
+  th{background:var(--juniper); color:var(--bone-3); text-align:left; padding:9px 12px; font-family:"DM Sans"; font-weight:600; font-size:13px;}
+  td{padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; color:var(--basalt-soft);}
+  tr:nth-child(even) td{background:var(--bone-2);}
+  td code{font-size:12px;}
+  td b{color:var(--juniper);}
+
+  /* steps */
+  ol.steps{list-style:none; counter-reset:s; margin:6px 0; padding:0;}
+  ol.steps > li{counter-increment:s; position:relative; padding:16px 20px 16px 64px; background:var(--bone-2); border:1px solid var(--line); border-radius:9px; margin-bottom:11px; box-shadow:var(--shadow);}
+  ol.steps > li::before{content:counter(s); position:absolute; left:18px; top:16px; width:32px; height:32px; background:var(--juniper); color:var(--bone-3); border-radius:7px; display:flex; align-items:center; justify-content:center; font-family:"DM Mono",monospace; font-weight:500; font-size:15px;}
+  ol.steps h4{margin:0 0 5px; font-size:17px;}
+  ol.steps p{font-size:14px; color:var(--basalt-soft); margin:0 0 5px;}
+  ol.steps .gate{font-family:"DM Mono",monospace; font-size:11px; color:var(--rust); letter-spacing:.02em;}
+  ol.steps .gate b{color:var(--sage-deep); font-weight:500;}
+
+  /* decision callouts */
+  .decn{background:var(--bone-3); border:1px solid var(--line); border-left:4px solid var(--rust); border-radius:7px; padding:14px 18px; margin-bottom:12px; box-shadow:var(--shadow);}
+  .decn .q{font-weight:600; color:var(--juniper); font-size:15.5px; display:block; margin-bottom:3px;}
+  .decn .r{font-size:14px; color:var(--basalt-soft);}
+  .decn .r b{color:var(--rust);}
+
+  .stage{background:linear-gradient(180deg,#2d3a2a,#26331f); color:var(--bone-3); border-radius:10px; padding:26px 30px; margin:14px 0 6px; border:1px solid var(--juniper-2); box-shadow:var(--shadow);}
+  .stage h3{color:var(--bone-3); margin:0 0 8px; font-size:21px;}
+  .stage p{color:#dfe3d4; max-width:74ch; margin:0 0 10px;} .stage p:last-child{margin:0;}
+  .stage em{color:var(--rust-pale); font-style:italic;}
+
+  footer{margin-top:50px; border-top:1px solid var(--line-2); background:var(--bone-2);}
+  footer .wrap{padding:24px 30px 32px; font-family:"DM Mono",monospace; font-size:12px; color:var(--sage-deep); letter-spacing:.05em; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+  @media (max-width:720px){ .hero .wrap{padding:42px 24px 38px;} .inout{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">High Desert · Prototype Build Spec · v2 · June 2026</div>
+    <h1>From Framework <em>to Keyboard</em></h1>
+    <p class="lede">The technical bridge between the dev framework and the first commit. What the prototype is, the data model and the policies that make the constitution true in code, how each feature is implemented, and the exact order to build it. Scope is the <strong>First Build Slice</strong> — a functional closed-beta MVP, not a mockup.</p>
+    <div class="meta">
+      <span><b>Builds</b> the First Build Slice (Dev Framework §07)</span>
+      <span><b>For</b> closed beta · Oct–Nov 2026</span>
+      <span><b>Stack</b> Supabase · Next.js · Tailwind</span>
+      <span><b>Decisions</b> locked · cohort free</span>
+      <span><b>Neighborhoods</b> 35 seeded</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#orient">00 · Orientation</a>
+    <a href="#need">01 · What We Still Need</a>
+    <a href="#scope">02 · Prototype Scope</a>
+    <a href="#data">03 · Data Model</a>
+    <a href="#rls">04 · RLS — Constitution in Code</a>
+    <a href="#impl">05 · Implementation by Feature</a>
+    <a href="#seq">06 · Build Sequence</a>
+    <a href="#lock">07 · Decisions to Lock</a>
+  </div>
+</nav>
+
+<!-- 00 -->
+<section id="orient">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">00</span><h2>Orientation</h2></div>
+    <p class="sec-intro">This is the <em>how, concretely, in order</em> — the layer below the dev framework. Everything here implements a pattern; the ties are marked so the reasoning stays attached to the code.</p>
+    <div class="stage">
+      <h3>What the prototype is</h3>
+      <p>A <em>functional</em> MVP a ~50-person Redmond founding cohort can actually use during the closed beta — real verification, real neighborhood events, a real governance vote, a real public transparency view. It is the smallest thing that is unmistakably High Desert (Pattern 17, <em>Minimum Trustworthy Platform</em>).</p>
+      <p>It is <em>not</em> the full platform, and not a design mockup. If you also want something to show Compass and the cohort before code exists, a clickable Figma flow is a cheap parallel track — but the spec below is the buildable thing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 01 -->
+<section id="need">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>What We Still Need</h2></div>
+    <p class="sec-intro">The conceptual layers are complete. Three things stand between you and building: this spec, a short list of provisional decisions, and a stack confirmation. The decisions are all config-driven — locking them now unblocks the build; changing them later is cheap.</p>
+
+    <h3>Stack (assumed — confirm or correct)</h3>
+    <table>
+      <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+      <tr><td><b>Data + auth + storage</b></td><td>Supabase (Postgres, Auth, Storage, Row-Level Security)</td><td>Already chosen in the framework. RLS is how the constitution becomes structurally true (Pattern 18).</td></tr>
+      <tr><td><b>Frontend</b></td><td>Next.js (App Router) + React + Tailwind</td><td>Server components keep logic off the client (matters for vote-weight integrity); mobile-first by default; one deploy.</td></tr>
+      <tr><td><b>Hosting</b></td><td>Vercel or Netlify</td><td>Zero-config deploys; you already use Netlify Drop for prototypes.</td></tr>
+      <tr><td><b>Email</b></td><td>Supabase Auth (magic link) + Resend for transactional</td><td>No passwords to leak; low overhead.</td></tr>
+      <tr><td><b>Payments</b></td><td><b>None in the prototype</b> — Stripe later</td><td>Founding cohort is free. Build the billing-status field; defer the integration and the sliding-scale UI.</td></tr>
+      <tr><td><b>SMS / alerts</b></td><td>Deferred</td><td>Resilience alerts are Phase 2 (C5). Out of scope.</td></tr>
+    </table>
+
+    <h3>Decisions — now locked (your sign-off, June 2026; see §07)</h3>
+    <p>Each has a recommended default so you can proceed today; all are flagged again in §07.</p>
+    <div class="card"><span class="src">unblocks Verification (A1) · Patterns 1, 2, 24</span><h4>Verification pathways for v1</h4><p>Recommend a <b>multi-path, human-reviewed</b> flow: any one of — driver's license / state ID, utility bill, voter registration, property record, <em>or a mailed postcard with a one-time code</em>. The postcard path solves PO-Box-only delivery (Warm Springs) and the unbanked/undocumented case. A person clears every submission from a review queue; evidence is deleted the moment a decision is made.</p></div>
+    <div class="card"><span class="src">unblocks Neighborhoods (B2) · Pattern 4</span><h4>How a neighborhood is defined</h4><p><b>Locked: resident-set, from a seeded list.</b> Seeded with the <b>35 Redmond neighborhoods</b> in §03 (sourced from the Enjoy Bend Life Redmond neighborhood map), picked by the member on join and editable by community process later — never a radius an engineer guessed. One entry carries a flag for your call (see §03): <code>eagle-crest</code> (a resort west of the city limits).</p></div>
+    <div class="card"><span class="src">unblocks Governance (A2) · Patterns 5, 6</span><h4>Provisional governance numbers</h4><p>Stub real values in config: <b>quorum 20%</b> of eligible voters; <b>minor</b> = simple majority; <b>major</b> = 60%; <b>immutable</b> = 75% + 30-day window. Tenure weight: <b>Yr1 1.0× · Yr2 1.2× · Yr3+ 1.5×</b>. These are placeholders the community ratifies — but the code needs numbers now.</p></div>
+    <div class="card"><span class="src">design integrity · Pattern 6 (anti-coercion)</span><h4>Vote visibility</h4><p>Recommend <b>secret until close, aggregate-only after</b>. Individual ballots are never readable by other members; only the tallied result and the audit metadata are public. Prevents pressure and vote-buying.</p></div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="scope">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Prototype Scope</h2></div>
+    <p class="sec-intro">The line between the First Build Slice and everything that comes after. Ruthless scope is the point — feature creep before trust is the documented common failure (Pattern 17).</p>
+    <div class="inout">
+      <div class="col in">
+        <h4>In — the prototype builds</h4>
+        <ul>
+          <li><b>Auth &amp; member profile</b> — magic-link sign-in, profile row</li>
+          <li><b>Residency verification</b> — multi-path, human-reviewed, verify-then-forget <span class="mono" style="color:var(--sage-deep)">(A1)</span></li>
+          <li><b>Neighborhoods</b> — resident-set from a seeded list <span class="mono" style="color:var(--sage-deep)">(B2)</span></li>
+          <li><b>Neighborhood event primitive</b> — create / list / detail / RSVP / who's-bringing <span class="mono" style="color:var(--sage-deep)">(B1, B3)</span></li>
+          <li><b>Governance</b> — proposal + tenure-weighted vote + result + audit log <span class="mono" style="color:var(--sage-deep)">(A2)</span></li>
+          <li><b>Moderation</b> — report → graduated action → appeal, human decides <span class="mono" style="color:var(--sage-deep)">(A3)</span></li>
+          <li><b>Transparency view</b> — public aggregate health + mod log + vote results <span class="mono" style="color:var(--sage-deep)">(A4)</span></li>
+          <li><b>Plain-language T&amp;C</b> — versioned, read-confirm, consent record <span class="mono" style="color:var(--sage-deep)">(A5)</span></li>
+          <li><b>Accessibility + Spanish + low-bandwidth</b> — cross-cutting, not a later pass</li>
+        </ul>
+      </div>
+      <div class="col out">
+        <h4>Out — deliberately deferred</h4>
+        <ul>
+          <li>Mutual aid board <span class="mono">(C1)</span></li>
+          <li>Skills &amp; trades trust graph <span class="mono">(C2)</span></li>
+          <li>Skill exchange / learning webs <span class="mono">(C3)</span></li>
+          <li>Resilience alerts &amp; SMS <span class="mono">(C5, Phase 2)</span></li>
+          <li>Real payments + sliding-scale UI <span class="mono">(post-beta)</span></li>
+          <li>The regional discussion board <span class="mono">(deferred / logged)</span></li>
+          <li>Visitor tier surfaces, youth version, historical archive</li>
+          <li>Multi-community expansion (Redmond only)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Why each is deferred or out</h3>
+    <p style="color:var(--basalt-soft); font-size:14.5px; max-width:74ch;">The quick grid above, with the reasoning attached — so the scope line can be re-decided in context, not just obeyed.</p>
+
+    <div class="card"><span class="src">deferred — planned, not in the prototype</span><h4>Coming later, just not first</h4>
+      <p><b>Mutual aid board</b> <span class="mono">(Phase 1)</span> — a participation feature that only works once a critical mass of verified neighbors and a trust culture exist; built early it sits empty or gets misused.</p>
+      <p><b>Skills &amp; trades trust graph</b> <span class="mono">(Phase 1)</span> — the hardest knowledge feature to get right because it must resist becoming a score (P10); needs mature verification and vouching norms first.</p>
+      <p><b>Skill exchange / learning webs</b> <span class="mono">(Phase 1)</span> — depends on the trust graph and an active event culture; matching people to learn from each other needs enough verified members to matter.</p>
+      <p><b>Standing / recurring gatherings</b> <span class="mono">(near-term)</span> — a complexity layer on the event primitive; the single-event MVP must prove people will host and show up before recurrence earns its state.</p>
+      <p><b>Community resilience alerts + SMS</b> <span class="mono">(Phase 2)</span> — high-stakes (people rely on it in an emergency), so it needs redundant, tested delivery you never bolt onto an MVP; adds SMS cost and a provider.</p>
+      <p><b>Historical / community archive</b> <span class="mono">(Phase 2, gated)</span> — held until Warm Springs consultation, because cultural memory is sovereignty-sensitive and must not be designed first and asked about later.</p>
+      <p><b>Youth version (13–17)</b> <span class="mono">(Phase 3, gated)</span> — a real legal/safety surface (COPPA, isolated feed) requiring a community vote before launch.</p>
+      <p><b>Real payments + sliding-scale UI</b> <span class="mono">(post-beta)</span> — the cohort is free, so charging is unnecessary now; deferring removes the Stripe/PCI surface and lets fieldwork teach the need-distribution before the sliding scale is locked (Meadows).</p>
+      <p><b>Multi-community expansion</b> <span class="mono">(Year 1+)</span> — Redmond-first <em>is</em> the strategy; saturate and win trust in one community before branching, gated on Redmond being healthy.</p>
+      <p style="margin-bottom:0;"><b>Regional discussion board</b> <span class="mono">(deferred &amp; logged)</span> — the single highest-conflict, highest-moderation-burden surface and the thing that turned Nextdoor toxic; held until the trust stock is high and re-opened only by a community vote.</p>
+    </div>
+
+    <div class="card"><span class="src">out by design — refusal, or another entity's lane</span><h4>Not building, on purpose</h4>
+      <p><b>Advertising</b> <span class="mono">(permanent, immutable)</span> — a second customer whose interests oppose members' is the root of platform decay; structural, not deferrable (Doctorow, Wu).</p>
+      <p><b>Scope-based pricing</b> <span class="mono">(decided against)</span> — charging more for a wider area feels fair but inverts fairness (breadth correlates with need → regressive) and installs an enshittification value-withhold; replaced by price-by-means (Baradaran, Doctorow).</p>
+      <p><b>Ranking / recommendation / engagement-optimizing algorithms</b> <span class="mono">(out)</span> — they sever feedback from the people they affect and become optimization weapons; default is chronological + proximity, any future ranking member-visible and never a target (O'Neil, Christian, P8).</p>
+      <p><b>Local marketplace / buy-sell</b> <span class="mono">(out — Compass's lane)</span> — commercial discovery belongs to Redmond Compass; HD does non-monetary aid and exchange first, and a transactional market would import the ratings pressure HD refuses.</p>
+      <p style="margin-bottom:0;"><b>Visitor posting / voting</b> <span class="mono">(out)</span> — full participation requires verified residency (Ostrom's boundary); visitors get read-only public info only.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="data">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Data Model</h2></div>
+    <p class="sec-intro">Postgres tables for the slice. Two non-negotiables show up in the schema itself: <strong>store as little PII as possible</strong> (verify-then-forget, Pattern 2) and <strong>votes, moderation, and the audit log are append-only</strong> (reversibility &amp; the record, Pattern 18).</p>
+    <table>
+      <tr><th>Table</th><th>Key columns</th><th>Notes / pattern</th></tr>
+      <tr><td><code>profiles</code></td><td>id → auth.users, display_name, neighborhood_id, verified_status, tenure_start, role, locale, created_at</td><td><b>verified_status / role / tenure_start are server-set only</b> — never client-writable. Ladder: visitor → verified → tenured (P3).</td></tr>
+      <tr><td><code>verifications</code></td><td>id, user_id, method, status (pending/approved/rejected), evidence_path, reviewed_by, reviewed_at, created_at</td><td>evidence_path points to a private bucket file; <b>file + path nulled on decision</b> (P2). Only reviewers read evidence.</td></tr>
+      <tr><td><code>neighborhoods</code></td><td>id, name, slug, description</td><td>Seeded with the 35 Redmond neighborhoods below. Resident-set, not radius (P4).</td></tr>
+      <tr><td><code>events</code></td><td>id, creator_id, neighborhood_id, title, body, starts_at, location, capacity, status, created_at</td><td>Neighborhood-scoped gathering (P11). No free-text comment feed (P12).</td></tr>
+      <tr><td><code>event_rsvps</code></td><td>id, event_id, user_id, status (going/maybe), bringing, created_at</td><td>Light coordination only (P12). One row per user per event.</td></tr>
+      <tr><td><code>proposals</code></td><td>id, author_id, title, body, kind (minor/major/immutable), status, opens_at, closes_at, created_at</td><td>Rules-before-tool (P5). Thresholds resolved from kind + config.</td></tr>
+      <tr><td><code>votes</code></td><td>id, proposal_id, user_id, choice (yes/no/abstain), weight, created_at</td><td><b>weight computed server-side from tenure</b>, never supplied by client. One vote per proposal. Secret until close (P6).</td></tr>
+      <tr><td><code>moderation_actions</code></td><td>id, target_type, target_id, actor_id, action (warn/temp_ban/extended_ban/review), reason, expires_at, created_at</td><td><b>Append-only.</b> Graduated; no permanent ban without review (P7, P9).</td></tr>
+      <tr><td><code>appeals</code></td><td>id, moderation_action_id, user_id, body, status, created_at</td><td>Opens immediately after action — voice follows action (P7).</td></tr>
+      <tr><td><code>audit_log</code></td><td>id, actor_id, action, entity, entity_id, metadata (jsonb), created_at</td><td><b>Append-only.</b> Public-readable with no PII. Feeds the transparency view (P8).</td></tr>
+      <tr><td><code>documents</code> / <code>consents</code></td><td>documents: id, kind, version, body, published_at &nbsp;·&nbsp; consents: id, user_id, document_id, accepted_at</td><td>Versioned T&amp;C; consent tied to the exact version accepted (P22, A5).</td></tr>
+    </table>
+
+    <h3>Seed: Redmond neighborhoods</h3>
+    <p style="color:var(--basalt-soft); font-size:14.5px; max-width:74ch;">The 35 names below seed the <code>neighborhoods</code> table (verbatim from the Enjoy Bend Life Redmond neighborhood map; the source list and your list match exactly). Members self-assign on join; "none of these fits" routes to a human (P4). <b>One carries a flag for your call</b> — marked <span style="color:var(--rust)">⚑</span>.</p>
+<pre><span class="c">-- slug :: display name</span>
+braydon-park · canyon-crossing · canyon-rim-village · cascade-view-estates
+cascade-west · cinder-butte-village · deer-crossing · diamond-bar-ranch
+echo-rim-estates · emerald-view-estates · evansville · fieldstone
+greens-at-redmond · maple-meadows · maplewood · mckenzie-rim-estates
+meadowbrook-estates · megan-park · mountain-glenn · north-rim
+obsidian-trails · pine-tree-meadows · pleasant-view · red-bar-estates
+red-hawk · rimrock-west-estate · sterling-pointe · summit-crest
+triple-ridge · village-at-ridgeview · vista-meadows · west-canyon-estates
+wildflower · windsong
+<span class="k">⚑ eagle-crest</span> <span class="c">-- destination resort WEST of / outside Redmond city limits</span>
+              <span class="c">   (unincorporated Deschutes Co.). Include only if Eagle Crest</span>
+              <span class="c">   residents count as part of the Redmond community.</span></pre>
+    <p style="color:var(--basalt-soft); font-size:14px; max-width:74ch;">Note this is a <em>subdivision-level</em> list. Residents who identify with a broader area (Downtown, NW/NE/North Redmond, or rural pockets like Chaparral) rather than a named subdivision are handled by the "none of these fits → human" fallback; add area-level options later if fieldwork shows people want them.</p>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="rls">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>RLS — the Constitution in Code</h2></div>
+    <p class="sec-intro">The governance model is enforced at the row level, where the data lives — so the UI is never the only thing between a rule and its breach (Pattern 18). A representative table; the principle is the same throughout: <strong>verified status and tenure weight are computed by the server and trusted from nowhere else.</strong></p>
+    <table>
+      <tr><th>Table</th><th>Read</th><th>Write</th></tr>
+      <tr><td><code>profiles</code></td><td>Public fields readable by verified members</td><td>Own row only; <b>verified_status/role/tenure_start blocked from self-edit</b> (service role only)</td></tr>
+      <tr><td><code>verifications</code></td><td>Own status; <b>evidence readable only by reviewers</b></td><td>Insert own request; status set by reviewers only</td></tr>
+      <tr><td><code>events</code> / <code>event_rsvps</code></td><td>Verified members</td><td>Insert if <code>verified_status = 'verified'</code>; edit/delete by creator or moderator</td></tr>
+      <tr><td><code>proposals</code> / <code>votes</code></td><td>Proposals: verified. <b>Individual votes: never</b> — aggregate only</td><td>One vote per proposal while open; weight set server-side</td></tr>
+      <tr><td><code>moderation_actions</code> / <code>audit_log</code></td><td>Public (no PII)</td><td>Insert by moderators/service; <b>no update, no delete</b> (append-only)</td></tr>
+    </table>
+
+    <p>Two policies worth seeing in full — the vote-integrity guard and verify-then-forget:</p>
+<pre><span class="c">-- A member may cast at most one vote per open proposal.</span>
+<span class="c">-- The weight column is set by a trigger from tenure, never by the client.</span>
+<span class="k">create policy</span> "one vote per open proposal" <span class="k">on</span> votes
+<span class="k">for insert to</span> authenticated
+<span class="k">with check</span> (
+  exists (<span class="k">select</span> 1 <span class="k">from</span> profiles p
+          <span class="k">where</span> p.id = auth.uid() <span class="k">and</span> p.verified_status = 'verified')
+  <span class="k">and</span> exists (<span class="k">select</span> 1 <span class="k">from</span> proposals pr
+          <span class="k">where</span> pr.id = proposal_id <span class="k">and</span> pr.status = 'open'
+            <span class="k">and</span> now() <span class="k">between</span> pr.opens_at <span class="k">and</span> pr.closes_at)
+  <span class="k">and not</span> exists (<span class="k">select</span> 1 <span class="k">from</span> votes v
+          <span class="k">where</span> v.proposal_id = proposal_id <span class="k">and</span> v.user_id = auth.uid())
+);
+
+<span class="c">-- Verify, then forget: on any decision, null the evidence and delete the file.</span>
+<span class="k">create trigger</span> drop_evidence_on_decision
+<span class="k">after update of</span> status <span class="k">on</span> verifications
+<span class="k">for each row when</span> (new.status <span class="k">in</span> ('approved','rejected'))
+<span class="k">execute function</span> purge_verification_evidence();  <span class="c">-- removes storage object + nulls path</span></pre>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="impl">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Implementation by Feature</h2></div>
+    <p class="sec-intro">For each in-scope feature: the data it touches, the policy that protects it, the member flow, and the edge cases that actually matter in Central Oregon.</p>
+
+    <div class="card"><span class="src">Auth &amp; profile · framework foundation · Pattern 3</span><h4>Sign-in &amp; member profile</h4><p><b>Data:</b> <code>profiles</code> row created by trigger on <code>auth.users</code> insert. <b>Flow:</b> magic-link sign-in → profile created as <em>visitor</em> → must accept T&amp;C and pass verification before any participation unlocks. <b>Edge:</b> a profile with no verified status can browse only; the ladder is enforced in RLS, not just hidden in the UI.</p><div class="tie"><b>Ties:</b> P3 Participation Ladder</div></div>
+
+    <div class="card"><span class="src">A5 · Pattern 22</span><h4>Plain-language terms &amp; read-confirm</h4><p><b>Data:</b> <code>documents</code> (versioned) + <code>consents</code>. <b>Flow:</b> render the current version, require a real scroll-and-confirm (System-2 friction on purpose), write a consent row bound to that version. <b>Edge:</b> when terms change, members re-confirm the new version; old consents stay on record. A plain-language draft of both documents now exists (companion: <em>Terms of Membership &amp; Privacy Policy v1</em>) to seed these rows — pending Oregon legal review before launch.</p><div class="tie"><b>Ties:</b> P22 Effort Where It Belongs</div></div>
+
+    <div class="card"><span class="src">A1 · Patterns 1, 2, 24</span><h4>Residency verification (the trust substrate)</h4><p><b>Data:</b> <code>verifications</code> + a private storage bucket. <b>Flow:</b> member picks a path (ID / utility bill / voter reg / property record / mailed postcard code) → uploads or requests a postcard → lands in a reviewer queue → a person approves/rejects → on decision, <em>evidence is purged</em> and only the status flag remains. <b>Edge:</b> the postcard-code path is the PO-Box / Warm Springs / unbanked accommodation and must work on day one; reviewer UI shows the minimum needed to decide and nothing more.</p><div class="tie"><b>Ties:</b> P1 Verification That Fits the Person · P2 Verify Then Forget · P24 Built for Every Body</div></div>
+
+    <div class="card"><span class="src">B2 · Pattern 4</span><h4>Neighborhoods</h4><p><b>Data:</b> <code>neighborhoods</code> seeded; <code>profiles.neighborhood_id</code>. <b>Flow:</b> on join (post-verification) the member picks their neighborhood from the seeded list. <b>Edge:</b> "none of these fits" routes to a human, not a forced choice; boundaries are editable by community process later, never a hard radius.</p><div class="tie"><b>Ties:</b> P4 Neighborhoods Drawn by Residents</div></div>
+
+    <div class="card"><span class="src">B1, B3 · Patterns 11, 12</span><h4>Neighborhood event primitive (the headline)</h4><p><b>Data:</b> <code>events</code> + <code>event_rsvps</code>. <b>Flow:</b> a verified member creates a neighborhood-scoped gathering (title, when, where, capacity); others RSVP and add what they're bringing; carpool field optional. <b>Edge:</b> there is <em>no</em> open comment thread — coordination ends when the event does. This is the deliberate refusal of the discussion-board surface.</p><div class="tie"><b>Ties:</b> P11 Events as Participation · P12 Just Enough Coordination</div></div>
+
+    <div class="card"><span class="src">A2 · Patterns 5, 6</span><h4>Governance: proposal &amp; tenure-weighted vote</h4><p><b>Data:</b> <code>proposals</code>, <code>votes</code>, <code>audit_log</code>. <b>Flow:</b> a member opens a proposal (kind = minor/major/immutable) → it runs for a set window → verified members cast one ballot each → a server function tallies using tenure weights and the kind's threshold → result + metadata written to the audit log. <b>Edge:</b> ballots are secret until close and never individually readable; weight is computed server-side from <code>tenure_start</code>, never accepted from the client. Seed the beta with one small real vote (a naming or norm decision) to prove it works.</p><div class="tie"><b>Ties:</b> P5 Decide the Rules Before the Tool · P6 Tenure-Weighted Vote</div></div>
+
+    <div class="card"><span class="src">A3 · Patterns 7, 9, 19</span><h4>Moderation &amp; appeal</h4><p><b>Data:</b> <code>moderation_actions</code> (append-only), <code>appeals</code>. <b>Flow:</b> a member reports content → a human moderator takes a graduated action (warn → temp → extended → review) → the appeal opens immediately in the same view. <b>Edge:</b> no permanent ban without review; a person always makes the call — automation may flag, never decide; sustained complaints against a decision can trigger a community override vote (reuses the governance engine).</p><div class="tie"><b>Ties:</b> P7 Action, Then Voice · P9 The Override · P19 Human in the Loop</div></div>
+
+    <div class="card"><span class="src">A4 · Pattern 8</span><h4>Transparency view</h4><p><b>Data:</b> read-only aggregates over <code>audit_log</code>, <code>moderation_actions</code>, <code>votes</code>. <b>Flow:</b> a public page shows member counts, events held, the moderation-action log (no PII), and closed-vote results. <b>Edge:</b> these are <em>vital signs, not targets</em> — displayed for accountability, never optimized, never shown as per-member scores. Quietly compute exit-vs-appeal for your own eyes as the early-warning signal.</p><div class="tie"><b>Ties:</b> P8 Vital Signs, Not Targets</div></div>
+
+    <div class="card"><span class="src">cross-cutting · Patterns 24, 22 · design practice</span><h4>Accessibility, Spanish &amp; low-bandwidth</h4><p><b>How:</b> semantic HTML, full keyboard paths, real contrast, captions, and an i18n string layer (English + Spanish together) from the first screen; test on a deliberately slow phone. <b>Edge:</b> not a later mode — built in. Spanish parity matters most when Madras branches later, but the architecture is laid now so it isn't a rewrite.</p><div class="tie"><b>Ties:</b> P24 Built for Every Body</div></div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="seq">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Build Sequence</h2></div>
+    <p class="sec-intro">Dependency-ordered. The trust substrate is built before anything to participate in; the discussion-style surfaces are never built at all. This maps to the June "technical build" milestone and feeds the closed-beta gate in Business Plan v6 §07.</p>
+    <ol class="steps">
+      <li><h4>Scaffold &amp; seed</h4><p>Next.js + Tailwind app, Supabase project, env + CI + deploy target. Create the schema and RLS skeleton. Seed neighborhoods and the first T&amp;C document.</p><span class="gate"><b>Done when:</b> a deployed empty app talks to the database under RLS.</span></li>
+      <li><h4>Auth &amp; profile</h4><p>Magic-link sign-in; profile-on-signup trigger; profile RLS (own-edit, server-only status). Visitor can browse, nothing else.</p><span class="gate"><b>Gate:</b> status/role/tenure provably not self-editable.</span></li>
+      <li><h4>Terms &amp; consent</h4><p>Versioned T&amp;C render + scroll-confirm + consent record. Participation stays locked until consent + verification.</p><span class="gate"><b>Ties:</b> P22 · A5</span></li>
+      <li><h4>Verification + reviewer queue</h4><p>Multi-path submission, private evidence bucket, reviewer queue UI, approve/reject, evidence-purge trigger. <em>This is the substrate — it precedes all participation features.</em></p><span class="gate"><b>Gate:</b> postcard-code (PO-Box) path works; evidence is gone after decision.</span></li>
+      <li><h4>Neighborhoods</h4><p>Self-assign from the seeded list; "none fits" → human. Unlocks scoping for events.</p><span class="gate"><b>Ties:</b> P4 · B2</span></li>
+      <li><h4>Event primitive</h4><p>Create / list / detail / RSVP / bringing, neighborhood-scoped. No comment feed. The headline build.</p><span class="gate"><b>Ties:</b> P11, P12 · B1, B3</span></li>
+      <li><h4>Governance engine</h4><p>Proposal → window → one weighted ballot each → server tally → audit row. Secret-until-close. Run one real seed vote.</p><span class="gate"><b>Gate:</b> weight server-set; one-vote-per-proposal enforced in RLS.</span></li>
+      <li><h4>Moderation, appeal &amp; transparency</h4><p>Report → graduated action (append-only) → immediate appeal; public transparency page over the audit log. Reuses the governance engine for overrides.</p><span class="gate"><b>Ties:</b> P7, P8, P9, P19 · A3, A4</span></li>
+      <li><h4>Accessibility, Spanish &amp; mobile pass</h4><p>Cross-cutting QA: keyboard, screen-reader, contrast, i18n strings, slow-phone. Built along the way; verified here.</p><span class="gate"><b>Ties:</b> P24</span></li>
+      <li><h4>Closed-beta hardening</h4><p>Full RLS review, soft-delete audit, seed the ~50-person cohort, dry-run the first conflict + first vote. Then — and only then — the public-launch gate from the business plan applies.</p><span class="gate"><b>Gate:</b> two trained mods · RLS reviewed · the slice works end-to-end.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="lock">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Decisions — Locked</h2></div>
+    <p class="sec-intro">All six signed off (June 2026). Step 1 can begin. Values are config-driven and ratifiable by the community later, but the build no longer waits on any of them.</p>
+    <div class="decn"><span class="q">1 · Stack &nbsp;<b>✓ Locked</b></span><span class="r">Supabase + Next.js + Tailwind, deploy Vercel/Netlify, no payments in beta.</span></div>
+    <div class="decn"><span class="q">2 · Verification pathways &nbsp;<b>✓ Locked</b></span><span class="r">ID / utility bill / voter reg / property record / <b>mailed postcard code</b>, all human-reviewed. The postcard path is the PO-Box / Warm Springs / unbanked accommodation.</span></div>
+    <div class="decn"><span class="q">3 · Redmond neighborhoods &nbsp;<b>✓ Received &amp; seeded</b></span><span class="r">35 neighborhoods seeded (§03), resident-set, editable later. One flagged for your final call: <code>eagle-crest</code> → resort outside city limits. (Wildflower spelling corrected.)</span></div>
+    <div class="decn"><span class="q">4 · Governance numbers &nbsp;<b>✓ Locked (provisional config)</b></span><span class="r">Quorum 20%, major 60%, immutable 75% + 30 days; tenure 1.0 / 1.2 / 1.5×. The cohort ratifies.</span></div>
+    <div class="decn"><span class="q">5 · Vote visibility &nbsp;<b>✓ Locked</b></span><span class="r">Secret until close, aggregate-only after (anti-coercion).</span></div>
+    <div class="decn"><span class="q">6 · Billing in beta &nbsp;<b>✓ Locked</b></span><span class="r">Cohort free; build the field, defer Stripe + sliding-scale UI.</span></div>
+    <div class="decn"><span class="q">7 · Terms &amp; Privacy &nbsp;<b>✓ Drafted</b></span><span class="r">Plain-language, design-specific draft now exists as a companion doc, seeding the <code>documents</code> table (kind = terms / privacy). <b>Pending Oregon legal review</b> before launch.</span></div>
+
+    <h3>Not blocking the build — flagged for before beta</h3>
+    <p style="color:var(--basalt-soft); font-size:14.5px; max-width:74ch;">None of these is needed to start coding; they're due before the closed beta opens, so they're on the radar now: the <b>first seed-vote topic</b> (the small real decision that proves the engine), <b>two trained moderators</b> (people, not code — a launch gate), and the <b>final legal review</b> of the Terms &amp; Privacy draft.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>HIGH DESERT · Prototype Build Spec · From Framework to Keyboard</span>
+    <span>v2 · June 2026 · Companion to Dev Framework v2</span>
+    <span><a href="https://creativecommons.org/licenses/by-sa/4.0/">Licensed CC BY-SA 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

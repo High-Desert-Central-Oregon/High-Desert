@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High Desert — A Pattern Language v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#ece3d2; --bone-2:#f4eee0; --bone-3:#f8f4ea;
+    --sage:#a4ae93; --sage-deep:#6f7a5e; --sage-pale:#cdd3bd;
+    --juniper:#2d3a2a; --juniper-2:#3c4c38;
+    --basalt:#24231d; --basalt-soft:#46443b;
+    --rust:#a4512a; --rust-2:#c46a3e; --rust-pale:#e4c4ad;
+    --line:#d7cdb8; --line-2:#c8bda3;
+    --shadow:0 1px 0 rgba(36,35,29,.04), 0 18px 40px -28px rgba(45,58,42,.45);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bone); color:var(--basalt); font-family:"DM Sans",system-ui,sans-serif; line-height:1.62; font-size:16.5px; letter-spacing:.005em; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px; margin:0 auto; padding:0 30px;}
+  a{color:var(--rust); text-decoration:none;} a:hover{text-decoration:underline; text-underline-offset:3px;}
+  h1,h2,h3,h4{font-family:"Playfair Display",Georgia,serif; font-weight:700; line-height:1.12; color:var(--juniper); letter-spacing:-.01em;}
+  .mono{font-family:"DM Mono",monospace;}
+
+  header.hero{
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(164,81,42,.16), transparent 55%),
+      radial-gradient(110% 80% at 6% 0%, rgba(111,122,94,.22), transparent 50%),
+      linear-gradient(180deg,#2d3a2a 0%, #283626 60%, #243121 100%);
+    color:var(--bone-3); border-bottom:3px solid var(--rust); position:relative; overflow:hidden;
+  }
+  header.hero::after{content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 84px);}
+  .hero .wrap{padding:60px 30px 52px; position:relative; z-index:1;}
+  .eyebrow{font-family:"DM Mono",monospace; font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--sage-pale);}
+  .hero h1{color:var(--bone-3); font-size:clamp(36px,6vw,62px); margin:.3em 0 .15em; font-weight:800;}
+  .hero h1 em{font-style:italic; font-weight:500; color:var(--rust-pale);}
+  .hero .lede{font-size:clamp(16px,2vw,19px); max-width:64ch; color:#e7e0cf; line-height:1.55;}
+
+  .howto{background:var(--bone-3); border:1px solid var(--line); border-left:4px solid var(--rust); border-radius:6px; padding:20px 24px; margin:30px 0 8px; box-shadow:var(--shadow);}
+  .howto h3{margin:0 0 8px; font-size:19px;}
+  .howto p{margin:0 0 10px; color:var(--basalt-soft); font-size:15.5px;}
+  .legend{display:flex; flex-wrap:wrap; gap:8px 22px; font-size:14px; color:var(--basalt-soft);}
+  .legend .conf{font-family:"DM Mono",monospace; color:var(--rust); font-weight:500;}
+  .v2note{margin:14px 0 8px; background:rgba(111,122,94,.12); border:1px dashed var(--sage-deep); border-radius:6px; padding:14px 18px; font-size:14.5px; color:var(--basalt-soft);}
+  .v2note b{color:var(--juniper);}
+
+  nav.toc{position:sticky; top:0; z-index:30; background:rgba(236,227,210,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--line-2);}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:4px; padding:10px 30px;}
+  nav.toc a{font-family:"DM Mono",monospace; font-size:11.5px; letter-spacing:.03em; color:var(--basalt-soft); padding:6px 11px; border-radius:20px; white-space:nowrap;}
+  nav.toc a:hover{background:var(--juniper); color:var(--bone-3); text-decoration:none;}
+
+  section{padding:50px 0 6px;}
+  .cluster-head{display:flex; align-items:baseline; gap:14px; margin-bottom:6px;}
+  .cluster-num{font-family:"DM Mono",monospace; font-size:13px; color:var(--rust); letter-spacing:.1em;}
+  h2{font-size:clamp(24px,3.4vw,32px);}
+  .cluster-intro{max-width:72ch; color:var(--basalt-soft); margin:8px 0 22px; font-size:15.5px;}
+
+  .pat{background:var(--bone-2); border:1px solid var(--line); border-radius:9px; padding:22px 26px; margin-bottom:15px; box-shadow:var(--shadow); position:relative;}
+  .pat.new{border-left:4px solid var(--rust);}
+  .pat-top{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px;}
+  .pat .pnum{font-family:"DM Mono",monospace; font-size:13px; color:var(--rust); font-weight:500; border:1px solid var(--rust-pale); border-radius:5px; padding:2px 8px;}
+  .pat h3{margin:0; font-size:22px;}
+  .pat .newtag{font-family:"DM Mono",monospace; font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--rust); border:1px solid var(--rust-pale); border-radius:20px; padding:2px 8px;}
+  .pat .conf{font-family:"DM Mono",monospace; font-size:14px; color:var(--rust); letter-spacing:.1em; margin-left:auto;}
+  .pat .conf span{opacity:.32;}
+  .pat .src-thinkers{font-family:"DM Mono",monospace; font-size:11px; letter-spacing:.02em; color:var(--sage-deep); margin:2px 0 12px;}
+
+  .pblock{margin:0 0 9px; padding-left:14px; border-left:2px solid var(--sage-pale);}
+  .pblock .lbl{font-family:"DM Mono",monospace; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; display:block; margin-bottom:1px;}
+  .pblock.problem .lbl{color:var(--rust);}
+  .pblock.forces .lbl{color:var(--sage-deep);}
+  .pblock.solution .lbl{color:var(--juniper); border:none;}
+  .pblock.solution{border-left:2px solid var(--juniper); background:rgba(111,122,94,.1); border-radius:0 5px 5px 0; padding:8px 14px;}
+  .pblock p{margin:0; font-size:15px; color:var(--basalt-soft);}
+  .pblock.solution p{color:var(--basalt); font-weight:500;}
+  .pblock.solution p b{color:var(--juniper);}
+  .pat .related{margin-top:11px; font-size:13px; color:var(--sage-deep); font-family:"DM Mono",monospace;}
+  .pat .related b{color:var(--rust); font-weight:500;}
+
+  .closing{background:linear-gradient(180deg,#2d3a2a,#26331f); color:var(--bone-3); border-radius:10px; padding:30px 32px; margin:14px 0 6px; border:1px solid var(--juniper-2); box-shadow:var(--shadow);}
+  .closing h3{color:var(--bone-3); margin:0 0 8px; font-size:23px;}
+  .closing p{color:#dfe3d4; max-width:72ch; margin:0 0 10px;}
+  .closing p:last-child{margin-bottom:0;}
+  .closing em{color:var(--rust-pale); font-style:italic;}
+
+  footer{margin-top:50px; border-top:1px solid var(--line-2); background:var(--bone-2);}
+  footer .wrap{padding:24px 30px 32px; font-family:"DM Mono",monospace; font-size:12px; color:var(--sage-deep); letter-spacing:.05em; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+  @media (max-width:680px){ .hero .wrap{padding:42px 24px 38px;} .pat .conf{margin-left:0;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">High Desert · A Pattern Language · v2 · June 2026</div>
+    <h1>A Pattern Language <em>for Civic Infrastructure</em></h1>
+    <p class="lede">After Christopher Alexander. Each design decision written as a pattern — the problem, the forces in tension, the resolving solution, and the evidence behind it. This is the form that lets the design travel to other communities, and to Warm Springs, without being imposed: patterns to adopt, adapt, or refuse.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="howto">
+    <h3>How to read this</h3>
+    <p>A pattern names a recurring problem and a way to resolve the forces around it. Patterns connect: each ends with the patterns it leads to. None is a rule — Alexander's insight is that mētis becomes transmissible only when you keep the <em>reasoning</em> (problem → forces → evidence) attached to the answer, so another community can re-decide it in their own context.</p>
+    <div class="legend">
+      <span><span class="conf">∗∗</span> &nbsp;high confidence — empirically grounded, load-bearing</span>
+      <span><span class="conf">∗</span> &nbsp;moderate — sound but to be tested in the field</span>
+      <span><span class="conf">·</span> &nbsp;tentative — a working hypothesis</span>
+    </div>
+  </div>
+  <div class="v2note">
+    <b>What's new in v2.</b> Five patterns added from the expanded reading — <b>14 Match People, Not Credentials</b> (Illich's learning webs), <b>20 Built to Be Maintained</b> (Eghbal), and a new craft cluster: <b>22 Effort Where It Belongs</b> (Kahneman), <b>23 Deep Modules, Narrow Interfaces</b> (Ousterhout), <b>24 Built for Every Body</b> (Shew). Evidence strengthened on <b>8</b> (the alignment problem), <b>10</b> (deschooling), and <b>16</b> (the right to exit). New patterns are marked <span class="newtag">new</span>.
+  </div>
+</div>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#c1">I · Membership &amp; Boundaries</a>
+    <a href="#c2">II · Voice &amp; Governance</a>
+    <a href="#c3">III · Knowledge &amp; Connection</a>
+    <a href="#c4">IV · Fair Access &amp; Non-Extraction</a>
+    <a href="#c5">V · Building &amp; Replication</a>
+    <a href="#c6">VI · Craft &amp; Care</a>
+  </div>
+</nav>
+
+<!-- CLUSTER I -->
+<section id="c1">
+  <div class="wrap">
+    <div class="cluster-head"><span class="cluster-num">I</span><h2>Membership &amp; Boundaries</h2></div>
+    <p class="cluster-intro">Who belongs, how they enter, and how the edges are drawn. A commons needs a boundary (Ostrom) — but the boundary must fit real people (Scott), not the median professional.</p>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">1</span><h3>Verification That Fits the Person</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Scott · Ostrom P1</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>A clear member/non-member boundary is required, but standard verification — address entry, license upload, utility bill — silently excludes the people furthest from the center: the PO-Box-only resident, the rancher without a license, the Spanish-speaking household.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The need for a legible, gameable-resistant boundary pulls against the diversity of how real Central Oregonians can prove where they live.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Offer <b>multiple verification pathways</b> (license, utility bill, voter registration, property record), <b>human review</b> for edge cases, PO-Box accommodation, and a Spanish-language flow. Verification must be legible to the person being verified, not just the administrator.</p></div>
+      <div class="related"><b>Leads to →</b> 2 Verify Then Forget · 4 Neighborhoods Drawn by Residents · 24 Built for Every Body</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">2</span><h3>Verify, Then Forget</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Doctorow · counter-capture</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Verification requires sensitive personal documents, but every document retained is a liability, a breach risk, and a thing a future actor could be tempted to monetize or a court could compel.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Trust requires proof of residency; non-extraction and member safety require holding as little as possible.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p><b>Delete verification PII immediately after use.</b> Keep only the verified-status flag (and neighborhood, if the member set one). The platform that stores less is cheaper to trust and harder to capture.</p></div>
+      <div class="related"><b>Leads to →</b> 16 The Tool You Can Leave · 18 The Constitution in the Data Layer</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">3</span><h3>The Participation Ladder</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Lave &amp; Wenger</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>A newcomer should be able to take part without being either locked out at the door or handed full power on arrival.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Openness and welcome pull against resistance to capture by the newest or most-active members.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Make membership a ladder of <b>legitimate peripheral participation</b>: free (browse, see the community) → verified (RSVP, organize, vouch) → tenured (greater vote weight). Each rung is earned through participation, mirroring how competence and belonging actually grow.</p></div>
+      <div class="related"><b>Leads to →</b> 6 Tenure-Weighted Vote · 7 Action, Then Voice · 14 Match People, Not Credentials</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">4</span><h3>Neighborhoods Drawn by Residents</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Jacobs · Scott</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>The platform needs to scope events and aid to a neighborhood — but a radius drawn on a map cuts off the neighbor across the street and never matches the lived shape of a community.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The system's need for tidy boundaries pulls against the mētis of where a neighborhood actually begins and ends.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Let <b>residents define their own area</b> — proximity to a point or proof of address — and let boundaries be adjusted by community process. Geography is data the community owns, not a circle an engineer guessed.</p></div>
+      <div class="related"><b>Leads to →</b> 11 Events as Participation · 15 Price by Means, Not Scope</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTER II -->
+<section id="c2">
+  <div class="wrap">
+    <div class="cluster-head"><span class="cluster-num">II</span><h2>Voice &amp; Governance</h2></div>
+    <p class="cluster-intro">How the community decides, corrects itself, and keeps the door open to disagreement. Every governance pattern is a voice mechanism (Hirschman) — built so members speak rather than leave in silence.</p>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">5</span><h3>Decide the Rules Before the Tool</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Postman · Meadows</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>If you build the enforcement infrastructure first, the tool quietly defines the institution — the technical system becomes the de-facto governance.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The urge to ship pulls against the need for the community's purposes to lead, not follow, the code.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p><b>Govern before you enforce.</b> The governance design and the founding cohort's first real vote precede the features that enforce them. Pedagogy before platform; purpose before mechanism.</p></div>
+      <div class="related"><b>Leads to →</b> 6 Tenure-Weighted Vote · 17 The Minimum Trustworthy Platform</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">6</span><h3>The Tenure-Weighted Vote</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Ostrom P3</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>One-person-one-vote is captured by whoever is loudest and most-recently-active; pure seniority entrenches the old guard and silences newcomers.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>New-member voice pulls against resistance to thin-participation and recency capture.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Combine a <b>quorum</b> with <b>tenure weighting</b> (Year 1 = 1.0×, Year 2 = 1.2×, Year 3+ = 1.5×). Newcomers vote from day one; long members carry the weight of having moved toward fuller membership. Neither lever alone is sufficient.</p></div>
+      <div class="related"><b>Leads to →</b> 9 The Override · 3 The Participation Ladder</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">7</span><h3>Action, Then Voice</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Hirschman · Ostrom P6</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Moderation either blocks the action (too slow to keep people safe) or blocks the person's voice (they're removed and leave silently — the invisible, unteachable exit).</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Safety and speed pull against fairness and the right to be heard.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p><b>Take the action; open the appeal immediately.</b> Sanctions are graduated (warning → temp → extended → board review), never permanent without review. Voice follows action rather than being blocked by it.</p></div>
+      <div class="related"><b>Leads to →</b> 9 The Override · 8 Vital Signs, Not Targets · 19 Human in the Loop</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">8</span><h3>Vital Signs, Not Targets</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Meadows · O'Neil · Christian</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>You must read the platform's health, but any metric turned into a target is gamed and corrupted (Goodhart). The alignment problem is the same failure in sharper form: specify success in simplified, measurable terms and you optimize the proxy while losing the thing you actually wanted.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The need to monitor pulls against the way optimization quietly turns a measure into the mission — and turns a metric over human outcomes into a weapon.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Track leading indicators — <b>exit-rate vs. appeal-rate</b>, mod-queue volume, cross-neighborhood engagement — as <b>diagnostics only.</b> Never optimize them, never display them as member scores. High exit with low appeal is the alarm that voice is failing. The measure serves the judgment; it never replaces it.</p></div>
+      <div class="related"><b>Leads to →</b> 15 Price by Means, Not Scope · 19 Human in the Loop</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">9</span><h3>The Override</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Ostrom P6 · Hirschman</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Even fair moderators err, and a single wrong decision left standing can calcify into distrust of the whole process.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Moderator authority (needed for order) pulls against the members' need to overrule it when it's wrong.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Let <b>sustained complaints trigger a community override vote</b>, and hold moderators to the same appeal system as members. Authority is real but never final against the community's voice.</p></div>
+      <div class="related"><b>Leads to →</b> 6 Tenure-Weighted Vote · 7 Action, Then Voice</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTER III -->
+<section id="c3">
+  <div class="wrap">
+    <div class="cluster-head"><span class="cluster-num">III</span><h2>Knowledge &amp; Connection</h2></div>
+    <p class="cluster-intro">The heart of the mission: putting people who hold local, practical knowledge in contact with where it's needed — without capturing, scoring, or formalizing it away (Polanyi, Scott). This is also where the line with Redmond Compass is drawn: participation, not discovery.</p>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">10</span><h3>The Trust Graph, Not the Directory</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Polanyi · Scott · O'Neil · Illich</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>People need to find who can help — who fixes wells, who teaches canning, who'll mentor a welder. A ranked business directory turns that tacit, relational knowledge into a score, and duplicates the partner who already does commercial discovery.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Findability pulls against preserving knowledge that lives in relationships and can't be reduced to stars.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Build a <b>trust graph of who-knows-how among verified neighbors</b> — surfaced through vouching and relationship, never star-ranked. The question is "who can I trust to help," answered by people, not an algorithm. (Commercial listings stay with Compass.)</p></div>
+      <div class="related"><b>Leads to →</b> 13 Mutual Aid With Dignity · 14 Match People, Not Credentials</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">11</span><h3>Events as Participation, Not Listings</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Jacobs · Dewey · Illich</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>A "what's on this weekend" listings page is discovery — the partner's lane — and reading about an event builds nothing. Community is built by doing, not browsing.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The partner boundary and the community-building mission both pull away from passive listings.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Let <b>verified neighbors create and join neighborhood-scale gatherings</b> — repair cafés, work parties, potlucks, skill-shares, wildfire-prep. The act of hosting is the civic muscle the platform exists to build. "Eyes on the street" is participation density.</p></div>
+      <div class="related"><b>Leads to →</b> 12 Just Enough Coordination · 4 Neighborhoods Drawn by Residents</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">12</span><h3>Just Enough Coordination</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Illich · Norman</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>A gathering needs light coordination, but an open discussion thread becomes a place to argue and the single largest moderation burden — the very surface deferred for now.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Usefulness pulls toward more communication; the deferred-board risk pulls toward less.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Provide <b>structured coordination that ends when the event does</b> — RSVP, a who's-bringing-what list, carpool — and no free-text feed. Frictionless to contribute; nothing that becomes a standing forum.</p></div>
+      <div class="related"><b>Leads to →</b> 11 Events as Participation · 22 Effort Where It Belongs</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">13</span><h3>Mutual Aid With Dignity</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Care Collective · Illich</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Asking for help can stigmatize, and aid boards ossify into stale, ignored lists.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The logic of care pulls toward visibility; dignity and freshness pull toward restraint.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Keep requests and offers <b>low-ceremony, neighborhood-scoped, and expiring</b> (≈30 days), with no ratings and no payments. Dignity in both asking and offering; people matching people, no institution between them.</p></div>
+      <div class="related"><b>Leads to →</b> 10 The Trust Graph · 14 Match People, Not Credentials</div>
+    </div>
+
+    <div class="pat new">
+      <div class="pat-top"><span class="pnum">14</span><h3>Match People, Not Credentials</h3><span class="newtag">new</span><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Illich (Deschooling) · Lave &amp; Wenger · Dewey</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>A community holds enormous practical knowledge — how to can, weld, prune, fix a pump, navigate a county permit — but the usual way to "connect learners with teachers" is to build a credentialed service: courses, certifications, an institution in the middle that owns the relationship.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The wish to make knowledge findable and trustworthy pulls toward formal credentials and ratings; the mission to preserve tacit, apprenticed knowledge pulls against any intermediary that converts a commons into a service.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Build <b>learning webs, not a school</b> — directly match people who want to learn or trade a skill with neighbors who hold it, peer to peer, with no credential, no fee required, and no institution owning the exchange. Often the match simply becomes a skill-share gathering. The platform connects; it does not certify.</p></div>
+      <div class="related"><b>Leads to →</b> 10 The Trust Graph · 11 Events as Participation · 13 Mutual Aid With Dignity</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTER IV -->
+<section id="c4">
+  <div class="wrap">
+    <div class="cluster-head"><span class="cluster-num">IV</span><h2>Fair Access &amp; Non-Extraction</h2></div>
+    <p class="cluster-intro">How the platform funds itself without betraying the people it serves. Ownership and pricing are destiny (Baradaran); the refusal of extraction is structural (Doctorow, Illich).</p>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">15</span><h3>Price by Means, Not by Scope</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Baradaran · Doctorow</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Charging more for a wider area and less for your own block feels fair — but breadth of access correlates with need: the cross-town commuter, the car-less resident, the newcomer, the job-seeker all need the whole city and are least able to pay more. It also installs a value-withhold the platform is later tempted to tighten, and splits a flat commons into classes.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Affordability and a flat commons pull against revenue and the ever-present enshittification temptation to gate.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p><b>One low flat price with an income-based sliding scale</b> down to free; <b>neighborhood focus is a free filter, never a paywall</b>; and a <b>supporter rate</b> that gives to the commons rather than buying more platform. Everyone gets the same full platform; price flexes to means, not access.</p></div>
+      <div class="related"><b>Leads to →</b> 16 The Tool You Can Leave · 8 Vital Signs, Not Targets</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">16</span><h3>The Tool You Can Leave</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Illich · Doctorow (The Internet Con)</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Platforms manufacture dependency and lock-in to hold users — the moment leaving costs you everything you made, the tool has begun to own you.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Stickiness and retention pull against conviviality and genuine member ownership.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Make it a tool a member can walk away from: <b>data belongs to members and is exportable</b>, nothing they made is held hostage, and there are no engagement traps or dark patterns. The right to exit — and, where possible, interoperability — is the mechanism that keeps the platform honest: a community that can leave is one the platform must keep serving.</p></div>
+      <div class="related"><b>Leads to →</b> 2 Verify Then Forget · 15 Price by Means, Not Scope · 20 Built to Be Maintained</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTER V -->
+<section id="c5">
+  <div class="wrap">
+    <div class="cluster-head"><span class="cluster-num">V</span><h2>Building &amp; Replication</h2></div>
+    <p class="cluster-intro">How the thing gets built, kept honest in code, and carried to other communities. The structure is the lock — and the code is where the lock is cut.</p>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">17</span><h3>The Minimum Trustworthy Platform</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Meadows</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Shipping a broad feature set before trust exists is the most common way community platforms die — complexity arrives before the trust to carry it.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Ambition and the wish to feel complete pull against the slow fill-time of the trust stock.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Ship the <b>smallest thing that is unmistakably High Desert</b> — verification + one neighborhood-event primitive + transparency, with governance seeded by one real vote — then phase-gate everything else behind confirmed baseline health. Earn the right to add complexity.</p></div>
+      <div class="related"><b>Leads to →</b> 5 Decide the Rules Before the Tool · 23 Deep Modules, Narrow Interfaces</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">18</span><h3>The Constitution in the Data Layer</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Baradaran</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Rules enforced only in the interface can be bypassed; if the UI is the only thing between a rule and its breach, the rule isn't real.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Developer convenience pulls toward client-side checks; structural integrity demands the lock sit deeper.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Enforce verification status, tenure weight, neighborhood scope, and moderation state at the <b>row level (RLS), where the data lives</b> — not patched on in the client. The governance model becomes structurally true, not merely displayed. The structure is the lock.</p></div>
+      <div class="related"><b>Leads to →</b> 2 Verify Then Forget · 6 Tenure-Weighted Vote</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">19</span><h3>Human in the Loop on Consequence</h3><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Weizenbaum</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Automating consequential decisions removes the moral responsibility those decisions require — not because a machine can't perform them, but because no one then answers for them.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>Scale and efficiency pull toward automation; judgment and accountability demand a person.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Automation may <b>surface, sort, or flag — never decide.</b> A person always makes the call on a ban, an appeal, or a governance outcome. Keep the decisions that carry moral weight with people who can be held responsible for them.</p></div>
+      <div class="related"><b>Leads to →</b> 7 Action, Then Voice · 8 Vital Signs, Not Targets</div>
+    </div>
+
+    <div class="pat new">
+      <div class="pat-top"><span class="pnum">20</span><h3>Built to Be Maintained</h3><span class="newtag">new</span><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Eghbal (Working in Public) · Ostrom</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Civic infrastructure has to outlast its founder, but the real constraint on software that lasts is not how much gets built — it's <em>maintainer attention.</em> A platform one person carries in their head dies when that person burns out or leaves; a founder-dependent project is not infrastructure.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The speed of a single builder pulls against the durability that only documentation, shared understanding, and a governed contributor base provide.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Treat maintenance as commons governance from the start: <b>design for handoff, not heroics.</b> Document decisions, keep the contribution surface small and legible, and grow a governed base of maintainers (the intern pipeline is the seed) under clear, Ostrom-style rules. Optimize for the attention the project will need in year five, not the features it can ship in month two.</p></div>
+      <div class="related"><b>Leads to →</b> 17 The Minimum Trustworthy Platform · 24 Built for Every Body · 21 Patterns, Offered Not Imposed</div>
+    </div>
+
+    <div class="pat">
+      <div class="pat-top"><span class="pnum">21</span><h3>Patterns, Offered Not Imposed</h3><span class="conf">∗<span></span></span></div>
+      <div class="src-thinkers">Alexander</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Carrying a working design to other towns — and one day to Warm Springs — risks imposing one community's answers on another, the very legibility failure the whole project refuses.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The value of transmissible, hard-won design pulls against local sovereignty and the mētis of each place.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Document every decision as <b>problem → forces → solution → evidence</b> — this document — and offer it as patterns a community can <b>adopt, adapt, or refuse.</b> Keep the reasoning attached to the answer so each place can re-decide in its own context. Replication without capture.</p></div>
+      <div class="related"><b>Leads to →</b> 4 Neighborhoods Drawn by Residents · 15 Price by Means, Not Scope</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTER VI -->
+<section id="c6">
+  <div class="wrap">
+    <div class="cluster-head"><span class="cluster-num">VI</span><h2>Craft &amp; Care</h2></div>
+    <p class="cluster-intro">How the tool itself is made — the design judgment underneath every other pattern. A convivial, mētis-preserving platform is not only governed well; it is <em>built</em> well, for the whole range of bodies and minds that will use it.</p>
+
+    <div class="pat new">
+      <div class="pat-top"><span class="pnum">22</span><h3>Effort Where It Belongs</h3><span class="newtag">new</span><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Kahneman · Norman</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Bad design puts effort in the wrong place: it forces slow, deliberate attention (System 2) onto routine acts that should be effortless, and lets consequential acts slip by on fast, automatic habit (System 1). Both failures erode trust — one exhausts people, the other lets them act without weighing what they're doing.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The drive to make everything frictionless pulls against the fact that some decisions <em>should</em> be slow, felt, and deliberate.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Match the cognitive mode to the stakes. <b>Make routine acts effortless</b> — one-tap RSVP, obvious affordances, no manual (System 1). <b>Make consequential acts deliberate</b> — the 30-day deliberation on immutable principles, the read-and-confirm on terms, a real pause before an irreversible vote (System 2). Friction is not a flaw to be removed; it is a tool to be placed exactly where judgment is required.</p></div>
+      <div class="related"><b>Leads to →</b> 12 Just Enough Coordination · 23 Deep Modules, Narrow Interfaces</div>
+    </div>
+
+    <div class="pat new">
+      <div class="pat-top"><span class="pnum">23</span><h3>Deep Modules, Narrow Interfaces</h3><span class="newtag">new</span><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Ousterhout</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Complexity is the thing that kills software slowly: every shallow component with a wide, leaky interface spreads its complexity across everything that touches it, until no one can change one part without breaking three others. For a platform meant to last and to be handed off, accumulated complexity is an existential risk, not a cosmetic one.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The pressure to ship the next feature fast pulls against the discipline that keeps the system comprehensible enough to keep changing safely.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Build <b>deep modules behind narrow interfaces</b> — each component does one substantial job and hides how. <b>Pull complexity downward</b> (the platform absorbs hard work so the member and the next developer don't), <b>design it twice</b> before committing, and <b>define errors out of existence</b> rather than handling them everywhere. Simplicity at the seams is what makes patterns 17 and 20 — minimal, maintainable — achievable in practice.</p></div>
+      <div class="related"><b>Leads to →</b> 17 The Minimum Trustworthy Platform · 20 Built to Be Maintained · 18 The Constitution in the Data Layer</div>
+    </div>
+
+    <div class="pat new">
+      <div class="pat-top"><span class="pnum">24</span><h3>Built for Every Body</h3><span class="newtag">new</span><span class="conf">∗∗<span></span></span></div>
+      <div class="src-thinkers">Shew (Against Technoableism) · Norman</div>
+      <div class="pblock problem"><span class="lbl">Problem</span><p>Technology built for an imagined "normal" user excludes disabled residents — and the common "fix" (a bolted-on accessibility mode, a tool that frames disabled people as problems to be solved) is its own harm: techno-ableism. A civic commons that doesn't work for everyone is not a commons.</p></div>
+      <div class="pblock forces"><span class="lbl">Forces</span><p>The convenience of designing for a single default user pulls against the truth that disabled residents are full members with their own expertise about what they need.</p></div>
+      <div class="pblock solution"><span class="lbl">Solution</span><p>Design <b>with disabled residents, not for an imagined norm.</b> Accessibility is a first-class requirement of the core build — screen-reader support, keyboard paths, contrast, captions, plain language, low-bandwidth tolerance — never a later mode. This is Pattern 1 extended to the body: verification, voice, and participation must fit the whole range of people, or the boundary quietly excludes again.</p></div>
+      <div class="related"><b>Leads to →</b> 1 Verification That Fits the Person · 22 Effort Where It Belongs</div>
+    </div>
+
+    <div class="closing">
+      <h3>This is v2 — and a pattern language is never finished</h3>
+      <p>Alexander's languages grew and were corrected by the people who built with them. So will this one. Patterns earn their confidence markers in the field: the fieldwork, the closed beta, and the first real conflicts will promote some to <em>∗∗</em>, demote others, and reveal patterns not yet written.</p>
+      <p>It helps to remember what these patterns are reaching back toward. A community that owns its own infrastructure, governs a commons, and preserves its own practical knowledge is not a radical experiment — across millennia it is closer to the human norm, and the extractive platform monoculture is the recent anomaly. The work is less invention than recovery.</p>
+      <p>The discipline is to keep adding patterns the way the community teaches them — with the forces and the local evidence intact — so that what travels to the next town is not a template but a <em>way of reasoning</em> a sovereign community can make its own.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>HIGH DESERT · A Pattern Language for Civic Infrastructure</span>
+    <span>v2 · June 2026 · Companion to Business Plan v6</span>
+    <span><a href="https://creativecommons.org/licenses/by-sa/4.0/">Licensed CC BY-SA 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

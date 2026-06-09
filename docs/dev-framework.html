@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High Desert — Development Framework v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#ece3d2; --bone-2:#f4eee0; --bone-3:#f8f4ea;
+    --sage:#a4ae93; --sage-deep:#6f7a5e; --sage-pale:#cdd3bd;
+    --juniper:#2d3a2a; --juniper-2:#3c4c38;
+    --basalt:#24231d; --basalt-soft:#46443b;
+    --rust:#a4512a; --rust-2:#c46a3e; --rust-pale:#e4c4ad;
+    --line:#d7cdb8; --line-2:#c8bda3;
+    --shadow:0 1px 0 rgba(36,35,29,.04), 0 18px 40px -28px rgba(45,58,42,.45);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bone); color:var(--basalt);
+    font-family:"DM Sans",system-ui,sans-serif; font-weight:400;
+    line-height:1.62; font-size:16.5px; letter-spacing:.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 30px;}
+  a{color:var(--rust); text-decoration:none;}
+  a:hover{text-decoration:underline; text-underline-offset:3px;}
+  h1,h2,h3,h4{font-family:"Playfair Display",Georgia,serif; font-weight:700; line-height:1.12; color:var(--juniper); letter-spacing:-.01em;}
+  .mono{font-family:"DM Mono",ui-monospace,monospace;}
+
+  /* ---- header ---- */
+  header.hero{
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(164,81,42,.16), transparent 55%),
+      radial-gradient(110% 80% at 6% 0%, rgba(111,122,94,.22), transparent 50%),
+      linear-gradient(180deg,#2d3a2a 0%, #283626 60%, #243121 100%);
+    color:var(--bone-3); position:relative; overflow:hidden;
+    border-bottom:3px solid var(--rust);
+  }
+  header.hero::after{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+    background-image:repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 84px);
+  }
+  .hero .wrap{padding:62px 30px 56px; position:relative; z-index:1;}
+  .eyebrow{font-family:"DM Mono",monospace; font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:var(--sage-pale);}
+  .hero h1{color:var(--bone-3); font-size:clamp(38px,6vw,68px); margin:.28em 0 .12em; font-weight:800;}
+  .hero h1 em{font-style:italic; font-weight:500; color:var(--rust-pale);}
+  .hero .lede{font-size:clamp(17px,2.1vw,20px); max-width:62ch; color:#e7e0cf; line-height:1.55;}
+  .hero .meta{margin-top:26px; display:flex; flex-wrap:wrap; gap:10px 22px; font-family:"DM Mono",monospace; font-size:12.5px; letter-spacing:.06em; color:var(--sage-pale);}
+  .hero .meta b{color:var(--bone-3); font-weight:500;}
+
+  /* ---- nav ---- */
+  nav.toc{position:sticky; top:0; z-index:30; background:rgba(236,227,210,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--line-2);}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:4px; padding:10px 30px;}
+  nav.toc a{font-family:"DM Mono",monospace; font-size:12px; letter-spacing:.04em; color:var(--basalt-soft); padding:6px 11px; border-radius:20px; white-space:nowrap;}
+  nav.toc a:hover{background:var(--juniper); color:var(--bone-3); text-decoration:none;}
+
+  /* ---- section scaffolding ---- */
+  section{padding:58px 0 8px;}
+  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:8px;}
+  .sec-num{font-family:"DM Mono",monospace; font-size:13px; color:var(--rust); letter-spacing:.1em; padding-top:6px;}
+  h2{font-size:clamp(27px,3.6vw,38px);}
+  .sec-intro{max-width:74ch; color:var(--basalt-soft); margin:10px 0 26px; font-size:16px;}
+  .sec-intro strong{color:var(--basalt);}
+
+  /* ---- callout / thesis ---- */
+  .thesis{background:var(--bone-3); border:1px solid var(--line); border-left:4px solid var(--rust); border-radius:6px; padding:22px 26px; margin:8px 0 4px; box-shadow:var(--shadow);}
+  .thesis p{margin:0; font-size:17.5px;}
+  .thesis .k{font-family:"Playfair Display",serif; font-style:italic; color:var(--juniper); font-size:19px;}
+
+  /* ---- principle stack ---- */
+  .layer{background:var(--bone-2); border:1px solid var(--line); border-radius:8px; padding:20px 24px; margin-bottom:14px; box-shadow:var(--shadow); position:relative;}
+  .layer-top{display:flex; align-items:baseline; flex-wrap:wrap; gap:8px 14px; margin-bottom:6px;}
+  .layer h3{font-size:21px; margin:0;}
+  .layer .who{font-family:"DM Mono",monospace; font-size:11.5px; letter-spacing:.03em; color:var(--sage-deep);}
+  .layer .claim{margin:6px 0 10px; color:var(--basalt-soft);}
+  .layer .dictates{font-size:14.5px; color:var(--basalt); background:rgba(164,174,147,.18); border-radius:5px; padding:9px 13px;}
+  .layer .dictates b{color:var(--juniper);}
+  .new-pill{font-family:"DM Mono",monospace; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#fff; background:var(--rust); padding:2px 7px; border-radius:10px; vertical-align:middle;}
+
+  /* ---- boundary grid ---- */
+  .boundary{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:8px;}
+  .bcard{border-radius:8px; padding:20px 22px; border:1px solid var(--line);}
+  .bcard h4{margin:0 0 4px; font-size:18px; display:flex; align-items:center; gap:9px;}
+  .bcard .tag{font-family:"DM Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; padding:2px 8px; border-radius:10px;}
+  .bcard ul{margin:10px 0 0; padding-left:18px;}
+  .bcard li{margin:4px 0; font-size:14.5px; color:var(--basalt-soft);}
+  .b-compass{background:var(--bone-2);} .b-compass .tag{background:var(--sage-pale); color:var(--juniper);}
+  .b-hd{background:#eef0e6; border-color:var(--sage);} .b-hd .tag{background:var(--juniper); color:var(--bone-3);}
+  .b-defer{background:#f3ece0;} .b-defer .tag{background:var(--rust-pale); color:var(--rust);}
+  .b-avoid{background:#f1e7e1;} .b-avoid .tag{background:#e0d2cb; color:var(--rust);}
+
+  /* ---- feature tiers ---- */
+  .tier-label{display:flex; align-items:center; gap:12px; margin:26px 0 12px;}
+  .tier-label h3{font-size:16px; font-family:"DM Mono",monospace; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--rust); margin:0;}
+  .tier-label .rule{flex:1; height:1px; background:var(--line-2);}
+  .tier-note{font-size:13px; color:var(--sage-deep); font-family:"DM Mono",monospace;}
+
+  .feat{background:var(--bone-2); border:1px solid var(--line); border-radius:8px; padding:16px 20px; margin-bottom:11px; box-shadow:var(--shadow);}
+  .feat-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .feat .id{font-family:"DM Mono",monospace; font-size:12px; color:var(--rust); font-weight:500;}
+  .feat h4{margin:0; font-size:18.5px;}
+  .feat .what{margin:6px 0 9px; color:var(--basalt-soft); font-size:15px;}
+  .feat .pills{display:flex; flex-wrap:wrap; gap:5px; margin-bottom:9px;}
+  .pill{font-family:"DM Mono",monospace; font-size:10.5px; letter-spacing:.02em; background:rgba(111,122,94,.16); color:var(--sage-deep); padding:2px 8px; border-radius:10px;}
+  .notes{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .note{font-size:13.5px; line-height:1.5;}
+  .note .lbl{font-family:"DM Mono",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--rust); display:block; margin-bottom:2px;}
+  .note.build .lbl{color:var(--juniper);}
+  .note p{margin:0; color:var(--basalt-soft);}
+
+  .substrate{border-left:4px solid var(--juniper);}
+  .headline{border-left:4px solid var(--rust);}
+
+  /* ---- practice lists ---- */
+  .prac{background:var(--bone-2); border:1px solid var(--line); border-radius:8px; padding:16px 20px; margin-bottom:11px; box-shadow:var(--shadow);}
+  .prac h4{margin:0 0 4px; font-size:18px;}
+  .prac .src{font-family:"DM Mono",monospace; font-size:11px; color:var(--sage-deep); float:right; padding-top:5px;}
+  .prac p{margin:4px 0 0; color:var(--basalt-soft); font-size:15px;}
+  .prac .do-dont{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; font-size:13.5px;}
+  .prac .do-dont div{padding:8px 12px; border-radius:5px;}
+  .do{background:rgba(111,122,94,.16);} .do b{color:var(--sage-deep);}
+  .dont{background:rgba(164,81,42,.1);} .dont b{color:var(--rust);}
+
+  /* ---- mission table ---- */
+  table.mission{width:100%; border-collapse:collapse; margin-top:10px; font-size:14px; background:var(--bone-2); border-radius:8px; overflow:hidden; box-shadow:var(--shadow);}
+  table.mission th{background:var(--juniper); color:var(--bone-3); font-family:"DM Mono",monospace; font-weight:500; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; padding:11px 14px; text-align:left;}
+  table.mission td{padding:12px 14px; border-top:1px solid var(--line); vertical-align:top; color:var(--basalt-soft);}
+  table.mission td:first-child{font-family:"Playfair Display",serif; font-style:italic; color:var(--juniper); font-size:16px; width:24%;}
+
+  /* ---- first slice ---- */
+  .slice{background:linear-gradient(180deg,#2d3a2a,#26331f); color:var(--bone-3); border-radius:10px; padding:30px 32px; margin-top:10px; border:1px solid var(--juniper-2); box-shadow:var(--shadow);}
+  .slice h3{color:var(--bone-3); margin:0 0 6px; font-size:24px;}
+  .slice p{color:#dfe3d4; max-width:70ch;}
+  .slice .steps{counter-reset:s; margin-top:18px; display:grid; gap:10px;}
+  .slice .step{display:flex; gap:14px; align-items:flex-start; background:rgba(255,255,255,.05); border:1px solid rgba(205,211,189,.18); border-radius:7px; padding:13px 16px;}
+  .slice .step::before{counter-increment:s; content:counter(s); font-family:"DM Mono",monospace; color:var(--rust-pale); border:1px solid var(--rust); border-radius:50%; width:26px; height:26px; min-width:26px; display:flex; align-items:center; justify-content:center; font-size:13px;}
+  .slice .step b{color:var(--bone-3);}
+  .slice .step span{color:#cfd4c5; font-size:14.5px;}
+  .slice .gate{margin-top:16px; font-family:"DM Mono",monospace; font-size:12.5px; color:var(--rust-pale); letter-spacing:.03em;}
+
+  footer{margin-top:54px; border-top:1px solid var(--line-2); background:var(--bone-2);}
+  footer .wrap{padding:26px 30px 34px; font-family:"DM Mono",monospace; font-size:12px; color:var(--sage-deep); letter-spacing:.05em; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+  @media (max-width:720px){
+    .boundary{grid-template-columns:1fr;}
+    .notes,.prac .do-dont{grid-template-columns:1fr;}
+    table.mission td:first-child{width:auto;}
+    .hero .wrap{padding:44px 24px 40px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">High Desert · Development Framework · v2 · June 2026</div>
+    <h1>From Canon <em>to Code</em></h1>
+    <p class="lede">The bridge from the reading list to the build. What to make, how to design it, how to engineer it — and why every choice answers back to the mission. Scoped to community-building and neighborhood-level events, launching Redmond-first.</p>
+    <div class="meta">
+      <span><b>Companion to</b> Business Plan v6</span>
+      <span><b>Operationalizes</b> Reading List v8</span>
+      <span><b>Launch</b> Redmond first</span>
+      <span><b>Partner boundary</b> Redmond Compass</span>
+      <span><b>Access</b> flat + sliding scale</span>
+      <span><b>Stack</b> Supabase · RLS · mobile-first</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#orient">00 · Orientation</a>
+    <a href="#stack">01 · Principle Stack</a>
+    <a href="#boundary">02 · Scope &amp; Boundary</a>
+    <a href="#features">03 · Feature Architecture</a>
+    <a href="#design">04 · Design Practice</a>
+    <a href="#dev">05 · Dev Practice</a>
+    <a href="#mission">06 · Mission Map</a>
+    <a href="#slice">07 · First Slice</a>
+  </div>
+</nav>
+
+<!-- 00 ORIENTATION -->
+<section id="orient">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">00</span><h2>Orientation</h2></div>
+    <p class="sec-intro">This document moves High Desert from <strong>plan</strong> to <strong>build</strong>. The business plan establishes <em>why the structure holds</em>. This establishes <em>what to construct first, how it should feel, and how it should be engineered</em> — with each decision traceable to the canon. The emphasis here is the six tool-design books now carried in both the reading list and Business Plan v6 (Polanyi, Schön, Illich, Weizenbaum, Norman, Alexander) — the ones that answer the build question directly, and so are load-bearing here. Reading List v8 sharpens the build craft further: Ousterhout on containing complexity, Eghbal on maintenance as commons governance, and Shew on accessibility as design <em>with</em> disabled residents — all folded into the practices below. Two scope decisions from v6 also shape this build: <strong>launch is Redmond-first</strong>, and <strong>access is flat with an income-based sliding scale</strong> — never gated by geographic scope.</p>
+
+    <div class="thesis">
+      <p>The organizing claim: <span class="k">High Desert is a convivial tool that preserves mētis.</span> In Illich's exact sense, it amplifies the community's own capacity without requiring the community to serve the platform. In Scott's and Polanyi's sense, it puts people who hold local, tacit, practical knowledge in contact with situations where that knowledge operates — rather than trying to capture, score, or formalize it away. Everything below is an instance of that one idea.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 01 PRINCIPLE STACK -->
+<section id="stack">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The Principle Stack</h2></div>
+    <p class="sec-intro">Six operative layers. Each names the thinkers, the single claim that matters for building, and what it <strong>dictates</strong> in the product. The plan covered the first three. Layers four through six are largely new and come straight from the v6 reading list.</p>
+
+    <div class="layer">
+      <div class="layer-top"><h3>Structural — why it survives</h3><span class="who">Doctorow · Baradaran · Wu · Lanier</span></div>
+      <p class="claim">Extraction is structural, not moral. A second customer (advertisers) inevitably wins against the first (users); private interests capture public structures one defensible step at a time; attention has been colonized by the ad model for 150 years.</p>
+      <p class="dictates"><b>Dictates:</b> No advertising, ever. Members are the only customer. Data belongs to members. Counter-capture is encoded, not promised — immutable principles changeable only by 75% supermajority + 30-day deliberation.</p>
+    </div>
+
+    <div class="layer">
+      <div class="layer-top"><h3>Systems — how it behaves</h3><span class="who">Meadows</span></div>
+      <p class="claim">Trust is the master stock: long fill time, fast drain time. System behavior comes from loop structure, not feature lists. The paradigm is the highest leverage point.</p>
+      <p class="dictates"><b>Dictates:</b> Build the minimum trustworthy platform first and earn the right to add complexity. Read health through leading indicators, never optimize them. Every feature is a deposit to or withdrawal from the trust stock.</p>
+    </div>
+
+    <div class="layer">
+      <div class="layer-top"><h3>Commons — how it's governed</h3><span class="who">Ostrom · Hirschman</span></div>
+      <p class="claim">Shared resources can be governed durably without privatization or top-down control — if eight design principles hold. When institutions decline, silence is not consent; it is exit produced by costly voice.</p>
+      <p class="dictates"><b>Dictates:</b> Clear boundaries (verification), collective choice (tenure-weighted voting), graduated sanctions, monitoring (transparency reports). Every governance feature is a <em>voice</em> mechanism: ban-then-appeal, public log, community override.</p>
+    </div>
+
+    <div class="layer">
+      <div class="layer-top"><h3>Knowledge — what it preserves <span class="new-pill">new emphasis</span></h3><span class="who">Scott · Polanyi · Schön · Jacobs</span></div>
+      <p class="claim">"We know more than we can tell." Institutions simplify to govern, and simplification destroys the tacit, local knowledge that made things work. You cannot fully capture mētis; you can only build conditions for it to operate.</p>
+      <p class="dictates"><b>Dictates:</b> Verification legible to the verified, not just the admin. Designs vary by subregion rather than templating from Bend. Features surface <em>who knows how</em> instead of ranking and scoring it. The design question is never "how do we capture local knowledge?" but "how do we connect people who hold it to where it's needed?"</p>
+    </div>
+
+    <div class="layer">
+      <div class="layer-top"><h3>Tool — how it's built <span class="new-pill">new</span></h3><span class="who">Illich · Weizenbaum · Norman · Alexander · Ousterhout</span></div>
+      <p class="claim">Convivial tools amplify capability without creating dependency; industrial tools make users serve the tool. Some decisions must stay with humans not because machines can't perform them but because they require moral responsibility. Good design needs no manual. Mētis can be made transmissible — as patterns — without becoming rigid theory. And complexity is the slow killer: deep modules behind narrow interfaces are how it's contained.</p>
+      <p class="dictates"><b>Dictates:</b> Consequential decisions (moderation outcomes, governance) stay with people; automation assists, never decides. Affordances over instructions. Contain complexity behind deep modules and narrow interfaces, so the platform stays comprehensible enough to keep changing and to hand off. Document each design choice as problem → forces → solution → evidence, so it travels to other towns without being imposed.</p>
+    </div>
+
+    <div class="layer">
+      <div class="layer-top"><h3>Learning — what it teaches <span class="new-pill">new</span></h3><span class="who">Dewey · Lave &amp; Wenger · Illich · Kahneman · Postman</span></div>
+      <p class="claim">Democracy is associated living — learned by practicing, not reading. Competence transmits through legitimate peripheral participation in communities of practice. Tools quietly colonize the institutions that adopt them unless purpose precedes the technical system.</p>
+      <p class="dictates"><b>Dictates:</b> Onboarding is a participation ladder (browse → contribute → organize → govern), with tenure weighting reflecting the climb. Mutual aid, skill-shares and the trades layer are learning webs — people matching people, no credentialing institution between them. Governance is decided <em>before</em> the infrastructure to enforce it is built.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 BOUNDARY -->
+<section id="boundary">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Scope &amp; the Compass Boundary</h2></div>
+    <p class="sec-intro">High Desert and Redmond Compass are complementary, not competing. Compass is the <strong>public discovery guide</strong> — anyone can read it. High Desert is the <strong>verified-resident community-building layer</strong> — you participate in it. The line is <em>discovery vs. participation</em>. High Desert does not rebuild what Compass already does well; it builds the thing that requires verified identity and trust. <strong>Launch is Redmond-first</strong> — one community served completely, matching Compass's footprint — then the same pattern branches to the other Central Oregon communities.</p>
+
+    <div class="boundary">
+      <div class="bcard b-compass">
+        <h4>Redmond Compass <span class="tag">Partner · owns</span></h4>
+        <ul>
+          <li>Small-business directory &amp; owner dashboards</li>
+          <li>Public event listings (discover what's happening)</li>
+          <li>Local news</li>
+          <li>Essential community resources</li>
+        </ul>
+      </div>
+      <div class="bcard b-hd">
+        <h4>High Desert <span class="tag">Owns</span></h4>
+        <ul>
+          <li>Verified residency — the trust substrate</li>
+          <li>Neighbor-organized, neighborhood-scale events (participation, not listing)</li>
+          <li>Mutual aid, skills &amp; trades <em>trust</em>, learning webs</li>
+          <li>Democratic governance, moderation, transparency</li>
+        </ul>
+      </div>
+      <div class="bcard b-defer">
+        <h4>Deferred — logged <span class="tag">Later</span></h4>
+        <ul>
+          <li><b>Digital community board</b> (regional discussion feed)</li>
+          <li>Reason: highest-conflict / highest-moderation-risk surface; phase-gating says don't open it until the trust stock is high (Meadows). Discussion-adjacent needs are partly met by Compass's community page.</li>
+          <li>Re-open later by community vote once verification, events, aid and governance are proven.</li>
+        </ul>
+      </div>
+      <div class="bcard b-avoid">
+        <h4>Do not duplicate <span class="tag">Avoid</span></h4>
+        <ul>
+          <li>A second business directory (Compass has it)</li>
+          <li>A public "what's on this weekend" listings page</li>
+          <li>A local news desk</li>
+          <li>Later: a thin optional bridge so HD neighborhood events <em>can</em> surface to Compass's public guide — logged, not built now.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Feature Architecture</h2></div>
+    <p class="sec-intro">Three tiers. The <strong>trust substrate</strong> is what makes High Desert categorically different from Compass and from social media — everything sits on it. <strong>Neighborhood events</strong> are the headline build. <strong>Community-building components</strong> are the relationship and capacity layer. Each card carries its principle tags, a design note, and a build note.</p>
+
+    <!-- TIER A -->
+    <div class="tier-label"><h3>Tier A — Trust Substrate</h3><span class="rule"></span><span class="tier-note">launch-critical · the loop everything depends on</span></div>
+
+    <div class="feat substrate">
+      <div class="feat-top"><span class="id">A1</span><h4>Residency verification</h4></div>
+      <p class="what">Multiple pathways (driver's license, utility bill, voter registration, property record), human review for edge cases, PO Box accommodation for Warm Springs, Spanish-language flow in Madras/Jefferson County.</p>
+      <div class="pills"><span class="pill">Scott · legibility</span><span class="pill">Ostrom P1 · boundaries</span><span class="pill">privacy-by-architecture</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Legible to the person being verified, not just the administrator. The rancher with a PO Box and the teen without a license both succeed.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Verify-then-forget: PII deleted post-verification. Verification status becomes a row-level flag that gates everything downstream.</p></div>
+      </div>
+    </div>
+
+    <div class="feat substrate">
+      <div class="feat-top"><span class="id">A2</span><h4>Tenure-weighted governance &amp; voting</h4></div>
+      <p class="what">Community votes on platform policy. Quorum requirements + tenure weighting (1.0× / 1.2× / 1.5×) prevent capture by the most-active or most-recent users. Immutable principles need 75% + 30-day deliberation.</p>
+      <div class="pills"><span class="pill">Ostrom P3 · collective choice</span><span class="pill">Lave &amp; Wenger · communities of practice</span><span class="pill">Baradaran · counter-capture</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Tenure weight reflects the participation ladder — longer members have moved toward fuller membership. Seed it small: the founding cohort's first vote is a real, low-stakes decision.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Thresholds and tenure brackets live in config + RLS, versioned. Every vote writes to an immutable audit log.</p></div>
+      </div>
+    </div>
+
+    <div class="feat substrate">
+      <div class="feat-top"><span class="id">A3</span><h4>Moderation — graduated &amp; appealable</h4></div>
+      <p class="what">Warning → temp ban → extended ban → board review. No permanent bans without review. Ban-then-appeal. Sustained complaints against a moderator decision trigger a community override vote.</p>
+      <div class="pills"><span class="pill">Ostrom P5/6 · sanctions + conflict</span><span class="pill">Hirschman · voice</span><span class="pill">Weizenbaum · human-in-loop</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Action does not block voice — the appeal opens immediately. Calibrate to Central Oregon's actual high-heat topics, catalogued in fieldwork, not generic templates.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Outcomes are never auto-decided. The model may surface, sort, or flag; a human always decides. Moderators are subject to the same appeal path.</p></div>
+      </div>
+    </div>
+
+    <div class="feat substrate">
+      <div class="feat-top"><span class="id">A4</span><h4>Transparency &amp; platform-health dashboard</h4></div>
+      <p class="what">Quarterly public reports (revenue, expenses, founder salary, moderation actions). Internal dashboard of leading indicators: posting frequency, cross-regional engagement, mod-queue volume, exit-rate vs. appeal-rate.</p>
+      <div class="pills"><span class="pill">Ostrom P4 · monitoring</span><span class="pill">Meadows · leading indicators</span><span class="pill">O'Neil · anti-WMD</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>The exit-vs-appeal ratio is the early-warning gauge: high exit + low appeal means voice is failing. Watch it like a vital sign.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Indicators are <em>diagnostics, never targets.</em> A metric optimized becomes a weapon (Goodhart / O'Neil). No engagement-maximizing logic anywhere.</p></div>
+      </div>
+    </div>
+
+    <div class="feat substrate">
+      <div class="feat-top"><span class="id">A5</span><h4>Plain-language terms &amp; read-confirm</h4></div>
+      <p class="what">Terms and privacy written to be understood, with an interactive read-confirm flow and archived version history.</p>
+      <div class="pills"><span class="pill">Norman · affordance</span><span class="pill">Kahneman · cognitive load</span><span class="pill">Scott · legible to the user</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>If a member can't explain the rule back, the rule isn't written yet. Spanish parity, not afterthought.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Versioned documents; consent records tied to the version a member actually accepted.</p></div>
+      </div>
+    </div>
+
+    <!-- TIER B -->
+    <div class="tier-label"><h3>Tier B — Neighborhood-Level Events</h3><span class="rule"></span><span class="tier-note">the headline · participation, not listings</span></div>
+
+    <div class="feat headline">
+      <div class="feat-top"><span class="id">B1</span><h4>Neighbor-organized events</h4></div>
+      <p class="what">Any verified resident can create a neighborhood-scale gathering — block party, repair café, trail or irrigation work party, potluck, skill-share, wildfire-prep meet. This is the <em>creation and joining</em> of events, which is what separates it from Compass's discovery listings.</p>
+      <div class="pills"><span class="pill">Jacobs · eyes on the street</span><span class="pill">Dewey · associated living</span><span class="pill">Illich · convivial</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Organizers are verified neighbors, never anonymous. The act of hosting is the civic muscle the platform exists to build.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Events inherit the A1–A3 trust + moderation layer for free. One clean primitive (create / RSVP / show up) before anything fancy.</p></div>
+      </div>
+    </div>
+
+    <div class="feat headline">
+      <div class="feat-top"><span class="id">B2</span><h4>Neighborhood geography</h4></div>
+      <p class="what">Events scope to neighborhood, not just region — the "neighborhood-level" requirement. Region → neighborhood granularity, with each community defining its own shape. <strong>Scope is a free focus filter — never a paywall.</strong> A member can narrow to their block or widen to all of Redmond at no cost; breadth is never withheld.</p>
+      <div class="pills"><span class="pill">Jacobs · participation density</span><span class="pill">Ostrom P2 · local conditions</span><span class="pill">Scott · don't template from Bend</span><span class="pill">Baradaran · access not gated by scope</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Let neighborhoods be drawn by residents, not imposed by a tidy grid. Sisters is not Bend is not Madras. Narrowing is a default/preference, not a purchased tier.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Geography is data, editable by community process — not hard-coded boundaries an engineer guessed. The scope filter lives in the UI; it must never become a billing gate.</p></div>
+      </div>
+    </div>
+
+    <div class="feat headline">
+      <div class="feat-top"><span class="id">B3</span><h4>Light coordination — not a chat board</h4></div>
+      <p class="what">RSVP, a "who's bringing what" list, simple carpool/ride coordination. Just enough to make a gathering happen. Deliberately <em>not</em> open-ended discussion — that's the deferred board.</p>
+      <div class="pills"><span class="pill">Illich · amplify, don't trap</span><span class="pill">Norman · no manual needed</span><span class="pill">Kahneman · one-tap</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Frictionless to contribute; nothing that becomes a place to argue. Coordination ends when the event does.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Structured fields, not a free-text feed. Keeps moderation surface tiny and intentional.</p></div>
+      </div>
+    </div>
+
+    <div class="feat headline">
+      <div class="feat-top"><span class="id">B4</span><h4>Standing &amp; recurring gatherings</h4></div>
+      <p class="what">Repair cafés, weekly walks, monthly skill-shares — events that repeat and accrete a regular group.</p>
+      <div class="pills"><span class="pill">Lave &amp; Wenger · communities of practice</span><span class="pill">brown · speed of trust</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Recurrence is how a community of practice forms. The platform should make returning easier than starting over.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Recurring series as first-class objects; a returning attendee is a soft signal of belonging, never a public score.</p></div>
+      </div>
+    </div>
+
+    <!-- TIER C -->
+    <div class="tier-label"><h3>Tier C — Community-Building Components</h3><span class="rule"></span><span class="tier-note">relationships &amp; mutual capacity</span></div>
+
+    <div class="feat">
+      <div class="feat-top"><span class="id">C1</span><h4>Mutual aid board</h4></div>
+      <p class="what">Requests and offers within a neighborhood — a ride, a tool, help after a storm, an extra freezer during wildfire season. Items expire (≈30 days) so the board stays current.</p>
+      <div class="pills"><span class="pill">Care Manifesto · care as logic</span><span class="pill">Illich · learning web</span><span class="pill">brown · critical connections</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>People matching people, no institution between them. Low ceremony; dignity in both asking and offering.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Expiry by default. Neighborhood-scoped via RLS. No payments, no ratings.</p></div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-top"><span class="id">C2</span><h4>Skills &amp; trades <em>trust</em> layer</h4></div>
+      <p class="what">Not a business directory (Compass owns that). This is the trust graph of practical know-how among verified neighbors — who can fix a fence, who knows wells, who teaches canning, who'll mentor a welder. Mētis made findable, without a credentialing institution.</p>
+      <div class="pills"><span class="pill">Scott / Polanyi · tacit knowledge</span><span class="pill">Lave &amp; Wenger</span><span class="pill">O'Neil · no scoring</span><span class="pill">Illich · deschooling</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Vouching through verified relationships, not star ratings. The question is "who can I trust to help," answered by people, not an algorithm. This is the sharpest line away from Compass and the clearest mētis application.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>A trust/skill graph, not a ranked list. Any ranking would be a WMD here — default to relationship and proximity. No payments on-platform.</p></div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-top"><span class="id">C3</span><h4>Skill exchange &amp; learning webs</h4></div>
+      <p class="what">Non-monetary teach/learn and barter — Spanish lessons for fly-tying, fence repair for childcare. The connective tissue between events (B), the trades trust graph (C2), and aid (C1).</p>
+      <div class="pills"><span class="pill">Illich · conviviality</span><span class="pill">Dewey · learning by doing</span><span class="pill">Care Manifesto</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Frame as reciprocity and learning, not a marketplace. Often the right surface is simply a skill-share <em>event</em> (B4).</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Reuse the events + trades primitives rather than building a fourth silo. Compose, don't multiply.</p></div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-top"><span class="id">C4</span><h4>Onboarding as a participation ladder</h4></div>
+      <p class="what">The free → verified → tenured arc made intentional. Newcomers begin at the periphery (browse public events, see the community) and move toward fuller participation (RSVP, organize, vouch, govern) as competence and identity develop.</p>
+      <div class="pills"><span class="pill">Lave &amp; Wenger · legitimate peripheral participation</span><span class="pill">Hirschman · voice over time</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>The free/paid tier split is "accidentally correct" in Lave &amp; Wenger's terms — this makes it deliberate. Each rung should feel earned, not gated.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Capabilities unlock by verification + tenure state, enforced in RLS, mirrored honestly in the UI.</p></div>
+      </div>
+    </div>
+
+    <div class="feat">
+      <div class="feat-top"><span class="id">C5</span><h4>Community resilience alerts</h4></div>
+      <p class="what">Opt-in wildfire / weather / infrastructure alerts with redundant delivery. High value given Central Oregon's wildfire stress; reads as neighbors looking out for neighbors, not a feed.</p>
+      <div class="pills"><span class="pill">civic infrastructure</span><span class="pill">Ostrom P2 · local conditions</span></div>
+      <div class="notes">
+        <div class="note"><span class="lbl">Design</span><p>Trusted, sparse, never noisy. Earns its place precisely by being rare.</p></div>
+        <div class="note build"><span class="lbl">Build</span><p>Phase it after the substrate proves out; push + SMS redundancy. Architecture logged now, built later.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 DESIGN -->
+<section id="design">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Design Practice</h2></div>
+    <p class="sec-intro">How the surfaces should feel. The through-line: <strong>frictionless to contribute, deliberate where it counts.</strong> Most platforms invert this — effortless outrage, effortful exit. High Desert reverses it.</p>
+
+    <div class="prac">
+      <span class="src">Norman</span>
+      <h4>Affordances over instructions</h4>
+      <p>Every surface — the RSVP, the appeal form, the transparency report — should be usable without a manual. If it needs explaining, it needs redesigning.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — make the obvious action the easy action; design invites use.</div>
+        <div class="dont"><b>Don't</b> — ship a feature that requires a help doc to operate.</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">Kahneman</span>
+      <h4>Friction by design</h4>
+      <p>Reserve System-2 effort for high-stakes moments and remove it everywhere else. Joining an event is one tap (System 1). Changing an immutable principle is a 30-day deliberation (System 2 on purpose).</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — one-tap to help, RSVP, vouch.</div>
+        <div class="dont"><b>Don't</b> — add friction to participation or remove it from consequence.</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">Illich · Doctorow</span>
+      <h4>Pass the conviviality test</h4>
+      <p>Each feature must amplify the community's capability without creating dependency on the platform. A member can always leave with their data and lose nothing they made. The right to exit — and, where feasible, interoperability — is the mechanism that keeps the platform honest: a community that can walk away is one the platform must keep serving.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — exportable data; an unobstructed exit; tools that work even if HD vanished.</div>
+        <div class="dont"><b>Don't</b> — lock-in, dark patterns, or engagement traps.</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">Baradaran · Doctorow</span>
+      <h4>Fair access — price by means, not scope</h4>
+      <p>Affordability is a design problem, not a billing afterthought. One low flat price with an income-based sliding scale down to free; a supporter rate gives <em>to the commons</em>, not more platform. Never price by how much of the community a member is allowed to see — breadth of access correlates with need, so scope-pricing is regressive and installs a value-withhold the platform is later tempted to tighten.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — flex price to means; make neighborhood focus a free filter; let everyone have the whole platform.</div>
+        <div class="dont"><b>Don't</b> — gate access by geography, feature-tier the commons, or raise price without a community vote.</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">Scott · Hirschman</span>
+      <h4>Legible to the user · voice-first</h4>
+      <p>Verification, moderation and governance are explained in the member's terms, not the admin's. Any action affecting a member ships with a response path in the same view.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — show the rule, the reason, and the appeal together.</div>
+        <div class="dont"><b>Don't</b> — take an action a member can't see, understand, or contest.</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">Alexander</span>
+      <h4>Write the pattern language</h4>
+      <p>Document each design choice as <em>problem → forces → solution → evidence.</em> This is now an explicit companion artifact — <strong>A Pattern Language for Civic Infrastructure (v2)</strong> — the thing that lets the design travel to other towns, and eventually to Warm Springs, <strong>without being imposed</strong>. Replication without capture.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — record the forces and the local evidence behind each choice.</div>
+        <div class="dont"><b>Don't</b> — ship a decision as a rule with no rationale attached.</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">Shew · Norman</span>
+      <h4>Built for every body — accessible by default</h4>
+      <p>Design <em>with</em> disabled residents, not for an imagined norm — and never as a bolted-on "accessibility mode." Screen-reader support, keyboard paths, contrast, captions, and plain language are first-class requirements of the core build. This is "verification that fits the person" extended to the body: if the platform doesn't work for everyone, the boundary quietly excludes again.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — ship semantic markup, keyboard navigation, and real contrast from the first screen; ask disabled members what they need.</div>
+        <div class="dont"><b>Don't</b> — treat accessibility as a later pass, or frame disabled people as problems for tech to "fix."</div>
+      </div>
+    </div>
+
+    <div class="prac">
+      <span class="src">accessibility · i18n</span>
+      <h4>Spanish-first, low-bandwidth, mobile-first</h4>
+      <p>Madras parity is a Day-1 design constraint, not a translation pass. Rural connectivity and phones-as-primary-device shape every layout.</p>
+      <div class="do-dont">
+        <div class="do"><b>Do</b> — design Spanish and English together; test on a slow phone.</div>
+        <div class="dont"><b>Don't</b> — assume Bend broadband and a desktop.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 DEV -->
+<section id="dev">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Software Development Practice</h2></div>
+    <p class="sec-intro">How it's engineered. The governing idea: <strong>the constitution should be true in the data layer, not just the UI.</strong> Structure is the lock (Baradaran); code is where the lock is cut.</p>
+
+    <div class="prac">
+      <span class="src">Meadows</span>
+      <h4>Minimum trustworthy platform, then earn complexity</h4>
+      <p>Ship the smallest thing that earns trust; phase-gate everything after. No new surface opens until baseline health is confirmed. Feature creep before trust is the documented common failure.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Ousterhout</span>
+      <h4>Deep modules, narrow interfaces — contain complexity</h4>
+      <p>Complexity is what kills software slowly. Build deep modules behind narrow interfaces — each does one substantial job and hides how. Pull complexity downward (the platform absorbs hard work so the member and the next developer don't), design it twice before committing, and define errors out of existence rather than handling them everywhere. Simplicity at the seams is what keeps the minimum platform minimal and the codebase handoff-ready.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Supabase · Postgres</span>
+      <h4>Row-Level Security as the constitution in code</h4>
+      <p>Verification status, tenure weight, neighborhood/region scope, and moderation state are enforced at the row level — not patched on in the client. The governance model is structurally true where the data lives, so the UI can't be the only thing standing between a rule and its breach.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Baradaran · Doctorow</span>
+      <h4>Scope is a filter, affordability is the billing layer — keep them apart</h4>
+      <p>Neighborhood scope is a focus filter enforced in the UI and backed by RLS — it shapes what a member sees, never what they're allowed to pay for. Affordability lives entirely at the billing layer (flat price, sliding scale, supporter rate). The two must never be coupled in code: no entitlement check that ties geographic breadth to subscription tier. Every verified member's row grants the whole platform.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">immutable principle</span>
+      <h4>Reversibility &amp; the audit log</h4>
+      <p>Every major decision is reversible by community vote, so the system must support it: version T&amp;C, governance config, moderation policy, neighborhood maps. Soft-delete, never hard-erase community record. Votes and moderation actions write to an append-only log.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Doctorow · counter-capture</span>
+      <h4>Privacy by architecture — verify then forget</h4>
+      <p>Collect the minimum; delete verification PII after use. The platform that stores less is cheaper to trust and harder to capture or subpoena. Data belongs to members and is exportable on request.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">O'Neil · Christian</span>
+      <h4>Anti-WMD engineering</h4>
+      <p>No opaque scoring, ranking, or recommendation that severs the feedback loop from the people it affects. Default to chronological and proximity. If anything ever ranks, the affected members must see and shape the logic — and it never becomes an optimization target. The alignment problem is the warning underneath this: specify success in simplified, measurable terms and you optimize the proxy while losing what you actually wanted. Keep the measurable serving human judgment, never substituting for it.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Weizenbaum · Illich</span>
+      <h4>Convivial architecture · human-in-the-loop</h4>
+      <p>Keep consequential decisions with people. Automation may surface, sort, or flag; it never decides a ban, an appeal, or a governance outcome. No engagement-maximizing mechanics in the codebase, full stop.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Scott · Lave &amp; Wenger</span>
+      <h4>A legible codebase for the intern pipeline</h4>
+      <p>The platform is built by the community it serves. Readable, documented, conventionally-structured code is legitimate peripheral participation for Tech-track interns and community devs — they start at the periphery and move inward. Resilience requires that no single person (the founder) is the only one who understands it.</p>
+    </div>
+
+    <div class="prac">
+      <span class="src">Eghbal · Ostrom</span>
+      <h4>Built to be maintained — design for handoff, not heroics</h4>
+      <p>Civic infrastructure must outlast its founder, and the real constraint on software that lasts is maintainer attention, not how much gets built. Treat maintenance as commons governance: document decisions, keep the contribution surface small and legible, and grow a governed base of maintainers (the intern pipeline is the seed) under clear, Ostrom-style rules. Optimize for the attention the project will need in year five, not the features it can ship in month two.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 MISSION -->
+<section id="mission">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Mission Map</h2></div>
+    <p class="sec-intro">High Desert is civic infrastructure, not social media: <strong>durable, democratic, non-extractive, mētis-preserving.</strong> Every cluster above answers back to those attributes. This is the check — if a proposed feature doesn't land in this table, it doesn't belong.</p>
+
+    <table class="mission">
+      <thead>
+        <tr><th>Mission attribute</th><th>What carries it</th><th>The failure it refuses</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Durable</td>
+          <td>Verification substrate (A1), governance (A2), legible codebase &amp; founder-independence (Dev), reversibility + audit log (Dev)</td>
+          <td>A personal project that dies when the founder or the funding leaves</td>
+        </tr>
+        <tr>
+          <td>Democratic</td>
+          <td>Tenure-weighted voting (A2), appealable moderation + override (A3), transparency reports (A4), voice-first / legible design (Design)</td>
+          <td>Hirschman's silent exit; rule by algorithm and the most-active users</td>
+        </tr>
+        <tr>
+          <td>Non-extractive</td>
+          <td>No-ads structure, privacy-by-architecture (Dev), no engagement targets (A4), conviviality test (Design), no on-platform payments / ratings</td>
+          <td>Doctorow's enshittification; attention as the product</td>
+        </tr>
+        <tr>
+          <td>Mētis-preserving</td>
+          <td>Skills &amp; trades trust graph (C2), neighborhood events &amp; geography (B1–B2), learning webs (C3), anti-WMD engineering (Dev), the pattern language (Design), Spanish-first</td>
+          <td>Scott's legibility failure; scoring and templating that erase local knowledge</td>
+        </tr>
+        <tr>
+          <td>Civic, not social</td>
+          <td>Participation over discovery (whole of Tier B), mutual aid (C1), resilience alerts (C5), the deferred board, the Compass boundary</td>
+          <td>Becoming one more feed; duplicating the partner instead of completing it</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 07 FIRST SLICE -->
+<section id="slice">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num">07</span><h2>The First Build Slice</h2></div>
+    <p class="sec-intro">Given all of the above, here is the minimum trustworthy platform — the smallest thing that is unmistakably High Desert and earns the right to grow. It is the Build loop made concrete: <em>min. trustworthy platform → earn trust → earn complexity.</em></p>
+
+    <div class="slice">
+      <h3>Verification + one event primitive + transparency, with governance seeded</h3>
+      <p>Not a community board. Not a marketplace. Not fifteen features. The substrate that makes trust possible, the single most community-building surface (neighbors making real gatherings happen), and the visible honesty that proves the model — with the founding cohort casting one real governance vote so the democracy is true from the first week.</p>
+      <div class="steps">
+        <div class="step"><span><b>Residency verification (A1)</b> — multi-pathway, PO Box + Spanish flows, verify-then-forget. The boundary that separates members from everyone, enforced in RLS.</span></div>
+        <div class="step"><span><b>Neighbor-organized events, one clean primitive (B1 + B3)</b> — create, RSVP, light coordination, scoped to neighborhood (B2). No open discussion surface.</span></div>
+        <div class="step"><span><b>Graduated, appealable moderation (A3)</b> — tiny by design because the only surface is structured events. Human decides; appeal opens immediately.</span></div>
+        <div class="step"><span><b>Transparency + health vitals (A4)</b> — public report scheduled from Day 30; exit-vs-appeal ratio watched internally as the early-warning gauge.</span></div>
+        <div class="step"><span><b>Governance seeded (A2)</b> — founding cohort's first real vote (a naming or norm decision) proves the loop works before it carries weight.</span></div>
+      </div>
+      <div class="gate">GATE → do not widen until baseline health holds: two trained mods · Spanish complete · payments tested · RLS reviewed. Mutual aid (C1) and the trades trust layer (C2) are the next slice, not this one.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>HIGH DESERT · Digital Civic Infrastructure for Central Oregon</span>
+    <span>Development Framework · v2 · June 2026 · Living Document</span>
+    <span><a href="https://creativecommons.org/licenses/by-sa/4.0/">Licensed CC BY-SA 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

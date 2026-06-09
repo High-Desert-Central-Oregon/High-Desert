@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>High Desert — Terms of Membership & Privacy Policy (Draft v1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,500;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#ece3d2; --bone-2:#f4eee0; --bone-3:#f8f4ea;
+    --sage:#a4ae93; --sage-deep:#6f7a5e; --sage-pale:#cdd3bd;
+    --juniper:#2d3a2a; --juniper-2:#3c4c38;
+    --basalt:#24231d; --basalt-soft:#46443b;
+    --rust:#a4512a; --rust-2:#c46a3e; --rust-pale:#e4c4ad;
+    --line:#d7cdb8; --line-2:#c8bda3;
+    --shadow:0 1px 0 rgba(36,35,29,.04), 0 18px 40px -28px rgba(45,58,42,.45);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bone); color:var(--basalt); font-family:"DM Sans",system-ui,sans-serif; line-height:1.66; font-size:16.5px; letter-spacing:.005em; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:880px; margin:0 auto; padding:0 30px;}
+  a{color:var(--rust); text-decoration:none;} a:hover{text-decoration:underline; text-underline-offset:3px;}
+  h1,h2,h3,h4{font-family:"Playfair Display",Georgia,serif; font-weight:700; line-height:1.15; color:var(--juniper); letter-spacing:-.01em;}
+  .mono{font-family:"DM Mono",monospace;}
+
+  header.hero{
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(164,81,42,.16), transparent 55%),
+      radial-gradient(110% 80% at 6% 0%, rgba(111,122,94,.22), transparent 50%),
+      linear-gradient(180deg,#2d3a2a 0%, #283626 60%, #243121 100%);
+    color:var(--bone-3); border-bottom:3px solid var(--rust); position:relative; overflow:hidden;
+  }
+  .hero .wrap{padding:54px 30px 46px; position:relative; z-index:1;}
+  .eyebrow{font-family:"DM Mono",monospace; font-size:12px; letter-spacing:.26em; text-transform:uppercase; color:var(--sage-pale);}
+  .hero h1{color:var(--bone-3); font-size:clamp(30px,5vw,50px); margin:.3em 0 .15em; font-weight:800;}
+  .hero .lede{font-size:clamp(15px,1.9vw,18px); max-width:62ch; color:#e7e0cf; line-height:1.55;}
+
+  .banner{background:#3a2417; border:1px solid var(--rust); border-left:5px solid var(--rust-2); border-radius:8px; padding:15px 20px; margin:24px 0 6px; color:#f0ddd5; font-size:14.5px; box-shadow:var(--shadow);}
+  .banner b{color:var(--rust-pale);}
+
+  nav.toc{position:sticky; top:0; z-index:30; background:rgba(236,227,210,.93); backdrop-filter:blur(8px); border-bottom:1px solid var(--line-2);}
+  nav.toc .wrap{display:flex; flex-wrap:wrap; gap:4px; padding:10px 30px; max-width:880px;}
+  nav.toc a{font-family:"DM Mono",monospace; font-size:11.5px; letter-spacing:.03em; color:var(--basalt-soft); padding:6px 11px; border-radius:20px;}
+  nav.toc a:hover{background:var(--juniper); color:var(--bone-3); text-decoration:none;}
+
+  .commit{background:rgba(111,122,94,.13); border:1px solid var(--line); border-left:4px solid var(--sage-deep); border-radius:8px; padding:18px 22px; margin:22px 0; box-shadow:var(--shadow);}
+  .commit h3{margin:0 0 10px; font-size:18px;}
+  .commit ul{margin:0; padding-left:20px;} .commit li{font-size:14.5px; margin-bottom:7px; color:var(--basalt-soft);} .commit li b{color:var(--juniper);}
+
+  .doc{padding:40px 0 6px; border-top:1px solid var(--line-2); margin-top:30px;}
+  .doc-tag{font-family:"DM Mono",monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--rust);}
+  .doc h2{font-size:clamp(23px,3.2vw,30px); margin:4px 0 2px;}
+  .doc .meta{font-family:"DM Mono",monospace; font-size:11.5px; color:var(--sage-deep); margin-bottom:18px;}
+
+  .clause{margin:0 0 16px;}
+  .clause h3{font-size:17px; margin:22px 0 6px; display:flex; gap:10px; align-items:baseline;}
+  .clause h3 .n{font-family:"DM Mono",monospace; font-size:13px; color:var(--rust); font-weight:500;}
+  .clause p{margin:0 0 8px; font-size:15px; color:var(--basalt-soft);}
+  .clause p b{color:var(--juniper);}
+  .clause ul{margin:4px 0 8px; padding-left:20px;} .clause li{font-size:14.5px; color:var(--basalt-soft); margin-bottom:5px;}
+  .why{font-family:"DM Mono",monospace; font-size:11px; color:var(--sage-deep); letter-spacing:.02em; border-left:2px solid var(--sage-pale); padding:2px 0 2px 10px; margin:4px 0 0;}
+  .why b{color:var(--rust); font-weight:500;}
+
+  footer{margin-top:46px; border-top:1px solid var(--line-2); background:var(--bone-2);}
+  footer .wrap{padding:24px 30px 32px; font-family:"DM Mono",monospace; font-size:12px; color:var(--sage-deep); letter-spacing:.05em; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; max-width:880px;}
+
+  @media (max-width:680px){ .hero .wrap{padding:40px 22px 34px;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">High Desert · Member Agreements · Draft v1 · June 2026</div>
+    <h1>Terms of Membership &amp; Privacy Policy</h1>
+    <p class="lede">Written in plain language, and written around how High Desert actually works — verified residents, no advertising, member-owned data, secret votes, and a tool you can always leave. This is the content that seeds the platform's read-and-confirm flow.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="banner">
+    <b>Draft — for your review.</b> This is a plain-language draft prepared to match High Desert's design. It is written to be clear and protective, but it is <b>not legal advice and has not yet been reviewed by an Oregon attorney</b> — that review is a pre-launch step (Business Plan §06). Bracketed items like [contact email] are placeholders to fill before publishing. Two member-facing documents are below; in the app they seed the <span class="mono">documents</span> table as <span class="mono">kind = terms</span> and <span class="mono">kind = privacy</span>, versioned, with a recorded consent.
+  </div>
+
+  <div class="commit">
+    <h3>Our commitments, in one place</h3>
+    <ul>
+      <li><b>No advertising, ever.</b> You are the member, not the product. We don't run ads or build profiles to sell.</li>
+      <li><b>Your data is yours.</b> You can export it, and you can leave with it. We never sell it.</li>
+      <li><b>We verify, then forget.</b> Your residency documents are deleted as soon as we've checked them.</li>
+      <li><b>You govern this place.</b> Major decisions are made by member vote, and your ballot is secret.</li>
+      <li><b>Enforcement comes with a voice.</b> Any action against you can be appealed, and you're told why.</li>
+      <li><b>Fair, flat pricing.</b> One low price with a sliding scale (free during the founding period) — and never raised without a member vote.</li>
+    </ul>
+  </div>
+</div>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#terms">Terms of Membership</a>
+    <a href="#privacy">Privacy Policy</a>
+  </div>
+</nav>
+
+<!-- ========== TERMS ========== -->
+<section id="terms" class="doc">
+  <div class="wrap">
+    <div class="doc-tag">Document 1 · kind = terms</div>
+    <h2>Terms of Membership</h2>
+    <div class="meta">Version 0.1 (draft) · Effective [date on publish] · Redmond, Oregon</div>
+
+    <div class="clause"><h3><span class="n">1</span> What High Desert is</h3>
+      <p>High Desert is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by [High Desert PBC], an Oregon public benefit corporation intending to convert to a nonprofit as the community grows. It is <b>not</b> advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">2</span> Who can join</h3>
+      <p>You must be <b>18 or older</b> to create an account at this time. Anyone may browse public information as a visitor. <b>Full participation</b> — creating events, RSVPing, posting, vouching, and voting — requires verifying that you are a Redmond resident (Section 3).</p>
+      <p>A version for ages 13–17 is planned for the future; it is not available yet and will launch only with its own protections and a community vote.</p>
+      <p class="why"><b>Why:</b> the boundary that makes a commons work (Ostrom) — verified residents only — plus a deliberate hold on minors until protections exist.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">3</span> Verifying your residency</h3>
+      <p>To participate fully you agree to verify your Redmond residency through one of several pathways (for example a government ID, a utility bill, voter registration, a property record, or a one-time code we mail to your address). A person reviews each submission. We may decline or revoke verification we reasonably believe to be inaccurate.</p>
+      <p><b>We delete your verification documents as soon as a decision is made.</b> We keep only the fact that you are verified and which method you used — never the underlying documents (see Privacy, Section 3).</p>
+      <p class="why"><b>Why:</b> verification that fits real people (Scott) + verify-then-forget (Patterns 1, 2).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">4</span> Membership, tenure &amp; your voice</h3>
+      <p>Membership grows with participation: visitor → verified member → long-standing (tenured) member. The platform is governed by its members. Major decisions are made by community vote, and votes are weighted modestly by how long you've been a member, so newcomers have a real voice while established members carry proportionate weight. Certain core principles are <b>immutable</b> and can only change by a 75% supermajority after a 30-day deliberation period.</p>
+      <p>By participating in governance you agree that decisions properly made by community vote are binding on how the platform operates.</p>
+      <p class="why"><b>Why:</b> tenure-weighted, capture-resistant governance (Ostrom; Patterns 3, 6).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">5</span> Being a good neighbor (acceptable use)</h3>
+      <p>High Desert is a place for real neighbors to connect. You agree not to:</p>
+      <ul>
+        <li>harass, threaten, demean, or incite harm against others, or post hateful content;</li>
+        <li>post content that is illegal, or use the platform to facilitate illegal activity;</li>
+        <li>share others' private information (doxxing) or impersonate anyone;</li>
+        <li>spam, advertise, or solicit commercially (commercial discovery lives with our partner, Redmond Compass);</li>
+        <li>misrepresent your residency, create multiple or fake accounts, or evade verification or moderation;</li>
+        <li>scrape, automate, overload, or attempt to break the platform or its security.</li>
+      </ul>
+      <p>Specific community standards may be refined by the community over time; this list is the baseline.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">6</span> Moderation, consequences &amp; appeals</h3>
+      <p>Enforcement is graduated — typically a warning, then a temporary restriction, then a longer one, with serious cases going to review. <b>You can appeal any action taken against you</b>, and the appeal opens immediately. We will tell you what happened and why. No account is permanently removed without a review, and sustained member objection to a moderation decision can trigger a community vote to overturn it. Moderators are accountable to the same process.</p>
+      <p class="why"><b>Why:</b> action-then-voice; no silent exit (Hirschman; Patterns 7, 9, 19).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">7</span> Events &amp; mutual aid are organized by members</h3>
+      <p>Neighborhood events, gatherings, and (when available) mutual-aid posts are created and run by members, not by High Desert. We verify residency, but we do not otherwise vet members, and we are not a party to what members arrange. <b>Use good judgment and meet safely.</b> To the extent the law allows, High Desert is not responsible for members' conduct, statements, or in-person gatherings.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">8</span> Your content stays yours</h3>
+      <p>You keep ownership of what you post. You grant High Desert a limited, non-exclusive license to store and display your content <b>only</b> as needed to operate the platform for the community — never to advertise, profile, or sell. You can export your content, and you can delete it; when you do, we remove it (some governance and moderation records may be kept in de-identified form for the integrity of the public record — see Privacy, Section 9).</p>
+      <p class="why"><b>Why:</b> member-owned, non-extractive, exportable (Patterns 15, 16).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">9</span> Cost, and our promise on advertising</h3>
+      <p>High Desert is funded by its members, never by advertising. <b>During the founding and beta period, membership is free.</b> When paid membership begins, it will be one low flat price with an income-based sliding scale down to free; choosing a higher "supporter" amount funds others' access, not extra features. <b>The price will never increase without a community vote</b>, and there will be no advertising, ever.</p>
+      <p class="why"><b>Why:</b> price by means not scope; no-ads is structural and immutable (Baradaran, Doctorow, Wu).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">10</span> Leaving</h3>
+      <p>You can close your account at any time and export your data first. We will delete your personal content, subject to the de-identified-record note above. We may suspend or close an account through the moderation process described in Section 6, with the right of appeal.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">11</span> Changes to these Terms</h3>
+      <p>These Terms are versioned. If we change them, we will show you what changed and ask you to confirm the new version before you continue participating. Changes that affect governance or the immutable principles follow the community process in Section 4 — they are not made by the operator alone.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">12</span> Disclaimers &amp; limits of liability</h3>
+      <p>High Desert is provided "as is," without warranties of any kind, to the fullest extent permitted by Oregon law. Any future emergency or community alerts are <b>best-effort and are never a substitute for 911 or official emergency sources.</b> To the extent the law allows, High Desert and its operators will not be liable for indirect or consequential damages, and total liability is limited to the amount you paid us in the prior 12 months (which, during the free period, is zero).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">13</span> Governing law &amp; resolving disputes</h3>
+      <p>These Terms are governed by the laws of the State of Oregon, and any dispute will be handled in the state or federal courts located in Deschutes County, Oregon. We ask that you first use the appeal and community-governance processes, and work with us informally, before pursuing a formal claim. (We do not require forced arbitration or waive your right to participate in class actions — keeping your options, and your voice, open.)</p>
+      <p class="why"><b>Why:</b> dispute terms that don't quietly strip member voice (Hirschman).</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">14</span> Contact</h3>
+      <p>Questions about these Terms: [contact email] · [mailing address]. [High Desert PBC], Redmond, Oregon.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PRIVACY ========== -->
+<section id="privacy" class="doc">
+  <div class="wrap">
+    <div class="doc-tag">Document 2 · kind = privacy</div>
+    <h2>Privacy Policy</h2>
+    <div class="meta">Version 0.1 (draft) · Effective [date on publish] · Redmond, Oregon</div>
+
+    <div class="clause"><h3><span class="n">1</span> The short version</h3>
+      <p>We collect as little as possible, we never sell your data, and we run no advertising and no behavioral profiling. We don't use third-party ad trackers. What you create here is yours, and you can take it with you. The sections below are the detail behind those promises.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">2</span> What we collect</h3>
+      <ul>
+        <li><b>Account:</b> your email address (used to sign in).</li>
+        <li><b>Profile:</b> a display name, the neighborhood you choose, and your language preference.</li>
+        <li><b>Verification evidence:</b> whatever you submit to prove residency — kept only temporarily (Section 3).</li>
+        <li><b>What you create:</b> events, RSVPs, mutual-aid posts, proposals, and votes.</li>
+        <li><b>Minimal operational logs:</b> basic security and error logs needed to run the service safely.</li>
+      </ul>
+    </div>
+
+    <div class="clause"><h3><span class="n">3</span> Verify, then forget</h3>
+      <p>Verification documents are stored briefly in restricted storage, readable only by the people reviewing them, and <b>deleted automatically the moment your verification is approved or rejected.</b> Afterward we keep only two things: that you are verified, and which method you used. We do not keep the documents themselves.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">4</span> Your votes are secret</h3>
+      <p>How you vote on a proposal is private. Individual ballots are never shown to other members or to operators. Only the aggregate result and de-identified governance metadata are made public.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">5</span> Transparency &amp; the public record</h3>
+      <p>To keep the community accountable, we maintain an append-only log of governance and moderation actions and publish periodic transparency reports. These contain <b>aggregate information only — no personal data.</b></p>
+    </div>
+
+    <div class="clause"><h3><span class="n">6</span> How we use your information</h3>
+      <p>We use your information for one purpose: to operate High Desert and its governance — verifying residency, running events and votes, moderating fairly, and keeping the service secure. We <b>never</b> use it to advertise, to build profiles about you, or to sell.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">7</span> Who we share with</h3>
+      <p>We do not sell or rent your data to anyone. We use a small number of service providers strictly to run the platform — currently our hosting and database provider (Supabase) and an email-delivery provider — under agreements that limit them to that purpose. We use no advertising networks. We disclose information to authorities only when legally required, and we will push back on requests that are overbroad.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">8</span> Cookies &amp; analytics</h3>
+      <p>We use only the essential cookies needed to keep you signed in and the service working. We do <b>not</b> use third-party advertising or cross-site tracking cookies. Any usage analytics are minimal, aggregate, and privacy-respecting.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">9</span> How long we keep things</h3>
+      <p>We keep the minimum necessary. Verification evidence is deleted on decision (Section 3). Your content is kept while your account is active and removed when you delete it or close your account — except entries in the governance and moderation record, which may be retained in <b>de-identified</b> form so the public record stays intact.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">10</span> Your rights &amp; choices</h3>
+      <p>You can access and export your data, correct your profile, delete your content, close your account, and withdraw consent. Because data belongs to members, export is a first-class feature, not a favor. To make a request, use [contact / in-app data request]. (De-identified governance-record entries described in Section 9 may remain.)</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">11</span> How we protect your information</h3>
+      <p>Access to data is enforced at the database level (row-level security), staff and reviewer access is restricted to what's necessary, and we deliberately store as little as possible — the safest data is the data we never keep.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">12</span> Children</h3>
+      <p>High Desert is for adults 18 and older at this time and is not directed to children under 13. A future version for ages 13–17 will have its own protections, will comply with applicable children's-privacy law (including COPPA), and will launch only after a community vote.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">13</span> Changes to this Policy</h3>
+      <p>This Policy is versioned. If we make a material change, we will show you what changed and ask you to confirm before you continue.</p>
+    </div>
+
+    <div class="clause"><h3><span class="n">14</span> Contact</h3>
+      <p>Privacy questions or data requests: [contact email] · [mailing address]. [High Desert PBC], Redmond, Oregon.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>HIGH DESERT · Terms of Membership &amp; Privacy Policy</span>
+    <span>Draft v1 · June 2026 · pending Oregon legal review</span>
+  </div>
+</footer>
+
+</body>
+</html>
