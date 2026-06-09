@@ -28,6 +28,7 @@ export const es: Dictionary = {
     reviewLink: "Revisiones",
     neighborhoodLink: "Vecindario",
     eventsLink: "Eventos",
+    governanceLink: "Propuestas",
   },
 
   landing: {
@@ -251,5 +252,56 @@ export const es: Dictionary = {
     markResolved: "Marcar como resuelta",
     resolving: "Guardando…",
     resolveError: "No se pudo actualizar. Inténtalo de nuevo.",
+  },
+
+  governance: {
+    listTitle: "Propuestas y votaciones",
+    listIntro:
+      "Propuestas de la comunidad y sus periodos de votación: primero las abiertas, luego las próximas y después las cerradas. Tu voto es secreto hasta que la votación cierra; los resultados aparecen solo después.",
+    create: "Nueva propuesta",
+    empty: "Aún no hay propuestas.",
+    openSection: "Abiertas a votación",
+    upcomingSection: "Próximas",
+    closedSection: "Cerradas",
+    windowOpenUntil: "Votación abierta hasta {date}",
+    windowOpensAt: "La votación abre {date}",
+    windowClosedAt: "Votación cerrada {date}",
+    proposedBy: "Propuesta por {name}",
+    opensLabel: "Abre la votación",
+    closesLabel: "Cierra la votación",
+    backToList: "← Todas las propuestas",
+    kinds: {
+      minor: "Menor",
+      major: "Mayor",
+      immutable: "Fundacional",
+    },
+    states: {
+      upcoming: "Próxima",
+      open: "Abierta",
+      closed: "Cerrada",
+    },
+    gateTitle: "Verifícate para participar en la gobernanza",
+    gateBody:
+      "Las propuestas y la votación son para residentes verificados de Redmond. Verifica tu residencia para leer y votar propuestas.",
+    gateCta: "Verifica tu residencia",
+    newTitle: "Nueva propuesta",
+    newIntro:
+      "Lleva una decisión a la comunidad. Indica cuándo abre y cierra la votación: ambas en hora de Redmond.",
+    fieldTitle: "Título",
+    fieldTitlePlaceholder: "p. ej. Adoptar el plan del jardín comunitario",
+    fieldKind: "Tipo de decisión",
+    fieldKindHint:
+      "Las decisiones más grandes necesitan un acuerdo más amplio para aprobarse. Los umbrales exactos los fija la comunidad.",
+    fieldBody: "Detalles",
+    fieldBodyPlaceholder: "Explica qué se decide y por qué…",
+    fieldOpens: "Abre la votación",
+    fieldCloses: "Cierra la votación",
+    submit: "Crear propuesta",
+    submitting: "Creando…",
+    titleRequired: "Por favor añade un título.",
+    windowRequired: "Por favor indica horas de apertura y cierre válidas.",
+    windowOrder: "La votación debe cerrar después de abrir.",
+    closesPast: "La hora de cierre debe estar en el futuro.",
+    errorGeneric: "No pudimos crear la propuesta. Inténtalo de nuevo.",
   },
 };

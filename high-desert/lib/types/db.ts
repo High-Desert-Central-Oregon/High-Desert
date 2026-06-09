@@ -57,6 +57,36 @@ export type EventRsvp = {
   created_at: string;
 };
 
+export type ProposalKind = "minor" | "major" | "immutable";
+export type ProposalStatus = "draft" | "open" | "closed";
+export type VoteChoice = "yes" | "no" | "abstain";
+
+export type ProposalRow = {
+  id: string;
+  author_id: string | null;
+  title: string;
+  body: string | null;
+  kind: ProposalKind;
+  status: ProposalStatus;
+  opens_at: string;
+  closes_at: string;
+  created_at: string;
+};
+
+/** Aggregate, weighted result — read ONLY from the proposal_results view, which
+ *  exposes closed proposals only and never per-ballot data. */
+export type ProposalResult = {
+  proposal_id: string;
+  title: string;
+  kind: ProposalKind;
+  status: ProposalStatus;
+  closes_at: string;
+  ballots: number;
+  yes_weight: number;
+  no_weight: number;
+  abstain_weight: number;
+};
+
 export type DocKind = "terms" | "privacy";
 
 export type DocumentRow = {

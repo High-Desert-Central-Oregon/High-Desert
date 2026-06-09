@@ -30,6 +30,7 @@ export const en = {
     reviewLink: "Reviews",
     neighborhoodLink: "Neighborhood",
     eventsLink: "Events",
+    governanceLink: "Proposals",
   },
 
   landing: {
@@ -252,6 +253,57 @@ export const en = {
     markResolved: "Mark resolved",
     resolving: "Saving…",
     resolveError: "Couldn't update that. Please try again.",
+  },
+
+  governance: {
+    listTitle: "Proposals & votes",
+    listIntro:
+      "Community proposals and their voting windows — open votes first, then upcoming, then closed. Your ballot is secret until a vote closes; results appear only after.",
+    create: "New proposal",
+    empty: "No proposals yet.",
+    openSection: "Open for voting",
+    upcomingSection: "Upcoming",
+    closedSection: "Closed",
+    windowOpenUntil: "Voting open until {date}",
+    windowOpensAt: "Voting opens {date}",
+    windowClosedAt: "Voting closed {date}",
+    proposedBy: "Proposed by {name}",
+    opensLabel: "Voting opens",
+    closesLabel: "Voting closes",
+    backToList: "← All proposals",
+    kinds: {
+      minor: "Minor",
+      major: "Major",
+      immutable: "Foundational",
+    },
+    states: {
+      upcoming: "Upcoming",
+      open: "Open",
+      closed: "Closed",
+    },
+    gateTitle: "Verify to take part in governance",
+    gateBody:
+      "Proposals and voting are for verified Redmond residents. Verify your residency to read and vote on proposals.",
+    gateCta: "Verify your residency",
+    newTitle: "New proposal",
+    newIntro:
+      "Put a decision to the community. Set when voting opens and closes — both are Redmond time.",
+    fieldTitle: "Title",
+    fieldTitlePlaceholder: "e.g. Adopt the community garden plan",
+    fieldKind: "Type of decision",
+    fieldKindHint:
+      "Bigger decisions need broader agreement to pass. The exact thresholds are set by the community.",
+    fieldBody: "Details",
+    fieldBodyPlaceholder: "Explain what's being decided and why…",
+    fieldOpens: "Voting opens",
+    fieldCloses: "Voting closes",
+    submit: "Create proposal",
+    submitting: "Creating…",
+    titleRequired: "Please add a title.",
+    windowRequired: "Please set valid open and close times.",
+    windowOrder: "Voting must close after it opens.",
+    closesPast: "The close time must be in the future.",
+    errorGeneric: "We couldn't create the proposal. Please try again.",
   },
 };
 

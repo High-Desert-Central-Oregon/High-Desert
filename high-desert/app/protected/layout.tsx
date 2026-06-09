@@ -48,6 +48,14 @@ async function NavBar() {
               {dict.nav.eventsLink}
             </Link>
           )}
+          {verified && (
+            <Link
+              href="/protected/governance"
+              className="text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {dict.nav.governanceLink}
+            </Link>
+          )}
           <Link
             href="/protected/neighborhoods"
             className="text-muted-foreground hover:text-foreground hover:underline"
