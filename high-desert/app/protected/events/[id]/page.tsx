@@ -8,7 +8,7 @@ import { RsvpForm } from "./rsvp-form";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
-import { formatEventDateTime } from "@/lib/events";
+import { formatRedmondDateTime } from "@/lib/time";
 import { t } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/i18n";
 import type { EventRow, RsvpStatus } from "@/lib/types/db";
@@ -153,7 +153,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           <div>
             <dt className="font-medium">{dict.events.whenLabel}</dt>
             <dd className="text-muted-foreground">
-              {formatEventDateTime(event.starts_at, locale)}
+              {formatRedmondDateTime(event.starts_at, locale)}
             </dd>
           </div>
         </div>

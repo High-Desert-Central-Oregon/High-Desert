@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,11 +17,11 @@ function errorMessage(state: EventFormState, dict: Dictionary): string | null {
 }
 
 /**
- * Create-event form. Plain fields, no comment thread (P12). The date/time field
- * is entered in Redmond local time (the cohort's clock); on submit we convert it
- * to a precise instant (ISO) in a hidden field so the server stores a real
- * timestamptz. creator_id and trust are never touched here — the server pins the
- * creator and RLS enforces verified.
+ * Create-event form. Plain fields, no comment thread (P12). The date/time is
+ * entered as a plain wall-clock value and submitted as-is; the server interprets
+ * it as Redmond time (lib/time.ts) — never the browser's clock — so an organizer
+ * in another timezone still schedules in Redmond time. creator_id and trust are
+ * never touched here: the server pins the creator and RLS enforces verified.
  */
 export function EventForm({
   neighborhoods,
@@ -36,13 +36,7 @@ export function EventForm({
     createEvent,
     null,
   );
-  const [localDt, setLocalDt] = useState("");
   const error = errorMessage(state, dict);
-
-  // Browser-local → ISO instant. The cohort is in Redmond, so the device clock
-  // and Redmond time line up; the value is read back and displayed in Redmond
-  // time everywhere (see lib/events.ts).
-  const iso = localDt ? new Date(localDt).toISOString() : "";
 
   return (
     <form action={action} className="flex flex-col gap-5">
@@ -65,15 +59,9 @@ export function EventForm({
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="when">{dict.events.fieldWhen}</Label>
-        <Input
-          id="when"
-          type="datetime-local"
-          required
-          value={localDt}
-          onChange={(e) => setLocalDt(e.target.value)}
-        />
-        {/* Precise instant submitted to the server. */}
-        <input type="hidden" name="starts_at" value={iso} />
+        {/* Submitted as a plain wall-clock string; the server reads it as
+            Redmond time (lib/time.ts), independent of the browser's timezone. */}
+        <Input id="when" name="starts_at" type="datetime-local" required />
       </div>
 
       <div className="flex flex-col gap-1.5">

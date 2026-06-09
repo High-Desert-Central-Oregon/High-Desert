@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
+import { redmondWallTimeToUtcISO } from "@/lib/time";
 
 export type EventFormState = { error: string } | null;
 export type RsvpState = { ok: true } | { error: string } | null;
@@ -33,9 +34,10 @@ export async function createEvent(
   const neighborhoodRaw = String(formData.get("neighborhood_id") ?? "").trim();
 
   if (!title) return { error: "title-required" };
-  if (!startsAt || Number.isNaN(Date.parse(startsAt))) {
-    return { error: "when-required" };
-  }
+  // The form sends a wall-clock value; interpret it as Redmond time, not the
+  // browser's or server's timezone (lib/time.ts).
+  const startsAtIso = redmondWallTimeToUtcISO(startsAt);
+  if (!startsAtIso) return { error: "when-required" };
 
   const capacity = Number.parseInt(capacityRaw, 10);
   const neighborhoodId =
@@ -49,7 +51,7 @@ export async function createEvent(
       neighborhood_id: neighborhoodId,
       title,
       body: body.length > 0 ? body : null,
-      starts_at: new Date(startsAt).toISOString(),
+      starts_at: startsAtIso,
       location: location.length > 0 ? location : null,
       capacity: Number.isInteger(capacity) && capacity > 0 ? capacity : null,
     })

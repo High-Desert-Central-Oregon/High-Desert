@@ -8,7 +8,7 @@ import { VerifiedNotice } from "./verified-notice";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
-import { formatEventDateTime } from "@/lib/events";
+import { formatRedmondDateTime } from "@/lib/time";
 import type { Dictionary } from "@/lib/i18n";
 
 export const metadata = {
@@ -53,7 +53,7 @@ function EventList({
               </Badge>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              {formatEventDateTime(ev.starts_at, locale)}
+              {formatRedmondDateTime(ev.starts_at, locale)}
             </p>
             {ev.location && (
               <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
