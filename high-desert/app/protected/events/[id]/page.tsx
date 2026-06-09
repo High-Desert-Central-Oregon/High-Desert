@@ -13,7 +13,7 @@ import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { getContentModeration } from "@/lib/moderation";
-import { t } from "@/lib/i18n";
+import { t, plural } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/i18n";
 import type { EventRow, RsvpStatus } from "@/lib/types/db";
 
@@ -221,7 +221,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
             <div>
               <dt className="font-medium">{dict.events.capacityLabel}</dt>
               <dd className="text-muted-foreground">
-                {t(dict.events.capacityValue, { count: event.capacity })}
+                {plural(locale, event.capacity, dict.events.capacityValue)}
               </dd>
             </div>
           </div>
@@ -249,9 +249,8 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           <h2 className="font-medium">{dict.rsvp.heading}</h2>
           {event.capacity != null && (
             <span className="text-sm text-muted-foreground">
-              {t(dict.rsvp.spotsTaken, {
+              {plural(locale, event.capacity, dict.rsvp.spotsTaken, {
                 going: going.length,
-                capacity: event.capacity,
               })}
             </span>
           )}

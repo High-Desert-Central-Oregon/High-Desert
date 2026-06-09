@@ -3,6 +3,12 @@ import type { Dictionary } from "./en";
 /**
  * Spanish strings. Typed as `Dictionary`, so it must match `en.ts` key-for-key.
  * Placeholders like {email} / {name} / {version} must be preserved verbatim.
+ *
+ * ⚠️ DRAFT — pending native-speaker review. These translations were drafted to
+ * ship en+es together from day one (invariant 9), but agent translation is NOT
+ * launch-ready: a community Spanish speaker should review the register and word
+ * choices before the beta, the same way the Terms await Oregon legal review.
+ * See DECISIONS.md (2026-06-09).
  */
 export const es: Dictionary = {
   app: {
@@ -140,7 +146,7 @@ export const es: Dictionary = {
     whenLabel: "Cuándo",
     whereLabel: "Dónde",
     capacityLabel: "Cupos limitados",
-    capacityValue: "{count} cupos",
+    capacityValue: { one: "{count} cupo", other: "{count} cupos" },
     noLocation: "Lugar por anunciar",
     backToEvents: "← Todos los eventos",
     newTitle: "Crear un evento",
@@ -185,7 +191,10 @@ export const es: Dictionary = {
     goingCount: "Asisten ({count})",
     maybeCount: "Tal vez ({count})",
     noneYet: "Aún no hay confirmaciones. Sé quien confirme primero.",
-    spotsTaken: "{going} de {capacity} cupos ocupados",
+    spotsTaken: {
+      one: "{going} de {count} cupo ocupado",
+      other: "{going} de {count} cupos ocupados",
+    },
     bringingTag: "lleva {item}",
   },
 
@@ -323,7 +332,7 @@ export const es: Dictionary = {
     resultsHeading: "Resultado",
     resultsNote:
       "Totales ponderados por antigüedad, solo en conjunto: nunca se muestran los votos individuales.",
-    turnout: "{count} votos emitidos",
+    turnout: { one: "{count} voto emitido", other: "{count} votos emitidos" },
     noResult: "No hay resultado disponible para esta propuesta.",
     closeHint:
       "La votación terminó. Registrar el cierre escribe el resultado oficial en el registro de auditoría público.",

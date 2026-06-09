@@ -7,6 +7,28 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-09 — Spanish strings are DRAFT, pending native-speaker review
+
+**Decision.** The app ships English and Spanish together from the first screen
+(invariant 9), but the Spanish in `lib/i18n/dictionaries/es.ts` is **agent-drafted
+and not launch-ready**. It is marked DRAFT (header comment in that file) and must
+be reviewed by a community Spanish speaker before the beta — the same posture as
+the Terms & Privacy text awaiting Oregon legal review.
+
+**Why.** Bilingual-by-default is a real commitment, not a checkbox; machine/agent
+translation gets the meaning across but can miss register, regional word choice
+(Central Oregon Spanish), and the plain-neighborly tone the rest of the product
+holds to. Shipping it as reviewed would over-claim. Flagging it keeps the parity
+(every key has an es value, enforced by the `Dictionary` type) while being honest
+that a human pass is owed.
+
+**How to apply.** A reviewer edits `es.ts` in place (the structure mirrors
+`en.ts` key-for-key); remove the DRAFT header once a native speaker has signed
+off. Pluralization uses CLDR rules (Intl.PluralRules) so plural forms are correct
+per language without hand-coding.
+
+---
+
 ## 2026-06-09 — Transparency log names the moderator, not the moderated member
 
 **Decision.** The public moderation transparency view shows, for each action: what

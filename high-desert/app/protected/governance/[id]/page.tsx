@@ -15,7 +15,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState } from "@/lib/governance";
 import { getContentModeration } from "@/lib/moderation";
-import { t } from "@/lib/i18n";
+import { t, plural } from "@/lib/i18n";
 import type { ProposalRow, ProposalResult, VoteChoice } from "@/lib/types/db";
 
 export const metadata = {
@@ -235,7 +235,7 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
           {result ? (
             <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
               <p className="text-sm text-muted-foreground">
-                {t(dict.governance.turnout, { count: Number(result.ballots) })}
+                {plural(locale, Number(result.ballots), dict.governance.turnout)}
               </p>
               <dl className="flex flex-col gap-2">
                 {(

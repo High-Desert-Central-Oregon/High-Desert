@@ -141,7 +141,7 @@ export const en = {
     whenLabel: "When",
     whereLabel: "Where",
     capacityLabel: "Limited spots",
-    capacityValue: "{count} spots",
+    capacityValue: { one: "{count} spot", other: "{count} spots" },
     noLocation: "Location to be announced",
     backToEvents: "← All events",
     newTitle: "Create an event",
@@ -186,7 +186,10 @@ export const en = {
     goingCount: "Going ({count})",
     maybeCount: "Maybe ({count})",
     noneYet: "No RSVPs yet. Be the first.",
-    spotsTaken: "{going} of {capacity} spots taken",
+    spotsTaken: {
+      one: "{going} of {count} spot taken",
+      other: "{going} of {count} spots taken",
+    },
     bringingTag: "bringing {item}",
   },
 
@@ -323,7 +326,7 @@ export const en = {
     resultsHeading: "Result",
     resultsNote:
       "Tenure-weighted totals, aggregate only — individual ballots are never shown.",
-    turnout: "{count} ballots cast",
+    turnout: { one: "{count} ballot cast", other: "{count} ballots cast" },
     noResult: "No result is available for this proposal.",
     closeHint:
       "Voting has ended. Recording the close writes the official result to the public audit log.",

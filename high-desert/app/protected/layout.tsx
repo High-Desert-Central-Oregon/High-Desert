@@ -27,6 +27,21 @@ async function ConsentGuard() {
   return null;
 }
 
+/** Localized skip link — the first focusable element, so keyboard users can jump
+ *  past the nav straight to the page content. */
+async function SkipLink() {
+  const { locale, dict } = await getServerDictionary();
+  return (
+    <a
+      href="#main"
+      lang={locale}
+      className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-background focus:px-3 focus:py-2 focus:shadow"
+    >
+      {dict.nav.skipToContent}
+    </a>
+  );
+}
+
 async function NavBar() {
   const { locale, dict } = await getServerDictionary();
   const profile = await getMyProfile();
@@ -111,12 +126,9 @@ export default function ProtectedLayout({
 }) {
   return (
     <div className="flex min-h-svh flex-col items-center">
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-background focus:px-3 focus:py-2 focus:shadow"
-      >
-        Skip to main content
-      </a>
+      <Suspense>
+        <SkipLink />
+      </Suspense>
 
       <Suspense fallback={<div className="h-16 w-full border-b" />}>
         <NavBar />

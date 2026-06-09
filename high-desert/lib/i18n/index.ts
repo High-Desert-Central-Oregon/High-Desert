@@ -37,4 +37,25 @@ export function t(template: string, values: Record<string, string | number>): st
   );
 }
 
+/**
+ * Pick the right plural form for `count` in the active language and fill it.
+ * Uses the platform's CLDR plural rules (Intl.PluralRules), so "1 ballot" vs
+ * "2 ballots" — and the Spanish equivalents — are correct without hand-coding
+ * each language's rules. `count` is always available as {count} in the template.
+ *
+ *   plural(locale, n, dict.governance.turnout)            // "1 ballot cast"
+ *   plural(locale, n, dict.rsvp.spotsTaken, { going })    // extra placeholders
+ */
+export function plural(
+  locale: string | null | undefined,
+  count: number,
+  forms: { one: string; other: string },
+  values: Record<string, string | number> = {},
+): string {
+  const lc = isLocale(locale) ? locale : defaultLocale;
+  const rule = new Intl.PluralRules(lc).select(count);
+  const template = rule === "one" ? forms.one : forms.other;
+  return t(template, { count, ...values });
+}
+
 export type { Dictionary };
