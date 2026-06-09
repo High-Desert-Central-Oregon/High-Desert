@@ -86,10 +86,52 @@ export const en = {
       "Your agreement to the current Terms & Privacy is on file. Thank you.",
     nextTitle: "What's next",
     nextBody:
-      "Verifying that you live in Redmond unlocks neighborhood events and the community vote. That step is coming soon in this beta.",
+      "Verifying that you live in Redmond unlocks neighborhood events and the community vote.",
     statusVerified: "Verified resident",
     statusUnverified: "Not yet verified",
     statusLabel: "Membership status",
+    verifyCta: "Verify your residency",
+  },
+
+  verify: {
+    title: "Verify that you live in Redmond",
+    intro:
+      "Full participation — neighborhood events and the community vote — is for verified Redmond residents. Choose one way to show your residency. A neighbor on the review team checks it by hand.",
+    forget:
+      "We delete your document the moment a reviewer decides. We keep only that you're verified and which method you used — never the document itself.",
+    methodLegend: "How would you like to verify?",
+    fileLabel: "Upload your document",
+    fileHint: "A clear photo or PDF, up to 10 MB.",
+    submit: "Submit for review",
+    submitting: "Submitting…",
+    postcardSubmit: "Request a mailed code",
+    fileRequired: "Please choose a file to upload.",
+    tooLarge: "That file is over 10 MB. Please choose a smaller one.",
+    badType: "Please upload an image (JPG, PNG, WEBP, HEIC) or a PDF.",
+    errorGeneric: "We couldn't submit that. Please try again.",
+    pendingTitle: "Your verification is under review",
+    pendingBody:
+      "A reviewer will check it soon. You'll get full access once you're approved — you can safely close this page.",
+    verifiedTitle: "You're a verified resident",
+    verifiedBody:
+      "Thank you. You have full access to neighborhood events and the community vote.",
+    rejectedNote:
+      "Your last submission wasn't approved. You can try again below with a different document or the mailed-code option.",
+    methods: {
+      id: "Government ID",
+      utility_bill: "Utility bill",
+      voter_reg: "Voter registration",
+      property_record: "Property record",
+      postcard_code: "Mailed postcard code",
+    },
+    methodHints: {
+      id: "A driver's license or state ID showing your Redmond address.",
+      utility_bill: "A recent water, power, gas, or internet bill in your name.",
+      voter_reg: "Your Oregon voter registration showing your address.",
+      property_record: "A property tax statement or deed for your Redmond home.",
+      postcard_code:
+        "No document needed. We mail a one-time code to your Redmond address and a reviewer confirms it with you — for anyone using a PO box or without standard paperwork.",
+    },
   },
 };
 

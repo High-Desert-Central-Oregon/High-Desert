@@ -85,9 +85,51 @@ export const es: Dictionary = {
       "Tu aceptación de los Términos y la Privacidad actuales está registrada. Gracias.",
     nextTitle: "Qué sigue",
     nextBody:
-      "Verificar que vives en Redmond desbloquea los eventos del vecindario y la votación comunitaria. Ese paso llegará pronto en esta beta.",
+      "Verificar que vives en Redmond desbloquea los eventos del vecindario y la votación comunitaria.",
     statusVerified: "Residente verificado",
     statusUnverified: "Aún no verificado",
     statusLabel: "Estado de membresía",
+    verifyCta: "Verifica tu residencia",
+  },
+
+  verify: {
+    title: "Verifica que vives en Redmond",
+    intro:
+      "La participación completa —eventos del vecindario y la votación comunitaria— es para residentes verificados de Redmond. Elige una forma de mostrar tu residencia. Una persona del equipo de revisión la comprueba a mano.",
+    forget:
+      "Borramos tu documento en el momento en que una persona decide. Solo conservamos que estás verificado y qué método usaste — nunca el documento en sí.",
+    methodLegend: "¿Cómo te gustaría verificarte?",
+    fileLabel: "Sube tu documento",
+    fileHint: "Una foto clara o un PDF, hasta 10 MB.",
+    submit: "Enviar para revisión",
+    submitting: "Enviando…",
+    postcardSubmit: "Solicitar un código por correo",
+    fileRequired: "Por favor elige un archivo para subir.",
+    tooLarge: "Ese archivo supera los 10 MB. Por favor elige uno más pequeño.",
+    badType: "Por favor sube una imagen (JPG, PNG, WEBP, HEIC) o un PDF.",
+    errorGeneric: "No pudimos enviarlo. Inténtalo de nuevo.",
+    pendingTitle: "Tu verificación está en revisión",
+    pendingBody:
+      "Una persona la revisará pronto. Tendrás acceso completo en cuanto se apruebe — puedes cerrar esta página con tranquilidad.",
+    verifiedTitle: "Eres residente verificado",
+    verifiedBody:
+      "Gracias. Tienes acceso completo a los eventos del vecindario y a la votación comunitaria.",
+    rejectedNote:
+      "Tu último envío no fue aprobado. Puedes intentarlo de nuevo abajo con otro documento o con la opción del código por correo.",
+    methods: {
+      id: "Identificación oficial",
+      utility_bill: "Factura de servicios",
+      voter_reg: "Registro electoral",
+      property_record: "Registro de propiedad",
+      postcard_code: "Código por correo postal",
+    },
+    methodHints: {
+      id: "Una licencia de conducir o identificación estatal que muestre tu dirección en Redmond.",
+      utility_bill: "Una factura reciente de agua, luz, gas o internet a tu nombre.",
+      voter_reg: "Tu registro electoral de Oregón que muestre tu dirección.",
+      property_record: "Un recibo de impuestos sobre la propiedad o escritura de tu casa en Redmond.",
+      postcard_code:
+        "No se necesita documento. Enviamos un código de un solo uso a tu dirección en Redmond y una persona lo confirma contigo — para quienes usan un apartado postal o no tienen documentación estándar.",
+    },
   },
 };

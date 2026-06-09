@@ -1,5 +1,7 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { CheckCircle2, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
@@ -50,6 +52,11 @@ async function Home() {
       <section className="rounded-lg border border-dashed p-5">
         <h2 className="font-medium">{dict.home.nextTitle}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{dict.home.nextBody}</p>
+        {!verified && (
+          <Button asChild className="mt-4">
+            <Link href="/protected/verify">{dict.home.verifyCta}</Link>
+          </Button>
+        )}
       </section>
     </div>
   );
