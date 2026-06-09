@@ -346,7 +346,9 @@ end; $$;
 -- ============================================================================
 -- 6 · VIEW: proposal_results  (aggregate, weighted, SECRET UNTIL CLOSE)
 --     Owned by the migration role, so it reads votes past RLS to aggregate —
---     but only ever exposes proposals that are closed.
+--     but reveals ONLY after a proposal's close TIME has passed. Visibility is
+--     purely temporal (now() > closes_at), never coupled to `status`: voting is
+--     gated on time, so a status flip can never reveal a tally early.
 -- ============================================================================
 create or replace view proposal_results as
 select
@@ -357,7 +359,7 @@ select
   coalesce(sum(case when v.choice='abstain' then v.weight end),0)   as abstain_weight
 from proposals p
 left join votes v on v.proposal_id = p.id
-where p.status = 'closed' or now() > p.closes_at
+where now() > p.closes_at
 group by p.id;
 
 -- ============================================================================
@@ -563,7 +565,8 @@ insert into documents (kind, version, body) values
 --   (verify-then-forget — the DB drops the pointer; the function drops the file).
 --
 -- • SCHEDULED: a cron/edge function flips proposals open -> closed at closes_at
---   (or a moderator closes one). proposal_results only shows closed proposals.
+--   (or a moderator records the close afterward). proposal_results reveals
+--   results purely on time — only once now() > closes_at.
 --
 -- • Casting a vote (client): insert { proposal_id, choice } only — the trigger sets
 --   user_id and weight. Reading results: select from proposal_results.
