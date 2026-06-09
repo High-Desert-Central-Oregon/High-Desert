@@ -4,13 +4,14 @@ import { notFound, redirect } from "next/navigation";
 import { CalendarClock, CalendarCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedGate } from "@/components/verified-gate";
+import { VoteForm } from "./vote-form";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState } from "@/lib/governance";
 import { t } from "@/lib/i18n";
-import type { ProposalRow } from "@/lib/types/db";
+import type { ProposalRow, VoteChoice } from "@/lib/types/db";
 
 export const metadata = {
   title: "Proposal · High Desert",
@@ -62,6 +63,19 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
       .eq("id", proposal.author_id)
       .maybeSingle<{ display_name: string }>();
     authorName = author?.display_name ?? null;
+  }
+
+  // The member's own current ballot, to prefill the form while open. RLS
+  // (vt_select) returns ONLY the caller's own row — never anyone else's.
+  let myChoice: VoteChoice | null = null;
+  if (state === "open") {
+    const { data: ballot } = await supabase
+      .from("votes")
+      .select("choice")
+      .eq("proposal_id", proposal.id)
+      .eq("user_id", profile.id)
+      .maybeSingle<{ choice: VoteChoice }>();
+    myChoice = ballot?.choice ?? null;
   }
 
   const stateBadgeVariant =
@@ -127,6 +141,23 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
           {proposal.body}
         </div>
       )}
+
+      {/* Voting — only while open. No tally is shown here (secret until close). */}
+      {state === "open" && (
+        <VoteForm
+          proposalId={proposal.id}
+          initialChoice={myChoice}
+          dict={dict}
+        />
+      )}
+      {state === "upcoming" && (
+        <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+          {t(dict.governance.votingOpensNote, {
+            date: formatRedmondDateTime(proposal.opens_at, locale),
+          })}
+        </p>
+      )}
+      {/* state === "closed": results render here in Part 4. */}
     </article>
   );
 }

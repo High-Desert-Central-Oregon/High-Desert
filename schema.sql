@@ -133,7 +133,7 @@ create table proposals (
   created_at timestamptz not null default now()
 );
 
-create table votes (                       -- append-only; SECRET (no member-facing select policy)
+create table votes (                       -- SECRET ballot; one row per member, revisable only while open
   id          uuid primary key default gen_random_uuid(),
   proposal_id uuid not null references proposals(id) on delete cascade,
   user_id     uuid not null references profiles(id) on delete cascade,
@@ -142,6 +142,10 @@ create table votes (                       -- append-only; SECRET (no member-fac
   created_at  timestamptz not null default now(),
   unique (proposal_id, user_id)            -- hard guarantee of one vote per member per proposal
 );
+-- A member may overwrite their OWN ballot while the proposal is open; at close it
+-- freezes permanently (enforced in the policies below). A member reads only their
+-- own ballot — never anyone else's. No delete. (Invariant 6 amended; see
+-- DECISIONS.md 2026-06-09. The audit log stays strictly append-only.)
 
 create table moderation_actions (          -- append-only; public for transparency (uuids only)
   id          uuid primary key default gen_random_uuid(),
@@ -245,7 +249,7 @@ begin
   return new;
 end; $$;
 create trigger trg_set_vote_weight
-  before insert on votes
+  before insert or update on votes
   for each row execute function public.set_vote_weight();
 
 -- Verify, then forget: drop the evidence pointer the instant a decision is recorded
@@ -431,16 +435,36 @@ create policy pr_insert on proposals for insert to authenticated
 create policy pr_update on proposals for update to authenticated
   using (public.is_moderator()) with check (public.is_moderator());
 
--- Votes: INSERT only — verified, proposal open, not already voted. No select policy => SECRET.
--- (user_id + weight are overwritten by trg_set_vote_weight; unique constraint is the hard guard.)
+-- Votes: SECRET ballot, revisable only while open. user_id + weight are always
+-- set by trg_set_vote_weight (on insert AND update); the unique constraint is the
+-- hard one-row guard. A re-vote flows through UPDATE, so vt_insert has no
+-- "not already voted" clause (it would block the upsert's insert probe).
+--   • SELECT: a member reads ONLY their own ballot — never another's, not even moderators.
+--   • INSERT: verified, own row, proposal open.
+--   • UPDATE: own row, only while open → frozen forever once closed.
+--   • (no DELETE policy: a ballot can't be withdrawn.)
+create policy vt_select on votes for select to authenticated
+  using (user_id = auth.uid());
 create policy vt_insert on votes for insert to authenticated
   with check (
     public.is_verified()
+    and user_id = auth.uid()
     and exists (select 1 from proposals pr
                 where pr.id = proposal_id and pr.status = 'open'
                   and now() between pr.opens_at and pr.closes_at)
-    and not exists (select 1 from votes v
-                where v.proposal_id = proposal_id and v.user_id = auth.uid())
+  );
+create policy vt_update on votes for update to authenticated
+  using (
+    user_id = auth.uid()
+    and exists (select 1 from proposals pr
+                where pr.id = proposal_id and pr.status = 'open'
+                  and now() between pr.opens_at and pr.closes_at)
+  )
+  with check (
+    user_id = auth.uid()
+    and exists (select 1 from proposals pr
+                where pr.id = proposal_id and pr.status = 'open'
+                  and now() between pr.opens_at and pr.closes_at)
   );
 
 -- Moderation: public read (transparency); moderators insert; append-only

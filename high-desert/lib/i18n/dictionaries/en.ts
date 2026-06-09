@@ -304,6 +304,20 @@ export const en = {
     windowOrder: "Voting must close after it opens.",
     closesPast: "The close time must be in the future.",
     errorGeneric: "We couldn't create the proposal. Please try again.",
+    voteHeading: "Your vote",
+    voteSecrecyNote:
+      "Your ballot is secret — only you can see it. You can change it any time until voting closes. No results are shown until then.",
+    choices: {
+      yes: "Yes",
+      no: "No",
+      abstain: "Abstain",
+    },
+    voteSubmit: "Cast my vote",
+    voteChange: "Change my vote",
+    voteSubmitting: "Saving…",
+    voteSaved: "Your vote is recorded.",
+    voteError: "We couldn't record your vote. Please try again.",
+    votingOpensNote: "Voting opens {date}. Check back then to cast your vote.",
   },
 };
 

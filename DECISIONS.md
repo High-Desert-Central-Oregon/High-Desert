@@ -7,6 +7,38 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-09 — Invariant 6 narrowly amended: ballots revisable until close
+
+**Decision.** A member may overwrite their own ballot while a proposal is open;
+at close the ballot freezes permanently. This narrows CLAUDE.md invariant 6,
+which listed `votes` as append-only (no update/delete). The amendment is scoped
+to the live ballot row only — the append-only audit log is unchanged.
+
+**Why.** Revisability-until-close is a coercion-resistance property of the secret
+ballot, not a convenience: a member pressured into an early vote can quietly
+change it before the window closes. Overwriting in place (rather than appending a
+new row) also minimizes ballot metadata — there is no recast trail to subpoena or
+leak. The permanent, tamper-evident record the invariant protects is the *closed*
+result and the audit log, both untouched.
+
+**How it works (all enforced in RLS, not the UI).**
+- `vt_select`: a member may read ONLY their own ballot (`user_id = auth.uid()`).
+  No other member and no moderator can read anyone else's vote, ever.
+- `vt_insert` / `vt_update`: a member may insert and update only their own row,
+  and update ONLY while the proposal is open (`now() between opens_at and
+  closes_at`). After close the predicate is false, so the ballot is immutable.
+- No `delete` policy: a ballot can't be withdrawn.
+- `set_vote_weight` now fires on INSERT **and** UPDATE, so the stored weight is
+  always re-derived from tenure server-side; the client never sends a weight.
+- Invariant 4 is preserved: still one row per member (unique constraint); this
+  updates in place rather than adding rows.
+- No vote choice is ever written to the audit log (that would defeat the secret
+  ballot). The `votes` table, gated by RLS, is the only record of a ballot.
+
+See `migrations/0002_votes_revisable.sql`.
+
+---
+
 ## 2026-06-09 — Neighborhood "none fits" modeled as a request queue
 
 **Decision.** The "none of these fit" neighborhood option is modeled as its own

@@ -303,5 +303,20 @@ export const es: Dictionary = {
     windowOrder: "La votación debe cerrar después de abrir.",
     closesPast: "La hora de cierre debe estar en el futuro.",
     errorGeneric: "No pudimos crear la propuesta. Inténtalo de nuevo.",
+    voteHeading: "Tu voto",
+    voteSecrecyNote:
+      "Tu voto es secreto: solo tú puedes verlo. Puedes cambiarlo en cualquier momento hasta que cierre la votación. No se muestran resultados hasta entonces.",
+    choices: {
+      yes: "Sí",
+      no: "No",
+      abstain: "Abstención",
+    },
+    voteSubmit: "Emitir mi voto",
+    voteChange: "Cambiar mi voto",
+    voteSubmitting: "Guardando…",
+    voteSaved: "Tu voto quedó registrado.",
+    voteError: "No pudimos registrar tu voto. Inténtalo de nuevo.",
+    votingOpensNote:
+      "La votación abre {date}. Vuelve entonces para emitir tu voto.",
   },
 };
