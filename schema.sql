@@ -211,6 +211,21 @@ returns void language sql security definer set search_path = public as $$
   values (auth.uid(), p_action, p_entity, p_entity_id, coalesce(p_metadata,'{}'::jsonb));
 $$;
 
+-- Is a piece of content currently hidden? True iff its LATEST remove/restore
+-- moderation action is a 'remove'. Used in the votes RLS and proposal_results so
+-- moderation state is DB-authoritative, not just enforced in the UI.
+create or replace function public.is_content_hidden(p_type text, p_id uuid)
+returns boolean language sql stable security definer set search_path = public as $$
+  select coalesce(
+    (select m.action = 'remove'
+       from moderation_actions m
+      where m.target_type = p_type and m.target_id = p_id
+        and m.action in ('remove','restore')
+      order by m.created_at desc, m.id desc
+      limit 1),
+    false);
+$$;
+
 -- ============================================================================
 -- 4 · TRIGGERS  (the integrity guarantees)
 -- ============================================================================
@@ -243,6 +258,24 @@ end; $$;
 create trigger trg_guard_profile_columns
   before update on profiles
   for each row execute function public.guard_profile_columns();
+
+-- A proposal's voting window, threshold, and author are fixed at creation. Freeze
+-- them on update so a moderator (the only role that can update a proposal) can't
+-- move the deadline (reveal a tally early / reopen a closed vote), change the
+-- threshold, or reassign authorship. Only `status` (to record a close) and the
+-- title/body stay editable.
+create or replace function public.guard_proposal_columns()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  new.opens_at  := old.opens_at;
+  new.closes_at := old.closes_at;
+  new.kind      := old.kind;
+  new.author_id := old.author_id;
+  return new;
+end; $$;
+create trigger trg_guard_proposal_columns
+  before update on proposals
+  for each row execute function public.guard_proposal_columns();
 
 -- Vote weight + voter id are set server-side, never trusted from the client
 create or replace function public.set_vote_weight()
@@ -315,6 +348,43 @@ end; $$;
 create trigger trg_log_moderation
   after insert on moderation_actions
   for each row execute function public.log_moderation();
+
+-- Governance audit is DB-driven: a proposal logs `proposal.created` on insert and
+-- `proposal.closed` (with the aggregate result, no per-ballot data) on the
+-- transition to 'closed'. Writing these in the database — rather than via a
+-- client log_audit() call — means they can't be forged or skipped, and lets
+-- log_audit() stay un-exposed to clients (see GRANTS).
+create or replace function public.log_proposal_created()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  perform public.log_audit('proposal.created', 'proposal', new.id,
+                           jsonb_build_object('kind', new.kind));
+  return null;
+end; $$;
+create trigger trg_log_proposal_created
+  after insert on proposals
+  for each row execute function public.log_proposal_created();
+
+create or replace function public.log_proposal_closed()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare v_ballots int; v_yes numeric; v_no numeric; v_abstain numeric;
+begin
+  select count(*),
+         coalesce(sum(case when choice='yes'     then weight end), 0),
+         coalesce(sum(case when choice='no'      then weight end), 0),
+         coalesce(sum(case when choice='abstain' then weight end), 0)
+    into v_ballots, v_yes, v_no, v_abstain
+  from votes where proposal_id = new.id;
+
+  perform public.log_audit('proposal.closed', 'proposal', new.id,
+    jsonb_build_object('ballots', v_ballots, 'yes_weight', v_yes,
+                       'no_weight', v_no, 'abstain_weight', v_abstain));
+  return null;
+end; $$;
+create trigger trg_log_proposal_closed
+  after update of status on proposals
+  for each row when (new.status = 'closed' and old.status is distinct from 'closed')
+  execute function public.log_proposal_closed();
 
 -- ============================================================================
 -- 5 · MODERATOR ACTION: decide a verification (human-in-the-loop)
@@ -440,6 +510,7 @@ select
 from proposals p
 left join votes v on v.proposal_id = p.id
 where now() > p.closes_at
+  and not public.is_content_hidden('proposal', p.id)   -- a removed proposal surfaces no result
 group by p.id;
 
 -- Current visibility of a piece of content = its LATEST remove/restore action
@@ -482,14 +553,15 @@ create policy pf_read   on profiles for select to authenticated using (true);
 create policy pf_update on profiles for update to authenticated
   using (id = auth.uid()) with check (id = auth.uid());
 
--- Verifications: see your own (+ moderators see all); submit your own as 'pending';
--- moderators update status (normally via decide_verification()).
+-- Verifications: see your own (+ moderators see all); submit your own as 'pending'.
+-- There is deliberately NO update policy: a decision is recorded ONLY through
+-- decide_verification() (SECURITY DEFINER), which also sets profiles.verified +
+-- tenure and writes the audit entry. A direct moderator UPDATE would leave an
+-- unaudited, half-verified state, so that path is closed (G3).
 create policy vf_read   on verifications for select to authenticated
   using (user_id = auth.uid() or public.is_moderator());
 create policy vf_insert on verifications for insert to authenticated
   with check (user_id = auth.uid() and status = 'pending');
-create policy vf_update on verifications for update to authenticated
-  using (public.is_moderator()) with check (public.is_moderator());
 
 -- Neighborhood-help requests: a member opens & reads their own; moderators read
 -- all and resolve them. No delete policy — resolved rows stay as light history.
@@ -511,8 +583,11 @@ create policy ev_insert on events for insert to authenticated
 create policy ev_update on events for update to authenticated
   using (creator_id = auth.uid() or public.is_moderator())
   with check (creator_id = auth.uid() or public.is_moderator());
+-- Creator self-delete only. A moderator must NOT silently hard-delete an event —
+-- moderation goes through the legible, appealable remove flow (moderation_actions),
+-- never a quiet DELETE (G4, P7).
 create policy ev_delete on events for delete to authenticated
-  using (creator_id = auth.uid() or public.is_moderator());
+  using (creator_id = auth.uid());
 
 -- RSVPs: verified members read; manage your own
 create policy rs_read   on event_rsvps for select to authenticated using (public.is_verified());
@@ -543,6 +618,7 @@ create policy vt_insert on votes for insert to authenticated
   with check (
     public.is_verified()
     and user_id = auth.uid()
+    and not public.is_content_hidden('proposal', proposal_id)   -- not on a removed proposal (G1)
     and exists (select 1 from proposals pr
                 where pr.id = proposal_id and pr.status = 'open'
                   and now() between pr.opens_at and pr.closes_at)
@@ -550,12 +626,14 @@ create policy vt_insert on votes for insert to authenticated
 create policy vt_update on votes for update to authenticated
   using (
     user_id = auth.uid()
+    and not public.is_content_hidden('proposal', proposal_id)   -- not on a removed proposal (G1)
     and exists (select 1 from proposals pr
                 where pr.id = proposal_id and pr.status = 'open'
                   and now() between pr.opens_at and pr.closes_at)
   )
   with check (
     user_id = auth.uid()
+    and not public.is_content_hidden('proposal', proposal_id)   -- not on a removed proposal (G1)
     and exists (select 1 from proposals pr
                 where pr.id = proposal_id and pr.status = 'open'
                   and now() between pr.opens_at and pr.closes_at)
@@ -587,6 +665,17 @@ grant select, insert, update, delete on
   profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log
   to authenticated;
+
+-- log_audit() and vote_weight_for() are internal primitives — only ever called
+-- from owner-context SECURITY DEFINER code (triggers, decide_verification,
+-- resolve_appeal, set_vote_weight), which keeps EXECUTE as the owner. Revoke the
+-- default PUBLIC execute so a member can't call them directly as a PostgREST RPC:
+-- log_audit would forge audit entries; vote_weight_for would leak any member's
+-- weight (G2). Self-guarding RPCs (decide_verification, file_appeal,
+-- resolve_appeal) and the RLS helpers (is_verified, is_moderator,
+-- is_content_hidden) intentionally keep their public EXECUTE.
+revoke execute on function public.log_audit(text, text, uuid, jsonb) from public, anon, authenticated;
+revoke execute on function public.vote_weight_for(uuid)              from public, anon, authenticated;
 
 -- ============================================================================
 -- 9 · SEED — Redmond neighborhoods (35; from the Enjoy Bend Life map; Wildflower corrected)

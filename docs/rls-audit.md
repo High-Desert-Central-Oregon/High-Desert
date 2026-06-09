@@ -230,13 +230,13 @@ Recommended, not urgent (RLS is on); left as a note rather than a gap.
 
 ## Findings — gap list
 
-| # | Severity | Gap | Fix (Part 2) | Status |
+| # | Severity | Gap | Fix | Status |
 |---|---|---|---|---|
-| **G1** | High | Vote accepted on a **removed** proposal — write path ignores moderation state (known) | `is_content_hidden()` check in `vt_insert`/`vt_update`; also exclude removed proposals from `proposal_results` | OPEN |
-| **G2** | High | `log_audit()` is a client-callable RPC with no guard → **forgeable audit entries** | `REVOKE EXECUTE` on `log_audit` (and `vote_weight_for`) from `anon`/`authenticated`/`public` | OPEN |
-| **G3** | Medium | `vf_update` lets a moderator bypass `decide_verification()` → unaudited, broken half-state | `DROP POLICY vf_update` (RPC is definer, doesn't need it) | OPEN |
-| **G4** | Medium | `ev_delete` lets a moderator **silently hard-delete** an event (P7 bypass) | Restrict `ev_delete` to creator-only; mods use the legible `remove` flow | OPEN |
-| **G5** | Medium | `pr_update` lets a moderator move `opens_at`/`closes_at` (reveal early / reopen) and change `kind`/`author_id`, unaudited | Freeze window + `kind` + `author_id` on update via a `guard_proposal_columns` trigger; `status`/content stay editable | OPEN |
+| **G1** | High | Vote accepted on a **removed** proposal — write path ignores moderation state (known) | `is_content_hidden()` check in `vt_insert`/`vt_update`; also exclude removed proposals from `proposal_results` | ✅ RESOLVED (0007) |
+| **G2** | High | `log_audit()` is a client-callable RPC with no guard → **forgeable audit entries** | `REVOKE EXECUTE` on `log_audit` (and `vote_weight_for`) from `anon`/`authenticated`/`public` | ✅ RESOLVED (0007) |
+| **G3** | Medium | `vf_update` lets a moderator bypass `decide_verification()` → unaudited, broken half-state | `DROP POLICY vf_update` (RPC is definer, doesn't need it) | ✅ RESOLVED (0007) |
+| **G4** | Medium | `ev_delete` lets a moderator **silently hard-delete** an event (P7 bypass) | Restrict `ev_delete` to creator-only; mods use the legible `remove` flow | ✅ RESOLVED (0007) |
+| **G5** | Medium | `pr_update` lets a moderator move `opens_at`/`closes_at` (reveal early / reopen) and change `kind`/`author_id`, unaudited | Freeze window + `kind` + `author_id` on update via a `guard_proposal_columns` trigger; `status`/content stay editable | ✅ RESOLVED (0007) |
 
 Accepted notes (documented, no change): **N1** profile column over-exposure ·
 **N2** removed-content identity recoverable via direct query (transparency posture)
@@ -244,4 +244,43 @@ Accepted notes (documented, no change): **N1** profile column over-exposure ·
 grants (RLS-gated; defense-in-depth opportunity) · service_role bypasses RLS
 (app-limited to storage deletion).
 
-> Part 2 closes G1–G5 and updates this table to **RESOLVED**.
+---
+
+## Resolution — migration 0007 (Part 2)
+
+All five gaps closed in `migrations/0007_rls_hardening.sql` (folded into
+`schema.sql`). Re-checked posture:
+
+- **G1 closed.** New `is_content_hidden(type, id)` (latest remove/restore =
+  remove?). `vt_insert` and `vt_update` now both require
+  `not is_content_hidden('proposal', proposal_id)`, so a removed proposal accepts
+  no new vote **and** freezes existing ballots from change — moderation state is
+  now DB-authoritative on the write path, not UI-only. `proposal_results` also
+  excludes removed proposals, so a takedown surfaces no result anywhere (incl. the
+  anon-readable view). A later `restore` re-opens both, as expected.
+- **G2 closed.** The app's only direct `log_audit()` RPC calls — `proposal.created`
+  and `proposal.closed` — were moved to DB triggers (`trg_log_proposal_created`,
+  `trg_log_proposal_closed`), so those entries are written on the actual state
+  change: un-forgeable and un-skippable, with the close aggregate computed in the
+  database (no per-ballot data). With no client needing it, `EXECUTE` on
+  `log_audit()` and `vote_weight_for()` is revoked from `public`/`anon`/
+  `authenticated`. The audit log can now be written **only** by owner-context
+  SECURITY DEFINER code (the audit triggers, `decide_verification`,
+  `resolve_appeal`), which keeps EXECUTE as the owner. Self-guarding RPCs
+  (`decide_verification`, `file_appeal`, `resolve_appeal`) and the RLS helpers
+  (`is_verified`, `is_moderator`, `is_content_hidden`) keep their public EXECUTE —
+  the policies invoke them as the querying role.
+- **G3 closed.** `vf_update` dropped. Verifications now change **only** through
+  `decide_verification()` — the audited, profile-updating, SECURITY DEFINER path.
+  No direct-UPDATE half-state remains.
+- **G4 closed.** `ev_delete` is creator-only. A moderator can no longer hard-delete
+  an event; takedowns go through the legible, appealable `remove` flow (P7).
+- **G5 closed.** `trg_guard_proposal_columns` freezes `opens_at`, `closes_at`,
+  `kind`, `author_id` on any proposal UPDATE. A moderator can record a close
+  (`status`) and fix typos (title/body) but cannot move the voting window, change
+  the threshold, or reassign authorship — "only the clock ends a vote" holds.
+
+Re-verified unchanged after 0007: secret ballot (own-row select only; post-close
+aggregate only; nothing per-ballot in audit), append-only on
+consents/moderation_actions/audit_log, the profile trust-field guard, and the
+appeal separation-of-duties (RPC-only writes).

@@ -67,14 +67,9 @@ export async function createProposal(
 
   if (error || !data) return { error: "create-failed" };
 
-  // Append-only audit (no PII). Best-effort: the proposal already exists.
-  await supabase.rpc("log_audit", {
-    p_action: "proposal.created",
-    p_entity: "proposal",
-    p_entity_id: data.id,
-    p_metadata: { kind },
-  });
-
+  // The append-only `proposal.created` audit entry is written by a DB trigger on
+  // insert (trg_log_proposal_created) — DB-driven so it can't be forged or
+  // skipped, and so log_audit() needn't be a client-callable RPC (RLS audit, G2).
   revalidatePath("/protected/governance");
   redirect(`/protected/governance/${data.id}`);
 }
@@ -125,9 +120,11 @@ export async function castVote(
  * time (proposal_results shows any proposal past closes_at), but a moderator
  * marks it formally closed and writes the permanent audit entry.
  *
- * The audit carries the AGGREGATE result only (turnout + weighted totals) —
- * never any per-ballot data, which would defeat the secret ballot. Idempotent:
- * a proposal already closed is a no-op, so the close is audited exactly once.
+ * Flipping status to 'closed' fires a DB trigger (trg_log_proposal_closed) that
+ * writes the append-only `proposal.closed` audit entry with the AGGREGATE result
+ * only (turnout + weighted totals, computed in the DB) — never per-ballot data.
+ * DB-driven so the close is always audited and the entry can't be forged (G2).
+ * Idempotent: a proposal already closed is a no-op, so it's audited exactly once.
  * Reversing a decision happens through a NEW proposal — history is never edited.
  */
 export async function recordProposalClose(
@@ -145,37 +142,17 @@ export async function recordProposalClose(
   if (!proposal) return { error: "not-found" };
   if (proposal.status === "closed") {
     revalidatePath(`/protected/governance/${proposalId}`);
-    return null; // already officially closed — don't double-audit
+    return null; // already officially closed — the trigger fired once, on the transition
   }
   if (Date.parse(proposal.closes_at) > Date.now()) {
     return { error: "not-yet-closed" }; // window still open; no early close here
   }
-
-  // Aggregate result only (the view exposes it because the window has passed).
-  const { data: result } = await supabase
-    .from("proposal_results")
-    .select("ballots, yes_weight, no_weight, abstain_weight")
-    .eq("proposal_id", proposalId)
-    .maybeSingle<{
-      ballots: number;
-      yes_weight: number;
-      no_weight: number;
-      abstain_weight: number;
-    }>();
 
   const { error: upError } = await supabase
     .from("proposals")
     .update({ status: "closed" })
     .eq("id", proposalId);
   if (upError) return { error: "close-failed" };
-
-  // Append-only audit, aggregate only — no per-ballot data.
-  await supabase.rpc("log_audit", {
-    p_action: "proposal.closed",
-    p_entity: "proposal",
-    p_entity_id: proposalId,
-    p_metadata: result ?? {},
-  });
 
   revalidatePath(`/protected/governance/${proposalId}`);
   return null;
