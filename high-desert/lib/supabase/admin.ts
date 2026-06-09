@@ -12,14 +12,14 @@ import { createClient } from "@supabase/supabase-js";
  * (CLAUDE.md invariant 1).
  *
  * Never import this into client code, and never expose the secret key
- * (`SUPABASE_SECRET_KEY` is server-only — not `NEXT_PUBLIC_*`).
+ * (`SUPABASE_SERVICE_ROLE_KEY` is server-only — not `NEXT_PUBLIC_*`).
  */
 export function createAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  const secretKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !secretKey) {
     throw new Error(
-      "Admin client requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY.",
+      "Admin client requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
     );
   }
   return createClient(url, secretKey, {
