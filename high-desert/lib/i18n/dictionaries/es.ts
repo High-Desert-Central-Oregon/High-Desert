@@ -24,6 +24,8 @@ export const es: Dictionary = {
     signIn: "Iniciar sesión",
     signOut: "Cerrar sesión",
     skipToContent: "Saltar al contenido principal",
+    verifyLink: "Verificar",
+    reviewLink: "Revisiones",
   },
 
   landing: {
@@ -131,5 +133,21 @@ export const es: Dictionary = {
       postcard_code:
         "No se necesita documento. Enviamos un código de un solo uso a tu dirección en Redmond y una persona lo confirma contigo — para quienes usan un apartado postal o no tienen documentación estándar.",
     },
+  },
+
+  review: {
+    title: "Revisiones de verificación",
+    intro:
+      "Comprobaciones de residencia pendientes, las más antiguas primero. Una persona decide cada una. Aprobar otorga el estado de verificado e inicia la antigüedad del miembro. El archivo de evidencia se elimina en cualquier caso.",
+    empty: "No hay verificaciones en espera por ahora.",
+    viewEvidence: "Ver evidencia",
+    opening: "Abriendo…",
+    noEvidence: "Sin archivo — solicitud de código por correo",
+    evidenceError: "No se pudo abrir la evidencia. El enlace puede haber caducado — inténtalo de nuevo.",
+    approve: "Aprobar",
+    reject: "Rechazar",
+    deciding: "Guardando…",
+    decideError: "No se pudo registrar esa decisión. Inténtalo de nuevo.",
+    confirmReject: "¿Rechazar esta solicitud de verificación?",
   },
 };

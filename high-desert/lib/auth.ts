@@ -36,3 +36,15 @@ export async function getMyProfile(): Promise<Profile | null> {
 
   return data ?? null;
 }
+
+/**
+ * Whether the signed-in member is a moderator or admin. A convenience check for
+ * gating reviewer UI and guarding server actions before they touch privileged
+ * operations. The database is still the real authority: `decide_verification`
+ * and the storage read policy both re-check `is_moderator()` server-side, so a
+ * forged client can never get past them even if this returned the wrong answer.
+ */
+export async function isModerator(): Promise<boolean> {
+  const profile = await getMyProfile();
+  return profile?.role === "moderator" || profile?.role === "admin";
+}

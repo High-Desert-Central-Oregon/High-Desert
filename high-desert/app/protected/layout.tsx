@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthButton } from "@/components/auth-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
 
@@ -29,12 +29,34 @@ async function ConsentGuard() {
 
 async function NavBar() {
   const { locale, dict } = await getServerDictionary();
+  const profile = await getMyProfile();
+  const isMod = profile?.role === "moderator" || profile?.role === "admin";
+  const verified = profile?.verified ?? false;
+
   return (
     <nav className="flex h-16 w-full justify-center border-b">
-      <div className="flex w-full max-w-3xl items-center justify-between p-3 px-5 text-sm">
-        <Link href="/protected" className="font-semibold tracking-tight">
-          {dict.app.name}
-        </Link>
+      <div className="flex w-full max-w-3xl items-center justify-between gap-3 p-3 px-5 text-sm">
+        <div className="flex items-center gap-4">
+          <Link href="/protected" className="font-semibold tracking-tight">
+            {dict.app.name}
+          </Link>
+          {!verified && (
+            <Link
+              href="/protected/verify"
+              className="text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {dict.nav.verifyLink}
+            </Link>
+          )}
+          {isMod && (
+            <Link
+              href="/protected/review"
+              className="text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {dict.nav.reviewLink}
+            </Link>
+          )}
+        </div>
         <div className="flex items-center gap-3">
           <LanguageSwitcher current={locale} />
           <Suspense>

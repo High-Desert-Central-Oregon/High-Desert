@@ -26,6 +26,8 @@ export const en = {
     signIn: "Sign in",
     signOut: "Sign out",
     skipToContent: "Skip to main content",
+    verifyLink: "Verify",
+    reviewLink: "Reviews",
   },
 
   landing: {
@@ -132,6 +134,22 @@ export const en = {
       postcard_code:
         "No document needed. We mail a one-time code to your Redmond address and a reviewer confirms it with you — for anyone using a PO box or without standard paperwork.",
     },
+  },
+
+  review: {
+    title: "Verification reviews",
+    intro:
+      "Pending residency checks, oldest first. A person decides each one. Approving grants verified status and starts the member's tenure. The evidence file is deleted either way.",
+    empty: "No verifications are waiting right now.",
+    viewEvidence: "View evidence",
+    opening: "Opening…",
+    noEvidence: "No file — mailed-code request",
+    evidenceError: "Couldn't open the evidence. The link may have expired — try again.",
+    approve: "Approve",
+    reject: "Reject",
+    deciding: "Saving…",
+    decideError: "Couldn't record that decision. Please try again.",
+    confirmReject: "Reject this verification request?",
   },
 };
 
