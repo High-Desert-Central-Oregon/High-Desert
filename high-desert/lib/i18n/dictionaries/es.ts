@@ -329,4 +329,26 @@ export const es: Dictionary = {
     recording: "Guardando…",
     closeError: "No se pudo registrar el cierre. Inténtalo de nuevo.",
   },
+
+  moderation: {
+    removedTitleEvent: "Un moderador eliminó este evento.",
+    removedTitleProposal: "Un moderador eliminó esta propuesta.",
+    removedReason: "Motivo",
+    appealable: "Si este contenido es tuyo, puedes apelar esta decisión.",
+    controlHeading: "Herramientas de moderación",
+    reasonLabel:
+      "Motivo (obligatorio: visible para el miembro y en el registro público)",
+    reasonPlaceholder: "¿Por qué se elimina o se restaura?",
+    removeConfirm:
+      "¿Eliminar este contenido? El motivo será visible para el miembro y en el registro público de transparencia.",
+    removeSubmit: "Eliminar",
+    restoreSubmit: "Restaurar",
+    working: "Guardando…",
+    reasonRequired: "Por favor escribe un motivo.",
+    error: "No pudimos registrar eso. Inténtalo de nuevo.",
+    noticesTitle: "Avisos de moderación",
+    noticeEventRemoved: 'Un moderador eliminó tu evento "{title}".',
+    noticeProposalRemoved: 'Un moderador eliminó tu propuesta "{title}".',
+    noticeView: "Ver detalles y apelar",
+  },
 };

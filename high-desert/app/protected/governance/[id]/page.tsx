@@ -6,11 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { VerifiedGate } from "@/components/verified-gate";
 import { VoteForm } from "./vote-form";
 import { CloseButton } from "./close-button";
+import { RemovedBanner } from "../../moderation/removed-banner";
+import { ModerationControl } from "../../moderation/moderation-control";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState } from "@/lib/governance";
+import { getContentModeration } from "@/lib/moderation";
 import { t } from "@/lib/i18n";
 import type { ProposalRow, ProposalResult, VoteChoice } from "@/lib/types/db";
 
@@ -54,6 +57,39 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
 
   if (!proposal) notFound();
 
+  const isMod = profile.role === "moderator" || profile.role === "admin";
+
+  // If a moderator removed this proposal, show the legible removed state instead
+  // of its content — never a silent disappearance (P7). It isn't deleted; the
+  // author can appeal (Part 3), and a moderator can restore it. (A hidden
+  // proposal shows no vote form or results here.)
+  const moderation = await getContentModeration(supabase, "proposal", proposal.id);
+  if (moderation?.hidden) {
+    return (
+      <div lang={locale} className="flex flex-col gap-6">
+        <Link
+          href="/protected/governance"
+          className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+        >
+          {dict.governance.backToList}
+        </Link>
+        <RemovedBanner
+          targetType="proposal"
+          reason={moderation.reason}
+          dict={dict}
+        />
+        {isMod && (
+          <ModerationControl
+            targetType="proposal"
+            targetId={proposal.id}
+            mode="restore"
+            dict={dict}
+          />
+        )}
+      </div>
+    );
+  }
+
   const state = proposalState(
     proposal.opens_at,
     proposal.closes_at,
@@ -86,7 +122,6 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
 
   // Results — ONLY after close, and ONLY from the aggregate view (no per-ballot
   // data, no pre-close totals; the view enforces both).
-  const isMod = profile.role === "moderator" || profile.role === "admin";
   let result: ResultRow | null = null;
   if (state === "closed") {
     const { data } = await supabase
@@ -222,6 +257,15 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
             <CloseButton proposalId={proposal.id} dict={dict} />
           )}
         </section>
+      )}
+
+      {isMod && (
+        <ModerationControl
+          targetType="proposal"
+          targetId={proposal.id}
+          mode="remove"
+          dict={dict}
+        />
       )}
     </article>
   );

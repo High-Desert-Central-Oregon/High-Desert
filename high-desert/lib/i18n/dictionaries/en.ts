@@ -329,6 +329,27 @@ export const en = {
     recording: "Saving…",
     closeError: "Couldn't record the close. Please try again.",
   },
+
+  moderation: {
+    removedTitleEvent: "This event was removed by a moderator.",
+    removedTitleProposal: "This proposal was removed by a moderator.",
+    removedReason: "Reason",
+    appealable: "If this is your content, you can appeal this decision.",
+    controlHeading: "Moderator tools",
+    reasonLabel: "Reason (required — shown to the member and in the public log)",
+    reasonPlaceholder: "Why is this being removed or restored?",
+    removeConfirm:
+      "Remove this content? The reason will be visible to the member and in the public transparency log.",
+    removeSubmit: "Remove",
+    restoreSubmit: "Restore",
+    working: "Saving…",
+    reasonRequired: "Please write a reason.",
+    error: "We couldn't record that. Please try again.",
+    noticesTitle: "Moderation notices",
+    noticeEventRemoved: 'Your event "{title}" was removed by a moderator.',
+    noticeProposalRemoved: 'Your proposal "{title}" was removed by a moderator.',
+    noticeView: "View details and appeal",
+  },
 };
 
 export type Dictionary = typeof en;

@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
+import { getHiddenIds } from "@/lib/moderation";
 import type { Dictionary } from "@/lib/i18n";
 
 export const metadata = {
@@ -90,7 +91,10 @@ async function EventsContent() {
     .order("starts_at", { ascending: true })
     .returns<EventListItem[]>();
 
-  const all = events ?? [];
+  // Hidden (moderator-removed) events drop out of the listing; their detail page
+  // still shows the legible removed state (P7 — not silent, not in the way).
+  const hidden = await getHiddenIds(supabase, "event");
+  const all = (events ?? []).filter((e) => !hidden.has(e.id));
 
   // Resolve neighborhood names for the badges, one query.
   const neighborhoodNames = new Map<string, string>();

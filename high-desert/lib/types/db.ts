@@ -87,6 +87,47 @@ export type ProposalResult = {
   abstain_weight: number;
 };
 
+export type ModAction =
+  | "warn"
+  | "temp_ban"
+  | "extended_ban"
+  | "review"
+  | "remove"
+  | "restore";
+
+export type ModerationActionRow = {
+  id: string;
+  target_type: string;
+  target_id: string;
+  actor_id: string;
+  action: ModAction;
+  reason: string | null;
+  expires_at: string | null;
+  created_at: string;
+};
+
+/** A row of the content_moderation view: the LATEST remove/restore for a target. */
+export type ContentModerationRow = {
+  action_id: string;
+  target_type: string;
+  target_id: string;
+  action: "remove" | "restore";
+  reason: string | null;
+  actor_id: string;
+  created_at: string;
+};
+
+export type AppealStatus = "open" | "upheld" | "overturned";
+
+export type AppealRow = {
+  id: string;
+  moderation_action_id: string;
+  user_id: string;
+  body: string;
+  status: AppealStatus;
+  created_at: string;
+};
+
 export type DocKind = "terms" | "privacy";
 
 export type DocumentRow = {

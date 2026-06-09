@@ -5,10 +5,13 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedNotice } from "../verified-notice";
 import { RsvpForm } from "./rsvp-form";
+import { RemovedBanner } from "../../moderation/removed-banner";
+import { ModerationControl } from "../../moderation/moderation-control";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
+import { getContentModeration } from "@/lib/moderation";
 import { t } from "@/lib/i18n";
 import type { Dictionary } from "@/lib/i18n";
 import type { EventRow, RsvpStatus } from "@/lib/types/db";
@@ -78,6 +81,34 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
     .maybeSingle<EventRow>();
 
   if (!event) notFound();
+
+  const isMod = profile.role === "moderator" || profile.role === "admin";
+
+  // If a moderator removed this event, show the legible removed state instead of
+  // the content — never a silent disappearance (P7). The event isn't deleted;
+  // the affected member can appeal (Part 3), and a moderator can restore it.
+  const moderation = await getContentModeration(supabase, "event", event.id);
+  if (moderation?.hidden) {
+    return (
+      <div lang={locale} className="flex flex-col gap-6">
+        <Link
+          href="/protected/events"
+          className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+        >
+          {dict.events.backToEvents}
+        </Link>
+        <RemovedBanner targetType="event" reason={moderation.reason} dict={dict} />
+        {isMod && (
+          <ModerationControl
+            targetType="event"
+            targetId={event.id}
+            mode="restore"
+            dict={dict}
+          />
+        )}
+      </div>
+    );
+  }
 
   // Neighborhood name + host name, resolved in parallel.
   const [{ data: nb }, { data: host }] = await Promise.all([
@@ -235,6 +266,15 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           </div>
         )}
       </section>
+
+      {isMod && (
+        <ModerationControl
+          targetType="event"
+          targetId={event.id}
+          mode="remove"
+          dict={dict}
+        />
+      )}
     </article>
   );
 }

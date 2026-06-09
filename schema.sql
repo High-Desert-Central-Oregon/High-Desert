@@ -30,7 +30,7 @@ create type rsvp_status          as enum ('going','maybe');
 create type proposal_kind        as enum ('minor','major','immutable');
 create type proposal_status      as enum ('draft','open','closed');
 create type vote_choice          as enum ('yes','no','abstain');
-create type mod_action           as enum ('warn','temp_ban','extended_ban','review');
+create type mod_action           as enum ('warn','temp_ban','extended_ban','review','remove','restore');
 create type appeal_status        as enum ('open','upheld','overturned');
 create type doc_kind             as enum ('terms','privacy');
 create type neighborhood_request_status as enum ('open','resolved');
@@ -149,13 +149,17 @@ create table votes (                       -- SECRET ballot; one row per member,
 
 create table moderation_actions (          -- append-only; public for transparency (uuids only)
   id          uuid primary key default gen_random_uuid(),
-  target_type text not null,               -- 'profile' | 'event' | 'rsvp' | ...
+  target_type text not null,               -- 'event' | 'proposal' | 'profile' | ...
   target_id   uuid not null,
   actor_id    uuid not null references profiles(id),
-  action      mod_action not null,
+  action      mod_action not null,         -- content: 'remove' hides, 'restore' un-hides (a reversal is a NEW row)
   reason      text,
   expires_at  timestamptz,
-  created_at  timestamptz not null default now()
+  created_at  timestamptz not null default now(),
+  -- No silent removal: content actions must carry a written reason.
+  constraint moderation_reason_required
+    check (action not in ('remove','restore')
+           or (reason is not null and length(btrim(reason)) > 0))
 );
 
 create table appeals (
@@ -362,6 +366,18 @@ left join votes v on v.proposal_id = p.id
 where now() > p.closes_at
 group by p.id;
 
+-- Current visibility of a piece of content = its LATEST remove/restore action
+-- ('remove' ⇒ hidden, 'restore'/none ⇒ visible). The append-only history stays
+-- in moderation_actions; this view just reads the top of the stack so the app
+-- can ask "is this hidden, and why?" in one query. Reads only columns already
+-- public (to authenticated) via moderation_actions' mod_read policy.
+create or replace view content_moderation as
+select distinct on (target_type, target_id)
+  id as action_id, target_type, target_id, action, reason, actor_id, created_at
+from moderation_actions
+where action in ('remove','restore')
+order by target_type, target_id, created_at desc, id desc;
+
 -- ============================================================================
 -- 7 · ROW-LEVEL SECURITY
 -- ============================================================================
@@ -490,6 +506,7 @@ create policy al_read on audit_log for select to authenticated using (true);
 -- ============================================================================
 grant usage on schema public to anon, authenticated;
 grant select on neighborhoods, documents, proposal_results to anon, authenticated;
+grant select on content_moderation to authenticated;
 grant select, insert, update, delete on
   profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log

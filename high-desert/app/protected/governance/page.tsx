@@ -10,6 +10,7 @@ import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState, type ProposalState } from "@/lib/governance";
+import { getHiddenIds } from "@/lib/moderation";
 import { t, type Dictionary } from "@/lib/i18n";
 import type { ProposalRow } from "@/lib/types/db";
 
@@ -97,7 +98,10 @@ async function GovernanceContent() {
     .select("id, title, kind, status, opens_at, closes_at")
     .returns<ListItem[]>();
 
-  const all = proposals ?? [];
+  // Hidden (moderator-removed) proposals drop out of the listing; their detail
+  // page still shows the legible removed state (P7).
+  const hidden = await getHiddenIds(supabase, "proposal");
+  const all = (proposals ?? []).filter((p) => !hidden.has(p.id));
   const now = Date.now();
   const withState = all.map((p) => ({
     p,
