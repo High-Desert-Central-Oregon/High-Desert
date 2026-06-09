@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isModerator } from "@/lib/auth";
 import { EVIDENCE_BUCKET } from "@/lib/verification";
 
@@ -47,8 +48,10 @@ export async function createEvidenceSignedUrl(
  * reimplement that logic (invariants 2, 5, 6). The RPC also re-checks
  * `is_moderator()` itself, so the guard below is defense in depth.
  *
- * NOTE: the purge trigger nulls `evidence_path` on this decision, but the stored
- * file itself is deleted in part 3 (verify-then-forget completed).
+ * Verify, then forget (invariant 1) is completed here in three ordered steps:
+ * read the evidence pointer first (the purge trigger nulls it the instant the
+ * status changes), make the decision, then delete the stored file — the DB drops
+ * the pointer, this action drops the file.
  */
 export async function decideVerification(
   verificationId: string,
@@ -57,11 +60,35 @@ export async function decideVerification(
   const supabase = await createClient();
   if (!(await isModerator())) return { error: "forbidden" };
 
+  // 1. Capture the evidence path BEFORE deciding — once status changes, the
+  //    purge trigger nulls it and it's gone from the row.
+  const { data: row } = await supabase
+    .from("verifications")
+    .select("evidence_path")
+    .eq("id", verificationId)
+    .maybeSingle<{ evidence_path: string | null }>();
+  const evidencePath = row?.evidence_path ?? null;
+
+  // 2. The decision itself (RPC owns all the trust columns + the audit entry).
   const { error } = await supabase.rpc("decide_verification", {
     p_id: verificationId,
     p_approve: approve,
   });
   if (error) return { error: "decide-failed" };
+
+  // 3. Delete the actual file. Deletion needs the service role (there is no
+  //    moderator DELETE policy on the bucket). A cleanup hiccup must never undo
+  //    a recorded decision or leave the member in limbo, so we log and proceed.
+  if (evidencePath) {
+    const { error: deleteError } = await createAdminClient()
+      .storage.from(EVIDENCE_BUCKET)
+      .remove([evidencePath]);
+    if (deleteError) {
+      console.error(
+        `evidence cleanup failed for verification ${verificationId}: ${deleteError.message}`,
+      );
+    }
+  }
 
   revalidatePath("/protected/review");
   return null;
