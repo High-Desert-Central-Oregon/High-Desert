@@ -28,6 +28,7 @@ export const en = {
     skipToContent: "Skip to main content",
     verifyLink: "Verify",
     reviewLink: "Reviews",
+    neighborhoodLink: "Neighborhood",
   },
 
   landing: {
@@ -93,6 +94,28 @@ export const en = {
     statusUnverified: "Not yet verified",
     statusLabel: "Membership status",
     verifyCta: "Verify your residency",
+    neighborhoodLabel: "Neighborhood",
+    noNeighborhood: "Not set",
+    neighborhoodCta: "Choose your neighborhood",
+    changeCta: "Change",
+  },
+
+  neighborhoods: {
+    title: "Your neighborhood",
+    intro:
+      "Pick the Redmond neighborhood you call home. You can change this any time.",
+    legend: "Choose your neighborhood",
+    noneOptionLabel: "None of these fit",
+    noneOptionHint:
+      "If your part of Redmond isn't listed — a broader area, a rural pocket, or a community outside city limits — choose this. A neighbor on the team will follow up to help place you.",
+    save: "Save neighborhood",
+    saving: "Saving…",
+    saved: "Neighborhood saved.",
+    noneConfirmTitle: "We'll follow up",
+    noneConfirmBody:
+      "Your response is noted. A neighbor on the team will reach out to help find your neighborhood. You have full access in the meantime.",
+    backHome: "Back to home",
+    errorGeneric: "We couldn't save that. Please try again.",
   },
 
   verify: {
@@ -150,6 +173,10 @@ export const en = {
     deciding: "Saving…",
     decideError: "Couldn't record that decision. Please try again.",
     confirmReject: "Reject this verification request?",
+    noNeighborhoodTitle: "Members without a neighborhood",
+    noNeighborhoodIntro:
+      "Verified members who haven't been placed yet — they said 'none fits' or skipped the step. Reach out to help them find their neighborhood.",
+    noNeighborhoodEmpty: "Everyone has a neighborhood set.",
   },
 };
 

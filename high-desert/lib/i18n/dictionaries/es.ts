@@ -26,6 +26,7 @@ export const es: Dictionary = {
     skipToContent: "Saltar al contenido principal",
     verifyLink: "Verificar",
     reviewLink: "Revisiones",
+    neighborhoodLink: "Vecindario",
   },
 
   landing: {
@@ -92,6 +93,28 @@ export const es: Dictionary = {
     statusUnverified: "Aún no verificado",
     statusLabel: "Estado de membresía",
     verifyCta: "Verifica tu residencia",
+    neighborhoodLabel: "Vecindario",
+    noNeighborhood: "No establecido",
+    neighborhoodCta: "Elige tu vecindario",
+    changeCta: "Cambiar",
+  },
+
+  neighborhoods: {
+    title: "Tu vecindario",
+    intro:
+      "Elige el vecindario de Redmond que consideras tu hogar. Puedes cambiarlo en cualquier momento.",
+    legend: "Elige tu vecindario",
+    noneOptionLabel: "Ninguno encaja",
+    noneOptionHint:
+      "Si tu parte de Redmond no aparece en la lista — un área más amplia, un bolsillo rural o una comunidad fuera de los límites de la ciudad — elige esta opción. Un vecino del equipo te contactará para ayudarte.",
+    save: "Guardar vecindario",
+    saving: "Guardando…",
+    saved: "Vecindario guardado.",
+    noneConfirmTitle: "Te contactaremos",
+    noneConfirmBody:
+      "Tu respuesta ha sido registrada. Un vecino del equipo se comunicará contigo para ayudarte a encontrar tu vecindario. Tienes acceso completo mientras tanto.",
+    backHome: "Volver al inicio",
+    errorGeneric: "No pudimos guardar eso. Inténtalo de nuevo.",
   },
 
   verify: {
@@ -149,5 +172,9 @@ export const es: Dictionary = {
     deciding: "Guardando…",
     decideError: "No se pudo registrar esa decisión. Inténtalo de nuevo.",
     confirmReject: "¿Rechazar esta solicitud de verificación?",
+    noNeighborhoodTitle: "Miembros sin vecindario",
+    noNeighborhoodIntro:
+      "Miembros verificados que aún no han sido ubicados — dijeron 'ninguno encaja' o no completaron el paso. Contáctalos para ayudarlos a encontrar su vecindario.",
+    noNeighborhoodEmpty: "Todos tienen un vecindario establecido.",
   },
 };
