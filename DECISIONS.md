@@ -7,6 +7,28 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-09 — Roadmap (post-beta): verified-resident Local Exchange
+
+Verified-resident **Local Exchange** — a neighborhood-scoped board for goods,
+services, and non-monetary skill/mutual-aid, browsed by time + proximity like
+events. Disciplines: no platform fee/cut, no ads, no ranking or featured listings
+(invariant 7); trust is a mutual completed-exchange acknowledgment, never
+ratings/scores/leaderboards; disputes use existing appealable moderation.
+Explicitly rejected from the sibling concept that prompted this: star ratings /
+reputation scores (perception-extraction; flatten relational trust into gameable
+proxies), invite-tree collective banning (collective punishment; contradicts
+Step 8 due process), in-app currency (deferred — requires legal review + member
+vote), personality screening (unimplementable + stigmatizing; instead remove the
+incentives that reward extraction), dating/friend-matching (outside civic scope).
+Rationale: keep value circulating locally without the platform becoming a
+rent-seeker or a perception game; bound trust (neighborhood, tenure, 12-city cap)
+rather than try to "scale" it.
+
+Documentation only — no code, no schema. See Pattern Language 25 (Local Exchange,
+Value Stays Local) and SPEC.md post-beta roadmap.
+
+---
+
 ## 2026-06-09 — Spanish strings are DRAFT, pending native-speaker review
 
 **Decision.** The app ships English and Spanish together from the first screen

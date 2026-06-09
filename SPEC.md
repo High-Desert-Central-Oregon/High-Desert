@@ -105,6 +105,12 @@ version, historical archive, multi-community expansion.
   Redmond Compass; a market imports the ratings pressure HD refuses.
 - **Visitor posting / voting** *(out)* — participation requires verified residency (Ostrom).
 
+**Post-beta roadmap (not in the current build).** Named future directions whose disciplines are
+already decided, kept here so the build doesn't drift into them by accident.
+
+- **Local Exchange** — verified-resident goods/services/skill board; see Pattern Language and
+  DECISIONS. Deliberate scope decision, post-beta.
+
 ---
 
 ## 03 · Data model
