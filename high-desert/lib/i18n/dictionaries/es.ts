@@ -29,6 +29,7 @@ export const es: Dictionary = {
     neighborhoodLink: "Vecindario",
     eventsLink: "Eventos",
     governanceLink: "Propuestas",
+    appealsLink: "Apelaciones",
   },
 
   landing: {
@@ -350,5 +351,31 @@ export const es: Dictionary = {
     noticeEventRemoved: 'Un moderador eliminó tu evento "{title}".',
     noticeProposalRemoved: 'Un moderador eliminó tu propuesta "{title}".',
     noticeView: "Ver detalles y apelar",
+    appealHeading: "Apelar esta eliminación",
+    appealPlaceholder: "Explica por qué debería restaurarse…",
+    appealSubmit: "Enviar apelación",
+    appealSubmitting: "Enviando…",
+    appealError: "No pudimos enviar tu apelación. Inténtalo de nuevo.",
+    appealStatusOpen:
+      "Tu apelación está en revisión por un moderador distinto al que la eliminó.",
+    appealStatusUpheld: "Tras la revisión, se mantuvo la eliminación.",
+    appealStatusOverturned:
+      "Tras la revisión, se revocó la eliminación y se restauró el contenido.",
+    appealsTitle: "Apelaciones",
+    appealsIntro:
+      "Apelaciones abiertas de los miembros, las más antiguas primero. No puedes resolver la apelación de tu propia acción: debe hacerlo otro moderador.",
+    appealsEmpty: "No hay apelaciones abiertas.",
+    appealOnEvent: "Eliminación de un evento",
+    appealOnProposal: "Eliminación de una propuesta",
+    appealRemovalReason: "Motivo de la eliminación",
+    appealBy: "Apelación de {name}",
+    ownActionNote:
+      "Tú tomaste esta acción, así que otro moderador debe resolver esta apelación.",
+    resolveReasonLabel: "Motivo de tu decisión (obligatorio, se registra)",
+    resolveReasonPlaceholder: "Explica tu decisión…",
+    uphold: "Mantener eliminación",
+    overturn: "Revocar y restaurar",
+    resolving: "Guardando…",
+    resolveError: "No pudimos registrar eso. Inténtalo de nuevo.",
   },
 };

@@ -8,6 +8,7 @@ import { VoteForm } from "./vote-form";
 import { CloseButton } from "./close-button";
 import { RemovedBanner } from "../../moderation/removed-banner";
 import { ModerationControl } from "../../moderation/moderation-control";
+import { AppealArea } from "../../moderation/appeal-area";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -65,6 +66,7 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
   // proposal shows no vote form or results here.)
   const moderation = await getContentModeration(supabase, "proposal", proposal.id);
   if (moderation?.hidden) {
+    const isOwner = proposal.author_id === profile.id;
     return (
       <div lang={locale} className="flex flex-col gap-6">
         <Link
@@ -77,7 +79,15 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
           targetType="proposal"
           reason={moderation.reason}
           dict={dict}
-        />
+        >
+          <AppealArea
+            actionId={moderation.actionId}
+            targetType="proposal"
+            targetId={proposal.id}
+            isOwner={isOwner}
+            dict={dict}
+          />
+        </RemovedBanner>
         {isMod && (
           <ModerationControl
             targetType="proposal"

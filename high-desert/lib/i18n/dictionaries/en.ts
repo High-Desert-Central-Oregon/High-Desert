@@ -31,6 +31,7 @@ export const en = {
     neighborhoodLink: "Neighborhood",
     eventsLink: "Events",
     governanceLink: "Proposals",
+    appealsLink: "Appeals",
   },
 
   landing: {
@@ -349,6 +350,32 @@ export const en = {
     noticeEventRemoved: 'Your event "{title}" was removed by a moderator.',
     noticeProposalRemoved: 'Your proposal "{title}" was removed by a moderator.',
     noticeView: "View details and appeal",
+    appealHeading: "Appeal this removal",
+    appealPlaceholder: "Explain why this should be restored…",
+    appealSubmit: "Submit appeal",
+    appealSubmitting: "Submitting…",
+    appealError: "We couldn't submit your appeal. Please try again.",
+    appealStatusOpen:
+      "Your appeal is under review by a different moderator than the one who removed this.",
+    appealStatusUpheld: "After review, the removal was upheld.",
+    appealStatusOverturned:
+      "After review, the removal was overturned and the content restored.",
+    appealsTitle: "Appeals",
+    appealsIntro:
+      "Open appeals from members, oldest first. You can't resolve an appeal of your own action — a different moderator must.",
+    appealsEmpty: "No open appeals.",
+    appealOnEvent: "Removal of an event",
+    appealOnProposal: "Removal of a proposal",
+    appealRemovalReason: "Removal reason",
+    appealBy: "Appeal by {name}",
+    ownActionNote:
+      "You took this action, so a different moderator must resolve this appeal.",
+    resolveReasonLabel: "Reason for your decision (required, recorded)",
+    resolveReasonPlaceholder: "Explain your decision…",
+    uphold: "Uphold removal",
+    overturn: "Overturn & restore",
+    resolving: "Saving…",
+    resolveError: "We couldn't record that. Please try again.",
   },
 };
 

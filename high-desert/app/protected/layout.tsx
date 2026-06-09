@@ -78,6 +78,14 @@ async function NavBar() {
               {dict.nav.reviewLink}
             </Link>
           )}
+          {isMod && (
+            <Link
+              href="/protected/moderation"
+              className="text-muted-foreground hover:text-foreground hover:underline"
+            >
+              {dict.nav.appealsLink}
+            </Link>
+          )}
         </div>
         <div className="flex items-center gap-3">
           <LanguageSwitcher current={locale} />

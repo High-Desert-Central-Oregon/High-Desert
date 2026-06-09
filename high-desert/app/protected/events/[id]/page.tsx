@@ -7,6 +7,7 @@ import { VerifiedNotice } from "../verified-notice";
 import { RsvpForm } from "./rsvp-form";
 import { RemovedBanner } from "../../moderation/removed-banner";
 import { ModerationControl } from "../../moderation/moderation-control";
+import { AppealArea } from "../../moderation/appeal-area";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -89,6 +90,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   // the affected member can appeal (Part 3), and a moderator can restore it.
   const moderation = await getContentModeration(supabase, "event", event.id);
   if (moderation?.hidden) {
+    const isOwner = event.creator_id === profile.id;
     return (
       <div lang={locale} className="flex flex-col gap-6">
         <Link
@@ -97,7 +99,15 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
         >
           {dict.events.backToEvents}
         </Link>
-        <RemovedBanner targetType="event" reason={moderation.reason} dict={dict} />
+        <RemovedBanner targetType="event" reason={moderation.reason} dict={dict}>
+          <AppealArea
+            actionId={moderation.actionId}
+            targetType="event"
+            targetId={event.id}
+            isOwner={isOwner}
+            dict={dict}
+          />
+        </RemovedBanner>
         {isMod && (
           <ModerationControl
             targetType="event"

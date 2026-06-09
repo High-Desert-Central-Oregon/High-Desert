@@ -347,6 +347,82 @@ begin
     'verification', p_id, '{}'::jsonb);
 end; $$;
 
+-- ----------------------------------------------------------------------------
+-- 5b · APPEALS: file (affected member) + resolve (a DIFFERENT moderator).
+--      These run with definer rights and enforce the two rules RLS can't express
+--      (polymorphic ownership; separation of duties), so the direct insert/update
+--      policies on `appeals` are intentionally absent — all writes go through here.
+-- ----------------------------------------------------------------------------
+create or replace function public.file_appeal(p_moderation_action_id uuid, p_body text)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare v_type text; v_target uuid; v_owner uuid; v_appeal uuid;
+begin
+  if p_body is null or length(btrim(p_body)) = 0 then
+    raise exception 'an appeal statement is required';
+  end if;
+
+  select target_type, target_id into v_type, v_target
+  from moderation_actions
+  where id = p_moderation_action_id and action = 'remove';
+  if v_target is null then raise exception 'no removal to appeal'; end if;
+
+  if exists (select 1 from appeals where moderation_action_id = p_moderation_action_id) then
+    raise exception 'this action has already been appealed';
+  end if;
+
+  if v_type = 'event' then
+    select creator_id into v_owner from events where id = v_target;
+  elsif v_type = 'proposal' then
+    select author_id into v_owner from proposals where id = v_target;
+  end if;
+
+  if v_owner is null or v_owner <> auth.uid() then
+    raise exception 'only the affected member may appeal this action';
+  end if;
+
+  insert into appeals (moderation_action_id, user_id, body)
+  values (p_moderation_action_id, auth.uid(), p_body)
+  returning id into v_appeal;
+  return v_appeal;
+end; $$;
+
+create or replace function public.resolve_appeal(p_appeal_id uuid, p_uphold boolean, p_reason text)
+returns void language plpgsql security definer set search_path = public as $$
+declare v_action uuid; v_actor uuid; v_type text; v_target uuid;
+begin
+  if not public.is_moderator() then
+    raise exception 'only moderators may resolve appeals';
+  end if;
+  if p_reason is null or length(btrim(p_reason)) = 0 then
+    raise exception 'a reason is required';
+  end if;
+
+  select a.moderation_action_id, m.actor_id, m.target_type, m.target_id
+    into v_action, v_actor, v_type, v_target
+  from appeals a join moderation_actions m on m.id = a.moderation_action_id
+  where a.id = p_appeal_id and a.status = 'open';
+  if v_action is null then raise exception 'appeal not found or already resolved'; end if;
+
+  -- Separation of duties: no one judges an appeal of their own action.
+  if v_actor = auth.uid() then
+    raise exception 'separation of duties: you cannot resolve an appeal of your own action';
+  end if;
+
+  update appeals
+     set status = case when p_uphold then 'upheld' else 'overturned' end::appeal_status
+   where id = p_appeal_id;
+
+  if not p_uphold then
+    insert into moderation_actions (target_type, target_id, actor_id, action, reason)
+    values (v_type, v_target, auth.uid(), 'restore', 'Appeal overturned: ' || p_reason);
+  end if;
+
+  perform public.log_audit(
+    case when p_uphold then 'appeal.upheld' else 'appeal.overturned' end,
+    'appeal', p_appeal_id,
+    jsonb_build_object('moderation_action_id', v_action, 'reason', p_reason));
+end; $$;
+
 -- ============================================================================
 -- 6 · VIEW: proposal_results  (aggregate, weighted, SECRET UNTIL CLOSE)
 --     Owned by the migration role, so it reads votes past RLS to aggregate —
@@ -490,12 +566,12 @@ create policy mod_read   on moderation_actions for select to authenticated using
 create policy mod_insert on moderation_actions for insert to authenticated
   with check (public.is_moderator() and actor_id = auth.uid());
 
--- Appeals: your own (+ moderators); you file; moderators resolve
+-- Appeals: a member reads their own; moderators read all. Filing and resolving
+-- go ONLY through file_appeal()/resolve_appeal() (security definer) — there are
+-- deliberately no direct insert/update policies, so the "affected member only"
+-- and "separation of duties" rules can't be bypassed via PostgREST.
 create policy ap_read   on appeals for select to authenticated
   using (user_id = auth.uid() or public.is_moderator());
-create policy ap_insert on appeals for insert to authenticated with check (user_id = auth.uid());
-create policy ap_update on appeals for update to authenticated
-  using (public.is_moderator()) with check (public.is_moderator());
 
 -- Audit log: public read (transparency); writes only via log_audit() (security definer)
 create policy al_read on audit_log for select to authenticated using (true);
