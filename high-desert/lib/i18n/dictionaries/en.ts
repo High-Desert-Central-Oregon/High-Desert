@@ -318,6 +318,16 @@ export const en = {
     voteSaved: "Your vote is recorded.",
     voteError: "We couldn't record your vote. Please try again.",
     votingOpensNote: "Voting opens {date}. Check back then to cast your vote.",
+    resultsHeading: "Result",
+    resultsNote:
+      "Tenure-weighted totals, aggregate only — individual ballots are never shown.",
+    turnout: "{count} ballots cast",
+    noResult: "No result is available for this proposal.",
+    closeHint:
+      "Voting has ended. Recording the close writes the official result to the public audit log.",
+    recordClose: "Record official close",
+    recording: "Saving…",
+    closeError: "Couldn't record the close. Please try again.",
   },
 };
 

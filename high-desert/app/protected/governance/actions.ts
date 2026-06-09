@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getMyProfile } from "@/lib/auth";
+import { getMyProfile, isModerator } from "@/lib/auth";
 import { redmondWallTimeToUtcISO } from "@/lib/time";
 import type { ProposalKind } from "@/lib/types/db";
 
@@ -117,4 +117,66 @@ export async function castVote(
 
   revalidatePath(`/protected/governance/${proposalId}`);
   return { ok: true };
+}
+
+/**
+ * Record the official close of a proposal whose voting window has passed. The
+ * human-in-the-loop finalization (invariant 5): results are already visible by
+ * time (proposal_results shows any proposal past closes_at), but a moderator
+ * marks it formally closed and writes the permanent audit entry.
+ *
+ * The audit carries the AGGREGATE result only (turnout + weighted totals) —
+ * never any per-ballot data, which would defeat the secret ballot. Idempotent:
+ * a proposal already closed is a no-op, so the close is audited exactly once.
+ * Reversing a decision happens through a NEW proposal — history is never edited.
+ */
+export async function recordProposalClose(
+  proposalId: string,
+): Promise<{ error: string } | null> {
+  if (!(await isModerator())) return { error: "forbidden" };
+
+  const supabase = await createClient();
+  const { data: proposal } = await supabase
+    .from("proposals")
+    .select("status, closes_at")
+    .eq("id", proposalId)
+    .maybeSingle<{ status: string; closes_at: string }>();
+
+  if (!proposal) return { error: "not-found" };
+  if (proposal.status === "closed") {
+    revalidatePath(`/protected/governance/${proposalId}`);
+    return null; // already officially closed — don't double-audit
+  }
+  if (Date.parse(proposal.closes_at) > Date.now()) {
+    return { error: "not-yet-closed" }; // window still open; no early close here
+  }
+
+  // Aggregate result only (the view exposes it because the window has passed).
+  const { data: result } = await supabase
+    .from("proposal_results")
+    .select("ballots, yes_weight, no_weight, abstain_weight")
+    .eq("proposal_id", proposalId)
+    .maybeSingle<{
+      ballots: number;
+      yes_weight: number;
+      no_weight: number;
+      abstain_weight: number;
+    }>();
+
+  const { error: upError } = await supabase
+    .from("proposals")
+    .update({ status: "closed" })
+    .eq("id", proposalId);
+  if (upError) return { error: "close-failed" };
+
+  // Append-only audit, aggregate only — no per-ballot data.
+  await supabase.rpc("log_audit", {
+    p_action: "proposal.closed",
+    p_entity: "proposal",
+    p_entity_id: proposalId,
+    p_metadata: result ?? {},
+  });
+
+  revalidatePath(`/protected/governance/${proposalId}`);
+  return null;
 }

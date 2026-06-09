@@ -5,17 +5,23 @@ import { CalendarClock, CalendarCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedGate } from "@/components/verified-gate";
 import { VoteForm } from "./vote-form";
+import { CloseButton } from "./close-button";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState } from "@/lib/governance";
 import { t } from "@/lib/i18n";
-import type { ProposalRow, VoteChoice } from "@/lib/types/db";
+import type { ProposalRow, ProposalResult, VoteChoice } from "@/lib/types/db";
 
 export const metadata = {
   title: "Proposal · High Desert",
 };
+
+type ResultRow = Pick<
+  ProposalResult,
+  "ballots" | "yes_weight" | "no_weight" | "abstain_weight"
+>;
 
 async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -76,6 +82,19 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
       .eq("user_id", profile.id)
       .maybeSingle<{ choice: VoteChoice }>();
     myChoice = ballot?.choice ?? null;
+  }
+
+  // Results — ONLY after close, and ONLY from the aggregate view (no per-ballot
+  // data, no pre-close totals; the view enforces both).
+  const isMod = profile.role === "moderator" || profile.role === "admin";
+  let result: ResultRow | null = null;
+  if (state === "closed") {
+    const { data } = await supabase
+      .from("proposal_results")
+      .select("ballots, yes_weight, no_weight, abstain_weight")
+      .eq("proposal_id", proposal.id)
+      .maybeSingle<ResultRow>();
+    result = data ?? null;
   }
 
   const stateBadgeVariant =
@@ -157,7 +176,53 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
           })}
         </p>
       )}
-      {/* state === "closed": results render here in Part 4. */}
+
+      {/* Results — closed proposals only, aggregate only, from the view. */}
+      {state === "closed" && (
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="font-medium">{dict.governance.resultsHeading}</h2>
+            <p className="text-sm text-muted-foreground">
+              {dict.governance.resultsNote}
+            </p>
+          </div>
+
+          {result ? (
+            <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+              <p className="text-sm text-muted-foreground">
+                {t(dict.governance.turnout, { count: Number(result.ballots) })}
+              </p>
+              <dl className="flex flex-col gap-2">
+                {(
+                  [
+                    ["yes", result.yes_weight],
+                    ["no", result.no_weight],
+                    ["abstain", result.abstain_weight],
+                  ] as const
+                ).map(([choice, weight]) => (
+                  <div
+                    key={choice}
+                    className="flex items-center justify-between gap-4 text-sm"
+                  >
+                    <dt>{dict.governance.choices[choice]}</dt>
+                    <dd className="font-medium tabular-nums">
+                      {Number(weight).toFixed(1)}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ) : (
+            <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
+              {dict.governance.noResult}
+            </p>
+          )}
+
+          {isMod && proposal.status !== "closed" && (
+            <CloseButton proposalId={proposal.id} dict={dict} />
+          )}
+        </section>
+      )}
     </article>
   );
 }

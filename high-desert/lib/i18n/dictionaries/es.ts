@@ -318,5 +318,15 @@ export const es: Dictionary = {
     voteError: "No pudimos registrar tu voto. Inténtalo de nuevo.",
     votingOpensNote:
       "La votación abre {date}. Vuelve entonces para emitir tu voto.",
+    resultsHeading: "Resultado",
+    resultsNote:
+      "Totales ponderados por antigüedad, solo en conjunto: nunca se muestran los votos individuales.",
+    turnout: "{count} votos emitidos",
+    noResult: "No hay resultado disponible para esta propuesta.",
+    closeHint:
+      "La votación terminó. Registrar el cierre escribe el resultado oficial en el registro de auditoría público.",
+    recordClose: "Registrar cierre oficial",
+    recording: "Guardando…",
+    closeError: "No se pudo registrar el cierre. Inténtalo de nuevo.",
   },
 };
