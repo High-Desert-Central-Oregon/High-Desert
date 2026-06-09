@@ -62,6 +62,12 @@ async function NavBar() {
           >
             {dict.nav.neighborhoodLink}
           </Link>
+          <Link
+            href="/protected/transparency"
+            className="text-muted-foreground hover:text-foreground hover:underline"
+          >
+            {dict.nav.transparencyLink}
+          </Link>
           {!verified && (
             <Link
               href="/protected/verify"

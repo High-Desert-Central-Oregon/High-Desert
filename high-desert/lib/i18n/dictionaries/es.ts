@@ -30,6 +30,7 @@ export const es: Dictionary = {
     eventsLink: "Eventos",
     governanceLink: "Propuestas",
     appealsLink: "Apelaciones",
+    transparencyLink: "Transparencia",
   },
 
   landing: {
@@ -377,5 +378,24 @@ export const es: Dictionary = {
     overturn: "Revocar y restaurar",
     resolving: "Guardando…",
     resolveError: "No pudimos registrar eso. Inténtalo de nuevo.",
+  },
+
+  transparency: {
+    title: "Transparencia",
+    intro:
+      "Un registro público de la moderación en High Desert: qué se hizo, por qué y cómo se resolvieron las apelaciones. La moderación es responsable, no arbitraria.",
+    empty: "Aún no hay actividad de moderación.",
+    actionRemoveEvent: "Se eliminó un evento",
+    actionRemoveProposal: "Se eliminó una propuesta",
+    actionRemoveGeneric: "Se eliminó contenido",
+    actionRestoreEvent: "Se restauró un evento",
+    actionRestoreProposal: "Se restauró una propuesta",
+    actionRestoreGeneric: "Se restauró contenido",
+    appealUpheld: "Apelación revisada: se mantiene la eliminación",
+    appealOverturned: "Apelación revisada: se restauró el contenido",
+    reason: "Motivo",
+    byModerator: "por {name}",
+    byModeratorUnknown: "por un moderador",
+    viewContent: "Ver",
   },
 };

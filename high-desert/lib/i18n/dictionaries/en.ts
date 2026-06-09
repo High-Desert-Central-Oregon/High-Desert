@@ -32,6 +32,7 @@ export const en = {
     eventsLink: "Events",
     governanceLink: "Proposals",
     appealsLink: "Appeals",
+    transparencyLink: "Transparency",
   },
 
   landing: {
@@ -376,6 +377,25 @@ export const en = {
     overturn: "Overturn & restore",
     resolving: "Saving…",
     resolveError: "We couldn't record that. Please try again.",
+  },
+
+  transparency: {
+    title: "Transparency",
+    intro:
+      "A public record of moderation on High Desert — what was done, why, and how appeals were resolved. Moderation is accountable, not arbitrary.",
+    empty: "No moderation activity yet.",
+    actionRemoveEvent: "An event was removed",
+    actionRemoveProposal: "A proposal was removed",
+    actionRemoveGeneric: "Content was removed",
+    actionRestoreEvent: "An event was restored",
+    actionRestoreProposal: "A proposal was restored",
+    actionRestoreGeneric: "Content was restored",
+    appealUpheld: "Appeal reviewed — the removal stands",
+    appealOverturned: "Appeal reviewed — the content was restored",
+    reason: "Reason",
+    byModerator: "by {name}",
+    byModeratorUnknown: "by a moderator",
+    viewContent: "View",
   },
 };
 

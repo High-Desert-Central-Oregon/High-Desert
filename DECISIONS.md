@@ -7,6 +7,30 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-09 — Transparency log names the moderator, not the moderated member
+
+**Decision.** The public moderation transparency view shows, for each action: what
+happened (an event/proposal was removed or restored, an appeal was upheld or
+overturned), the written reason, the acting **moderator's** name, and the time.
+It does **not** name the affected member, and it links to the content's detail
+page rather than restating its title.
+
+**Why.** Accountability runs toward power: the people exercising moderation
+authority are named so the community can see moderation is principled, not
+arbitrary (P8). The people *subject* to it are not re-exposed — a removed item's
+detail page already shows only the reason (not the original author or title), so
+the log adds no new exposure of the moderated member. In a ~50-person cohort,
+naming the affected member in a public feed would amplify a takedown into a
+reputational event; that's the opposite of due process. The member's own
+identity, their appeal statement, and their content stay private to them and
+moderators (RLS), while the *fact and rationale* of moderation are fully public.
+
+**Revisit if:** the community decides moderator anonymity is needed for safety
+(flip to "a moderator"), or that affected-member identity should appear (e.g. for
+repeat-pattern visibility) — either is a community decision, not a default.
+
+---
+
 ## 2026-06-09 — Invariant 6 narrowly amended: ballots revisable until close
 
 **Decision.** A member may overwrite their own ballot while a proposal is open;
