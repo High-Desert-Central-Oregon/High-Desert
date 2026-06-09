@@ -42,73 +42,67 @@ async function SkipLink() {
   );
 }
 
+/** A nav link with a thumb-sized hit area and a visible keyboard-focus style. */
+function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className="py-1 text-muted-foreground hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none"
+    >
+      {children}
+    </Link>
+  );
+}
+
 async function NavBar() {
   const { locale, dict } = await getServerDictionary();
   const profile = await getMyProfile();
   const isMod = profile?.role === "moderator" || profile?.role === "admin";
   const verified = profile?.verified ?? false;
 
+  // Mobile-first: the whole bar is one wrapping flex row, so on a narrow phone
+  // the links flow onto extra lines instead of forcing horizontal scroll. The
+  // controls sit right via ml-auto on a wide screen and drop to their own line
+  // when wrapped. Height comes from padding, not a fixed h-16.
   return (
-    <nav lang={locale} className="flex h-16 w-full justify-center border-b">
-      <div className="flex w-full max-w-3xl items-center justify-between gap-3 p-3 px-5 text-sm">
-        <div className="flex items-center gap-4">
-          <Link href="/protected" className="font-semibold tracking-tight">
-            {dict.app.name}
-          </Link>
-          {verified && (
-            <Link
-              href="/protected/events"
-              className="text-muted-foreground hover:text-foreground hover:underline"
-            >
-              {dict.nav.eventsLink}
-            </Link>
-          )}
-          {verified && (
-            <Link
-              href="/protected/governance"
-              className="text-muted-foreground hover:text-foreground hover:underline"
-            >
-              {dict.nav.governanceLink}
-            </Link>
-          )}
-          <Link
-            href="/protected/neighborhoods"
-            className="text-muted-foreground hover:text-foreground hover:underline"
-          >
-            {dict.nav.neighborhoodLink}
-          </Link>
-          <Link
-            href="/protected/transparency"
-            className="text-muted-foreground hover:text-foreground hover:underline"
-          >
-            {dict.nav.transparencyLink}
-          </Link>
-          {!verified && (
-            <Link
-              href="/protected/verify"
-              className="text-muted-foreground hover:text-foreground hover:underline"
-            >
-              {dict.nav.verifyLink}
-            </Link>
-          )}
-          {isMod && (
-            <Link
-              href="/protected/review"
-              className="text-muted-foreground hover:text-foreground hover:underline"
-            >
-              {dict.nav.reviewLink}
-            </Link>
-          )}
-          {isMod && (
-            <Link
-              href="/protected/moderation"
-              className="text-muted-foreground hover:text-foreground hover:underline"
-            >
-              {dict.nav.appealsLink}
-            </Link>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
+    <nav lang={locale} className="flex w-full justify-center border-b">
+      <div className="flex w-full max-w-3xl flex-wrap items-center gap-x-4 gap-y-1 p-3 px-5 text-sm">
+        <Link
+          href="/protected"
+          className="py-1 font-semibold tracking-tight"
+        >
+          {dict.app.name}
+        </Link>
+        {verified && (
+          <NavLink href="/protected/events">{dict.nav.eventsLink}</NavLink>
+        )}
+        {verified && (
+          <NavLink href="/protected/governance">
+            {dict.nav.governanceLink}
+          </NavLink>
+        )}
+        <NavLink href="/protected/neighborhoods">
+          {dict.nav.neighborhoodLink}
+        </NavLink>
+        <NavLink href="/protected/transparency">
+          {dict.nav.transparencyLink}
+        </NavLink>
+        {!verified && (
+          <NavLink href="/protected/verify">{dict.nav.verifyLink}</NavLink>
+        )}
+        {isMod && (
+          <NavLink href="/protected/review">{dict.nav.reviewLink}</NavLink>
+        )}
+        {isMod && (
+          <NavLink href="/protected/moderation">{dict.nav.appealsLink}</NavLink>
+        )}
+        <div className="ml-auto flex items-center gap-3">
           <LanguageSwitcher current={locale} />
           <Suspense>
             <AuthButton />

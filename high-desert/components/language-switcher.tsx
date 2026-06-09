@@ -47,7 +47,7 @@ export function LanguageSwitcher({ current }: { current: Locale }) {
             aria-pressed={active}
             disabled={isPending}
             className={cn(
-              "px-2.5 py-1 transition-colors disabled:opacity-60",
+              "px-3 py-1.5 transition-colors disabled:opacity-60",
               i > 0 && "border-l",
               active
                 ? "bg-foreground text-background font-medium"
