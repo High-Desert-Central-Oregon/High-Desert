@@ -19,6 +19,18 @@ export type Profile = {
   created_at: string;
 };
 
+export type NeighborhoodRequestStatus = "open" | "resolved";
+
+export type NeighborhoodRequest = {
+  id: string;
+  user_id: string;
+  note: string | null;
+  status: NeighborhoodRequestStatus;
+  created_at: string;
+  resolved_at: string | null;
+  resolved_by: string | null;
+};
+
 export type DocKind = "terms" | "privacy";
 
 export type DocumentRow = {

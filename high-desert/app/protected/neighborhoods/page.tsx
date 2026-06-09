@@ -33,6 +33,15 @@ async function NeighborhoodContent() {
     .eq("id", user.id)
     .maybeSingle<{ neighborhood_id: string | null }>();
 
+  // Does the member have an open "none fits" help request awaiting follow-up?
+  // (RLS lets a member read their own requests.)
+  const { data: openRequest } = await supabase
+    .from("neighborhood_requests")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq("status", "open")
+    .maybeSingle<{ id: string }>();
+
   return (
     <div lang={locale} className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
@@ -43,6 +52,15 @@ async function NeighborhoodContent() {
           {dict.neighborhoods.intro}
         </p>
       </header>
+
+      {openRequest && (
+        <p
+          role="status"
+          className="rounded-lg border border-dashed bg-muted/40 p-4 text-sm text-muted-foreground"
+        >
+          {dict.neighborhoods.openRequestNotice}
+        </p>
+      )}
 
       <NeighborhoodForm
         neighborhoods={neighborhoods ?? []}

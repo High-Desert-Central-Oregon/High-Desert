@@ -33,6 +33,7 @@ create type vote_choice          as enum ('yes','no','abstain');
 create type mod_action           as enum ('warn','temp_ban','extended_ban','review');
 create type appeal_status        as enum ('open','upheld','overturned');
 create type doc_kind             as enum ('terms','privacy');
+create type neighborhood_request_status as enum ('open','resolved');
 
 -- ============================================================================
 -- 2 · TABLES
@@ -66,6 +67,19 @@ create table verifications (
   reviewed_at   timestamptz,
   created_at    timestamptz not null default now()
 );
+
+create table neighborhood_requests (      -- "none of the listed neighborhoods fit" queue
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references profiles(id) on delete cascade,
+  note        text,                         -- optional, member-supplied: where they actually live
+  status      neighborhood_request_status not null default 'open',
+  created_at  timestamptz not null default now(),
+  resolved_at timestamptz,                  -- stamped server-side on resolution (trigger), never by client
+  resolved_by uuid references profiles(id)  -- the member (if they later picked) or the moderator who closed it
+);
+-- At most one OPEN request per member; resolved ones are kept as light history.
+create unique index neighborhood_requests_one_open_per_user
+  on neighborhood_requests (user_id) where (status = 'open');
 
 create table documents (
   id           uuid primary key default gen_random_uuid(),
@@ -248,6 +262,40 @@ create trigger trg_purge_evidence
   for each row when (new.status in ('approved','rejected'))
   execute function public.purge_verification_evidence();
 
+-- A neighborhood-help request is resolved either by a moderator (who marks it
+-- done) or automatically when the member later picks a neighborhood. Either way
+-- resolved_at / resolved_by are stamped here, server-side, never by the client.
+create or replace function public.stamp_neighborhood_request_resolution()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.status = 'resolved' and old.status is distinct from 'resolved' then
+    new.resolved_at := now();
+    new.resolved_by := coalesce(new.resolved_by, auth.uid());
+  end if;
+  return new;
+end; $$;
+create trigger trg_stamp_neighborhood_request
+  before update on neighborhood_requests
+  for each row execute function public.stamp_neighborhood_request_resolution();
+
+-- When a member picks a neighborhood, the question their request was asking is
+-- answered — auto-resolve any open request of theirs (the stamp trigger above
+-- records who/when).
+create or replace function public.resolve_open_neighborhood_requests()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.neighborhood_id is not null
+     and new.neighborhood_id is distinct from old.neighborhood_id then
+    update neighborhood_requests
+       set status = 'resolved'
+     where user_id = new.id and status = 'open';
+  end if;
+  return new;
+end; $$;
+create trigger trg_resolve_neighborhood_requests
+  after update of neighborhood_id on profiles
+  for each row execute function public.resolve_open_neighborhood_requests();
+
 -- Moderation action -> audit entry
 create or replace function public.log_moderation()
 returns trigger language plpgsql security definer set search_path = public as $$
@@ -314,6 +362,7 @@ group by p.id;
 alter table neighborhoods      enable row level security;
 alter table profiles           enable row level security;
 alter table verifications      enable row level security;
+alter table neighborhood_requests enable row level security;
 alter table documents          enable row level security;
 alter table consents           enable row level security;
 alter table events             enable row level security;
@@ -342,6 +391,15 @@ create policy vf_read   on verifications for select to authenticated
 create policy vf_insert on verifications for insert to authenticated
   with check (user_id = auth.uid() and status = 'pending');
 create policy vf_update on verifications for update to authenticated
+  using (public.is_moderator()) with check (public.is_moderator());
+
+-- Neighborhood-help requests: a member opens & reads their own; moderators read
+-- all and resolve them. No delete policy — resolved rows stay as light history.
+create policy nr_read   on neighborhood_requests for select to authenticated
+  using (user_id = auth.uid() or public.is_moderator());
+create policy nr_insert on neighborhood_requests for insert to authenticated
+  with check (user_id = auth.uid() and status = 'open');
+create policy nr_update on neighborhood_requests for update to authenticated
   using (public.is_moderator()) with check (public.is_moderator());
 
 -- Consents: your own; append-only (no update/delete policy)
@@ -407,7 +465,7 @@ create policy al_read on audit_log for select to authenticated using (true);
 grant usage on schema public to anon, authenticated;
 grant select on neighborhoods, documents, proposal_results to anon, authenticated;
 grant select, insert, update, delete on
-  profiles, verifications, consents, events, event_rsvps,
+  profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log
   to authenticated;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { setNeighborhood, type NeighborhoodState } from "./actions";
@@ -8,15 +8,18 @@ import type { Dictionary } from "@/lib/i18n";
 
 type Neighborhood = { id: string; name: string };
 
+const NONE = "none";
+
 /**
  * Neighborhood picker. 35 Redmond neighborhoods as radio buttons (alphabetical,
- * two-column on wider screens) plus a "None of these fit" option. Submits via
- * server action; shows an inline confirmation rather than redirecting, so the
- * member can immediately change their mind if they mis-clicked.
+ * two-column on wider screens) plus a "None of these fit" option that reveals an
+ * optional "where do you live?" note. Submits via server action; shows an inline
+ * confirmation rather than redirecting, so the member can immediately change
+ * their mind if they mis-clicked.
  *
- * "None fits" posts value="none" → the action sets neighborhood_id to null.
- * The member is shown a follow-up confirmation; moderators see them in the
- * review queue (Step 5 Part 2).
+ * Picking a real neighborhood sets profiles.neighborhood_id (and a DB trigger
+ * auto-resolves any open help request). "None fits" leaves it null and opens a
+ * neighborhood-help request a moderator follows up on (Step 5 Part 1).
  */
 export function NeighborhoodForm({
   neighborhoods,
@@ -31,8 +34,10 @@ export function NeighborhoodForm({
     setNeighborhood,
     null,
   );
+  // Track the selection so the note field can appear only for "none fits".
+  const [selected, setSelected] = useState<string>(currentId ?? NONE);
 
-  // "None fits" path: show confirmation card + option to reconsider.
+  // "None fits" path: show confirmation card + a way back to the form.
   if (state && "saved" in state && state.cleared) {
     return (
       <div className="flex flex-col gap-4 rounded-lg border bg-card p-6">
@@ -47,10 +52,9 @@ export function NeighborhoodForm({
           >
             {dict.neighborhoods.backHome}
           </Link>
-          {/* reload the page to get back to the form */}
           <a
             href="/protected/neighborhoods"
-            className="text-muted-foreground underline-offset-2 hover:underline hover:text-foreground"
+            className="text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           >
             {dict.neighborhoods.legend} →
           </a>
@@ -90,7 +94,8 @@ export function NeighborhoodForm({
                 type="radio"
                 name="neighborhood_id"
                 value={nb.id}
-                defaultChecked={nb.id === currentId}
+                checked={selected === nb.id}
+                onChange={() => setSelected(nb.id)}
                 className="accent-primary"
               />
               <span className="text-sm">{nb.name}</span>
@@ -102,8 +107,9 @@ export function NeighborhoodForm({
             <input
               type="radio"
               name="neighborhood_id"
-              value="none"
-              defaultChecked={currentId === null}
+              value={NONE}
+              checked={selected === NONE}
+              onChange={() => setSelected(NONE)}
               className="mt-0.5 accent-primary"
             />
             <span className="text-sm">
@@ -117,6 +123,23 @@ export function NeighborhoodForm({
           </label>
         </div>
       </fieldset>
+
+      {/* Optional note, only when "none fits" is chosen */}
+      {selected === NONE && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="note" className="text-sm font-medium">
+            {dict.neighborhoods.noneNoteLabel}
+          </label>
+          <textarea
+            id="note"
+            name="note"
+            rows={2}
+            maxLength={300}
+            placeholder={dict.neighborhoods.noneNotePlaceholder}
+            className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          />
+        </div>
+      )}
 
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.neighborhoods.saving : dict.neighborhoods.save}

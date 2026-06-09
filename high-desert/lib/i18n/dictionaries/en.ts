@@ -108,12 +108,17 @@ export const en = {
     noneOptionLabel: "None of these fit",
     noneOptionHint:
       "If your part of Redmond isn't listed — a broader area, a rural pocket, or a community outside city limits — choose this. A neighbor on the team will follow up to help place you.",
+    noneNoteLabel: "Where do you live? (optional)",
+    noneNotePlaceholder:
+      "e.g. Downtown Redmond, or a rural area outside the listed neighborhoods",
     save: "Save neighborhood",
     saving: "Saving…",
     saved: "Neighborhood saved.",
     noneConfirmTitle: "We'll follow up",
     noneConfirmBody:
       "Your response is noted. A neighbor on the team will reach out to help find your neighborhood. You have full access in the meantime.",
+    openRequestNotice:
+      "You've told us none of the listed neighborhoods fit. A neighbor on the team will follow up to help place you. You can still pick a neighborhood here any time.",
     backHome: "Back to home",
     errorGeneric: "We couldn't save that. Please try again.",
   },
@@ -173,10 +178,16 @@ export const en = {
     deciding: "Saving…",
     decideError: "Couldn't record that decision. Please try again.",
     confirmReject: "Reject this verification request?",
-    noNeighborhoodTitle: "Members without a neighborhood",
-    noNeighborhoodIntro:
-      "Verified members who haven't been placed yet — they said 'none fits' or skipped the step. Reach out to help them find their neighborhood.",
-    noNeighborhoodEmpty: "Everyone has a neighborhood set.",
+    requestsTitle: "Neighborhood-help requests",
+    requestsIntro:
+      "Members who said none of the listed neighborhoods fit, oldest first. Reach out to help place them, then mark the request resolved.",
+    requestsEmpty: "No open neighborhood-help requests.",
+    requestNote: "Where they live:",
+    requestNoNote: "No note left.",
+    memberSince: "Member since {date}",
+    markResolved: "Mark resolved",
+    resolving: "Saving…",
+    resolveError: "Couldn't update that. Please try again.",
   },
 };
 

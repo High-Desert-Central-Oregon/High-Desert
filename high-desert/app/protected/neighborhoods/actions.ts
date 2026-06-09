@@ -2,12 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, isModerator } from "@/lib/auth";
 
 export type NeighborhoodState =
   | { saved: true; cleared: boolean }
   | { error: string }
   | null;
+
+export type ResolveState = { error: string } | null;
 
 /**
  * Set (or clear) the signed-in member's neighborhood. neighborhood_id is a
@@ -17,8 +19,13 @@ export type NeighborhoodState =
  * and tenure_start on any profile update, so setting neighborhood_id can never
  * touch those fields even if the client tried (invariant 2).
  *
- * A null neighborhoodId means "none of these fit" — the member stays unplaced
- * and appears in the moderator's follow-up list (Part 2).
+ * Two paths:
+ *   • A real neighborhood id → set it. A DB trigger
+ *     (trg_resolve_neighborhood_requests) auto-resolves any open help request,
+ *     since the member's question is now answered.
+ *   • "none" → leave neighborhood_id null AND open a neighborhood-help request
+ *     (with the optional "where do you live?" note) so a moderator can follow up.
+ *     This is a deliberate flag, distinct from "hasn't chosen yet."
  */
 export async function setNeighborhood(
   _prev: NeighborhoodState,
@@ -28,8 +35,8 @@ export async function setNeighborhood(
   if (!user) return { error: "unauthenticated" };
 
   const raw = formData.get("neighborhood_id");
-  const neighborhoodId =
-    !raw || raw === "none" ? null : String(raw);
+  const isNone = !raw || raw === "none";
+  const neighborhoodId = isNone ? null : String(raw);
 
   const supabase = await createClient();
   const { error } = await supabase
@@ -39,7 +46,48 @@ export async function setNeighborhood(
 
   if (error) return { error: "save-failed" };
 
+  if (isNone) {
+    const note = String(formData.get("note") ?? "").trim();
+    // Open a help request. The partial unique index guarantees at most one open
+    // request per member; if they already have one, that's success, not an error
+    // (Ousterhout: define the error out of existence). 23505 = unique_violation.
+    const { error: reqError } = await supabase
+      .from("neighborhood_requests")
+      .insert({
+        user_id: user.id,
+        note: note.length > 0 ? note : null,
+        status: "open",
+      });
+    if (reqError && reqError.code !== "23505") {
+      return { error: "save-failed" };
+    }
+  }
+
   revalidatePath("/protected");
   revalidatePath("/protected/neighborhoods");
-  return { saved: true, cleared: neighborhoodId === null };
+  revalidatePath("/protected/review");
+  return { saved: true, cleared: isNone };
+}
+
+/**
+ * Mark a neighborhood-help request resolved. Moderator-only, the human-in-the-
+ * loop follow-up (invariant 5) — a person has reached out and placed the member.
+ * RLS (nr_update) re-checks is_moderator(); the stamp trigger records who/when.
+ */
+export async function resolveNeighborhoodRequest(
+  requestId: string,
+): Promise<ResolveState> {
+  if (!(await isModerator())) return { error: "forbidden" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("neighborhood_requests")
+    .update({ status: "resolved" })
+    .eq("id", requestId)
+    .eq("status", "open"); // no-op if already resolved
+
+  if (error) return { error: "resolve-failed" };
+
+  revalidatePath("/protected/review");
+  return null;
 }

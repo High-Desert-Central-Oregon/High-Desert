@@ -107,12 +107,17 @@ export const es: Dictionary = {
     noneOptionLabel: "Ninguno encaja",
     noneOptionHint:
       "Si tu parte de Redmond no aparece en la lista — un área más amplia, un bolsillo rural o una comunidad fuera de los límites de la ciudad — elige esta opción. Un vecino del equipo te contactará para ayudarte.",
+    noneNoteLabel: "¿Dónde vives? (opcional)",
+    noneNotePlaceholder:
+      "p. ej. el centro de Redmond, o una zona rural fuera de los vecindarios listados",
     save: "Guardar vecindario",
     saving: "Guardando…",
     saved: "Vecindario guardado.",
     noneConfirmTitle: "Te contactaremos",
     noneConfirmBody:
       "Tu respuesta ha sido registrada. Un vecino del equipo se comunicará contigo para ayudarte a encontrar tu vecindario. Tienes acceso completo mientras tanto.",
+    openRequestNotice:
+      "Nos has dicho que ninguno de los vecindarios listados encaja. Un vecino del equipo te contactará para ayudarte a ubicarte. Aún puedes elegir un vecindario aquí en cualquier momento.",
     backHome: "Volver al inicio",
     errorGeneric: "No pudimos guardar eso. Inténtalo de nuevo.",
   },
@@ -172,9 +177,15 @@ export const es: Dictionary = {
     deciding: "Guardando…",
     decideError: "No se pudo registrar esa decisión. Inténtalo de nuevo.",
     confirmReject: "¿Rechazar esta solicitud de verificación?",
-    noNeighborhoodTitle: "Miembros sin vecindario",
-    noNeighborhoodIntro:
-      "Miembros verificados que aún no han sido ubicados — dijeron 'ninguno encaja' o no completaron el paso. Contáctalos para ayudarlos a encontrar su vecindario.",
-    noNeighborhoodEmpty: "Todos tienen un vecindario establecido.",
+    requestsTitle: "Solicitudes de ayuda con el vecindario",
+    requestsIntro:
+      "Miembros que dijeron que ninguno de los vecindarios listados encaja, las más antiguas primero. Contáctalos para ayudarlos a ubicarse y luego marca la solicitud como resuelta.",
+    requestsEmpty: "No hay solicitudes de ayuda con el vecindario abiertas.",
+    requestNote: "Dónde viven:",
+    requestNoNote: "Sin nota.",
+    memberSince: "Miembro desde {date}",
+    markResolved: "Marcar como resuelta",
+    resolving: "Guardando…",
+    resolveError: "No se pudo actualizar. Inténtalo de nuevo.",
   },
 };
