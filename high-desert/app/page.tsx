@@ -1,58 +1,75 @@
-import { DeployButton } from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import { AuthButton } from "@/components/auth-button";
-import { Hero } from "@/components/hero";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { ConnectSupabaseSteps } from "@/components/tutorial/connect-supabase-steps";
-import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
-import { hasEnvVars } from "@/lib/utils";
-import Link from "next/link";
 import { Suspense } from "react";
+import Link from "next/link";
+import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { getCurrentUser } from "@/lib/auth";
+import { getServerDictionary } from "@/lib/i18n/server";
+
+async function Landing() {
+  const { locale, dict } = await getServerDictionary();
+  const user = await getCurrentUser();
+
+  return (
+    <main
+      id="main"
+      lang={locale}
+      className="mx-auto flex min-h-svh w-full max-w-3xl flex-col px-5"
+    >
+      <nav className="flex h-16 items-center justify-between">
+        <span className="font-semibold tracking-tight">{dict.app.name}</span>
+        <LanguageSwitcher current={locale} />
+      </nav>
+
+      <div className="flex flex-1 flex-col justify-center gap-10 py-12">
+        <div className="flex flex-col gap-4">
+          <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            {dict.app.place}
+          </p>
+          <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+            {dict.landing.title}
+          </h1>
+          <p className="max-w-prose text-pretty text-muted-foreground">
+            {dict.landing.subtitle}
+          </p>
+          <div className="mt-2">
+            <Button asChild size="lg">
+              <Link href={user ? "/protected" : "/auth/login"}>
+                {user ? dict.landing.dashboardCta : dict.landing.signInCta}
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        <section aria-label={dict.landing.commitmentsTitle} className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            {dict.landing.commitmentsTitle}
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {dict.landing.commitments.map((line) => (
+              <li key={line} className="flex items-start gap-2 text-sm">
+                <Check
+                  className="mt-0.5 size-4 shrink-0 text-green-600 dark:text-green-500"
+                  aria-hidden="true"
+                />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <footer className="border-t py-6 text-xs text-muted-foreground">
+        {dict.app.name} · {dict.app.place}
+      </footer>
+    </main>
+  );
+}
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
-              </div>
-            </div>
-            {!hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )}
-          </div>
-        </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          <Hero />
-          <main className="flex-1 flex flex-col gap-6 px-4">
-            <h2 className="font-medium text-xl mb-4">Next steps</h2>
-            {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-          </main>
-        </div>
-
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer"
-            >
-              Supabase
-            </a>
-          </p>
-          <ThemeSwitcher />
-        </footer>
-      </div>
-    </main>
+    <Suspense>
+      <Landing />
+    </Suspense>
   );
 }

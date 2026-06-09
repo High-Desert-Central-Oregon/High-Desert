@@ -1,43 +1,64 @@
-import { redirect } from "next/navigation";
-
-import { createClient } from "@/lib/supabase/server";
-import { InfoIcon } from "lucide-react";
-import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
 import { Suspense } from "react";
+import { CheckCircle2, Clock } from "lucide-react";
+import { getMyProfile } from "@/lib/auth";
+import { getServerDictionary } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n";
 
-async function UserDetails() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getClaims();
+async function Home() {
+  const { locale, dict } = await getServerDictionary();
+  const profile = await getMyProfile();
+  const name = profile?.display_name ?? "";
+  const verified = profile?.verified ?? false;
 
-  if (error || !data?.claims) {
-    redirect("/auth/login");
-  }
+  return (
+    <div lang={locale} className="flex flex-col gap-8">
+      <header className="flex flex-col gap-2">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {dict.home.title}
+        </h1>
+        {name && (
+          <p className="text-muted-foreground">
+            {t(dict.home.greeting, { name })}
+          </p>
+        )}
+      </header>
 
-  return JSON.stringify(data.claims, null, 2);
+      <section
+        aria-label={dict.home.statusLabel}
+        className="flex items-center gap-3 rounded-lg border bg-card p-4"
+      >
+        {verified ? (
+          <CheckCircle2
+            className="size-5 text-green-600 dark:text-green-500"
+            aria-hidden="true"
+          />
+        ) : (
+          <Clock className="size-5 text-muted-foreground" aria-hidden="true" />
+        )}
+        <div className="text-sm">
+          <p className="font-medium">{dict.home.statusLabel}</p>
+          <p className="text-muted-foreground">
+            {verified ? dict.home.statusVerified : dict.home.statusUnverified}
+          </p>
+        </div>
+      </section>
+
+      <p className="text-sm text-green-700 dark:text-green-500">
+        {dict.home.consentRecorded}
+      </p>
+
+      <section className="rounded-lg border border-dashed p-5">
+        <h2 className="font-medium">{dict.home.nextTitle}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{dict.home.nextBody}</p>
+      </section>
+    </div>
+  );
 }
 
 export default function ProtectedPage() {
   return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="w-full">
-        <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-          <InfoIcon size="16" strokeWidth={2} />
-          This is a protected page that you can only see as an authenticated
-          user
-        </div>
-      </div>
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
-        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          <Suspense>
-            <UserDetails />
-          </Suspense>
-        </pre>
-      </div>
-      <div>
-        <h2 className="font-bold text-2xl mb-4">Next steps</h2>
-        <FetchDataSteps />
-      </div>
-    </div>
+    <Suspense>
+      <Home />
+    </Suspense>
   );
 }

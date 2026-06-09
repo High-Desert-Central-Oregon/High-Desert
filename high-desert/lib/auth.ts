@@ -1,0 +1,38 @@
+import { createClient } from "@/lib/supabase/server";
+import type { Profile } from "@/lib/types/db";
+
+export type CurrentUser = { id: string; email: string | null };
+
+/**
+ * The signed-in user, or null. Wraps `getClaims()` so the rest of the app has a
+ * single, small way to ask "who is this?" without re-deriving the shape of a JWT.
+ * Reads cookies — render inside a `<Suspense>` boundary.
+ */
+export async function getCurrentUser(): Promise<CurrentUser | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  if (error || !data?.claims?.sub) return null;
+  return { id: data.claims.sub, email: data.claims.email ?? null };
+}
+
+/**
+ * The signed-in member's profile row, or null if not signed in. The profile is
+ * created by the database on sign-up (`handle_new_user` trigger), so this only
+ * ever reads — bootstrap is the server's job, never the client's (invariant 2).
+ */
+export async function getMyProfile(): Promise<Profile | null> {
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return null;
+
+  const { data } = await supabase
+    .from("profiles")
+    .select(
+      "id, display_name, neighborhood_id, verified, role, tenure_start, locale, created_at",
+    )
+    .eq("id", userId)
+    .maybeSingle<Profile>();
+
+  return data ?? null;
+}
