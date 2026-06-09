@@ -47,8 +47,14 @@ export function ReviewRow({
     if (!approve && !window.confirm(dict.review.confirmReject)) return;
     setError(null);
     startDecision(async () => {
-      const result = await decideVerification(id, approve);
-      if (result?.error) setError(dict.review.decideError);
+      try {
+        const result = await decideVerification(id, approve);
+        if (result?.error) setError(dict.review.decideError);
+      } catch {
+        // The action throws (and leaves the row pending) if the evidence file
+        // couldn't be deleted first — surface it so the moderator can retry.
+        setError(dict.review.decideError);
+      }
     });
   };
 
