@@ -200,7 +200,7 @@ export const en = {
   verify: {
     title: "Verify that you live in Redmond",
     intro:
-      "Full participation — neighborhood events and the community vote — is for verified Redmond residents. Choose one way to show your residency. A neighbor on the review team checks it by hand.",
+      "Neighborhood events and the community vote are for verified Redmond residents. Choose one way to show you live here, and a neighbor on the review team checks it by hand.",
     forget:
       "We delete your document the moment a reviewer decides. We keep only that you're verified and which method you used — never the document itself.",
     methodLegend: "How would you like to verify?",
@@ -301,7 +301,7 @@ export const en = {
     fieldTitlePlaceholder: "e.g. Adopt the community garden plan",
     fieldKind: "Type of decision",
     fieldKindHint:
-      "Bigger decisions need broader agreement to pass. The exact thresholds are set by the community.",
+      "Bigger decisions need more agreement to pass. The community decides exactly how much.",
     fieldBody: "Details",
     fieldBodyPlaceholder: "Explain what's being decided and why…",
     fieldOpens: "Voting opens",
@@ -343,7 +343,7 @@ export const en = {
     removedTitleEvent: "This event was removed by a moderator.",
     removedTitleProposal: "This proposal was removed by a moderator.",
     removedReason: "Reason",
-    appealable: "If this is your content, you can appeal this decision.",
+    appealable: "If you posted this, you can appeal.",
     controlHeading: "Moderator tools",
     reasonLabel: "Reason (required — shown to the member and in the public log)",
     reasonPlaceholder: "Why is this being removed or restored?",
@@ -363,8 +363,7 @@ export const en = {
     appealSubmit: "Submit appeal",
     appealSubmitting: "Submitting…",
     appealError: "We couldn't submit your appeal. Please try again.",
-    appealStatusOpen:
-      "Your appeal is under review by a different moderator than the one who removed this.",
+    appealStatusOpen: "A different moderator is reviewing your appeal.",
     appealStatusUpheld: "After review, the removal was upheld.",
     appealStatusOverturned:
       "After review, the removal was overturned and the content restored.",
@@ -389,7 +388,7 @@ export const en = {
   transparency: {
     title: "Transparency",
     intro:
-      "A public record of moderation on High Desert — what was done, why, and how appeals were resolved. Moderation is accountable, not arbitrary.",
+      "A public record of what moderators have done and why, including how appeals turned out — so moderation stays out in the open.",
     empty: "No moderation activity yet.",
     actionRemoveEvent: "An event was removed",
     actionRemoveProposal: "A proposal was removed",

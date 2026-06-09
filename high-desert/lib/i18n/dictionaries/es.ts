@@ -205,7 +205,7 @@ export const es: Dictionary = {
   verify: {
     title: "Verifica que vives en Redmond",
     intro:
-      "La participación completa —eventos del vecindario y la votación comunitaria— es para residentes verificados de Redmond. Elige una forma de mostrar tu residencia. Una persona del equipo de revisión la comprueba a mano.",
+      "Los eventos del vecindario y la votación comunitaria son para residentes verificados de Redmond. Elige una forma de mostrar que vives aquí, y un vecino del equipo de revisión la comprueba a mano.",
     forget:
       "Borramos tu documento en el momento en que una persona decide. Solo conservamos que estás verificado y qué método usaste — nunca el documento en sí.",
     methodLegend: "¿Cómo te gustaría verificarte?",
@@ -306,7 +306,7 @@ export const es: Dictionary = {
     fieldTitlePlaceholder: "p. ej. Adoptar el plan del jardín comunitario",
     fieldKind: "Tipo de decisión",
     fieldKindHint:
-      "Las decisiones más grandes necesitan un acuerdo más amplio para aprobarse. Los umbrales exactos los fija la comunidad.",
+      "Las decisiones más grandes necesitan más acuerdo para aprobarse. La comunidad decide exactamente cuánto.",
     fieldBody: "Detalles",
     fieldBodyPlaceholder: "Explica qué se decide y por qué…",
     fieldOpens: "Abre la votación",
@@ -349,7 +349,7 @@ export const es: Dictionary = {
     removedTitleEvent: "Un moderador eliminó este evento.",
     removedTitleProposal: "Un moderador eliminó esta propuesta.",
     removedReason: "Motivo",
-    appealable: "Si este contenido es tuyo, puedes apelar esta decisión.",
+    appealable: "Si tú lo publicaste, puedes apelar.",
     controlHeading: "Herramientas de moderación",
     reasonLabel:
       "Motivo (obligatorio: visible para el miembro y en el registro público)",
@@ -370,8 +370,7 @@ export const es: Dictionary = {
     appealSubmit: "Enviar apelación",
     appealSubmitting: "Enviando…",
     appealError: "No pudimos enviar tu apelación. Inténtalo de nuevo.",
-    appealStatusOpen:
-      "Tu apelación está en revisión por un moderador distinto al que la eliminó.",
+    appealStatusOpen: "Otro moderador está revisando tu apelación.",
     appealStatusUpheld: "Tras la revisión, se mantuvo la eliminación.",
     appealStatusOverturned:
       "Tras la revisión, se revocó la eliminación y se restauró el contenido.",
@@ -396,7 +395,7 @@ export const es: Dictionary = {
   transparency: {
     title: "Transparencia",
     intro:
-      "Un registro público de la moderación en High Desert: qué se hizo, por qué y cómo se resolvieron las apelaciones. La moderación es responsable, no arbitraria.",
+      "Un registro público de lo que han hecho los moderadores y por qué, incluido cómo terminaron las apelaciones, para que la moderación esté a la vista de todos.",
     empty: "Aún no hay actividad de moderación.",
     actionRemoveEvent: "Se eliminó un evento",
     actionRemoveProposal: "Se eliminó una propuesta",
