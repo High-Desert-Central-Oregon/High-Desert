@@ -18,7 +18,7 @@ including the intern pipeline. So contributions are held to two standards: they 
 
 This project is licensed under the **GNU AGPL-3.0-or-later** (see `LICENSE`). By contributing,
 you agree your contribution is provided under the **same license**. Everyone — including the
-maintainers and High Desert PBC — is bound by the AGPL equally; there is no separate grant that
+maintainers and High Desert — is bound by the AGPL equally; there is no separate grant that
 lets the project take your contribution proprietary. We use the DCO below rather than a
 contributor license agreement, on purpose: no rights are assigned to anyone.
 
@@ -98,7 +98,7 @@ and the member-data commitments, privacy bugs are treated as security bugs.
 ## Per-file header notice (new source files)
 
     High Desert — <one-line description of the file>
-    Copyright (C) 2026 High Desert PBC
+    Copyright (C) 2026 High Desert
     SPDX-License-Identifier: AGPL-3.0-or-later
 
     This program is free software: you can redistribute it and/or modify it under

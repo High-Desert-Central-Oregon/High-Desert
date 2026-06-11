@@ -3,8 +3,8 @@
 **Community-owned, verified, ad-free digital civic infrastructure for Redmond, Oregon.**
 
 High Desert is a place for verified neighbors to find each other, organize, help one another,
-and govern the platform together. It is run by [High Desert PBC], an Oregon public benefit
-corporation on a path to nonprofit status. It is not social media and it is not
+and govern the platform together. It is run by [High Desert], a member-governed Oregon nonprofit
+public benefit corporation (ORS 65, on a 501(c)(3) pathway). It is not social media and it is not
 advertising-supported — the people it serves are the only customer.
 
 > **Status: pre-launch.** We're building the prototype — a functional closed-beta MVP for a
@@ -111,5 +111,5 @@ instance, [get in touch][contact].
 
 ---
 
-*[High Desert PBC] · Redmond, Oregon. Replace the bracketed placeholders ([repo URL], [contact],
+*[High Desert] · Redmond, Oregon. Replace the bracketed placeholders ([repo URL], [contact],
 and the entity name) before publishing.*

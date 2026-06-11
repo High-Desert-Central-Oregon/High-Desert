@@ -8,7 +8,8 @@ flag it — do not "helpfully" work around it.**
 ## What this is
 
 High Desert is community-owned, verified, ad-free digital civic infrastructure for
-**Redmond, Oregon** — a Public Benefit Corporation on a path to nonprofit. It is *not*
+**Redmond, Oregon** — a member-governed Oregon nonprofit public benefit corporation
+(ORS 65, on a 501(c)(3) pathway). It is *not*
 ad-supported social media. We are building the **prototype**: a functional closed-beta MVP
 a ~50-person founding cohort will actually use (real verification, real neighborhood
 events, a real governance vote, a public transparency view). Ship the smallest thing that
