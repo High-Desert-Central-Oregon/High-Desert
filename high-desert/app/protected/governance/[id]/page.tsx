@@ -250,7 +250,7 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
                     className="flex items-center justify-between gap-4 text-sm"
                   >
                     <dt>{dict.governance.choices[choice]}</dt>
-                    <dd className="font-medium tabular-nums">
+                    <dd className="font-mono font-medium tabular-nums">
                       {Number(weight).toFixed(1)}
                     </dd>
                   </div>

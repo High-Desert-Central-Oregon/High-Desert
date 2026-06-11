@@ -1,60 +1,72 @@
+/* Brand fonts are self-hosted via @fontsource and imported in app/layout.tsx
+ * (no external CDN); this file maps them onto the --font-* variables below. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * The High Desert palette, mapped onto the shadcn token contract. Values are HSL
+ * triplets (the `hsl(var(--x))` wrappers live in tailwind.config.ts). Hex sources
+ * are noted so the brand stays legible to the next developer.
+ *
+ * WCAG 2.1 AA was re-checked against THESE real colors (not the old placeholder)
+ * in both themes; the few adjustments needed to pass are called out inline:
+ *   • muted-foreground is darkened from the brand #736E60 to #5E5849 so secondary
+ *     text clears 4.5:1 on the bone-2 card surface (it failed at 4.06).
+ *   • --accent is rust (the brand accent) with WHITE text — rust is NOT the error
+ *     color; --destructive is a separate, distinctly-red red.
+ *   • --border is the soft sage divider (decorative: cards carry their own bg +
+ *     shadow). --input is a darker sage so form-control boundaries clear 3:1.
+ */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Playfair Display Variable", Georgia, "Times New Roman", serif;
+    --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", monospace;
+
+    --background: 43 38.9% 92.9%; /* bone     #F4F0E6 */
+    --foreground: 38 13.3% 11.8%; /* basalt   #221F1A */
+    --card: 41 36.7% 88.2%; /* bone-2   #ECE5D6 */
+    --card-foreground: 38 13.3% 11.8%; /* basalt */
+    --popover: 41 36.7% 88.2%; /* bone-2 */
+    --popover-foreground: 38 13.3% 11.8%; /* basalt */
+    --primary: 141 13.4% 24.9%; /* juniper  #37483D */
+    --primary-foreground: 43 38.9% 92.9%; /* bone */
+    --secondary: 82 13.5% 72.4%; /* sage-soft #BBC2AF */
+    --secondary-foreground: 38 13.3% 11.8%; /* basalt */
+    --muted: 41 36.7% 88.2%; /* bone-2 */
+    --muted-foreground: 43 12.6% 32.7%; /* muted text #5E5849 (AA-darkened from #736E60) */
+    --accent: 19 54.2% 44.5%; /* rust     #AF5A34 (brand accent — not error) */
+    --accent-foreground: 0 0% 100%; /* white on rust (4.84:1) */
+    --destructive: 4 76.5% 40%; /* distinct red #B42318 (the error state) */
+    --destructive-foreground: 0 0% 100%; /* white */
+    --border: 82 13.5% 72.4%; /* sage-soft #BBC2AF (decorative dividers) */
+    --input: 84 13% 42.4%; /* sage-deep #6F7A5E (control boundary, 3:1) */
+    --ring: 19 54.2% 44.5%; /* rust (focus ring) */
     --radius: 0.5rem;
   }
+
+  /* Warm dark mode: deep basalt/juniper ground, bone text, lighter rust + sage. */
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --background: 37 13.8% 11.4%; /* deep basalt #211E19 */
+    --foreground: 43 38.9% 92.9%; /* bone */
+    --card: 37 10.3% 15.3%; /* raised warm  #2B2823 */
+    --card-foreground: 43 38.9% 92.9%; /* bone */
+    --popover: 37 10.3% 15.3%;
+    --popover-foreground: 43 38.9% 92.9%;
+    --primary: 83 14% 56.7%; /* sage #94A081 (lighter accent in dark) */
+    --primary-foreground: 38 13.3% 11.8%; /* basalt */
+    --secondary: 138 14.3% 32.9%; /* juniper-2 #48604F */
+    --secondary-foreground: 43 38.9% 92.9%; /* bone */
+    --muted: 37 10.3% 15.3%; /* card-tone surface */
+    --muted-foreground: 43 15% 67.3%; /* light muted #B8B19F (6.87:1 on card) */
+    --accent: 20 58% 56.1%; /* lighter rust #D07A4E */
+    --accent-foreground: 38 13.3% 11.8%; /* basalt on lighter rust (5.2:1) */
+    --destructive: 5 72.5% 62.9%; /* lighter red #E5675C */
+    --destructive-foreground: 38 13.3% 11.8%; /* basalt */
+    --border: 40 11.5% 20.4%; /* warm divider #3A362E */
+    --input: 43 11.2% 43.7%; /* lighter control boundary #7C7563 (3.6:1) */
+    --ring: 20 58% 56.1%; /* lighter rust */
   }
 }
 
@@ -63,6 +75,14 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "ss01"; /* DM Sans single-storey a — friendlier reading */
+  }
+  /* Playfair Display for the display/heading layer. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif;
   }
 }

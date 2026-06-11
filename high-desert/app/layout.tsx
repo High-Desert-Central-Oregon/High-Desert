@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+// Self-hosted brand fonts (no external CDN). Variable files cover all weights;
+// DM Mono ships fixed weights, so pull the two we use.
+import "@fontsource-variable/dm-sans";
+import "@fontsource-variable/playfair-display";
+import "@fontsource/dm-mono/400.css";
+import "@fontsource/dm-mono/500.css";
 import "./globals.css";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -14,12 +19,8 @@ export const metadata: Metadata = {
     "Community-owned, verified, ad-free civic infrastructure for Redmond, Oregon.",
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
-  subsets: ["latin"],
-});
-
+// Fonts are self-hosted (@fontsource, imported in globals.css) and applied
+// through the --font-* CSS variables / Tailwind families — no external CDN.
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
