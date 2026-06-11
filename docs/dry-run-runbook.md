@@ -23,7 +23,9 @@ paste block.
 
 **Setup**
 
-1. Apply `schema.sql` + migrations `0001`–`0007` to a fresh staging DB.
+1. Apply `schema.sql` + migrations `0001`–`0010` to a fresh staging DB. (`0010`
+   needs the `pg_cron` extension; if it isn't available, skip it — the manual
+   close still works.)
 2. Run [seed/dry-run-accounts.sql](../seed/dry-run-accounts.sql). Confirm the
    roster check at the end prints the six accounts with weights 1.0 / 1.2 / 1.5.
 3. Run the blocks below **in order**, as the project owner (Supabase SQL editor =
@@ -417,10 +419,13 @@ where entity = 'proposal' and entity_id = '0b000000-0000-0000-0000-000000000001'
 > B2/B3 and run the open-state checks now, then **wait until the window passes**
 > for B4. Need more time? Re-run the seed and use a longer `closes_at`.
 
-### B2 · The three tiers vote
+### B2 · Members across the tiers vote (and clear the turnout floor)
 
 Each member sends **only a choice** — the trigger sets `user_id` and `weight`
-from tenure. The upsert mirrors the app's `castVote`.
+from tenure. The upsert mirrors the app's `castVote`. **Five** members vote here,
+on purpose: the privacy floor (migration 0008) withholds the weighted breakdown
+until at least 5 distinct members have voted, so five clears it and B4 can show
+the tiers. (Voters: Carla 1.0, Ben 1.2, Diego 1.0, Frank 1.5, Aida 1.5.)
 
 **▶ as Carla** (1.0×) — `commit`
 
@@ -443,6 +448,34 @@ commit;
 begin;
   select set_config('request.jwt.claims',
     '{"sub":"00000000-0000-0000-0000-0000000000b2","role":"authenticated"}', true);
+  set local role authenticated;
+
+  insert into votes (proposal_id, choice)
+  values ('0b000000-0000-0000-0000-000000000001', 'yes')
+  on conflict (proposal_id, user_id) do update set choice = excluded.choice;
+commit;
+```
+
+**▶ as Diego** (1.0×, verified in Walkthrough A) — votes **no** — `commit`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000d4","role":"authenticated"}', true);
+  set local role authenticated;
+
+  insert into votes (proposal_id, choice)
+  values ('0b000000-0000-0000-0000-000000000001', 'no')
+  on conflict (proposal_id, user_id) do update set choice = excluded.choice;
+commit;
+```
+
+**▶ as Frank** (1.5×, a moderator is also a verified member) — votes **yes** — `commit`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000f6","role":"authenticated"}', true);
   set local role authenticated;
 
   insert into votes (proposal_id, choice)
@@ -572,7 +605,14 @@ begin;
 rollback;   -- discards the forced flip AND its premature close-audit
 ```
 
-### B4 · The window closes → result appears → moderator records the close
+### B4 · The window closes → result appears → the close is recorded
+
+> **pg_cron note (migration 0010).** On a DB with the scheduled close enabled,
+> `close_due_proposals()` records the close automatically ~5 min after the window
+> passes (actor null = closed on schedule). To exercise the *manual* moderator
+> close below deterministically, unschedule it first —
+> `select cron.unschedule('close-due-proposals');` — or run B4 within 5 minutes of
+> the window passing. Either way the close is audited exactly once.
 
 Wait until the window has passed, then confirm:
 
@@ -583,16 +623,23 @@ select now() > closes_at as window_passed from proposals
 where id = '0b000000-0000-0000-0000-000000000001';
 -- Proceed once this is true.
 
-select ballots, yes_weight, no_weight, abstain_weight
+select ballots, revealed, yes_weight, no_weight, abstain_weight
 from proposal_results
 where proposal_id = '0b000000-0000-0000-0000-000000000001';
--- Expected: 3 | 2.2 | 0 | 1.5
---   yes  = Carla 1.0 + Ben 1.2 = 2.2
---   no   = 0            (Aida changed her 'no' to 'abstain' before close)
---   abst = Aida 1.5
--- The weighting (1.0 / 1.2 / 1.5) is visible in the totals; the per-member
--- choices are not — aggregate only.
+-- Expected: 5 | true | 3.7 | 1.0 | 1.5
+--   yes  = Carla 1.0 + Ben 1.2 + Frank 1.5 = 3.7
+--   no   = Diego 1.0
+--   abst = Aida 1.5    (she changed her 'no' to 'abstain' before close)
+-- revealed = true because 5 ballots >= the MIN_TURNOUT floor (5). The weighting
+-- (1.0 / 1.2 / 1.5) is visible in the totals; the per-member choices are not.
 ```
+
+**The turnout floor (migration 0008), for contrast.** Here `revealed=true` because
+five cleared the floor. Had fewer than five voted, the same row would come back
+`revealed=false` with `yes_weight / no_weight / abstain_weight = NULL` (only
+`ballots` populated), and the UI shows "turnout too low to reveal" — turnout, never
+the breakdown. To see it directly, re-run this walkthrough but let only Carla, Ben,
+and Aida vote (3 < 5): B4's query returns `3 | false | NULL | NULL | NULL`.
 
 **▶ as Esther** records the official close — `commit`
 
@@ -607,6 +654,8 @@ begin;
 commit;
 -- Expected: status open→closed fires trg_log_proposal_closed, which writes
 -- 'proposal.closed' with the AGGREGATE result computed in-DB (no per-ballot data).
+-- (If pg_cron already closed it, this is a no-op — status is already 'closed', so
+--  the trigger doesn't re-fire; the audit was written once, by the job.)
 ```
 
 Confirm the close audit — aggregate only, no ballots leaked:
@@ -617,13 +666,15 @@ where entity = 'proposal' and entity_id = '0b000000-0000-0000-0000-000000000001'
 order by created_at;
 -- Expected, in order:
 --   proposal.created | {"kind":"minor"}
---   proposal.closed  | {"ballots":3,"yes_weight":2.2,"no_weight":0,"abstain_weight":1.5}
--- No user_id and no per-member choice appears anywhere in the audit log.
+--   proposal.closed  | {"ballots":5,"revealed":true,"yes_weight":3.7,"no_weight":1.0,"abstain_weight":1.5}
+-- At/above the floor the breakdown is recorded; below it the entry is just
+-- {"ballots":n,"revealed":false}. No user_id and no per-member choice ever appears.
 ```
 
-> **Idempotent close.** The server action no-ops if the proposal is already
-> closed, and the trigger only fires on the `→ closed` transition — so the close
-> is audited exactly once. Reversing a decision is a NEW proposal; history is
+> **Idempotent close.** The manual action no-ops if the proposal is already
+> closed, the scheduled job only closes still-open proposals, and the trigger
+> fires only on the `→ closed` transition — so the close is audited exactly once,
+> whichever path records it. Reversing a decision is a NEW proposal; history is
 > never edited.
 
 ---
@@ -764,19 +815,50 @@ rollback;
 
 (The `decide_verification` half of the refusal is shown in **A1-neg(b)**.)
 
+### C-privacy · A member can't read another member's tenure (N1, migration 0008)
+
+`tenure_start` reveals a member's vote-weight tier, so it is not public: other
+members see only the public columns, through the `public_profiles` view.
+
+**▶ as Carla** — `rollback`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000c3","role":"authenticated"}', true);
+  set local role authenticated;
+
+  -- The public view: Aida's public columns, and NO tenure_start column exists on it.
+  select id, display_name, verified, role from public_profiles
+  where id = '00000000-0000-0000-0000-0000000000a1';
+  -- Expected: 1 row (Aida's public fields).
+
+  -- The base table: another member's row is not readable at all (pf_read = own + mod),
+  -- so tenure_start can't be reached this way either.
+  select count(*) as base_rows_visible from profiles
+  where id = '00000000-0000-0000-0000-0000000000a1';
+  -- Expected: 0 — Carla can read only her own base profiles row (and moderators all).
+rollback;
+```
+
 ---
 
 ## Invariant coverage matrix
 
-What each invariant / gap is proven by, so the dry-run is auditable:
+What each invariant / gap is proven by, so the dry-run is auditable. **Re-verified
+against the pre-launch overhaul (brand, privacy, account data, coherence): every
+row below still passes.** The only walkthrough that changed is **B** — the vote now
+has five ballots (the new turnout floor withholds the breakdown below five), so B4
+shows `revealed=true` with `ballots=5, yes=3.7, no=1.0, abstain=1.5` instead of the
+old three-ballot tally. No invariant or gap regressed.
 
 | # | Invariant (CLAUDE.md) / Gap (rls-audit.md) | Proven by |
 |---|---|---|
 | 1 | Verify, then forget | **A2** — `evidence_path` → null on decision |
 | 2 | Server sets trust, never the client | **A1-neg** (self-approve denied) · seed §3 (admin path) · **B3/G5** (window freeze) |
-| 3 | Vote weight computed server-side from tenure | **B0/B2/B4** — totals reflect 1.0/1.2/1.5; client sends only a choice |
+| 3 | Vote weight computed server-side from tenure | **B0/B2/B4** — totals reflect 1.0/1.2/1.5 (5 voters clear the floor); client sends only a choice |
 | 4 | Ballots secret; one per member | **B3** — own-row-only reads; one row per member |
-| 5 | Human in the loop on consequence | **A2** decide · **A7** resolve · **B4** official close |
+| 5 | Human in the loop on consequence | **A2** decide · **A7** resolve · **B4** close (the *vote* is the human decision; recording the close — moderator or pg_cron — only stamps it) |
 | 6 | Append-only record | **A8/B4** audit accumulates; ballot frozen after close; no deletes |
 | 7 | No silent removal (chronological, legible) | **A4** legible remove vs **C-G4** no silent delete |
 | — | **G1** vote on removed content | **C-G1** |
@@ -784,6 +866,15 @@ What each invariant / gap is proven by, so the dry-run is auditable:
 | — | **G3** verification half-state | **A1-neg(a/b)** |
 | — | **G4** silent hard-delete | **C-G4** |
 | — | **G5** moved window / threshold / author | **B3 (G5 in-flight)** |
+
+Pre-launch overhaul — newly covered (additive; nothing above regressed):
+
+| Area | Property | Proven by |
+|---|---|---|
+| Privacy (N1) | tenure_start hidden from other members | **C-privacy** — base profiles own+mod; `public_profiles` has no tenure column |
+| Privacy (N3) | results members-only + min-turnout floor | **B4** — `revealed=true` at 5; below 5 the breakdown is withheld (turnout only), in the view AND the close audit |
+| Account (inv. 8) | export own data; delete = anonymise, never rewrite the record | migration `0009` (`delete_my_account` keeps votes/moderation/audit on a tombstone) — exercised separately so the dry-run isn't self-destructive |
+| Coherence (inv. 5) | scheduled close records, never decides | migration `0010` — `close_due_proposals` only flips past-window proposals; the audit/turnout floor is unchanged |
 
 ---
 
