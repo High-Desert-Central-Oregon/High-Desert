@@ -41,9 +41,13 @@ backdate tenure. `verified`/`tenure_start` are set only by `decide_verification(
 only. ✅
 **⚠️ N1:** `pf_read` exposes *every* column to every member, including
 `tenure_start`, `role`, `verified` — broader than SPEC §04's "public fields."
-Benign (these drive UI; tenure is derivable as vote weight anyway) and not a
-ballot leak, but it's column-over-exposure. RLS is row-level; trimming columns
-needs column GRANTs or a public-profile view. Accepted for the prototype.
+Benign at the time (these drive UI; tenure is derivable as a member's 1×–3×
+vote-weight tier — `< 1 yr` 1.0 · `1–2 yr` 1.5 · `2–4 yr` 2.0 · `4 yr+` 3.0) and
+not a ballot leak, but it's column-over-exposure. RLS is row-level; trimming
+columns needs column GRANTs or a public-profile view. **Since resolved (migration
+0008):** `tenure_start` is no longer public — the wider 1×–3× spread makes the
+tier a sharper signal, so the base table is now own+moderator only and other
+members read `public_profiles` (no tenure column). See DECISIONS 2026-06-11.
 
 ## verifications
 | Op | Policy | Permits | Assessment |

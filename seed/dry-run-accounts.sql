@@ -18,12 +18,12 @@
 --
 -- WHAT THIS CREATES
 --   6 accounts across 3 neighborhoods, spanning every vote-weight tier:
---     a1 Aida Ramirez   member     verified  Braydon Park     1.5×  (Year 3+)
---     b2 Ben Okafor     member     verified  Braydon Park     1.2×  (Year 2)
---     c3 Carla Nguyen   member     verified  Canyon Crossing  1.0×  (Year 1, es)
---     d4 Diego Flores   member     UNVERIFIED Canyon Crossing  —    (verifies in the runbook)
---     e5 Esther Cohen   moderator  verified  Deer Crossing    1.5×  (reviewer / actor)
---     f6 Frank Mbeki    moderator  verified  Deer Crossing    1.5×  (resolves appeals — separation of duties)
+--     a1 Aida Ramirez   member     verified  Braydon Park     3.0×  (4 yr+)
+--     b2 Ben Okafor     member     verified  Braydon Park     1.5×  (1–2 yr)
+--     c3 Carla Nguyen   member     verified  Canyon Crossing  1.0×  (< 1 yr, es)
+--     d4 Diego Flores   member     UNVERIFIED Canyon Crossing  —    (verifies in the runbook → 1.0×)
+--     e5 Esther Cohen   moderator  verified  Deer Crossing    3.0×  (reviewer / actor, 4 yr+)
+--     f6 Frank Mbeki    moderator  verified  Deer Crossing    2.0×  (resolves appeals; 2–4 yr — separation of duties)
 --
 -- Two moderators exist on purpose: the appeal flow requires a DIFFERENT
 -- moderator than the one who acted (resolve_appeal enforces it).
@@ -135,9 +135,11 @@ select public.seed_test_user('00000000-0000-0000-0000-0000000000f6', 'frank@dryr
 -- 3 · Set trust state via the admin path (owner context; the guard does not
 --     freeze because auth.uid() is NULL). One statement sets all six.
 --
---     Tenure dates are chosen relative to 2026-06-09 to land in each tier:
---       vote_weight_for():  > today-1y → 1.0  ·  > today-2y → 1.2  ·  else → 1.5
---       2022-06-01 → 1.5   2024-11-01 → 1.2   2026-02-01 → 1.0
+--     Tenure dates land in each Business Plan v11 bracket (1×–3×), with margin so
+--     they hold regardless of the exact run date:
+--       vote_weight_for():  >today-1y →1.0 · >today-2y →1.5 · >today-4y →2.0 · else →3.0
+--       2026-02-01 →1.0  2025-03-01 →1.5  2023-09-01 →2.0  2021-03-01 / 2020-09-01 →3.0
+--       (dates sit mid-bracket so the tiers hold across the closed-beta window)
 --     Diego stays UNVERIFIED with no tenure — he verifies live in Walkthrough A,
 --     which sets tenure_start = current_date (→ 1.0×).
 -- ----------------------------------------------------------------------------
@@ -148,12 +150,12 @@ update profiles p set
   neighborhood_id = n.id,
   locale          = v.locale
 from (values
-  ('00000000-0000-0000-0000-0000000000a1'::uuid, true,  'member',    '2022-06-01', 'braydon-park',    'en'),
-  ('00000000-0000-0000-0000-0000000000b2'::uuid, true,  'member',    '2024-11-01', 'braydon-park',    'en'),
+  ('00000000-0000-0000-0000-0000000000a1'::uuid, true,  'member',    '2021-03-01', 'braydon-park',    'en'),
+  ('00000000-0000-0000-0000-0000000000b2'::uuid, true,  'member',    '2025-03-01', 'braydon-park',    'en'),
   ('00000000-0000-0000-0000-0000000000c3'::uuid, true,  'member',    '2026-02-01', 'canyon-crossing', 'es'),
   ('00000000-0000-0000-0000-0000000000d4'::uuid, false, 'member',    null,         'canyon-crossing', 'en'),
-  ('00000000-0000-0000-0000-0000000000e5'::uuid, true,  'moderator', '2021-09-01', 'deer-crossing',   'en'),
-  ('00000000-0000-0000-0000-0000000000f6'::uuid, true,  'moderator', '2023-01-01', 'deer-crossing',   'en')
+  ('00000000-0000-0000-0000-0000000000e5'::uuid, true,  'moderator', '2020-09-01', 'deer-crossing',   'en'),
+  ('00000000-0000-0000-0000-0000000000f6'::uuid, true,  'moderator', '2023-09-01', 'deer-crossing',   'en')
 ) as v(id, verified, role, tenure_start, slug, locale)
 left join neighborhoods n on n.slug = v.slug
 where p.id = v.id;
@@ -182,10 +184,10 @@ where p.id in (
   '00000000-0000-0000-0000-0000000000e5','00000000-0000-0000-0000-0000000000f6'
 )
 order by p.role desc, vote_weight desc, p.display_name;
--- Expected:
---   Frank Mbeki   moderator true  2023-01-01 1.5  Deer Crossing
---   Esther Cohen  moderator true  2021-09-01 1.5  Deer Crossing
---   Aida Ramirez  member    true  2022-06-01 1.5  Braydon Park
---   Ben Okafor    member    true  2024-11-01 1.2  Braydon Park
+-- Expected (order by role desc, vote_weight desc, display_name):
+--   Esther Cohen  moderator true  2020-09-01 3.0  Deer Crossing
+--   Frank Mbeki   moderator true  2023-09-01 2.0  Deer Crossing
+--   Aida Ramirez  member    true  2021-03-01 3.0  Braydon Park
+--   Ben Okafor    member    true  2025-03-01 1.5  Braydon Park
 --   Carla Nguyen  member    true  2026-02-01 1.0  Canyon Crossing
 --   Diego Flores  member    false (null)     1.0  Canyon Crossing   ← 1.0 default; verifies in the runbook

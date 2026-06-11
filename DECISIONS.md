@@ -60,9 +60,10 @@ members — `display_name`, `neighborhood`, `verified`, and `role` (moderator
 visibility is intended). **`tenure_start` is hidden from other members**, readable
 only by the member themselves and by moderators.
 
-**Why.** `tenure_start` lets anyone infer a member's vote-weight tier (1.0 / 1.2 /
-1.5×). In a ~50-person cohort that's a meaningful re-identification / influence
-signal, and it's not needed for any member-facing feature. The old `pf_read`
+**Why.** `tenure_start` lets anyone infer a member's vote-weight tier (the 1×–3×
+scheme — `vote_weight_for`, migration 0011). In a ~50-person cohort that's a
+meaningful re-identification / influence signal, and it's not needed for any
+member-facing feature. The old `pf_read`
 `using (true)` exposed every column (audit note N1).
 
 **How (never by loosening a trust guard).** RLS is row-level, not column-level, so

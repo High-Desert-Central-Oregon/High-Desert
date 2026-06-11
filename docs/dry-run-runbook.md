@@ -27,7 +27,7 @@ paste block.
    needs the `pg_cron` extension; if it isn't available, skip it — the manual
    close still works.)
 2. Run [seed/dry-run-accounts.sql](../seed/dry-run-accounts.sql). Confirm the
-   roster check at the end prints the six accounts with weights 1.0 / 1.2 / 1.5.
+   roster check at the end prints the six accounts spanning weights 1.0 / 1.5 / 2.0 / 3.0.
 3. Run the blocks below **in order**, as the project owner (Supabase SQL editor =
    `postgres`, or `psql` as a superuser). Select a whole block and run it as one
    statement batch.
@@ -57,12 +57,12 @@ Blocks marked **▶ as owner** are plain reads run without impersonation (e.g.
 
 | Short | Name | UUID | Role | Neighborhood | Weight |
 |---|---|---|---|---|---|
-| a1 | Aida Ramirez | `00000000-0000-0000-0000-0000000000a1` | member | Braydon Park | 1.5× |
-| b2 | Ben Okafor | `00000000-0000-0000-0000-0000000000b2` | member | Braydon Park | 1.2× |
-| c3 | Carla Nguyen | `00000000-0000-0000-0000-0000000000c3` | member | Canyon Crossing | 1.0× |
+| a1 | Aida Ramirez | `00000000-0000-0000-0000-0000000000a1` | member | Braydon Park | 3.0× (4 yr+) |
+| b2 | Ben Okafor | `00000000-0000-0000-0000-0000000000b2` | member | Braydon Park | 1.5× (1–2 yr) |
+| c3 | Carla Nguyen | `00000000-0000-0000-0000-0000000000c3` | member | Canyon Crossing | 1.0× (< 1 yr) |
 | d4 | Diego Flores | `00000000-0000-0000-0000-0000000000d4` | member (unverified) | Canyon Crossing | — → 1.0× |
-| e5 | Esther Cohen | `00000000-0000-0000-0000-0000000000e5` | **moderator** | Deer Crossing | 1.5× |
-| f6 | Frank Mbeki | `00000000-0000-0000-0000-0000000000f6` | **moderator** | Deer Crossing | 1.5× |
+| e5 | Esther Cohen | `00000000-0000-0000-0000-0000000000e5` | **moderator** | Deer Crossing | 3.0× (4 yr+) |
+| f6 | Frank Mbeki | `00000000-0000-0000-0000-0000000000f6` | **moderator** | Deer Crossing | 2.0× (2–4 yr) |
 
 Fixed content UUIDs created during the run (so every check can reference them):
 
@@ -371,18 +371,19 @@ visible and no member can read another's ballot**. After the clock passes
 close. Proves: server-set weight, secret ballot, results-by-clock, the close
 audit.
 
-### B0 · Pre-state — the three tiers
+### B0 · Pre-state — the four tiers (Business Plan v11, 1×–3×)
 
 **▶ as owner**
 
 ```sql
 select p.display_name, p.tenure_start, public.vote_weight_for(p.id) as weight
 from profiles p
-where p.id in ('00000000-0000-0000-0000-0000000000a1',
-               '00000000-0000-0000-0000-0000000000b2',
-               '00000000-0000-0000-0000-0000000000c3')
+where p.id in ('00000000-0000-0000-0000-0000000000c3',   -- Carla  < 1 yr
+               '00000000-0000-0000-0000-0000000000b2',   -- Ben    1–2 yr
+               '00000000-0000-0000-0000-0000000000f6',   -- Frank  2–4 yr
+               '00000000-0000-0000-0000-0000000000a1')   -- Aida   4 yr+
 order by weight;
--- Expected: Carla 1.0 · Ben 1.2 · Aida 1.5
+-- Expected: Carla 1.0 · Ben 1.5 · Frank 2.0 · Aida 3.0
 ```
 
 ### B1 · Aida opens a proposal (short window)
@@ -425,7 +426,8 @@ Each member sends **only a choice** — the trigger sets `user_id` and `weight`
 from tenure. The upsert mirrors the app's `castVote`. **Five** members vote here,
 on purpose: the privacy floor (migration 0008) withholds the weighted breakdown
 until at least 5 distinct members have voted, so five clears it and B4 can show
-the tiers. (Voters: Carla 1.0, Ben 1.2, Diego 1.0, Frank 1.5, Aida 1.5.)
+the tiers. (Voters span all four tiers: Carla 1.0, Ben 1.5, Diego 1.0, Frank 2.0,
+Aida 3.0.)
 
 **▶ as Carla** (1.0×) — `commit`
 
@@ -442,7 +444,7 @@ commit;
 -- Expected: 1 row; trg_set_vote_weight stamps user_id=Carla, weight=1.0.
 ```
 
-**▶ as Ben** (1.2×) — `commit`
+**▶ as Ben** (1.5×) — `commit`
 
 ```sql
 begin;
@@ -470,7 +472,7 @@ begin;
 commit;
 ```
 
-**▶ as Frank** (1.5×, a moderator is also a verified member) — votes **yes** — `commit`
+**▶ as Frank** (2.0×, a moderator is also a verified member) — votes **yes** — `commit`
 
 ```sql
 begin;
@@ -484,7 +486,7 @@ begin;
 commit;
 ```
 
-**▶ as Aida** (1.5×) — votes **no** first — `commit`
+**▶ as Aida** (3.0×) — votes **no** first — `commit`
 
 ```sql
 begin;
@@ -512,7 +514,7 @@ begin;
   values ('0b000000-0000-0000-0000-000000000001', 'abstain')
   on conflict (proposal_id, user_id) do update set choice = excluded.choice;
 commit;
--- Expected: vt_update permits the change while open; weight re-derived (1.5).
+-- Expected: vt_update permits the change while open; weight re-derived (3.0).
 -- One row per member throughout (no recast trail).
 ```
 
@@ -527,7 +529,7 @@ begin;
   set local role authenticated;
 
   select proposal_id, choice, weight from votes;
-  -- Expected: exactly ONE row — Aida's own — choice=abstain, weight=1.5
+  -- Expected: exactly ONE row — Aida's own — choice=abstain, weight=3.0
 rollback;
 ```
 
@@ -626,12 +628,12 @@ where id = '0b000000-0000-0000-0000-000000000001';
 select ballots, revealed, yes_weight, no_weight, abstain_weight
 from proposal_results
 where proposal_id = '0b000000-0000-0000-0000-000000000001';
--- Expected: 5 | true | 3.7 | 1.0 | 1.5
---   yes  = Carla 1.0 + Ben 1.2 + Frank 1.5 = 3.7
+-- Expected: 5 | true | 4.5 | 1.0 | 3.0
+--   yes  = Carla 1.0 + Ben 1.5 + Frank 2.0 = 4.5
 --   no   = Diego 1.0
---   abst = Aida 1.5    (she changed her 'no' to 'abstain' before close)
+--   abst = Aida 3.0    (she changed her 'no' to 'abstain' before close)
 -- revealed = true because 5 ballots >= the MIN_TURNOUT floor (5). The weighting
--- (1.0 / 1.2 / 1.5) is visible in the totals; the per-member choices are not.
+-- (1.0 / 1.5 / 2.0 / 3.0) is visible in the totals; the per-member choices are not.
 ```
 
 **The turnout floor (migration 0008), for contrast.** Here `revealed=true` because
@@ -666,7 +668,7 @@ where entity = 'proposal' and entity_id = '0b000000-0000-0000-0000-000000000001'
 order by created_at;
 -- Expected, in order:
 --   proposal.created | {"kind":"minor"}
---   proposal.closed  | {"ballots":5,"revealed":true,"yes_weight":3.7,"no_weight":1.0,"abstain_weight":1.5}
+--   proposal.closed  | {"ballots":5,"revealed":true,"yes_weight":4.5,"no_weight":1.0,"abstain_weight":3.0}
 -- At/above the floor the breakdown is recorded; below it the entry is just
 -- {"ballots":n,"revealed":false}. No user_id and no per-member choice ever appears.
 ```
@@ -849,14 +851,15 @@ What each invariant / gap is proven by, so the dry-run is auditable. **Re-verifi
 against the pre-launch overhaul (brand, privacy, account data, coherence): every
 row below still passes.** The only walkthrough that changed is **B** — the vote now
 has five ballots (the new turnout floor withholds the breakdown below five), so B4
-shows `revealed=true` with `ballots=5, yes=3.7, no=1.0, abstain=1.5` instead of the
-old three-ballot tally. No invariant or gap regressed.
+shows `revealed=true` with `ballots=5, yes=4.5, no=1.0, abstain=3.0` (weighted by
+the Business Plan v11 1×–3× tenure scheme — migration 0011). No invariant or gap
+regressed.
 
 | # | Invariant (CLAUDE.md) / Gap (rls-audit.md) | Proven by |
 |---|---|---|
 | 1 | Verify, then forget | **A2** — `evidence_path` → null on decision |
 | 2 | Server sets trust, never the client | **A1-neg** (self-approve denied) · seed §3 (admin path) · **B3/G5** (window freeze) |
-| 3 | Vote weight computed server-side from tenure | **B0/B2/B4** — totals reflect 1.0/1.2/1.5 (5 voters clear the floor); client sends only a choice |
+| 3 | Vote weight computed server-side from tenure | **B0/B2/B4** — totals reflect the 1×–3× scheme 1.0/1.5/2.0/3.0 (5 voters clear the floor); client sends only a choice |
 | 4 | Ballots secret; one per member | **B3** — own-row-only reads; one row per member |
 | 5 | Human in the loop on consequence | **A2** decide · **A7** resolve · **B4** close (the *vote* is the human decision; recording the close — moderator or pg_cron — only stamps it) |
 | 6 | Append-only record | **A8/B4** audit accumulates; ballot frozen after close; no deletes |

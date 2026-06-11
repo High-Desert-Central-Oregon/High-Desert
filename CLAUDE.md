@@ -109,5 +109,6 @@ expansion, youth (under-18) accounts. If a task seems to require one of these, s
 - **Eagle Crest** is in the neighborhood seed but sits outside Redmond city limits — leave it
   unless told to remove it.
 - Terms & Privacy are a **draft pending legal review** — do not present them as final.
-- Governance numbers (quorum 20%, major 60%, immutable 75% + 30 days; tenure 1.0/1.2/1.5×)
-  are provisional config for the cohort to ratify — keep them in config, not hardcoded.
+- Governance numbers (quorum 20%, major 60%, immutable 75% + 30 days; tenure 1×/1.5×/2×/3×
+  by <1yr / 1–2yr / 2–4yr / 4yr+, Business Plan v11) are provisional config for the cohort to
+  ratify — keep them in config, not hardcoded.

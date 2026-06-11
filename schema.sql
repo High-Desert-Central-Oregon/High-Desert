@@ -199,13 +199,18 @@ returns boolean language sql stable security definer set search_path = public as
                   where id = auth.uid() and role in ('moderator','admin') and deleted_at is null);
 $$;
 
+-- Tenure vote-weight: Business Plan v11's 1×–3× range. Provisional config the
+-- cohort ratifies like the other governance numbers; brackets by how long ago
+-- tenure_start was. Change here + migration + seed/dry-run-accounts.sql + the
+-- dry-run runbook together (the test math depends on these exact numbers).
 create or replace function public.vote_weight_for(p_user uuid)
 returns numeric language sql stable security definer set search_path = public as $$
   select case
     when tenure_start is null                                  then 1.0
-    when tenure_start > current_date - interval '1 year'       then 1.0   -- Year 1
-    when tenure_start > current_date - interval '2 years'      then 1.2   -- Year 2
-    else 1.5                                                              -- Year 3+
+    when tenure_start > current_date - interval '1 year'       then 1.0   -- < 1 yr
+    when tenure_start > current_date - interval '2 years'      then 1.5   -- 1–2 yr
+    when tenure_start > current_date - interval '4 years'      then 2.0   -- 2–4 yr
+    else 3.0                                                              -- 4 yr+
   end
   from profiles where id = p_user;
 $$;
@@ -580,8 +585,8 @@ grant execute on function public.delete_my_account() to authenticated;
 -- `revealed` is the MIN_TURNOUT floor (provisional 5): with one or two ballots a
 -- weighted breakdown can reveal how an individual voted, so the breakdown is
 -- withheld (NULL) until at least 5 distinct members vote. 5 is cohort-ratifiable
--- config alongside the governance thresholds; it sits below quorum (20% of ~50 =
--- 10), so it never hides a legitimately-decided result. Members-only (no anon
+-- config alongside the governance thresholds; it sits below quorum (15% of ~50 ≈
+-- 7.5), so it never hides a legitimately-decided result. Members-only (no anon
 -- grant); the same floor is applied to the close audit entry (log_proposal_closed).
 create view proposal_results as
 with tally as (
@@ -755,7 +760,8 @@ create policy mod_insert on moderation_actions for insert to authenticated
 create policy ap_read   on appeals for select to authenticated
   using (user_id = auth.uid() or public.is_moderator());
 
--- Audit log: public read (transparency); writes only via log_audit() (security definer)
+-- Audit log: members read (transparency; no anon); writes only via the security-definer
+-- log_audit(), which clients cannot call (its EXECUTE was revoked — see GRANTS)
 create policy al_read on audit_log for select to authenticated using (true);
 
 -- ============================================================================
