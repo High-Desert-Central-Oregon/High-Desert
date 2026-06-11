@@ -7,6 +7,47 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-11 — Two stubs resolved (scheduled close; evidence deletion)
+
+Pre-launch coherence sweep. The two long-standing stubs noted in `schema.sql` are
+now resolved.
+
+### Scheduled proposal close — implemented via pg_cron (records, never decides)
+
+**Decision.** A proposal's official close is now recorded automatically by a
+pg_cron job (`close_due_proposals()`, `migrations/0010_scheduled_close.sql`),
+~5 min after its window passes. The moderator's manual `recordProposalClose`
+stays as an idempotent override.
+
+**Why this doesn't violate invariant 5 (human in the loop on consequence).** The
+governance *outcome* is the voters' tally — decided by people, at the ballot.
+Closing the proposal does not decide anything: it flips `status` and stamps the
+already-determined aggregate into the audit log (the pass/fail threshold isn't
+even evaluated). That is "automation may surface or record, never decide." Leaving
+it to a manual click meant the permanent `proposal.closed` record could be missing
+indefinitely if no moderator acted; a schedule makes the record reliable.
+Visibility is unchanged — `proposal_results` is gated on `now() > closes_at`, so
+results were already visible the instant the window passed; the job adds only the
+record. The cron entry's `actor_id` is null (closed on schedule, not by a person).
+
+**Revisit if:** the cohort wants a human to always finalize (drop the schedule), or
+wants the threshold evaluated at close (a future feature, still not "deciding" —
+the rule would be the cohort's, applied mechanically).
+
+### Evidence deletion — confirmed in-app; the "edge function" was never real
+
+**Confirmation, not a change.** Verify-then-forget is fully covered in-app: the
+`decideVerification` server action deletes the Storage object via the service-role
+client *before* it commits the decision (delete-before-commit, so a storage failure
+can't orphan a file), and the `trg_purge_evidence` trigger nulls the pointer. The
+"edge function" referenced in old comments/docs was never built — that was stale
+documentation describing a path the app already covers more safely. The references
+in `schema.sql`, `SPEC.md`, `docs/SETUP.md`, and the dry-run runbook are corrected
+to describe the real in-app flow. (The service-role admin client now has exactly
+two uses: this, and the account-deletion auth scrub.)
+
+---
+
 ## 2026-06-11 — Two privacy decisions settled (profile fields; results)
 
 Pre-launch, the two deferred privacy notes from `docs/rls-audit.md` (N1, N3) are

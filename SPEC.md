@@ -173,8 +173,8 @@ with check (
           where v.proposal_id = proposal_id and v.user_id = auth.uid())
 );
 
--- Verify, then forget: on any decision, null the evidence pointer (and an
--- edge function deletes the file).
+-- Verify, then forget: on any decision, null the evidence pointer (the app's
+-- decideVerification action deletes the Storage object before it commits).
 create trigger trg_purge_evidence
 after update of status on verifications
 for each row when (new.status in ('approved','rejected'))

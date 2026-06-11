@@ -15,8 +15,10 @@
 --   • votes / moderation / consents / audit are APPEND-ONLY                        (P18)
 --   • a human decides verifications and moderation; code only assists              (P19)
 --
--- INTENTIONALLY STUBBED (see NOTES at bottom): Storage bucket + true file deletion
---   (edge function), scheduled proposal closing, transactional email.
+-- SETUP STILL NEEDED (see NOTES at bottom): create the private Storage bucket +
+--   its policies, enable pg_cron for the scheduled close, wire transactional email.
+-- (Evidence file deletion and the scheduled close are IMPLEMENTED — in the
+--  decideVerification server action and close_due_proposals()/pg_cron respectively.)
 -- ============================================================================
 
 create extension if not exists pgcrypto;   -- gen_random_uuid()
@@ -297,8 +299,10 @@ create or replace function public.purge_verification_evidence()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
   new.evidence_path := null;
-  -- The actual Storage object is removed by an edge function keyed on this id
-  -- (Postgres can't reliably delete a Storage object inline). See NOTES.
+  -- This nulls the POINTER. The Storage OBJECT is deleted by the app's
+  -- decideVerification server action via the service-role client, BEFORE it
+  -- commits the decision (delete-before-commit, so a storage failure can never
+  -- orphan a file). Postgres can't reliably delete a Storage object inline.
   return new;
 end; $$;
 create trigger trg_purge_evidence
@@ -397,6 +401,27 @@ create trigger trg_log_proposal_closed
   after update of status on proposals
   for each row when (new.status = 'closed' and old.status is distinct from 'closed')
   execute function public.log_proposal_closed();
+
+-- Scheduled close: record the official close of any proposal whose window has
+-- passed. The OUTCOME is the voters' tally; this only stamps that clock-determined
+-- result into the log (invariant 5 — automation records, never decides) via the
+-- trigger above. The moderator path (recordProposalClose) stays as a manual,
+-- idempotent override. Run on a schedule by pg_cron — see the SCHEDULED note at
+-- the bottom for the cron.schedule wiring (kept out of the main body so this file
+-- still runs where pg_cron isn't installed).
+create or replace function public.close_due_proposals()
+returns integer language plpgsql security definer set search_path = public as $$
+declare v_count int;
+begin
+  with closed as (
+    update proposals set status = 'closed'
+     where status = 'open' and now() > closes_at
+    returning 1
+  )
+  select count(*) into v_count from closed;
+  return v_count;
+end; $$;
+revoke execute on function public.close_due_proposals() from public, anon, authenticated;
 
 -- ============================================================================
 -- 5 · MODERATOR ACTION: decide a verification (human-in-the-loop)
@@ -825,12 +850,22 @@ insert into documents (kind, version, body) values
 --     create policy "evidence read (moderators)" on storage.objects
 --       for select to authenticated
 --       using (bucket_id = 'verification-evidence' and public.is_moderator());
---   An edge function deletes the object when decide_verification() runs
---   (verify-then-forget — the DB drops the pointer; the function drops the file).
+--   Verify-then-forget is completed in-app: the trg_purge_evidence trigger nulls
+--   the pointer, and the decideVerification server action deletes the Storage
+--   object via the service-role client BEFORE committing the decision
+--   (delete-before-commit — a storage failure can't orphan a file). No edge
+--   function is involved.
 --
--- • SCHEDULED: a cron/edge function flips proposals open -> closed at closes_at
---   (or a moderator records the close afterward). proposal_results reveals
---   results purely on time — only once now() > closes_at.
+-- • SCHEDULED CLOSE: enable pg_cron, then schedule close_due_proposals() (defined
+--   above) so a proposal's official close is recorded ~5 min after its window:
+--     create extension if not exists pg_cron;
+--     select cron.schedule('close-due-proposals', '*/5 * * * *',
+--       $$ select public.close_due_proposals(); $$);
+--   This RECORDS the clock-determined close (the outcome is the voters' tally;
+--   invariant 5 — automation records, never decides). The moderator path remains
+--   a manual override. proposal_results reveals results purely on time — only once
+--   now() > closes_at — so the schedule adds the record, never the visibility.
+--   See migrations/0010_scheduled_close.sql.
 --
 -- • Casting a vote (client): insert { proposal_id, choice } only — the trigger sets
 --   user_id and weight. Reading results: select from proposal_results.

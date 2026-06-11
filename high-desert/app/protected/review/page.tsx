@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
+import { formatRedmondDate } from "@/lib/time";
 import type { VerificationMethod } from "@/lib/verification";
 
 export const metadata = {
@@ -104,7 +105,7 @@ async function ReviewContent() {
                   applicantName={profilesById.get(row.user_id)?.name ?? "—"}
                   methodLabel={dict.verify.methods[row.method]}
                   hasEvidence={Boolean(row.evidence_path)}
-                  submittedAt={new Date(row.created_at).toLocaleDateString(locale)}
+                  submittedAt={formatRedmondDate(row.created_at, locale)}
                   dict={dict}
                 />
               </li>
@@ -139,9 +140,7 @@ async function ReviewContent() {
                     memberName={profilesById.get(r.user_id)?.name ?? "—"}
                     note={r.note}
                     memberSince={t(dict.review.memberSince, {
-                      date: joined
-                        ? new Date(joined).toLocaleDateString(locale)
-                        : "—",
+                      date: joined ? formatRedmondDate(joined, locale) : "—",
                     })}
                     dict={dict}
                   />

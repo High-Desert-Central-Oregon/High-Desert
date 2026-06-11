@@ -120,3 +120,18 @@ export function formatRedmondDateTime(iso: string, locale: string): string {
     timeZoneName: "short",
   }).format(new Date(iso));
 }
+
+/**
+ * A Redmond-local calendar date, e.g. "Jul 1, 2026" — for "submitted on" /
+ * "joined on" style displays where the time of day doesn't matter. Still routed
+ * through Redmond time so the calendar day is correct near midnight regardless of
+ * the server's timezone (never the raw browser/runtime clock).
+ */
+export function formatRedmondDate(iso: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: REDMOND_TZ,
+  }).format(new Date(iso));
+}

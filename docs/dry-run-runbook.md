@@ -175,9 +175,9 @@ where entity = 'verification' and entity_id = '0d000000-0000-0000-0000-000000000
 ```
 
 > The DB drops the `evidence_path` pointer synchronously (shown above). The
-> Storage *object* itself is deleted by the service-role edge function keyed on
-> this id (see schema NOTES); that side is out of scope for a SQL dry-run, but
-> the pointer purge is the row-level half of verify-then-forget.
+> Storage *object* itself is deleted in-app by the `decideVerification` server
+> action (service-role client, delete-before-commit) — out of scope for a SQL
+> dry-run, but the pointer purge is the row-level half of verify-then-forget.
 
 ### A3 · Diego posts an event
 

@@ -79,8 +79,9 @@ safe to expose) and **secret** keys (`sb_secret_…`, server-only). The legacy `
    ```
 
 3. The **secret key** (`sb_secret_…`) is server-only — never prefix it with `NEXT_PUBLIC_` (that
-   inlines it into the client bundle) and never expose it to the browser. You only need it once
-   server-side privileged tasks exist (e.g. the evidence-deletion edge function).
+   inlines it into the client bundle) and never expose it to the browser. It powers the
+   service-role admin client, used for exactly two privileged tasks: deleting verification
+   evidence on a decision, and scrubbing the auth identity on account deletion.
 
 `.env.local` is gitignored; never commit real keys.
 
@@ -133,14 +134,19 @@ so the token is checked against the auth server rather than trusting the session
 the never-trust-the-client invariant. For a working scaffold to adapt, `npx create-next-app -e
 with-supabase` wires up `@supabase/ssr` (swap its password block for magic link).
 
-## What's stubbed
+## Setup still needed
 
-Intentionally not built yet (see `schema.sql` notes and `CLAUDE.md`):
-- **Evidence file deletion** — an edge function, triggered when a verification decision is made,
-  that deletes the Storage object. Until it's deployed, the DB nulls the `evidence_path` pointer
-  but the file itself lingers; deploy this before real verification data flows through.
-- **Scheduled proposal closing** — a scheduled job to close governance proposals at `closes_at`.
-- **Transactional email** — production SMTP for magic links and notices.
+The two former code stubs are now implemented; what remains is environment setup
+(see `schema.sql` notes and `CLAUDE.md`):
+- **Evidence file deletion** — *implemented in-app.* On a verification decision, the
+  `decideVerification` server action deletes the Storage object via the service-role client
+  *before* it commits (delete-before-commit, so a failure can't orphan a file), and the DB nulls
+  the `evidence_path` pointer. Setup: create the private `verification-evidence` bucket + its
+  policies (schema NOTES) and set the secret key.
+- **Scheduled proposal closing** — *implemented* as `close_due_proposals()` + a pg_cron schedule
+  (`migrations/0010_scheduled_close.sql`). Setup: enable the `pg_cron` extension and run the
+  `cron.schedule(...)` call. A moderator can still record a close manually (idempotent).
+- **Transactional email** — production SMTP for magic links and notices (still to wire).
 
 ---
 
