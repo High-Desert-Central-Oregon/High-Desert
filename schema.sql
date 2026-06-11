@@ -376,9 +376,18 @@ begin
     into v_ballots, v_yes, v_no, v_abstain
   from votes where proposal_id = new.id;
 
-  perform public.log_audit('proposal.closed', 'proposal', new.id,
-    jsonb_build_object('ballots', v_ballots, 'yes_weight', v_yes,
-                       'no_weight', v_no, 'abstain_weight', v_abstain));
+  -- Always record the close + turnout; withhold the weighted breakdown below
+  -- MIN_TURNOUT (provisional 5) so a small-N close can't de-anonymise a ballot
+  -- via the audit log — the same floor proposal_results applies.
+  if v_ballots >= 5 then
+    perform public.log_audit('proposal.closed', 'proposal', new.id,
+      jsonb_build_object('ballots', v_ballots, 'revealed', true,
+                         'yes_weight', v_yes, 'no_weight', v_no,
+                         'abstain_weight', v_abstain));
+  else
+    perform public.log_audit('proposal.closed', 'proposal', new.id,
+      jsonb_build_object('ballots', v_ballots, 'revealed', false));
+  end if;
   return null;
 end; $$;
 create trigger trg_log_proposal_closed
@@ -500,18 +509,41 @@ end; $$;
 --     purely temporal (now() > closes_at), never coupled to `status`: voting is
 --     gated on time, so a status flip can never reveal a tally early.
 -- ============================================================================
-create or replace view proposal_results as
+-- `revealed` is the MIN_TURNOUT floor (provisional 5): with one or two ballots a
+-- weighted breakdown can reveal how an individual voted, so the breakdown is
+-- withheld (NULL) until at least 5 distinct members vote. 5 is cohort-ratifiable
+-- config alongside the governance thresholds; it sits below quorum (20% of ~50 =
+-- 10), so it never hides a legitimately-decided result. Members-only (no anon
+-- grant); the same floor is applied to the close audit entry (log_proposal_closed).
+create view proposal_results as
+with tally as (
+  select
+    p.id as proposal_id, p.title, p.kind, p.status, p.closes_at,
+    count(v.id)                                                     as ballots,
+    coalesce(sum(case when v.choice='yes'     then v.weight end),0) as yes_weight,
+    coalesce(sum(case when v.choice='no'      then v.weight end),0) as no_weight,
+    coalesce(sum(case when v.choice='abstain' then v.weight end),0) as abstain_weight
+  from proposals p
+  left join votes v on v.proposal_id = p.id
+  where now() > p.closes_at
+    and not public.is_content_hidden('proposal', p.id)   -- a removed proposal surfaces no result
+  group by p.id
+)
 select
-  p.id as proposal_id, p.title, p.kind, p.status, p.closes_at,
-  count(v.id)                                                       as ballots,
-  coalesce(sum(case when v.choice='yes'     then v.weight end),0)   as yes_weight,
-  coalesce(sum(case when v.choice='no'      then v.weight end),0)   as no_weight,
-  coalesce(sum(case when v.choice='abstain' then v.weight end),0)   as abstain_weight
-from proposals p
-left join votes v on v.proposal_id = p.id
-where now() > p.closes_at
-  and not public.is_content_hidden('proposal', p.id)   -- a removed proposal surfaces no result
-group by p.id;
+  proposal_id, title, kind, status, closes_at, ballots,
+  (ballots >= 5) as revealed,
+  case when ballots >= 5 then yes_weight     end as yes_weight,
+  case when ballots >= 5 then no_weight      end as no_weight,
+  case when ballots >= 5 then abstain_weight end as abstain_weight
+from tally;
+
+-- Public profile fields — the genuinely-public columns of every member, for any
+-- authenticated member to read (display_name, neighborhood, verified, role).
+-- Owner-rights view: it reads past the base profiles RLS, but exposes ONLY these
+-- columns — tenure_start (a vote-weight tell) is deliberately absent (N1).
+create or replace view public_profiles as
+  select id, display_name, neighborhood_id, verified, role
+  from profiles;
 
 -- Current visibility of a piece of content = its LATEST remove/restore action
 -- ('remove' ⇒ hidden, 'restore'/none ⇒ visible). The append-only history stays
@@ -546,10 +578,14 @@ alter table audit_log          enable row level security;
 create policy nb_read  on neighborhoods for select to anon, authenticated using (true);
 create policy doc_read on documents     for select to anon, authenticated using (true);
 
--- Profiles: anyone logged-in can read; you may edit only your own row
--- (protected columns are frozen by trg_guard_profile_columns). Inserts happen via
--- the signup trigger (security definer), so no insert policy is needed.
-create policy pf_read   on profiles for select to authenticated using (true);
+-- Profiles: the BASE table is readable only by the member themselves and
+-- moderators — it carries tenure_start, which reveals a member's vote-weight
+-- tier, so it is not public (rls-audit N1). Everyone else reads the genuinely
+-- public columns through the `public_profiles` view (section 6). You may edit
+-- only your own row (protected columns are frozen by trg_guard_profile_columns).
+-- Inserts happen via the signup trigger (security definer), so no insert policy.
+create policy pf_read   on profiles for select to authenticated
+  using (id = auth.uid() or public.is_moderator());
 create policy pf_update on profiles for update to authenticated
   using (id = auth.uid()) with check (id = auth.uid());
 
@@ -659,8 +695,11 @@ create policy al_read on audit_log for select to authenticated using (true);
 --     PostgREST needs. Supabase usually manages these — included for portability.)
 -- ============================================================================
 grant usage on schema public to anon, authenticated;
-grant select on neighborhoods, documents, proposal_results to anon, authenticated;
-grant select on content_moderation to authenticated;
+grant select on neighborhoods, documents to anon, authenticated;
+-- Governance results are members-only (no anon): the breakdown reveals how the
+-- cohort voted and is withheld below MIN_TURNOUT (rls-audit N3). public_profiles
+-- exposes only the public member columns; tenure_start stays on the base table.
+grant select on proposal_results, public_profiles, content_moderation to authenticated;
 grant select, insert, update, delete on
   profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log

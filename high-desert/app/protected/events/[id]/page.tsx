@@ -130,7 +130,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           .maybeSingle<{ name: string }>()
       : Promise.resolve({ data: null }),
     supabase
-      .from("profiles")
+      .from("public_profiles") // public columns only; tenure_start stays private
       .select("display_name")
       .eq("id", event.creator_id)
       .maybeSingle<{ display_name: string }>(),
@@ -152,7 +152,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   const rsvpUserIds = [...new Set(rsvps.map((r) => r.user_id))];
   if (rsvpUserIds.length > 0) {
     const { data: people } = await supabase
-      .from("profiles")
+      .from("public_profiles") // public columns only; tenure_start stays private
       .select("id, display_name")
       .in("id", rsvpUserIds);
     for (const p of people ?? []) rsvpNames.set(p.id, p.display_name);

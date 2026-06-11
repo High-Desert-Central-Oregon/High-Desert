@@ -83,7 +83,7 @@ async function TransparencyContent() {
   ];
   if (actorIds.length > 0) {
     const { data: people } = await supabase
-      .from("profiles")
+      .from("public_profiles") // public columns only; tenure_start stays private
       .select("id, display_name")
       .in("id", actorIds);
     for (const p of people ?? []) names.set(p.id, p.display_name);

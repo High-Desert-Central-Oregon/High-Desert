@@ -7,6 +7,60 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-06-11 — Two privacy decisions settled (profile fields; results)
+
+Pre-launch, the two deferred privacy notes from `docs/rls-audit.md` (N1, N3) are
+now decided and implemented (migration `0008`). Both were the recommended calls.
+
+### (a) Profile fields — tenure_start is not public
+
+**Decision.** A member's profile exposes only genuinely public fields to other
+members — `display_name`, `neighborhood`, `verified`, and `role` (moderator
+visibility is intended). **`tenure_start` is hidden from other members**, readable
+only by the member themselves and by moderators.
+
+**Why.** `tenure_start` lets anyone infer a member's vote-weight tier (1.0 / 1.2 /
+1.5×). In a ~50-person cohort that's a meaningful re-identification / influence
+signal, and it's not needed for any member-facing feature. The old `pf_read`
+`using (true)` exposed every column (audit note N1).
+
+**How (never by loosening a trust guard).** RLS is row-level, not column-level, so
+the read is split: the base `profiles` table is now readable only by the member
+themselves and moderators (full row, incl. `tenure_start`); everyone else reads a
+new **`public_profiles`** view that selects only the four public columns. The
+profile trust-field guard (`trg_guard_profile_columns`) is untouched. App reads of
+*other* members' names (transparency, event creator/RSVPs, proposal author) now go
+through `public_profiles`; own-profile and moderator reads stay on the base table.
+
+**Revisit if:** the cohort wants tenure visible (e.g. to show "founding member"),
+which would be a deliberate community choice, not a default.
+
+### (b) Governance results — members-only + a minimum-turnout floor
+
+**Decision.** `proposal_results` is gated to **authenticated members** (anon read
+dropped). And a **minimum-turnout floor**: if fewer than **5** distinct members
+voted, the weighted breakdown is withheld ("turnout too low to reveal") and only
+the turnout count is shown. **5 is provisional config for the cohort to ratify**,
+alongside the governance thresholds (quorum 20%, major 60%, immutable 75%).
+
+**Why.** Closed results were readable by the open internet (audit note N3), and
+with one or two ballots a weighted breakdown can reveal how an individual voted.
+The floor closes that small-N de-anonymisation gap. It sits *below* quorum (20% of
+~50 = 10), so it never hides a legitimately-decided result — only very-low-turnout
+ones where the privacy risk is real and the outcome wouldn't have carried anyway.
+
+**How.** The floor is enforced in the database, in *both* places the breakdown
+could surface: the `proposal_results` view (a `revealed` flag nulls the weights
+below the floor) **and** the permanent `proposal.closed` audit entry
+(`log_proposal_closed` records turnout + `revealed:false`, withholding the
+breakdown). The UI shows the turnout and a plain-language "too low to reveal" note.
+
+**Revisit:** the cohort ratifies (or changes) the floor of 5 with the other
+governance numbers. If membership grows, revisit whether 5 is still the right
+absolute (vs. a percentage).
+
+---
+
 ## 2026-06-09 — Local Exchange refined: two-layer scope, Compass review
 
 **Decision.** Local Exchange will live on **High Desert** (name pending,

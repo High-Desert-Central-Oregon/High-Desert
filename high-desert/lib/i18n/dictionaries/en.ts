@@ -332,6 +332,8 @@ export const en = {
       "Tenure-weighted totals, aggregate only — individual ballots are never shown.",
     turnout: { one: "{count} ballot cast", other: "{count} ballots cast" },
     noResult: "No result is available for this proposal.",
+    resultsTooLowTurnout:
+      "Too few people voted to show the breakdown without revealing how individuals voted. Only the turnout above is shown.",
     closeHint:
       "Voting has ended. Recording the close writes the official result to the public audit log.",
     recordClose: "Record official close",

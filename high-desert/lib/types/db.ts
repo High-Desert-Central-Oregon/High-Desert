@@ -74,7 +74,9 @@ export type ProposalRow = {
 };
 
 /** Aggregate, weighted result — read ONLY from the proposal_results view, which
- *  exposes closed proposals only and never per-ballot data. */
+ *  exposes closed proposals only and never per-ballot data. `revealed` is the
+ *  MIN_TURNOUT floor: below it the weighted breakdown is withheld (null) so a
+ *  small-N close can't de-anonymise a ballot; turnout (`ballots`) still shows. */
 export type ProposalResult = {
   proposal_id: string;
   title: string;
@@ -82,9 +84,10 @@ export type ProposalResult = {
   status: ProposalStatus;
   closes_at: string;
   ballots: number;
-  yes_weight: number;
-  no_weight: number;
-  abstain_weight: number;
+  revealed: boolean;
+  yes_weight: number | null;
+  no_weight: number | null;
+  abstain_weight: number | null;
 };
 
 export type ModAction =

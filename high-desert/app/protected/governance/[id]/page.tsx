@@ -24,7 +24,7 @@ export const metadata = {
 
 type ResultRow = Pick<
   ProposalResult,
-  "ballots" | "yes_weight" | "no_weight" | "abstain_weight"
+  "ballots" | "revealed" | "yes_weight" | "no_weight" | "abstain_weight"
 >;
 
 async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -110,7 +110,7 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
   let authorName: string | null = null;
   if (proposal.author_id) {
     const { data: author } = await supabase
-      .from("profiles")
+      .from("public_profiles") // public columns only; tenure_start stays private
       .select("display_name")
       .eq("id", proposal.author_id)
       .maybeSingle<{ display_name: string }>();
@@ -136,7 +136,7 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
   if (state === "closed") {
     const { data } = await supabase
       .from("proposal_results")
-      .select("ballots, yes_weight, no_weight, abstain_weight")
+      .select("ballots, revealed, yes_weight, no_weight, abstain_weight")
       .eq("proposal_id", proposal.id)
       .maybeSingle<ResultRow>();
     result = data ?? null;
@@ -237,25 +237,33 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
               <p className="text-sm text-muted-foreground">
                 {plural(locale, Number(result.ballots), dict.governance.turnout)}
               </p>
-              <dl className="flex flex-col gap-2">
-                {(
-                  [
-                    ["yes", result.yes_weight],
-                    ["no", result.no_weight],
-                    ["abstain", result.abstain_weight],
-                  ] as const
-                ).map(([choice, weight]) => (
-                  <div
-                    key={choice}
-                    className="flex items-center justify-between gap-4 text-sm"
-                  >
-                    <dt>{dict.governance.choices[choice]}</dt>
-                    <dd className="font-mono font-medium tabular-nums">
-                      {Number(weight).toFixed(1)}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              {result.revealed ? (
+                <dl className="flex flex-col gap-2">
+                  {(
+                    [
+                      ["yes", result.yes_weight],
+                      ["no", result.no_weight],
+                      ["abstain", result.abstain_weight],
+                    ] as const
+                  ).map(([choice, weight]) => (
+                    <div
+                      key={choice}
+                      className="flex items-center justify-between gap-4 text-sm"
+                    >
+                      <dt>{dict.governance.choices[choice]}</dt>
+                      <dd className="font-mono font-medium tabular-nums">
+                        {Number(weight ?? 0).toFixed(1)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : (
+                // Below MIN_TURNOUT: turnout shows, but the weighted breakdown is
+                // withheld so a small-N close can't reveal how someone voted.
+                <p className="text-sm text-muted-foreground">
+                  {dict.governance.resultsTooLowTurnout}
+                </p>
+              )}
             </div>
           ) : (
             <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">

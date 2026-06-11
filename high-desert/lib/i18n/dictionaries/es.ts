@@ -338,6 +338,8 @@ export const es: Dictionary = {
       "Totales ponderados por antigüedad, solo en conjunto: nunca se muestran los votos individuales.",
     turnout: { one: "{count} voto emitido", other: "{count} votos emitidos" },
     noResult: "No hay resultado disponible para esta propuesta.",
+    resultsTooLowTurnout:
+      "Votaron muy pocas personas para mostrar el desglose sin revelar cómo votó cada quien. Solo se muestra la participación indicada arriba.",
     closeHint:
       "La votación terminó. Registrar el cierre escribe el resultado oficial en el registro de auditoría público.",
     recordClose: "Registrar cierre oficial",
