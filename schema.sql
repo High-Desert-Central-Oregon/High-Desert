@@ -54,7 +54,8 @@ create table profiles (
   role            member_role not null default 'member',
   tenure_start    date,                              -- set once, on first approval; drives vote weight
   locale          text not null default 'en',
-  created_at      timestamptz not null default now()
+  created_at      timestamptz not null default now(),
+  deleted_at      timestamptz                        -- set when the member deletes their account; row kept as a scrubbed tombstone to anchor the append-only record
 );
 
 create table verifications (
@@ -186,12 +187,14 @@ create table audit_log (                    -- append-only; public for transpare
 -- ============================================================================
 create or replace function public.is_verified()
 returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from profiles where id = auth.uid() and verified);
+  select exists (select 1 from profiles
+                  where id = auth.uid() and verified and deleted_at is null);
 $$;
 
 create or replace function public.is_moderator()
 returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from profiles where id = auth.uid() and role in ('moderator','admin'));
+  select exists (select 1 from profiles
+                  where id = auth.uid() and role in ('moderator','admin') and deleted_at is null);
 $$;
 
 create or replace function public.vote_weight_for(p_user uuid)
@@ -501,6 +504,46 @@ begin
     'appeal', p_appeal_id,
     jsonb_build_object('moderation_action_id', v_action, 'reason', p_reason));
 end; $$;
+
+-- ----------------------------------------------------------------------------
+-- 5c · ACCOUNT DELETION: erase the person, preserve the tamper-evident record.
+--      Self-pinned (acts only on auth.uid(); no user-id parameter). Definer so it
+--      can reach past the append-only RLS on consents/appeals. Deletes the
+--      personal rows and scrubs the profile's PII, but KEEPS votes /
+--      moderation_actions / audit_log / proposals (re-anchored to the scrubbed
+--      tombstone) — a hard delete would CASCADE votes and change closed tallies.
+--      The guarded trust fields (verified/role/tenure_start) and the auth identity
+--      are scrubbed by the service-role admin client in the delete server action
+--      (it has no auth.uid(), so the self-edit guard doesn't fire — the guard is
+--      never loosened). See migrations/0009_account_data.sql.
+-- ----------------------------------------------------------------------------
+create or replace function public.delete_my_account()
+returns void language plpgsql security definer set search_path = public as $$
+declare v_uid uuid := auth.uid();
+begin
+  if v_uid is null then
+    raise exception 'must be signed in to delete your account';
+  end if;
+
+  delete from event_rsvps           where user_id   = v_uid;
+  delete from events                where creator_id = v_uid;  -- cascades their rsvps
+  delete from verifications         where user_id   = v_uid;   -- evidence already purged on decision
+  delete from neighborhood_requests where user_id   = v_uid;
+  delete from consents              where user_id   = v_uid;
+
+  update appeals set body = '[removed when the member deleted their account]'
+   where user_id = v_uid;
+
+  update profiles set
+      display_name    = 'Former member',
+      neighborhood_id = null,
+      locale          = 'en',
+      deleted_at      = now()
+   where id = v_uid;
+
+  perform public.log_audit('account.deleted', 'profile', v_uid, '{}'::jsonb);
+end; $$;
+grant execute on function public.delete_my_account() to authenticated;
 
 -- ============================================================================
 -- 6 · VIEW: proposal_results  (aggregate, weighted, SECRET UNTIL CLOSE)

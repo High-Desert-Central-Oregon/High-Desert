@@ -37,6 +37,7 @@ export const es: Dictionary = {
     governanceLink: "Propuestas",
     appealsLink: "Apelaciones",
     transparencyLink: "Transparencia",
+    accountLink: "Cuenta",
   },
 
   landing: {
@@ -411,5 +412,28 @@ export const es: Dictionary = {
     byModerator: "por {name}",
     byModeratorUnknown: "por un moderador",
     viewContent: "Ver",
+  },
+  account: {
+    title: "Tu cuenta",
+    intro:
+      "Tus datos son tuyos. Llévate una copia cuando quieras, o cierra tu cuenta y vete.",
+    exportHeading: "Exporta tus datos",
+    exportBody:
+      "Descarga en un solo archivo todo lo que contiene tu cuenta: tu perfil, tus confirmaciones de asistencia, propuestas, tus propios votos y más. Los documentos de verificación nunca se guardan.",
+    exportButton: "Descargar mis datos",
+    deleteHeading: "Elimina tu cuenta",
+    deleteBody:
+      "Esto cierra tu cuenta de forma permanente y borra tu información personal. No se puede deshacer.",
+    deleteKept:
+      "Se conserva, pero ya no vinculado a ti: tus votos anteriores y cualquier registro de moderación permanecen en el recuento permanente de la comunidad como «Miembro anterior», para no reescribir nunca resultados ya cerrados.",
+    deleteErased:
+      "Se borra para siempre: tu perfil, tus confirmaciones de asistencia, los eventos que creaste, tu estado de verificación y tu vecindario.",
+    deleteIrreversible:
+      "No hay forma de deshacerlo ni de volver a iniciar sesión después.",
+    deleteConfirmLabel: "Escribe {word} para confirmar",
+    deleteConfirmWord: "ELIMINAR",
+    deleteButton: "Eliminar mi cuenta",
+    deleting: "Eliminando…",
+    deleteError: "No pudimos eliminar tu cuenta. Inténtalo de nuevo.",
   },
 };

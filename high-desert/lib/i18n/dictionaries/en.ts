@@ -33,6 +33,7 @@ export const en = {
     governanceLink: "Proposals",
     appealsLink: "Appeals",
     transparencyLink: "Transparency",
+    accountLink: "Account",
   },
 
   landing: {
@@ -404,6 +405,29 @@ export const en = {
     byModerator: "by {name}",
     byModeratorUnknown: "by a moderator",
     viewContent: "View",
+  },
+  account: {
+    title: "Your account",
+    intro:
+      "Your data is yours. Take a copy whenever you like, or close your account and go.",
+    exportHeading: "Export your data",
+    exportBody:
+      "Download everything your account holds as a single file — your profile, RSVPs, proposals, your own ballots, and more. Verification documents are never kept.",
+    exportButton: "Download my data",
+    deleteHeading: "Delete your account",
+    deleteBody:
+      "This permanently closes your account and erases your personal information. It cannot be undone.",
+    deleteKept:
+      "Kept, but no longer linked to you: your past votes and any moderation record stay in the community's permanent tally as “Former member,” so closed results are never rewritten.",
+    deleteErased:
+      "Erased for good: your profile, your RSVPs, the events you created, your verification status, and your neighborhood.",
+    deleteIrreversible:
+      "There is no undo, and no way to sign back in afterward.",
+    deleteConfirmLabel: "Type {word} to confirm",
+    deleteConfirmWord: "DELETE",
+    deleteButton: "Delete my account",
+    deleting: "Deleting…",
+    deleteError: "We couldn't delete your account. Please try again.",
   },
 };
 
