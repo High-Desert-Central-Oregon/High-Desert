@@ -38,7 +38,7 @@ the community later, but the build no longer waits on any of them.
 
 - **Verification pathways:** ID / utility bill / voter reg / property record / **mailed postcard
   code**, all human-reviewed. The postcard path is the PO-Box / Warm Springs / unbanked accommodation.
-- **Governance numbers (provisional config):** quorum 20%, major 60%, immutable 75% + 30 days;
+- **Governance numbers (provisional config):** quorum 15%, major 60%, immutable 75% + 30 days;
   tenure weight (Business Plan v11, 1×–3×): `< 1 yr` 1.0× · `1–2 yr` 1.5× · `2–4 yr` 2.0× · `4 yr+` 3.0×.
 - **Vote visibility:** secret until close, aggregate-only after (anti-coercion).
 - **Billing:** cohort free; defer Stripe.

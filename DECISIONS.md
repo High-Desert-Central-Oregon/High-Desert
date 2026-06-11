@@ -83,12 +83,12 @@ which would be a deliberate community choice, not a default.
 dropped). And a **minimum-turnout floor**: if fewer than **5** distinct members
 voted, the weighted breakdown is withheld ("turnout too low to reveal") and only
 the turnout count is shown. **5 is provisional config for the cohort to ratify**,
-alongside the governance thresholds (quorum 20%, major 60%, immutable 75%).
+alongside the governance thresholds (quorum 15%, major 60%, immutable 75%).
 
 **Why.** Closed results were readable by the open internet (audit note N3), and
 with one or two ballots a weighted breakdown can reveal how an individual voted.
-The floor closes that small-N de-anonymisation gap. It sits *below* quorum (20% of
-~50 = 10), so it never hides a legitimately-decided result — only very-low-turnout
+The floor closes that small-N de-anonymisation gap. It sits *below* quorum (15% of
+~50 ≈ 7.5), so it never hides a legitimately-decided result — only very-low-turnout
 ones where the privacy risk is real and the outcome wouldn't have carried anyway.
 
 **How.** The floor is enforced in the database, in *both* places the breakdown
