@@ -1,5 +1,5 @@
 -- ============================================================================
--- HIGH DESERT — Prototype schema.sql  (v1, June 2026)
+-- STEPPE — Prototype schema.sql  (v1, June 2026)
 -- Implements Build Spec v2 §03 (data model) and §04 (RLS — the constitution in code).
 --
 -- TARGET: a fresh Supabase project (Postgres 15+). Paste into the SQL editor, or

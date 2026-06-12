@@ -1,5 +1,5 @@
 -- ============================================================================
--- HIGH DESERT — Seed: private Storage bucket for verification evidence
+-- STEPPE — Seed: private Storage bucket for verification evidence
 -- ----------------------------------------------------------------------------
 -- Implements the storage half of "verify, then forget" (CLAUDE.md invariant 1;
 -- schema.sql NOTES). Run AFTER schema.sql, against the same Supabase project.

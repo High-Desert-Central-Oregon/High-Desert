@@ -1,5 +1,5 @@
 -- ============================================================================
--- HIGH DESERT — Seed: Terms & Privacy bodies (DRAFT v0.1)
+-- STEPPE — Seed: Terms & Privacy bodies (DRAFT v0.1)
 -- ----------------------------------------------------------------------------
 -- Fills the placeholder bodies that schema.sql inserts for documents
 -- (kind = terms / privacy, version = '0.1') with the plain-language draft

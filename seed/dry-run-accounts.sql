@@ -1,5 +1,5 @@
 -- ============================================================================
--- HIGH DESERT — dry-run TEST accounts  (Step 10, closed-beta hardening)
+-- STEPPE — dry-run TEST accounts  (Step 10, closed-beta hardening)
 -- ----------------------------------------------------------------------------
 -- ⚠️  STAGING / DEV ONLY.  These are SYNTHETIC test accounts for the dry-run
 --     runbook (docs/dry-run-runbook.md). They are NOT the ~50-person founding
