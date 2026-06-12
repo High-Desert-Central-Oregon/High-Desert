@@ -9,7 +9,7 @@ import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata = {
-  title: "Create an event · High Desert",
+  title: "Create an event · Steppe",
 };
 
 type NeighborhoodRow = { id: string; name: string };

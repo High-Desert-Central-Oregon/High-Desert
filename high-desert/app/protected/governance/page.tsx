@@ -16,7 +16,7 @@ import { t, type Dictionary } from "@/lib/i18n";
 import type { ProposalRow } from "@/lib/types/db";
 
 export const metadata = {
-  title: "Proposals & votes · High Desert",
+  title: "Proposals & votes · Steppe",
 };
 
 type ListItem = Pick<

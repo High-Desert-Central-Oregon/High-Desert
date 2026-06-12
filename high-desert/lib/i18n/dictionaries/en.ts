@@ -8,7 +8,8 @@
  */
 export const en = {
   app: {
-    name: "High Desert",
+    name: "Steppe",
+    descriptor: "a high desert civic commons",
     tagline: "Community-owned civic infrastructure for Redmond, Oregon.",
     place: "Redmond, Oregon",
   },
@@ -39,7 +40,7 @@ export const en = {
   landing: {
     title: "A neighborhood you can trust.",
     subtitle:
-      "High Desert is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.",
+      "Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.",
     signInCta: "Sign in or join",
     dashboardCta: "Go to your home",
     commitmentsTitle: "What we promise",
@@ -52,7 +53,7 @@ export const en = {
   },
 
   auth: {
-    title: "Sign in to High Desert",
+    title: "Sign in to Steppe",
     subtitle:
       "New here? Use the same form — we'll create your account. We email you a secure link, so there's no password to remember or leak.",
     emailLabel: "Email address",
@@ -75,7 +76,7 @@ export const en = {
   welcome: {
     title: "Before you join in",
     intro:
-      "These are the Terms of Membership and the Privacy Policy for High Desert. Please read them — they're short and in plain language — then confirm at the bottom to continue.",
+      "These are the Terms of Membership and the Privacy Policy for Steppe. Please read them — they're short and in plain language — then confirm at the bottom to continue.",
     draftNotice:
       "Draft for review — pending Oregon legal review. The final wording may change before public launch.",
     signedInAs: "Signed in as {email}.",
@@ -92,7 +93,7 @@ export const en = {
   },
 
   home: {
-    title: "Welcome to High Desert",
+    title: "Welcome to Steppe",
     greeting: "Hello, {name}.",
     consentRecorded:
       "Your agreement to the current Terms & Privacy is on file. Thank you.",
@@ -432,13 +433,13 @@ export const en = {
   notFound: {
     title: "We couldn't find that page",
     body: "The link might be old, or the page may have moved. Let's get you back to familiar ground.",
-    back: "Back to High Desert",
+    back: "Back to Steppe",
   },
   error: {
     title: "Something went wrong on our end",
     body: "That's on us, not you. Try again — and if it keeps happening, it's worth letting us know.",
     retry: "Try again",
-    back: "Back to High Desert",
+    back: "Back to Steppe",
   },
 };
 

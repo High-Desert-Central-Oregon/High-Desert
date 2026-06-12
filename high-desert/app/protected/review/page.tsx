@@ -11,7 +11,7 @@ import { formatRedmondDate } from "@/lib/time";
 import type { VerificationMethod } from "@/lib/verification";
 
 export const metadata = {
-  title: "Verification reviews · High Desert",
+  title: "Verification reviews · Steppe",
 };
 
 type PendingRow = {

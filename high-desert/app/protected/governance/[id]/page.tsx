@@ -20,7 +20,7 @@ import { t, plural } from "@/lib/i18n";
 import type { ProposalRow, ProposalResult, VoteChoice } from "@/lib/types/db";
 
 export const metadata = {
-  title: "Proposal · High Desert",
+  title: "Proposal · Steppe",
 };
 
 type ResultRow = Pick<

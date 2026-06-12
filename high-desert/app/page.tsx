@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { Lockup } from "@/components/wordmark";
 import { getCurrentUser } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 
@@ -16,8 +17,12 @@ async function Landing() {
       lang={locale}
       className="mx-auto flex min-h-svh w-full max-w-3xl flex-col px-5"
     >
-      <nav className="flex h-16 items-center justify-between">
-        <span className="font-semibold tracking-tight">{dict.app.name}</span>
+      <nav className="flex items-center justify-between py-3">
+        <Lockup
+          name={dict.app.name}
+          descriptor={dict.app.descriptor}
+          lang={locale}
+        />
         <LanguageSwitcher current={locale} />
       </nav>
 

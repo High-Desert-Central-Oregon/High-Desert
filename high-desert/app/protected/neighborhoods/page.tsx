@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata = {
-  title: "Your neighborhood · High Desert",
+  title: "Your neighborhood · Steppe",
 };
 
 type NeighborhoodRow = { id: string; name: string };

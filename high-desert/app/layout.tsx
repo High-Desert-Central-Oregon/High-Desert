@@ -14,7 +14,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "High Desert — Redmond, Oregon",
+  title: "Steppe — Redmond, Oregon",
   description:
     "Community-owned, verified, ad-free civic infrastructure for Redmond, Oregon.",
 };

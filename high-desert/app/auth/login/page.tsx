@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { MagicLinkForm } from "@/components/magic-link-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { Lockup } from "@/components/wordmark";
 import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata = {
-  title: "Sign in · High Desert",
+  title: "Sign in · Steppe",
 };
 
 async function LoginCard() {
@@ -18,8 +19,12 @@ async function LoginCard() {
     >
       <div className="flex w-full max-w-sm flex-col gap-6">
         <div className="flex items-center justify-between">
-          <Link href="/" className="font-semibold tracking-tight">
-            {dict.app.name}
+          <Link href="/">
+            <Lockup
+              name={dict.app.name}
+              descriptor={dict.app.descriptor}
+              lang={locale}
+            />
           </Link>
           <LanguageSwitcher current={locale} />
         </div>

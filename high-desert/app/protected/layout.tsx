@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AuthButton } from "@/components/auth-button";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { Wordmark } from "@/components/wordmark";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -73,11 +74,8 @@ async function NavBar() {
   return (
     <nav lang={locale} className="flex w-full justify-center border-b">
       <div className="flex w-full max-w-3xl flex-wrap items-center gap-x-4 gap-y-1 p-3 px-5 text-sm">
-        <Link
-          href="/protected"
-          className="py-1 font-semibold tracking-tight"
-        >
-          {dict.app.name}
+        <Link href="/protected" className="py-1">
+          <Wordmark name={dict.app.name} />
         </Link>
         {verified && (
           <NavLink href="/protected/events">{dict.nav.eventsLink}</NavLink>

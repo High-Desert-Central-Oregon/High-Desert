@@ -6,13 +6,14 @@ import { TermsGate } from "./terms-gate";
 import { DocumentBody } from "@/components/document-body";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { LogoutButton } from "@/components/logout-button";
+import { Lockup } from "@/components/wordmark";
 import { getCurrentUser } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Welcome · High Desert",
+  title: "Welcome · Steppe",
 };
 
 async function WelcomeContent() {
@@ -34,7 +35,11 @@ async function WelcomeContent() {
     >
       <header className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <span className="font-semibold tracking-tight">{dict.app.name}</span>
+          <Lockup
+            name={dict.app.name}
+            descriptor={dict.app.descriptor}
+            lang={locale}
+          />
           <LanguageSwitcher current={locale} />
         </div>
 

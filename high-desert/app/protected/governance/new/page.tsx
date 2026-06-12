@@ -9,7 +9,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import { redmondInputValue } from "@/lib/time";
 
 export const metadata = {
-  title: "New proposal · High Desert",
+  title: "New proposal · Steppe",
 };
 
 async function NewProposalContent() {

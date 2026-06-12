@@ -8,7 +8,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Appeals · High Desert",
+  title: "Appeals · Steppe",
 };
 
 type AppealRow = {

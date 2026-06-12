@@ -12,7 +12,8 @@ import type { Dictionary } from "./en";
  */
 export const es: Dictionary = {
   app: {
-    name: "High Desert",
+    name: "Steppe",
+    descriptor: "un bien común cívico del alto desierto",
     tagline: "Infraestructura cívica de propiedad comunitaria para Redmond, Oregón.",
     place: "Redmond, Oregón",
   },
@@ -43,7 +44,7 @@ export const es: Dictionary = {
   landing: {
     title: "Un vecindario en el que puedes confiar.",
     subtitle:
-      "High Desert es infraestructura cívica verificada, sin anuncios y de propiedad de sus miembros para la gente de Redmond. Sin anuncios. Sin rastreo. Tus datos siguen siendo tuyos.",
+      "Steppe es infraestructura cívica verificada, sin anuncios y de propiedad de sus miembros para la gente de Redmond. Sin anuncios. Sin rastreo. Tus datos siguen siendo tuyos.",
     signInCta: "Inicia sesión o únete",
     dashboardCta: "Ir a tu inicio",
     commitmentsTitle: "Lo que prometemos",
@@ -56,7 +57,7 @@ export const es: Dictionary = {
   },
 
   auth: {
-    title: "Inicia sesión en High Desert",
+    title: "Inicia sesión en Steppe",
     subtitle:
       "¿Eres nuevo? Usa el mismo formulario: crearemos tu cuenta. Te enviamos un enlace seguro por correo, así no hay contraseña que recordar ni que se pueda filtrar.",
     emailLabel: "Correo electrónico",
@@ -80,7 +81,7 @@ export const es: Dictionary = {
   welcome: {
     title: "Antes de participar",
     intro:
-      "Estos son los Términos de Membresía y la Política de Privacidad de High Desert. Por favor léelos —son breves y en lenguaje claro— y luego confirma al final para continuar.",
+      "Estos son los Términos de Membresía y la Política de Privacidad de Steppe. Por favor léelos —son breves y en lenguaje claro— y luego confirma al final para continuar.",
     draftNotice:
       "Borrador para revisión: pendiente de revisión legal en Oregón. La redacción final puede cambiar antes del lanzamiento público.",
     signedInAs: "Sesión iniciada como {email}.",
@@ -97,7 +98,7 @@ export const es: Dictionary = {
   },
 
   home: {
-    title: "Bienvenido a High Desert",
+    title: "Bienvenido a Steppe",
     greeting: "Hola, {name}.",
     consentRecorded:
       "Tu aceptación de los Términos y la Privacidad actuales está registrada. Gracias.",
@@ -439,12 +440,12 @@ export const es: Dictionary = {
   notFound: {
     title: "No encontramos esa página",
     body: "Puede que el enlace sea antiguo o que la página se haya movido. Te llevamos de vuelta a terreno conocido.",
-    back: "Volver a High Desert",
+    back: "Volver a Steppe",
   },
   error: {
     title: "Algo salió mal de nuestro lado",
     body: "Es cosa nuestra, no tuya. Inténtalo de nuevo y, si sigue pasando, vale la pena avisarnos.",
     retry: "Intentar de nuevo",
-    back: "Volver a High Desert",
+    back: "Volver a Steppe",
   },
 };

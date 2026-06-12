@@ -4,7 +4,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Error · High Desert",
+  title: "Error · Steppe",
 };
 
 async function ErrorCard({

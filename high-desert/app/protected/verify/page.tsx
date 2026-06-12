@@ -9,7 +9,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import type { VerificationRow } from "@/lib/verification";
 
 export const metadata = {
-  title: "Verify residency · High Desert",
+  title: "Verify residency · Steppe",
 };
 
 /** The member's most recent verification request, if any (own row via RLS). */

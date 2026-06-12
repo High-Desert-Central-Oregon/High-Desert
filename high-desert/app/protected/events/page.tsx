@@ -14,7 +14,7 @@ import { getHiddenIds } from "@/lib/moderation";
 import type { Dictionary } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Neighborhood events · High Desert",
+  title: "Neighborhood events · Steppe",
 };
 
 type EventListItem = {

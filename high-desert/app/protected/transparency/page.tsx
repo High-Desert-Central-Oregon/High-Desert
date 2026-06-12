@@ -10,7 +10,7 @@ import { formatRedmondDateTime } from "@/lib/time";
 import { t, type Dictionary } from "@/lib/i18n";
 
 export const metadata = {
-  title: "Transparency · High Desert",
+  title: "Transparency · Steppe",
 };
 
 type AuditRow = {

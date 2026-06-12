@@ -58,7 +58,7 @@ function AttendeeList({
 }
 
 export const metadata = {
-  title: "Event · High Desert",
+  title: "Event · Steppe",
 };
 
 async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
