@@ -3,7 +3,7 @@ import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EventForm } from "./event-form";
-import { VerifiedNotice } from "../verified-notice";
+import { VerifiedGate } from "@/components/verified-gate";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -21,7 +21,15 @@ async function NewEventContent() {
   const { locale, dict } = await getServerDictionary();
 
   // Verified-only to create (enforced by RLS; this is the friendly gate).
-  if (!profile.verified) return <VerifiedNotice dict={dict} locale={locale} />;
+  if (!profile.verified)
+    return (
+      <VerifiedGate
+        title={dict.events.gateTitle}
+        body={dict.events.gateBody}
+        ctaLabel={dict.events.gateCta}
+        locale={locale}
+      />
+    );
 
   const supabase = await createClient();
   const { data: neighborhoods } = await supabase

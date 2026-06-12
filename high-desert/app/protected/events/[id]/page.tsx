@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { VerifiedNotice } from "../verified-notice";
+import { VerifiedGate } from "@/components/verified-gate";
 import { RsvpForm } from "./rsvp-form";
 import { RemovedBanner } from "../../moderation/removed-banner";
 import { ModerationControl } from "../../moderation/moderation-control";
@@ -68,7 +68,15 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   if (!profile) redirect("/auth/login");
 
   const { locale, dict } = await getServerDictionary();
-  if (!profile.verified) return <VerifiedNotice dict={dict} locale={locale} />;
+  if (!profile.verified)
+    return (
+      <VerifiedGate
+        title={dict.events.gateTitle}
+        body={dict.events.gateBody}
+        ctaLabel={dict.events.gateCta}
+        locale={locale}
+      />
+    );
 
   const supabase = await createClient();
 

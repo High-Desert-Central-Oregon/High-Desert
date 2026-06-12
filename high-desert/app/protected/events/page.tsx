@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { CalendarPlus, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { VerifiedNotice } from "./verified-notice";
+import { VerifiedGate } from "@/components/verified-gate";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -78,7 +78,15 @@ async function EventsContent() {
 
   // Verified-only: the DB blocks the read anyway (ev_read), but show the
   // plain-language reason rather than an empty page.
-  if (!profile.verified) return <VerifiedNotice dict={dict} locale={locale} />;
+  if (!profile.verified)
+    return (
+      <VerifiedGate
+        title={dict.events.gateTitle}
+        body={dict.events.gateBody}
+        ctaLabel={dict.events.gateCta}
+        locale={locale}
+      />
+    );
 
   const supabase = await createClient();
 
