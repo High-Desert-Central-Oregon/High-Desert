@@ -429,6 +429,17 @@ export const en = {
     deleting: "Deleting…",
     deleteError: "We couldn't delete your account. Please try again.",
   },
+  notFound: {
+    title: "We couldn't find that page",
+    body: "The link might be old, or the page may have moved. Let's get you back to familiar ground.",
+    back: "Back to High Desert",
+  },
+  error: {
+    title: "Something went wrong on our end",
+    body: "That's on us, not you. Try again — and if it keeps happening, it's worth letting us know.",
+    retry: "Try again",
+    back: "Back to High Desert",
+  },
 };
 
 export type Dictionary = typeof en;

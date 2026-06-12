@@ -26,6 +26,21 @@ export function getDictionary(locale: string | null | undefined): Dictionary {
 }
 
 /**
+ * Read the language cookie on the CLIENT — for places the server's `cookies()`
+ * isn't available, e.g. the error boundary (`app/error.tsx`), which must be a
+ * client component. Returns English on the server or when unset, so a render
+ * before mount stays hydration-stable; read it in an effect to pick up the real
+ * choice. Mirrors `getLocale()` (server) reading the same `LOCALE_COOKIE`.
+ */
+export function getClientLocale(): Locale {
+  if (typeof document === "undefined") return defaultLocale;
+  const match = document.cookie.match(
+    new RegExp(`(?:^|;\\s*)${LOCALE_COOKIE}=([^;]+)`),
+  );
+  return isLocale(match?.[1]) ? (match[1] as Locale) : defaultLocale;
+}
+
+/**
  * Fill {placeholders} in a string with named values. Keeps interpolation in one
  * place so translators never have to touch template syntax.
  *

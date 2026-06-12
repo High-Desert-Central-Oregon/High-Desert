@@ -436,4 +436,15 @@ export const es: Dictionary = {
     deleting: "Eliminando…",
     deleteError: "No pudimos eliminar tu cuenta. Inténtalo de nuevo.",
   },
+  notFound: {
+    title: "No encontramos esa página",
+    body: "Puede que el enlace sea antiguo o que la página se haya movido. Te llevamos de vuelta a terreno conocido.",
+    back: "Volver a High Desert",
+  },
+  error: {
+    title: "Algo salió mal de nuestro lado",
+    body: "Es cosa nuestra, no tuya. Inténtalo de nuevo y, si sigue pasando, vale la pena avisarnos.",
+    retry: "Intentar de nuevo",
+    back: "Volver a High Desert",
+  },
 };
