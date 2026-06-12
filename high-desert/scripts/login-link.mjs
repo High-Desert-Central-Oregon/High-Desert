@@ -1,7 +1,10 @@
 // scripts/login-link.mjs
-// node --env-file=.env.local scripts/login-link.mjs you@example.com http://localhost:3001
+// Local dev sign-in: mint a magic link and click it (before Resend email is wired).
+//   node --env-file=.env.local scripts/login-link.mjs you@example.com
+// Base URL defaults to the dev server's port (`next dev -p 3100`); pass a second
+// arg to override, e.g. http://localhost:3000 for `next start`.
 import { createClient } from '@supabase/supabase-js'
-const [, , email, base = 'http://localhost:3000'] = process.argv
+const [, , email, base = 'http://localhost:3100'] = process.argv
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY,
