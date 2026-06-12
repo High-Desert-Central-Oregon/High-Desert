@@ -73,7 +73,7 @@ async function VerifyContent() {
 
       <div className="flex items-start gap-2 rounded-md border bg-card p-3 text-sm text-muted-foreground">
         <CheckCircle2
-          className="mt-0.5 size-4 shrink-0 text-green-600 dark:text-green-500"
+          className="mt-0.5 size-4 shrink-0 text-success"
           aria-hidden="true"
         />
         <span>{dict.verify.forget}</span>
@@ -82,7 +82,7 @@ async function VerifyContent() {
       {latest?.status === "rejected" && (
         <p
           role="status"
-          className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+          className="rounded-md border border-warning/40 bg-warning/10 p-3 text-sm text-warning"
         >
           {dict.verify.rejectedNote}
         </p>
@@ -108,7 +108,7 @@ function StatusCard({
 }) {
   const toneClass =
     tone === "success"
-      ? "text-green-700 dark:text-green-500"
+      ? "text-success"
       : "text-muted-foreground";
   return (
     <div lang={lang} className="flex flex-col gap-3 rounded-lg border bg-card p-6">

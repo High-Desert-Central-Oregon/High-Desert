@@ -130,7 +130,7 @@ async function Home() {
         >
           {verified ? (
             <CheckCircle2
-              className="size-5 shrink-0 text-green-600 dark:text-green-500"
+              className="size-5 shrink-0 text-success"
               aria-hidden="true"
             />
           ) : (
@@ -169,7 +169,7 @@ async function Home() {
         </section>
       </div>
 
-      <p className="text-sm text-green-700 dark:text-green-500">
+      <p className="text-sm text-success">
         {dict.home.consentRecorded}
       </p>
 

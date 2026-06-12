@@ -67,7 +67,7 @@ export function NeighborhoodForm({
     <form action={action} className="flex flex-col gap-6">
       {/* Success banner (normal pick) */}
       {state && "saved" in state && !state.cleared && (
-        <p role="status" className="text-sm text-green-700 dark:text-green-500">
+        <p role="status" className="text-sm text-success">
           {dict.neighborhoods.saved}
         </p>
       )}

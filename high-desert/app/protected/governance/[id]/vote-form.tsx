@@ -52,7 +52,7 @@ export function VoteForm({
         </p>
       )}
       {saved && !error && (
-        <p role="status" className="text-sm text-green-700 dark:text-green-500">
+        <p role="status" className="text-sm text-success">
           {dict.governance.voteSaved}
         </p>
       )}

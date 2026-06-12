@@ -17,6 +17,10 @@
  *     color; --destructive is a separate, distinctly-red red.
  *   • --border is the soft sage divider (decorative: cards carry their own bg +
  *     shadow). --input is a darker sage so form-control boundaries clear 3:1.
+ *   • --success / --warning are semantic status colors, tuned to the palette the
+ *     same way --destructive is: a juniper-family green and an earthy ochre,
+ *     distinct from primary/juniper and the rust accent. Each clears 4.5:1 as
+ *     text on both bg and card in both themes (ratios noted inline).
  */
 @layer base {
   :root {
@@ -40,6 +44,10 @@
     --accent-foreground: 0 0% 100%; /* white on rust (4.84:1) */
     --destructive: 4 76.5% 40%; /* distinct red #B42318 (the error state) */
     --destructive-foreground: 0 0% 100%; /* white */
+    --success: 146 40.4% 29.6%; /* juniper-family green #2D6A47 — text clears 4.5 on bg (5.65) + card (5.13); more saturated than primary juniper, so distinct */
+    --success-foreground: 0 0% 100%; /* white on a success surface (6.4:1) */
+    --warning: 41 81% 26.9%; /* earthy ochre #7C580D — text clears 4.5 on bg (5.66) + card (5.14); distinct from the rust accent */
+    --warning-foreground: 0 0% 100%; /* white on a warning surface (6.4:1) */
     --border: 82 13.5% 72.4%; /* sage-soft #BBC2AF (decorative dividers) */
     --input: 84 13% 42.4%; /* sage-deep #6F7A5E (control boundary, 3:1) */
     --ring: 19 54.2% 44.5%; /* rust (focus ring) */
@@ -64,6 +72,10 @@
     --accent-foreground: 38 13.3% 11.8%; /* basalt on lighter rust (5.2:1) */
     --destructive: 5 72.5% 62.9%; /* lighter red #E5675C */
     --destructive-foreground: 38 13.3% 11.8%; /* basalt */
+    --success: 149 38.2% 62.5%; /* lighter green #7BC49E — text clears 4.5 on bg (8.09) + card (7.15) */
+    --success-foreground: 38 13.3% 11.8%; /* basalt on a success surface (8.1:1) */
+    --warning: 42 62.2% 60.6%; /* lighter ochre #D9B45C — text clears 4.5 on bg (8.41) + card (7.43) */
+    --warning-foreground: 38 13.3% 11.8%; /* basalt on a warning surface (8.4:1) */
     --border: 40 11.5% 20.4%; /* warm divider #3A362E */
     --input: 43 11.2% 43.7%; /* lighter control boundary #7C7563 (3.6:1) */
     --ring: 20 58% 56.1%; /* lighter rust */

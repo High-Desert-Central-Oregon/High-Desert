@@ -50,7 +50,7 @@ async function WelcomeContent() {
             present them as final (CLAUDE.md "Open items"). */}
         <div
           role="note"
-          className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+          className="flex items-start gap-2 rounded-md border border-warning/40 bg-warning/10 p-3 text-sm text-warning"
         >
           <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           <span>{dict.welcome.draftNotice}</span>

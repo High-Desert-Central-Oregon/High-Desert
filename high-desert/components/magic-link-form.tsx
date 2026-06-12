@@ -70,7 +70,7 @@ export function MagicLinkForm({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-2xl">
             <CheckCircle2
-              className="size-6 text-green-600 dark:text-green-500"
+              className="size-6 text-success"
               aria-hidden="true"
             />
             {dict.auth.checkEmailTitle}

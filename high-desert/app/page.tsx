@@ -49,7 +49,7 @@ async function Landing() {
             {dict.landing.commitments.map((line) => (
               <li key={line} className="flex items-start gap-2 text-sm">
                 <Check
-                  className="mt-0.5 size-4 shrink-0 text-green-600 dark:text-green-500"
+                  className="mt-0.5 size-4 shrink-0 text-success"
                   aria-hidden="true"
                 />
                 <span>{line}</span>
