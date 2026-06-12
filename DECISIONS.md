@@ -1,4 +1,4 @@
-# Decisions log — High Desert
+# Decisions log — Steppe
 
 A running record of design and scope decisions made while building, with enough
 "why" that the next person (or the cohort) can revisit them. Newest first.
@@ -105,7 +105,7 @@ absolute (vs. a percentage).
 
 ## 2026-06-09 — Local Exchange refined: two-layer scope, Compass review
 
-**Decision.** Local Exchange will live on **High Desert** (name pending,
+**Decision.** Local Exchange will live on **Steppe** (name pending,
 confirming this week). Redmond Compass reviewed the concept and was positive —
 the separation of civic-participation exchange from commercial discovery aligns
 with both platforms' lanes. Scope is now two deliberate layers:

@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 /*
- * The High Desert palette, mapped onto the shadcn token contract. Values are HSL
+ * The Steppe palette, mapped onto the shadcn token contract. Values are HSL
  * triplets (the `hsl(var(--x))` wrappers live in tailwind.config.ts). Hex sources
  * are noted so the brand stays legible to the next developer.
  *

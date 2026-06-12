@@ -59,7 +59,7 @@ export async function GET() {
     // display, so it does not route through lib/time.ts.
     exported_at: new Date().toISOString(),
     account: { id: uid, email: user.email },
-    note: "Your High Desert data. Verification evidence is never kept — it is deleted the moment a decision is made (verify, then forget).",
+    note: "Your Steppe data. Verification evidence is never kept — it is deleted the moment a decision is made (verify, then forget).",
     profile: profile.data ?? null,
     verifications: verifications.data ?? [],
     neighborhood_requests: neighborhoodRequests.data ?? [],

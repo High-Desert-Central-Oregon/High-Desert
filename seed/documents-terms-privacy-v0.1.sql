@@ -33,9 +33,9 @@ update documents set body = $tos$
 - **Enforcement comes with a voice.** Any action against you can be appealed, and you're told why.
 - **Fair, flat pricing.** One low price with a sliding scale (free during the founding period) — and never raised without a member vote.
 
-## 1 · What High Desert is
+## 1 · What Steppe is
 
-High Desert is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by [High Desert PBC], an Oregon public benefit corporation intending to convert to a nonprofit as the community grows. It is **not** advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.
+Steppe is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by [Steppe PBC], an Oregon public benefit corporation intending to convert to a nonprofit as the community grows. It is **not** advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.
 
 ## 2 · Who can join
 
@@ -63,7 +63,7 @@ Why — tenure-weighted, capture-resistant governance.
 
 ## 5 · Being a good neighbor (acceptable use)
 
-High Desert is a place for real neighbors to connect. You agree not to:
+Steppe is a place for real neighbors to connect. You agree not to:
 
 - harass, threaten, demean, or incite harm against others, or post hateful content;
 - post content that is illegal, or use the platform to facilitate illegal activity;
@@ -82,17 +82,17 @@ Why — action-then-voice; no silent exit.
 
 ## 7 · Events & mutual aid are organized by members
 
-Neighborhood events, gatherings, and (when available) mutual-aid posts are created and run by members, not by High Desert. We verify residency, but we do not otherwise vet members, and we are not a party to what members arrange. **Use good judgment and meet safely.** To the extent the law allows, High Desert is not responsible for members' conduct, statements, or in-person gatherings.
+Neighborhood events, gatherings, and (when available) mutual-aid posts are created and run by members, not by Steppe. We verify residency, but we do not otherwise vet members, and we are not a party to what members arrange. **Use good judgment and meet safely.** To the extent the law allows, Steppe is not responsible for members' conduct, statements, or in-person gatherings.
 
 ## 8 · Your content stays yours
 
-You keep ownership of what you post. You grant High Desert a limited, non-exclusive license to store and display your content **only** as needed to operate the platform for the community — never to advertise, profile, or sell. You can export your content, and you can delete it; when you do, we remove it (some governance and moderation records may be kept in de-identified form for the integrity of the public record — see Privacy, Section 9).
+You keep ownership of what you post. You grant Steppe a limited, non-exclusive license to store and display your content **only** as needed to operate the platform for the community — never to advertise, profile, or sell. You can export your content, and you can delete it; when you do, we remove it (some governance and moderation records may be kept in de-identified form for the integrity of the public record — see Privacy, Section 9).
 
 Why — member-owned, non-extractive, exportable.
 
 ## 9 · Cost, and our promise on advertising
 
-High Desert is funded by its members, never by advertising. **During the founding and beta period, membership is free.** When paid membership begins, it will be one low flat price with an income-based sliding scale down to free; choosing a higher "supporter" amount funds others' access, not extra features. **The price will never increase without a community vote**, and there will be no advertising, ever.
+Steppe is funded by its members, never by advertising. **During the founding and beta period, membership is free.** When paid membership begins, it will be one low flat price with an income-based sliding scale down to free; choosing a higher "supporter" amount funds others' access, not extra features. **The price will never increase without a community vote**, and there will be no advertising, ever.
 
 Why — price by means not scope; no-ads is structural and immutable.
 
@@ -106,7 +106,7 @@ These Terms are versioned. If we change them, we will show you what changed and 
 
 ## 12 · Disclaimers & limits of liability
 
-High Desert is provided "as is," without warranties of any kind, to the fullest extent permitted by Oregon law. Any future emergency or community alerts are **best-effort and are never a substitute for 911 or official emergency sources.** To the extent the law allows, High Desert and its operators will not be liable for indirect or consequential damages, and total liability is limited to the amount you paid us in the prior 12 months (which, during the free period, is zero).
+Steppe is provided "as is," without warranties of any kind, to the fullest extent permitted by Oregon law. Any future emergency or community alerts are **best-effort and are never a substitute for 911 or official emergency sources.** To the extent the law allows, Steppe and its operators will not be liable for indirect or consequential damages, and total liability is limited to the amount you paid us in the prior 12 months (which, during the free period, is zero).
 
 ## 13 · Governing law & resolving disputes
 
@@ -116,7 +116,7 @@ Why — dispute terms that don't quietly strip member voice.
 
 ## 14 · Contact
 
-Questions about these Terms: [contact email] · [mailing address]. [High Desert PBC], Redmond, Oregon.
+Questions about these Terms: [contact email] · [mailing address]. [Steppe PBC], Redmond, Oregon.
 $tos$
 where kind = 'terms' and version = '0.1';
 
@@ -151,7 +151,7 @@ To keep the community accountable, we maintain an append-only log of governance 
 
 ## 6 · How we use your information
 
-We use your information for one purpose: to operate High Desert and its governance — verifying residency, running events and votes, moderating fairly, and keeping the service secure. We **never** use it to advertise, to build profiles about you, or to sell.
+We use your information for one purpose: to operate Steppe and its governance — verifying residency, running events and votes, moderating fairly, and keeping the service secure. We **never** use it to advertise, to build profiles about you, or to sell.
 
 ## 7 · Who we share with
 
@@ -175,7 +175,7 @@ Access to data is enforced at the database level (row-level security), staff and
 
 ## 12 · Children
 
-High Desert is for adults 18 and older at this time and is not directed to children under 13. A future version for ages 13–17 will have its own protections, will comply with applicable children's-privacy law (including COPPA), and will launch only after a community vote.
+Steppe is for adults 18 and older at this time and is not directed to children under 13. A future version for ages 13–17 will have its own protections, will comply with applicable children's-privacy law (including COPPA), and will launch only after a community vote.
 
 ## 13 · Changes to this Policy
 
@@ -183,6 +183,6 @@ This Policy is versioned. If we make a material change, we will show you what ch
 
 ## 14 · Contact
 
-Privacy questions or data requests: [contact email] · [mailing address]. [High Desert PBC], Redmond, Oregon.
+Privacy questions or data requests: [contact email] · [mailing address]. [Steppe PBC], Redmond, Oregon.
 $pp$
 where kind = 'privacy' and version = '0.1';

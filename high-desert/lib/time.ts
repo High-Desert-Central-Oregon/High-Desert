@@ -1,7 +1,7 @@
 /**
  * Redmond-time utilities — the single source of truth for date/time handling.
  *
- * High Desert serves one place: Redmond, Oregon. Every event and governance time
+ * Steppe serves one place: Redmond, Oregon. Every event and governance time
  * is Redmond local time, ALWAYS, regardless of where the member who entered it
  * happened to be sitting. We never trust the browser clock for this. A wall-clock
  * value typed into a form (e.g. "2026-07-01T18:00") is interpreted as
