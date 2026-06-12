@@ -35,7 +35,7 @@ update documents set body = $tos$
 
 ## 1 · What Steppe is
 
-Steppe is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by [Steppe PBC], an Oregon public benefit corporation intending to convert to a nonprofit as the community grows. It is **not** advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.
+Steppe is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by [Steppe], an Oregon nonprofit public benefit corporation — member-governed, with no owner and a mission entrenched in its articles. It is **not** advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.
 
 ## 2 · Who can join
 
@@ -116,7 +116,7 @@ Why — dispute terms that don't quietly strip member voice.
 
 ## 14 · Contact
 
-Questions about these Terms: [contact email] · [mailing address]. [Steppe PBC], Redmond, Oregon.
+Questions about these Terms: [contact email] · [mailing address]. [Steppe], Redmond, Oregon.
 $tos$
 where kind = 'terms' and version = '0.1';
 
@@ -183,6 +183,6 @@ This Policy is versioned. If we make a material change, we will show you what ch
 
 ## 14 · Contact
 
-Privacy questions or data requests: [contact email] · [mailing address]. [Steppe PBC], Redmond, Oregon.
+Privacy questions or data requests: [contact email] · [mailing address]. [Steppe], Redmond, Oregon.
 $pp$
 where kind = 'privacy' and version = '0.1';
