@@ -1,9 +1,9 @@
-High Desert
-Copyright (C) 2026 High Desert
+Steppe
+Copyright (C) 2026 Steppe
 
   (The copyright holder named above is a placeholder — replace it with the exact
-   registered legal entity name once the nonprofit public benefit corporation is
-   incorporated.)
+   registered legal entity name, a "Steppe …" nonprofit, once the nonprofit
+   public benefit corporation is incorporated.)
 
 This program is free software: you can redistribute it and/or modify it under the
 terms of the GNU Affero General Public License as published by the Free Software
@@ -19,22 +19,26 @@ TRADEMARKS — open code, protected name
 ================================================================================
 
 The AGPL above covers the SOURCE CODE. It does NOT grant any right to use the
-"High Desert" name, the High Desert logo, or related branding.
+"Steppe" name, the Steppe lockup (the "Steppe" wordmark together with its
+"a high desert civic commons" descriptor), the Steppe logo, or related branding.
+(The phrase "high desert" alone is a geographic description of Central Oregon and
+is not claimed; what is protected is the Steppe name and the lockup as a whole.)
 
 You MAY:
   - run, study, modify, and self-host this software under the AGPL;
   - create and operate a fork under a DIFFERENT name of your own.
 
-You MAY NOT, without prior written permission from High Desert:
-  - use the "High Desert" name or logo to name or promote your deployment or fork;
+You MAY NOT, without prior written permission from Steppe:
+  - use the "Steppe" name, the lockup/descriptor, or the logo to name or promote
+    your deployment or fork;
   - imply that your deployment, fork, or product is endorsed by, affiliated with,
-    or is the official "High Desert";
-  - use the name or logo in any way likely to confuse residents about which service
-    is the community-governed High Desert.
+    or is the official "Steppe";
+  - use the name, descriptor, or logo in any way likely to confuse residents about
+    which service is the community-governed Steppe.
 
-This protects the one thing the community's trust is attached to — the name — from
-being used by an impostor or an extractive fork. It is a safeguard for members, not
-a restriction on the code.
+This protects the one thing the community's trust is attached to — the Steppe name
+and mark — from being used by an impostor or an extractive fork. It is a safeguard
+for members, not a restriction on the code.
 
 Replication is welcome. If you are a community — or the Confederated Tribes of Warm
 Springs — wanting to run your own instance, get in touch; the patterns are meant to

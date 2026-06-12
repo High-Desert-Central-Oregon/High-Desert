@@ -1,6 +1,6 @@
-# Contributing to High Desert
+# Contributing to Steppe
 
-High Desert is community-owned civic infrastructure, not a typical product. The code is
+Steppe is community-owned civic infrastructure, not a typical product. The code is
 meant to outlast any one of us and to be read and maintained by the community it serves —
 including the intern pipeline. So contributions are held to two standards: they must be
 **legible** (an intern can read them) and they must **respect the invariants**.
@@ -18,7 +18,7 @@ including the intern pipeline. So contributions are held to two standards: they 
 
 This project is licensed under the **GNU AGPL-3.0-or-later** (see `LICENSE`). By contributing,
 you agree your contribution is provided under the **same license**. Everyone — including the
-maintainers and High Desert — is bound by the AGPL equally; there is no separate grant that
+maintainers and Steppe — is bound by the AGPL equally; there is no separate grant that
 lets the project take your contribution proprietary. We use the DCO below rather than a
 contributor license agreement, on purpose: no rights are assigned to anyone.
 
@@ -42,7 +42,7 @@ By signing off, you certify the statement below.
 > **Note on privacy.** Your sign-off (name + email) becomes part of the public git history
 > permanently. This is about *contributor* identity and is standard for open source — it is
 > entirely separate from the platform's member-data privacy commitments (verify-then-forget, no
-> selling data), which still fully apply to the people who *use* High Desert.
+> selling data), which still fully apply to the people who *use* Steppe.
 
 ### Developer Certificate of Origin 1.1
 
@@ -101,8 +101,8 @@ and the member-data commitments, privacy bugs are treated as security bugs.
 
 ## Per-file header notice (new source files)
 
-    High Desert — <one-line description of the file>
-    Copyright (C) 2026 High Desert
+    Steppe — <one-line description of the file>
+    Copyright (C) 2026 Steppe
     SPDX-License-Identifier: AGPL-3.0-or-later
 
     This program is free software: you can redistribute it and/or modify it under

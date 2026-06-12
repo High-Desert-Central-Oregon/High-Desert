@@ -1,4 +1,4 @@
-# CLAUDE.md — High Desert
+# CLAUDE.md — Steppe
 
 This file is the codebase's constitution. Read it before doing anything. Every feature
 here implements a documented design pattern; the reasoning is in `SPEC.md` and the data
@@ -7,13 +7,13 @@ flag it — do not "helpfully" work around it.**
 
 ## What this is
 
-High Desert is community-owned, verified, ad-free digital civic infrastructure for
+Steppe is community-owned, verified, ad-free digital civic infrastructure for
 **Redmond, Oregon** — a member-governed Oregon nonprofit public benefit corporation
 (ORS 65, on a 501(c)(3) pathway). It is *not*
 ad-supported social media. We are building the **prototype**: a functional closed-beta MVP
 a ~50-person founding cohort will actually use (real verification, real neighborhood
 events, a real governance vote, a public transparency view). Ship the smallest thing that
-is unmistakably High Desert, then earn the right to add more.
+is unmistakably Steppe, then earn the right to add more.
 
 ## Stack
 

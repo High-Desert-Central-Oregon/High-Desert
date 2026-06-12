@@ -1,9 +1,9 @@
-# High Desert
+# Steppe
 
 **Community-owned, verified, ad-free digital civic infrastructure for Redmond, Oregon.**
 
-High Desert is a place for verified neighbors to find each other, organize, help one another,
-and govern the platform together. It is run by [High Desert], a member-governed Oregon nonprofit
+Steppe is a place for verified neighbors to find each other, organize, help one another,
+and govern the platform together. It is run by [Steppe], a member-governed Oregon nonprofit
 public benefit corporation (ORS 65, on a 501(c)(3) pathway). It is not social media and it is not
 advertising-supported — the people it serves are the only customer.
 
@@ -89,7 +89,7 @@ respect every invariant in CLAUDE.md."*
 
 ## Contributing
 
-High Desert is built by the community it serves, including a paid intern pipeline — so the code
+Steppe is built by the community it serves, including a paid intern pipeline — so the code
 is meant to be **legible and maintainable**, and to respect the invariants. Start with
 [`CLAUDE.md`](./CLAUDE.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md). We use the Developer
 Certificate of Origin (sign off with `git commit -s`); contributions are under the same AGPL
@@ -100,16 +100,16 @@ license as the project (inbound = outbound).
 The design is meant to be **adopted, adapted, or refused** by other communities — and, on their
 own terms, by the Confederated Tribes of Warm Springs. The AGPL keeps any fork open; the patterns
 (CC BY-SA 4.0) travel with their reasoning intact. You may run and modify the code freely, but you
-may not operate it *as* "High Desert" — see [`NOTICE`](./NOTICE). If you'd like to run your own
+may not operate it *as* "Steppe" — see [`NOTICE`](./NOTICE). If you'd like to run your own
 instance, [get in touch][contact].
 
 ## License
 
 - **Code:** GNU Affero General Public License v3.0 or later — [`LICENSE`](./LICENSE)
 - **Documentation & design materials:** Creative Commons Attribution-ShareAlike 4.0 — [`docs/LICENSE`](./docs/LICENSE)
-- **"High Desert"** name and logo: reserved trademark — [`NOTICE`](./NOTICE)
+- **"Steppe"** name and logo: reserved trademark — [`NOTICE`](./NOTICE)
 
 ---
 
-*[High Desert] · Redmond, Oregon. Replace the bracketed placeholders ([repo URL], [contact],
+*[Steppe] · Redmond, Oregon. Replace the bracketed placeholders ([repo URL], [contact],
 and the entity name) before publishing.*

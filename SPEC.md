@@ -1,4 +1,4 @@
-# High Desert — Prototype Build Spec (v2)
+# Steppe — Prototype Build Spec (v2)
 
 The technical bridge from the design framework to the first commit: what the prototype is,
 the data model and the policies that make the constitution true in code, how each feature is
@@ -14,7 +14,7 @@ built, and the order to build it. Companion to `CLAUDE.md` (the invariants) and 
 
 A *functional* MVP a ~50-person Redmond founding cohort can actually use — real verification,
 real neighborhood events, a real governance vote, a real public transparency view. It is the
-smallest thing that is unmistakably High Desert (Pattern 17, Minimum Trustworthy Platform).
+smallest thing that is unmistakably Steppe (Pattern 17, Minimum Trustworthy Platform).
 It is **not** the full platform and not a design mockup. Everything here implements a pattern;
 the ties are marked so the reasoning stays attached to the code.
 
