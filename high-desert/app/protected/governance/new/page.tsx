@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ProposalForm } from "./proposal-form";
@@ -56,7 +57,7 @@ async function NewProposalContent() {
 
 export default function NewProposalPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <NewProposalContent />
     </Suspense>
   );

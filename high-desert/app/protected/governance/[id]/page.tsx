@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CalendarClock, CalendarCheck } from "lucide-react";
@@ -295,7 +296,7 @@ export default function ProposalDetailPage({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <ProposalDetail params={params} />
     </Suspense>
   );

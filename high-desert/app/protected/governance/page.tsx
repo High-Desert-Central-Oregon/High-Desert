@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FilePlus2 } from "lucide-react";
@@ -196,7 +197,7 @@ async function GovernanceContent() {
 
 export default function GovernancePage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <GovernanceContent />
     </Suspense>
   );

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { CheckCircle2, Clock, MapPin, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -188,7 +189,7 @@ async function Home() {
 
 export default function ProtectedPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <Home />
     </Suspense>
   );

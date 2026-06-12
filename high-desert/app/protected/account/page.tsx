@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth";
@@ -48,7 +49,7 @@ async function AccountView() {
 
 export default function AccountPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <AccountView />
     </Suspense>
   );

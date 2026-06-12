@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EventForm } from "./event-form";
@@ -55,7 +56,7 @@ async function NewEventContent() {
 
 export default function NewEventPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <NewEventContent />
     </Suspense>
   );

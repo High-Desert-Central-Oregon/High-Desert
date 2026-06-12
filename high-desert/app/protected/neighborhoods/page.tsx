@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { NeighborhoodForm } from "./neighborhood-form";
 import { createClient } from "@/lib/supabase/server";
@@ -73,7 +74,7 @@ async function NeighborhoodContent() {
 
 export default function NeighborhoodPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <NeighborhoodContent />
     </Suspense>
   );

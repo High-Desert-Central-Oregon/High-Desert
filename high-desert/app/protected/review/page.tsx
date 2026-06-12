@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { ReviewRow } from "./review-row";
 import { NeighborhoodRequestRow } from "./neighborhood-request-row";
@@ -156,7 +157,7 @@ async function ReviewContent() {
 
 export default function ReviewPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <ReviewContent />
     </Suspense>
   );

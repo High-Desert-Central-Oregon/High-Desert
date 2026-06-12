@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 import { VerifyForm } from "./verify-form";
@@ -125,7 +126,7 @@ function StatusCard({
 
 export default function VerifyPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <VerifyContent />
     </Suspense>
   );

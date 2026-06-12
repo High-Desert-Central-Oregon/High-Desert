@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { TermsGate } from "./terms-gate";
 import { DocumentBody } from "@/components/document-body";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -84,7 +85,13 @@ async function WelcomeContent() {
 
 export default function WelcomePage() {
   return (
-    <Suspense>
+    <Suspense
+      fallback={
+        <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:py-12">
+          <PageSkeleton />
+        </main>
+      }
+    >
       <WelcomeContent />
     </Suspense>
   );

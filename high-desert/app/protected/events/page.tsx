@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarPlus, MapPin } from "lucide-react";
@@ -184,7 +185,7 @@ async function EventsContent() {
 
 export default function EventsPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <EventsContent />
     </Suspense>
   );

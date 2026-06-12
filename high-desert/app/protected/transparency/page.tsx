@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ScrollText } from "lucide-react";
@@ -158,7 +159,7 @@ async function TransparencyContent() {
 
 export default function TransparencyPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <TransparencyContent />
     </Suspense>
   );

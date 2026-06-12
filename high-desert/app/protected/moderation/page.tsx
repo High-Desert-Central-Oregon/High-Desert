@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { AppealResolver } from "./appeal-resolver";
 import { createClient } from "@/lib/supabase/server";
@@ -152,7 +153,7 @@ async function AppealsContent() {
 
 export default function AppealsPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<PageSkeleton />}>
       <AppealsContent />
     </Suspense>
   );
