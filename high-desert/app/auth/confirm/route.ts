@@ -9,7 +9,16 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type") as EmailOtpType | null;
   // Default landing after a verified magic link. The protected area then routes
   // members who haven't accepted the current Terms to the consent gate.
-  const next = searchParams.get("next") ?? "/protected";
+  //
+  // Only ever forward to an INTERNAL path: an attacker-supplied absolute
+  // ("https://evil.com") or protocol-relative ("//evil.com") `next` would turn
+  // this confirm route into an open redirect, so anything that isn't a plain
+  // "/path" falls back to /protected. (The app itself always sends next=/protected.)
+  const nextParam = searchParams.get("next") ?? "/protected";
+  const next =
+    nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : "/protected";
 
   if (token_hash && type) {
     const supabase = await createClient();
@@ -19,14 +28,14 @@ export async function GET(request: NextRequest) {
       token_hash,
     });
     if (!error) {
-      // redirect user to specified redirect URL or root of app
+      // redirect user to the (validated, internal) next path
       redirect(next);
     } else {
-      // redirect the user to an error page with some instructions
-      redirect(`/auth/error?error=${error?.message}`);
+      // Surface the failure; encode so a message with & or # can't corrupt the URL.
+      redirect(`/auth/error?error=${encodeURIComponent(error.message)}`);
     }
   }
 
   // redirect the user to an error page with some instructions
-  redirect(`/auth/error?error=No token hash or type`);
+  redirect(`/auth/error?error=${encodeURIComponent("No token hash or type")}`);
 }
