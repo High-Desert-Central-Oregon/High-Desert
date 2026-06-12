@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Lockup } from "@/components/wordmark";
 import {
   defaultLocale,
   getClientLocale,
@@ -42,6 +43,12 @@ export default function Error({
       lang={locale}
       className="flex min-h-svh w-full flex-col items-center justify-center gap-6 p-6"
     >
+      <Lockup
+        name={dict.app.name}
+        descriptor={dict.app.descriptor}
+        lang={locale}
+        className="items-center text-center"
+      />
       <Card className="w-full max-w-md">
         <CardHeader>
           <h1 className="text-2xl font-semibold tracking-tight">
