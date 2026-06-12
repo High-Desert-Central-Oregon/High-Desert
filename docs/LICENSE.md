@@ -1,6 +1,6 @@
 # Documentation & Design Materials — License
 
-The **source code** of High Desert is licensed under the GNU AGPL-3.0-or-later (see the
+The **source code** of Steppe is licensed under the GNU AGPL-3.0-or-later (see the
 top-level `LICENSE` and `NOTICE`).
 
 This file covers the project's **documentation and design materials** — including the pattern
@@ -13,7 +13,7 @@ https://creativecommons.org/licenses/by-sa/4.0/
 You are free to **share** and **adapt** these materials for any purpose, including commercially,
 as long as you:
 
-- **Attribute** — credit "High Desert," link to the source and to the license, and indicate if
+- **Attribute** — credit "Steppe," link to the source and to the license, and indicate if
   you made changes; and
 - **ShareAlike** — license your adaptations under CC BY-SA 4.0 as well.
 
@@ -25,7 +25,7 @@ keep it open.
 
 ### Suggested attribution
 
-> "High Desert — A Pattern Language for Civic Infrastructure" by High Desert PBC, licensed under
+> "Steppe — A Pattern Language for Civic Infrastructure" by Steppe, licensed under
 > CC BY-SA 4.0. Source: &lt;repo URL&gt;. Changes: &lt;yes / no&gt;.
 
 ### Scope note
