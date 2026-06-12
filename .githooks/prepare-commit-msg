@@ -1,0 +1,6 @@
+#!/bin/sh
+# Auto-add a DCO Signed-off-by (commit author's identity) if absent — so
+# every commit is signed, even a quick `git commit -m`. No-op if already signed.
+msg_file="$1"
+sob=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+grep -qF -- "$sob" "$msg_file" || git interpret-trailers --in-place --trailer "$sob" "$msg_file"

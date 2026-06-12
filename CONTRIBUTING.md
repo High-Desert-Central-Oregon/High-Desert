@@ -33,6 +33,10 @@ This appends, using your real name and email:
 
     Signed-off-by: Jane Builder <jane@example.com>
 
+Run `git config core.hooksPath .githooks` once after cloning, and the tracked
+hook signs every commit for you — so a plain `git commit -m` is signed without
+remembering `-s`.
+
 By signing off, you certify the statement below.
 
 > **Note on privacy.** Your sign-off (name + email) becomes part of the public git history
