@@ -167,7 +167,7 @@
       <tr><td><b>Frontend</b></td><td>Next.js (App Router) + React + Tailwind</td><td>Server components keep logic off the client (matters for vote-weight integrity); mobile-first by default; one deploy.</td></tr>
       <tr><td><b>Hosting</b></td><td>Vercel or Netlify</td><td>Zero-config deploys; you already use Netlify Drop for prototypes.</td></tr>
       <tr><td><b>Email</b></td><td>Supabase Auth (magic link) + Resend for transactional</td><td>No passwords to leak; low overhead.</td></tr>
-      <tr><td><b>Payments</b></td><td><b>None in the prototype</b> — Stripe later</td><td>Founding cohort is free. Build the billing-status field; defer the integration and the sliding-scale UI.</td></tr>
+      <tr><td><b>Payments</b></td><td><b>None in the prototype</b> — Stripe later</td><td>Founding cohort is free. Build the billing-status field; defer the integration and the optional-contribution UI.</td></tr>
       <tr><td><b>SMS / alerts</b></td><td>Deferred</td><td>Resilience alerts are Phase 2 (C5). Out of scope.</td></tr>
     </table>
 
@@ -207,7 +207,7 @@
           <li>Skills &amp; trades trust graph <span class="mono">(C2)</span></li>
           <li>Skill exchange / learning webs <span class="mono">(C3)</span></li>
           <li>Resilience alerts &amp; SMS <span class="mono">(C5, Phase 2)</span></li>
-          <li>Real payments + sliding-scale UI <span class="mono">(post-beta)</span></li>
+          <li>Real payments + optional-contribution UI <span class="mono">(post-beta)</span></li>
           <li>The regional discussion board <span class="mono">(deferred / logged)</span></li>
           <li>Visitor tier surfaces, youth version, historical archive</li>
           <li>Multi-community expansion (Redmond only)</li>
@@ -226,7 +226,7 @@
       <p><b>Community resilience alerts + SMS</b> <span class="mono">(Phase 2)</span> — high-stakes (people rely on it in an emergency), so it needs redundant, tested delivery you never bolt onto an MVP; adds SMS cost and a provider.</p>
       <p><b>Historical / community archive</b> <span class="mono">(Phase 2, gated)</span> — held until Warm Springs consultation, because cultural memory is sovereignty-sensitive and must not be designed first and asked about later.</p>
       <p><b>Youth version (13–17)</b> <span class="mono">(Phase 3, gated)</span> — a real legal/safety surface (COPPA, isolated feed) requiring a community vote before launch.</p>
-      <p><b>Real payments + sliding-scale UI</b> <span class="mono">(post-beta)</span> — the cohort is free, so charging is unnecessary now; deferring removes the Stripe/PCI surface and lets fieldwork teach the need-distribution before the sliding scale is locked (Meadows).</p>
+      <p><b>Real payments + optional-contribution UI</b> <span class="mono">(post-beta)</span> — the cohort is free, so charging is unnecessary now; deferring removes the Stripe/PCI surface and lets fieldwork inform the contribution model before it's built (Meadows).</p>
       <p><b>Multi-community expansion</b> <span class="mono">(Year 1+)</span> — Redmond-first <em>is</em> the strategy; saturate and win trust in one community before branching, gated on Redmond being healthy.</p>
       <p style="margin-bottom:0;"><b>Regional discussion board</b> <span class="mono">(deferred &amp; logged)</span> — the single highest-conflict, highest-moderation-burden surface and the thing that turned Nextdoor toxic; held until the trust stock is high and re-opened only by a community vote.</p>
     </div>
@@ -347,7 +347,7 @@ wildflower · windsong
 <section id="seq">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">06</span><h2>Build Sequence</h2></div>
-    <p class="sec-intro">Dependency-ordered. The trust substrate is built before anything to participate in; the discussion-style surfaces are never built at all. This maps to the June "technical build" milestone and feeds the closed-beta gate in Business Plan v6 §07.</p>
+    <p class="sec-intro">Dependency-ordered. The trust substrate is built before anything to participate in; the discussion-style surfaces are never built at all. This maps to the June "technical build" milestone and feeds the closed-beta gate in Business Plan v11 §07.</p>
     <ol class="steps">
       <li><h4>Scaffold &amp; seed</h4><p>Next.js + Tailwind app, Supabase project, env + CI + deploy target. Create the schema and RLS skeleton. Seed neighborhoods and the first T&amp;C document.</p><span class="gate"><b>Done when:</b> a deployed empty app talks to the database under RLS.</span></li>
       <li><h4>Auth &amp; profile</h4><p>Magic-link sign-in; profile-on-signup trigger; profile RLS (own-edit, server-only status). Visitor can browse, nothing else.</p><span class="gate"><b>Gate:</b> status/role/tenure provably not self-editable.</span></li>
@@ -373,7 +373,7 @@ wildflower · windsong
     <div class="decn"><span class="q">3 · Redmond neighborhoods &nbsp;<b>✓ Received &amp; seeded</b></span><span class="r">35 neighborhoods seeded (§03), resident-set, editable later. One flagged for your final call: <code>eagle-crest</code> → resort outside city limits. (Wildflower spelling corrected.)</span></div>
     <div class="decn"><span class="q">4 · Governance numbers &nbsp;<b>✓ Locked (provisional config)</b></span><span class="r">Quorum 15%, major 60%, immutable 75% + 30 days; tenure 1×–3×. The cohort ratifies.</span></div>
     <div class="decn"><span class="q">5 · Vote visibility &nbsp;<b>✓ Locked</b></span><span class="r">Secret until close, aggregate-only after (anti-coercion).</span></div>
-    <div class="decn"><span class="q">6 · Billing in beta &nbsp;<b>✓ Locked</b></span><span class="r">Cohort free; build the field, defer Stripe + sliding-scale UI.</span></div>
+    <div class="decn"><span class="q">6 · Billing in beta &nbsp;<b>✓ Locked</b></span><span class="r">Cohort free; build the field, defer Stripe + optional-contribution UI.</span></div>
     <div class="decn"><span class="q">7 · Terms &amp; Privacy &nbsp;<b>✓ Drafted</b></span><span class="r">Plain-language, design-specific draft now exists as a companion doc, seeding the <code>documents</code> table (kind = terms / privacy). <b>Pending Oregon legal review</b> before launch.</span></div>
 
     <h3>Not blocking the build — flagged for before beta</h3>

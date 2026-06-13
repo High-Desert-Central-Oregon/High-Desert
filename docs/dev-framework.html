@@ -161,11 +161,11 @@
     <h1>From Canon <em>to Code</em></h1>
     <p class="lede">The bridge from the reading list to the build. What to make, how to design it, how to engineer it — and why every choice answers back to the mission. Scoped to community-building and neighborhood-level events, launching Redmond-first.</p>
     <div class="meta">
-      <span><b>Companion to</b> Business Plan v6</span>
-      <span><b>Operationalizes</b> Reading List v8</span>
+      <span><b>Companion to</b> Business Plan v11</span>
+      <span><b>Operationalizes</b> Reading List v11</span>
       <span><b>Launch</b> Redmond first</span>
       <span><b>Partner boundary</b> Redmond Compass</span>
-      <span><b>Access</b> flat + sliding scale</span>
+      <span><b>Access</b> flat, optional support</span>
       <span><b>Stack</b> Supabase · RLS · mobile-first</span>
     </div>
   </div>
@@ -188,7 +188,7 @@
 <section id="orient">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">00</span><h2>Orientation</h2></div>
-    <p class="sec-intro">This document moves Steppe from <strong>plan</strong> to <strong>build</strong>. The business plan establishes <em>why the structure holds</em>. This establishes <em>what to construct first, how it should feel, and how it should be engineered</em> — with each decision traceable to the canon. The emphasis here is the six tool-design books now carried in both the reading list and Business Plan v6 (Polanyi, Schön, Illich, Weizenbaum, Norman, Alexander) — the ones that answer the build question directly, and so are load-bearing here. Reading List v8 sharpens the build craft further: Ousterhout on containing complexity, Eghbal on maintenance as commons governance, and Shew on accessibility as design <em>with</em> disabled residents — all folded into the practices below. Two scope decisions from v6 also shape this build: <strong>launch is Redmond-first</strong>, and <strong>access is flat with an income-based sliding scale</strong> — never gated by geographic scope.</p>
+    <p class="sec-intro">This document moves Steppe from <strong>plan</strong> to <strong>build</strong>. The business plan establishes <em>why the structure holds</em>. This establishes <em>what to construct first, how it should feel, and how it should be engineered</em> — with each decision traceable to the canon. The emphasis here is the six tool-design books now carried in both the reading list and Business Plan v11 (Polanyi, Schön, Illich, Weizenbaum, Norman, Alexander) — the ones that answer the build question directly, and so are load-bearing here. Reading List v11 sharpens the build craft further: Ousterhout on containing complexity, Eghbal on maintenance as commons governance, and Shew on accessibility as design <em>with</em> disabled residents — all folded into the practices below. Two scope decisions from v11 also shape this build: <strong>launch is Redmond-first</strong>, and <strong>access is one flat price with an optional voluntary contribution</strong> — never gated by geographic scope.</p>
 
     <div class="thesis">
       <p>The organizing claim: <span class="k">Steppe is a convivial tool that preserves mētis.</span> In Illich's exact sense, it amplifies the community's own capacity without requiring the community to serve the platform. In Scott's and Polanyi's sense, it puts people who hold local, tacit, practical knowledge in contact with situations where that knowledge operates — rather than trying to capture, score, or formalize it away. Everything below is an instance of that one idea.</p>
@@ -200,7 +200,7 @@
 <section id="stack">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">01</span><h2>The Principle Stack</h2></div>
-    <p class="sec-intro">Six operative layers. Each names the thinkers, the single claim that matters for building, and what it <strong>dictates</strong> in the product. The plan covered the first three. Layers four through six are largely new and come straight from the v6 reading list.</p>
+    <p class="sec-intro">Six operative layers. Each names the thinkers, the single claim that matters for building, and what it <strong>dictates</strong> in the product. The plan covered the first three. Layers four through six are largely new and come straight from the v11 reading list.</p>
 
     <div class="layer">
       <div class="layer-top"><h3>Structural — why it survives</h3><span class="who">Doctorow · Baradaran · Wu · Lanier</span></div>
@@ -482,7 +482,7 @@
     <div class="prac">
       <span class="src">Baradaran · Doctorow</span>
       <h4>Fair access — price by means, not scope</h4>
-      <p>Affordability is a design problem, not a billing afterthought. One low flat price with an income-based sliding scale down to free; a supporter rate gives <em>to the commons</em>, not more platform. Never price by how much of the community a member is allowed to see — breadth of access correlates with need, so scope-pricing is regressive and installs a value-withhold the platform is later tempted to tighten.</p>
+      <p>Affordability is a design problem, not a billing afterthought. One low flat price — the same for everyone, the whole platform for all — with an optional contribution on top of dues that the member directs toward running the commons or to where it's most needed. Never price by how much of the community a member is allowed to see — breadth of access correlates with need, so scope-pricing is regressive and installs a value-withhold the platform is later tempted to tighten.</p>
       <div class="do-dont">
         <div class="do"><b>Do</b> — flex price to means; make neighborhood focus a free filter; let everyone have the whole platform.</div>
         <div class="dont"><b>Don't</b> — gate access by geography, feature-tier the commons, or raise price without a community vote.</div>
@@ -558,7 +558,7 @@
     <div class="prac">
       <span class="src">Baradaran · Doctorow</span>
       <h4>Scope is a filter, affordability is the billing layer — keep them apart</h4>
-      <p>Neighborhood scope is a focus filter enforced in the UI and backed by RLS — it shapes what a member sees, never what they're allowed to pay for. Affordability lives entirely at the billing layer (flat price, sliding scale, supporter rate). The two must never be coupled in code: no entitlement check that ties geographic breadth to subscription tier. Every verified member's row grants the whole platform.</p>
+      <p>Neighborhood scope is a focus filter enforced in the UI and backed by RLS — it shapes what a member sees, never what they're allowed to pay for. Affordability lives entirely at the billing layer (one flat price, with optional contributions). The two must never be coupled in code: no entitlement check that ties geographic breadth to subscription tier. Every verified member's row grants the whole platform.</p>
     </div>
 
     <div class="prac">
