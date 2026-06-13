@@ -1,6 +1,6 @@
 # Setup
 
-How to stand up High Desert from scratch — the Supabase backend and a local app. Repeatable
+How to stand up Steppe from scratch — the Supabase backend and a local app. Repeatable
 for a fresh environment (and for another community standing up their own instance).
 
 **Prerequisites:** Node.js and git installed, plus a free [Supabase](https://supabase.com)
@@ -150,4 +150,4 @@ The two former code stubs are now implemented; what remains is environment setup
 
 ---
 
-*Part of the High Desert documentation, licensed CC BY-SA 4.0 (see `docs/LICENSE`).*
+*Part of the Steppe documentation, licensed CC BY-SA 4.0 (see `docs/LICENSE`).*

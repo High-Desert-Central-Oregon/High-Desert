@@ -1,4 +1,4 @@
-# Dry-run runbook — High Desert (Step 10)
+# Dry-run runbook — Steppe (Step 10)
 
 Two end-to-end walkthroughs that double as an **invariant smoke test** for the
 closed-beta hardening. Walkthrough A is the first conflict (verify → post →

@@ -1,4 +1,4 @@
-# RLS audit — High Desert
+# RLS audit — Steppe
 
 Step 10, Part 1. A table-by-table posture review of row-level security: for every
 table, every operation (select / insert / update / delete), which roles the
