@@ -23,9 +23,14 @@ paste block.
 
 **Setup**
 
-1. Apply `schema.sql` + migrations `0001`–`0010` to a fresh staging DB. (`0010`
-   needs the `pg_cron` extension; if it isn't available, skip it — the manual
-   close still works.)
+1. Apply `schema.sql` to a fresh staging DB — that's all. `schema.sql` is the
+   complete current schema (the snapshot through head). The numbered migrations
+   `0001`–`0011` are historical deltas already folded into it; they exist only to
+   bring an *existing* DB forward and must **not** be replayed on top of
+   `schema.sql` (doing so collides — e.g. `0003` fails with `cannot drop columns
+   from view`, since the snapshot already has the evolved `proposal_results`). If
+   you are instead migrating a pre-existing DB and reach `0010` (scheduled close)
+   without the `pg_cron` extension, skip it — the manual close still works.
 2. Run [seed/dry-run-accounts.sql](../seed/dry-run-accounts.sql). Confirm the
    roster check at the end prints the six accounts spanning weights 1.0 / 1.5 / 2.0 / 3.0.
 3. Run the blocks below **in order**, as the project owner (Supabase SQL editor =
