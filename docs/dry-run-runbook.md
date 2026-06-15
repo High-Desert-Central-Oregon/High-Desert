@@ -909,6 +909,32 @@ begin;
 rollback;
 ```
 
+### D-G8b · Own-row read doesn't widen rosters (a pending member, for the UI)
+
+`gm_read` is `user_id = auth.uid() OR is_group_member(group_id)`. The own-row half
+lets a member see their *own* membership at any status (so the UI can show a
+pending/invited state) — it must NOT expose any other member's row. Ben is
+**pending** in Curated g2.
+
+**▶ as Ben** (`…b2`) — `rollback`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000b2","role":"authenticated"}', true);
+  set local role authenticated;
+  select count(*) as own_g2 from group_members
+   where group_id = '90000000-0000-0000-0000-000000000002' and user_id = '00000000-0000-0000-0000-0000000000b2';
+  -- Expected: 1 — Ben sees his own pending row.
+  select count(*) as others_g2 from group_members
+   where group_id = '90000000-0000-0000-0000-000000000002' and user_id <> '00000000-0000-0000-0000-0000000000b2';
+  -- Expected: 0 — and NOT one other row of g2's roster (no widening; g2 has 3 total).
+rollback;
+```
+
+Active-member rosters are unchanged: Frank still reads all of g3 (2), Aida all of
+g2 (3) — the own-row clause only ever *adds* your own row, never another's (G8).
+
 ### D-G10 · Join-policy enforcement
 
 ```sql
