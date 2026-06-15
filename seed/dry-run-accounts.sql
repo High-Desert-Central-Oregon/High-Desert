@@ -8,8 +8,10 @@
 --     email, (3) the Eagle Crest in/out decision. Do not run this against prod.
 --
 -- PREREQUISITES
---   • schema.sql has been applied (tables, triggers, RLS, the 35 neighborhood
---     seeds) plus migrations 0001–0007. pgcrypto is enabled by schema.sql.
+--   • schema.sql has been applied to a FRESH DB (tables, triggers, RLS, the 35
+--     neighborhood seeds). schema.sql is the complete current snapshot — the
+--     numbered migrations are already folded in; don't replay them. pgcrypto is
+--     enabled by schema.sql.
 --   • Run as the project owner (Supabase SQL editor = `postgres`, or psql as a
 --     superuser). The owner bypasses RLS, and — because auth.uid() is NULL with
 --     no JWT — the profile trust-field guard (trg_guard_profile_columns) does
@@ -28,46 +30,16 @@
 -- Two moderators exist on purpose: the appeal flow requires a DIFFERENT
 -- moderator than the one who acted (resolve_appeal enforces it).
 --
--- IDEMPOTENT: re-running first clears all prior test data (Section 0), in FK
--- dependency order, so a fresh dry-run always starts clean — including any
--- events/proposals/votes/appeals/audit rows a previous runbook pass created.
---
--- TEARDOWN: Section 0 IS the teardown. To wipe the test accounts without
--- re-seeding, run Section 0 on its own.
+-- FRESH-DB-ONLY: this seed is strictly additive and assumes an empty DB. There
+-- is no in-place teardown anymore — the append-only tables (audit_log, consents,
+-- moderation_actions, votes) are immutable in place (migration 0012: triggers
+-- bind every role, owner included), so a populated DB cannot be cleared by row
+-- deletes, and proposals/auth.users deletes are FK-blocked by the rows those
+-- tables protect. The clean-slate path is:
+--     supabase db reset   →   psql -f schema.sql   →   psql -f this file
+-- Re-running against a populated DB will error (the six test accounts already
+-- exist) — by design; reset first for a fresh dry-run.
 -- ============================================================================
-
--- ----------------------------------------------------------------------------
--- 0 · RESET (idempotent teardown). Deletes only the six fixed test UUIDs and
---     everything they authored/acted-on. Owner context = RLS bypassed.
---     Order matters: rows with ON DELETE NO ACTION back-references to profiles
---     (moderation_actions.actor_id, audit_log.actor_id, verifications.reviewed_by,
---     neighborhood_requests.resolved_by) must go before auth.users cascades.
--- ----------------------------------------------------------------------------
-do $$
-declare
-  test_ids uuid[] := array[
-    '00000000-0000-0000-0000-0000000000a1',
-    '00000000-0000-0000-0000-0000000000b2',
-    '00000000-0000-0000-0000-0000000000c3',
-    '00000000-0000-0000-0000-0000000000d4',
-    '00000000-0000-0000-0000-0000000000e5',
-    '00000000-0000-0000-0000-0000000000f6'
-  ]::uuid[];
-begin
-  delete from audit_log          where actor_id   = any(test_ids);
-  delete from appeals            where user_id    = any(test_ids);
-  delete from moderation_actions where actor_id   = any(test_ids);
-  delete from votes              where user_id    = any(test_ids);
-  delete from proposals          where author_id  = any(test_ids);
-  delete from events             where creator_id = any(test_ids);
-  delete from verifications      where user_id    = any(test_ids) or reviewed_by = any(test_ids);
-  delete from neighborhood_requests where user_id = any(test_ids) or resolved_by = any(test_ids);
-  delete from consents           where user_id    = any(test_ids);
-  delete from event_rsvps        where user_id    = any(test_ids);
-  -- Cascades the profiles rows (and any remaining children) via the FK on
-  -- profiles.id -> auth.users(id) ON DELETE CASCADE.
-  delete from auth.users         where id         = any(test_ids);
-end $$;
 
 -- ----------------------------------------------------------------------------
 -- 1 · Helper: create one auth user. The on_auth_user_created trigger then

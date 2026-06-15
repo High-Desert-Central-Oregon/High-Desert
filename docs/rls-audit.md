@@ -244,7 +244,8 @@ bind every role, owner included:**
 
 Append-only is now enforced in-DB, not just by RLS+grants; `service_role` bypassing
 RLS no longer implies it can rewrite the record. (A clean dev slate now comes from
-`supabase db reset`, not row deletes — Section 0 of the seed can't DELETE these.)
+`supabase db reset`, not row deletes — the dry-run seed is fresh-DB-only and no
+longer attempts an in-place teardown of these tables.)
 
 ---
 

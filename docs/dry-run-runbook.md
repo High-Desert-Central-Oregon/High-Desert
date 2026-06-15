@@ -79,7 +79,9 @@ Fixed content UUIDs created during the run (so every check can reference them):
 | Aida's proposal (the vote) | `0b000000-0000-0000-0000-000000000001` |
 | G1 probe proposal | `0c000000-0000-0000-0000-000000000001` |
 
-If a run gets messy, re-run the seed — Section 0 of it is an idempotent teardown.
+If a run gets messy, reset for a clean slate: `supabase db reset` → apply
+`schema.sql` → run the seed. (The append-only tables are immutable in place since
+migration 0012, so there's no in-place teardown — the seed is fresh-DB-only.)
 
 ---
 
@@ -423,7 +425,8 @@ where entity = 'proposal' and entity_id = '0b000000-0000-0000-0000-000000000001'
 > The window is real wall-clock time — that is the security property, not an
 > inconvenience (results reveal on the clock, not a flag). Cast the ballots in
 > B2/B3 and run the open-state checks now, then **wait until the window passes**
-> for B4. Need more time? Re-run the seed and use a longer `closes_at`.
+> for B4. Need more time? Reset (`supabase db reset` → `schema.sql` → seed) and
+> open the proposal with a longer `closes_at`.
 
 ### B2 · Members across the tiers vote (and clear the turnout floor)
 
@@ -888,7 +891,17 @@ Pre-launch overhaul — newly covered (additive; nothing above regressed):
 
 ## Reset between runs
 
-Re-running [seed/dry-run-accounts.sql](../seed/dry-run-accounts.sql) clears all
-six test accounts and everything they created (Section 0 of the seed, in FK
-dependency order) and re-seeds them clean. Run it whenever you want a fresh
-dry-run — or on its own to tear the test accounts down entirely.
+A fresh dry-run starts from an empty database, not an in-place wipe: the
+append-only tables (`audit_log`, `consents`, `moderation_actions`, `votes`) are
+immutable in place since migration 0012, so they can't be cleared by row deletes.
+Reset with:
+
+```
+supabase db reset            # drop & recreate; re-applies schema via the reset
+psql "$DB" -f schema.sql     # the complete current snapshot
+psql "$DB" -f seed/dry-run-accounts.sql
+```
+
+[seed/dry-run-accounts.sql](../seed/dry-run-accounts.sql) is fresh-DB-only and
+strictly additive — re-running it against a populated DB errors (the six accounts
+already exist). Reset first.
