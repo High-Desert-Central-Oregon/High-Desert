@@ -206,6 +206,13 @@ export const es: Dictionary = {
     manage: "Gestionar",
     joining: "Uniéndose…",
     joinError: "No pudimos completar eso. Inténtalo de nuevo.",
+    leave: "Salir del grupo",
+    leaving: "Saliendo…",
+    confirmLeave:
+      "¿Salir de este grupo? Perderás el acceso al contenido solo para miembros.",
+    leaveError: "No pudimos salir del grupo. Inténtalo de nuevo.",
+    leaveLastMaintainer:
+      "Eres el único responsable. Nombra a otro responsable antes de salir.",
     // Página del grupo
     aboutTitle: "Acerca de",
     noDescription: "Aún no hay descripción.",

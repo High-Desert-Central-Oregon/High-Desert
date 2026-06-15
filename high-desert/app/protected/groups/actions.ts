@@ -8,6 +8,7 @@ import { slugify } from "@/lib/groups";
 import type { GroupVisibility, GroupJoinPolicy } from "@/lib/types/db";
 
 export type JoinState = { ok: true } | { error: string } | null;
+export type LeaveState = { ok: true } | { error: string } | null;
 export type GroupFormState = { error: string } | null;
 export type SuggestCategoryResult =
   | { id: string; slug: string; name: string }
@@ -42,6 +43,36 @@ export async function joinGroup(
   if (error) return { error: "join-failed" };
 
   revalidatePath("/protected/groups");
+  return { ok: true };
+}
+
+/**
+ * Leave a group. The `leave_group` RPC removes the caller's own membership and
+ * refuses if they're the group's sole active maintainer (don't orphan a group) —
+ * we surface that as a clear message rather than a generic failure. Membership is
+ * the only thing touched; the client never sets status/role.
+ */
+export async function leaveGroup(
+  _prev: LeaveState,
+  formData: FormData,
+): Promise<LeaveState> {
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
+
+  const groupId = String(formData.get("group_id") ?? "").trim();
+  const slug = String(formData.get("slug") ?? "").trim();
+  if (!groupId) return { error: "bad-group" };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("leave_group", { p_group: groupId });
+  if (error) {
+    const m = (error.message ?? "").toLowerCase();
+    if (m.includes("only maintainer")) return { error: "last-maintainer" };
+    return { error: "leave-failed" };
+  }
+
+  revalidatePath("/protected/groups");
+  if (slug) revalidatePath(`/protected/groups/${slug}`);
   return { ok: true };
 }
 

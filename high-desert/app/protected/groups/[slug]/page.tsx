@@ -4,8 +4,10 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { Lock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "../membership-control";
+import { LeaveGroupButton } from "../leave-group-button";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -177,14 +179,35 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
             )}
           </div>
         </div>
-        <div className="shrink-0">
-          <MembershipControl
-            control={control}
-            groupId={dir.id}
-            slug={dir.slug}
-            dict={dict}
-            size="default"
-          />
+        <div className="flex shrink-0 items-center gap-2">
+          {isActiveMember ? (
+            <>
+              {mem?.role === "maintainer" && (
+                <Button asChild variant="outline" size="default">
+                  <Link href={`/protected/groups/${dir.slug}/manage`}>
+                    {dict.groups.manage}
+                  </Link>
+                </Button>
+              )}
+              {/* No Leave on the Everyone group — membership there is implicit. */}
+              {!dir.is_system && (
+                <LeaveGroupButton
+                  groupId={dir.id}
+                  slug={dir.slug}
+                  dict={dict}
+                  size="default"
+                />
+              )}
+            </>
+          ) : (
+            <MembershipControl
+              control={control}
+              groupId={dir.id}
+              slug={dir.slug}
+              dict={dict}
+              size="default"
+            />
+          )}
         </div>
       </header>
 

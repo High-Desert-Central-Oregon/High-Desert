@@ -201,6 +201,12 @@ export const en = {
     manage: "Manage",
     joining: "Joining…",
     joinError: "We couldn't complete that. Please try again.",
+    leave: "Leave group",
+    leaving: "Leaving…",
+    confirmLeave: "Leave this group? You'll lose access to members-only content.",
+    leaveError: "We couldn't leave the group. Please try again.",
+    leaveLastMaintainer:
+      "You're the only maintainer. Make someone else a maintainer before you leave.",
     // Group page
     aboutTitle: "About",
     noDescription: "No description yet.",
