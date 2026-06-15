@@ -131,6 +131,61 @@ export type AppealRow = {
   created_at: string;
 };
 
+// Groups core (Spec v2 §1; migration 0013).
+export type GroupVisibility = "public" | "members_only";
+export type GroupJoinPolicy = "open" | "request" | "locked";
+export type GroupMemberRole = "maintainer" | "member";
+export type GroupMemberStatus = "active" | "pending" | "invited";
+
+export type Category = {
+  id: string;
+  slug: string;
+  name: string;
+  created_by: string | null;
+  created_at: string;
+};
+
+/** Full group row (base table) — readable for public groups, or members_only
+ *  groups you're an active member of (grp_read). */
+export type GroupRow = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  category_id: string | null;
+  visibility: GroupVisibility;
+  join_policy: GroupJoinPolicy;
+  is_system: boolean;
+  created_by: string | null;
+  created_at: string;
+  archived_at: string | null;
+};
+
+/** Directory-safe projection (groups_directory view): every group to any verified
+ *  member, but `description` is null for members_only groups (G8). */
+export type GroupDirectoryRow = {
+  id: string;
+  slug: string;
+  name: string;
+  category_id: string | null;
+  visibility: GroupVisibility;
+  join_policy: GroupJoinPolicy;
+  is_system: boolean;
+  created_at: string;
+  archived_at: string | null;
+  description: string | null;
+  member_count: number;
+};
+
+export type GroupMemberRow = {
+  id: string;
+  group_id: string;
+  user_id: string;
+  role: GroupMemberRole;
+  status: GroupMemberStatus;
+  created_at: string;
+};
+
 export type DocKind = "terms" | "privacy";
 
 export type DocumentRow = {

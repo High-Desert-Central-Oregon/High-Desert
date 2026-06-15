@@ -81,6 +81,9 @@ async function NavBar() {
           <NavLink href="/protected/events">{dict.nav.eventsLink}</NavLink>
         )}
         {verified && (
+          <NavLink href="/protected/groups">{dict.nav.groupsLink}</NavLink>
+        )}
+        {verified && (
           <NavLink href="/protected/governance">
             {dict.nav.governanceLink}
           </NavLink>
