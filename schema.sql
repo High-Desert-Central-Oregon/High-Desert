@@ -428,6 +428,57 @@ begin
 end; $$;
 revoke execute on function public.close_due_proposals() from public, anon, authenticated;
 
+-- Append-only immutability backstop (in-DB, role-independent). RLS + grant
+-- revocation stop the client roles, but a BYPASSRLS role (service_role, owner)
+-- could still alter/erase the record. A trigger fires regardless of rolbypassrls,
+-- so it binds EVERY role. audit_log / consents / moderation_actions are truly
+-- append-only (block UPDATE + DELETE). votes is immutable-after-close /
+-- revisable-while-open, so its guard refuses INSERT/UPDATE once the proposal is
+-- closed (the EXACT vt_insert/vt_update while-open predicate, negated — so they
+-- can't drift) and refuses DELETE always. TRUNCATE is blocked on all four
+-- (statement-level; truncate skips row triggers). INSERT stays open on the three
+-- append-only tables or the record stops recording. (Migration 0012.)
+create or replace function public.forbid_write()
+returns trigger language plpgsql set search_path = public as $$
+begin
+  raise exception 'table "%" is append-only: % is not permitted', tg_table_name, tg_op
+    using errcode = 'check_violation';
+end; $$;
+
+create or replace function public.guard_votes_immutable()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if tg_op = 'DELETE' then
+    raise exception 'votes are immutable: a ballot cannot be deleted'
+      using errcode = 'check_violation';
+  end if;
+  if not exists (select 1 from proposals pr
+                 where pr.id = new.proposal_id and pr.status = 'open'
+                   and now() between pr.opens_at and pr.closes_at) then
+    raise exception 'votes are immutable once the proposal is closed (proposal %)', new.proposal_id
+      using errcode = 'check_violation';
+  end if;
+  return new;
+end; $$;
+
+create trigger trg_append_only before update or delete on audit_log
+  for each row execute function public.forbid_write();
+create trigger trg_append_only before update or delete on consents
+  for each row execute function public.forbid_write();
+create trigger trg_append_only before update or delete on moderation_actions
+  for each row execute function public.forbid_write();
+create trigger trg_guard_votes_immutable before insert or update or delete on votes
+  for each row execute function public.guard_votes_immutable();
+
+create trigger trg_no_truncate before truncate on audit_log
+  for each statement execute function public.forbid_write();
+create trigger trg_no_truncate before truncate on consents
+  for each statement execute function public.forbid_write();
+create trigger trg_no_truncate before truncate on moderation_actions
+  for each statement execute function public.forbid_write();
+create trigger trg_no_truncate before truncate on votes
+  for each statement execute function public.forbid_write();
+
 -- ============================================================================
 -- 5 · MODERATOR ACTION: decide a verification (human-in-the-loop)
 --     Sets tenure_start once, on first approval; writes audit; purge trigger fires.
@@ -789,6 +840,12 @@ grant select, insert, update, delete on
 -- is_content_hidden) intentionally keep their public EXECUTE.
 revoke execute on function public.log_audit(text, text, uuid, jsonb) from public, anon, authenticated;
 revoke execute on function public.vote_weight_for(uuid)              from public, anon, authenticated;
+
+-- Append-only tables can't be wiped: the trg_no_truncate triggers refuse TRUNCATE
+-- for every role, and the privilege itself is revoked here as belt-and-suspenders
+-- (Supabase's defaults grant TRUNCATE broadly). (Migration 0012.)
+revoke truncate on audit_log, consents, moderation_actions, votes
+  from anon, authenticated, service_role;
 
 -- ============================================================================
 -- 9 · SEED — Redmond neighborhoods (35; from the Enjoy Bend Life map; Wildflower corrected)

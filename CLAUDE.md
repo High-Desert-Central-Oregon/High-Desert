@@ -46,9 +46,14 @@ undermine them:
 5. **Human in the loop on consequence.** Moderation outcomes, verification decisions, and
    governance results are decided by people. Automation may surface, sort, or flag —
    **never decide.** Use `decide_verification()` for the moderator action.
-6. **Append-only record.** `votes`, `moderation_actions`, `consents`, and `audit_log` are
-   append-only (no update/delete). Treat them as the permanent record; write to `audit_log`
-   via `log_audit()` only.
+6. **Append-only record.** `moderation_actions`, `consents`, and `audit_log` are strictly
+   append-only — no update or delete, ever. `votes` is **immutable-after-close,
+   revisable-while-open**: a member may revise their ballot while the proposal is open
+   (coercion-resistance), but once it closes the ballot can't be added, altered, or erased.
+   This is enforced in-DB by triggers (migration 0012) that bind **every** role —
+   `service_role` and the table owner included — not just RLS. Treat all four as the
+   permanent record; write to `audit_log` via `log_audit()` only. A clean dev slate comes
+   from `supabase db reset`, not row deletes (the deletes are refused).
 7. **No ranking, no engagement optimization.** Default to **chronological + proximity**
    ordering everywhere. No opaque scoring, recommendation, or feed-optimization. If ranking
    is ever needed, it must be member-visible and never an optimization target.

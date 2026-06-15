@@ -222,13 +222,29 @@ and schema NOTES): insert = own `<uid>/…` folder; select = moderators only; **
 delete policy** — deletion is the service-role admin client (verify-then-forget).
 ✅ A member can never read another member's (or even their own) evidence file.
 
-## Append-only grants — defense-in-depth note
-**⚠️ N4:** `authenticated` is granted `insert, update, delete` on every member
-table, including the append-only ones (`consents`, `audit_log`, `moderation_actions`,
-`votes`). RLS denies the disallowed ops today, so nothing is currently exploitable
-— but the append-only guarantee rests on a single layer. Revoking `update`/`delete`
-grants on the strictly-append-only tables would make it belt-and-suspenders.
-Recommended, not urgent (RLS is on); left as a note rather than a gap.
+## Append-only — in-DB backstop *(N4 → resolved, 0012)*
+**N4 (was a defense-in-depth note, now closed).** Append-only used to rest on a
+single layer: RLS (absent UPDATE/DELETE policies) for `authenticated`, plus missing
+DML grants for `anon`/`service_role`. That left two holes for a **BYPASSRLS** role
+(`service_role`, and the table owner / `postgres`): RLS doesn't apply to them, so the
+revoked grants were the *only* thing stopping an alter/erase — and `TRUNCATE` was
+still granted to `anon`/`service_role` outright, a full-table wipe with no row policy
+to catch it.
+
+**Fix (migration 0012) — triggers, which fire regardless of `rolbypassrls` and so
+bind every role, owner included:**
+- `audit_log`, `consents`, `moderation_actions` — `forbid_write()` on
+  `BEFORE UPDATE OR DELETE` (INSERT stays open; the record must keep recording).
+- `votes` — `guard_votes_immutable()`: refuses INSERT/UPDATE once the proposal is
+  closed (the **exact** `vt_insert`/`vt_update` while-open predicate, negated — so
+  trigger and policy can't drift), and refuses DELETE always. Revisable-while-open
+  is preserved; a closed ballot can't be added, altered, or erased.
+- All four — `BEFORE TRUNCATE` statement trigger, plus `REVOKE TRUNCATE … FROM
+  anon, authenticated, service_role` as belt-and-suspenders.
+
+Append-only is now enforced in-DB, not just by RLS+grants; `service_role` bypassing
+RLS no longer implies it can rewrite the record. (A clean dev slate now comes from
+`supabase db reset`, not row deletes — Section 0 of the seed can't DELETE these.)
 
 ---
 
@@ -244,9 +260,11 @@ Recommended, not urgent (RLS is on); left as a note rather than a gap.
 
 Accepted notes (documented, no change): **N1** profile column over-exposure ·
 **N2** removed-content identity recoverable via direct query (transparency posture)
-· **N3** `proposal_results` public to anon (intended) · **N4** broad append-only
-grants (RLS-gated; defense-in-depth opportunity) · service_role bypasses RLS
-(app-limited to storage deletion).
+· **N3** `proposal_results` public to anon (intended). **N4** broad append-only
+grants — **✅ RESOLVED (0012):** in-DB triggers now enforce append-only against
+every role (incl. `service_role`/owner), and `TRUNCATE` is blocked + revoked. With
+0012 a `service_role` bypassing RLS can no longer rewrite the append-only record (it
+remains app-limited to storage deletion).
 
 ---
 
