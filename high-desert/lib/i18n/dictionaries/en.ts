@@ -201,6 +201,15 @@ export const en = {
     manage: "Manage",
     joining: "Joining…",
     joinError: "We couldn't complete that. Please try again.",
+    // Group page
+    aboutTitle: "About",
+    noDescription: "No description yet.",
+    lockedAbout:
+      "This is a members-only group. Join to see its content and members.",
+    membersTitle: "Members",
+    membersLockedNote: "Members are visible once you join.",
+    membersEmpty: "No members yet.",
+    roleMaintainer: "Maintainer",
     // Create group
     backToGroups: "← All groups",
     newTitle: "Create a group",

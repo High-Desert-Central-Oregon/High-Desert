@@ -206,6 +206,15 @@ export const es: Dictionary = {
     manage: "Gestionar",
     joining: "Uniéndose…",
     joinError: "No pudimos completar eso. Inténtalo de nuevo.",
+    // Página del grupo
+    aboutTitle: "Acerca de",
+    noDescription: "Aún no hay descripción.",
+    lockedAbout:
+      "Este es un grupo solo para miembros. Únete para ver su contenido y miembros.",
+    membersTitle: "Miembros",
+    membersLockedNote: "Los miembros se ven una vez que te unes.",
+    membersEmpty: "Aún no hay miembros.",
+    roleMaintainer: "Responsable",
     // Crear grupo
     backToGroups: "← Todos los grupos",
     newTitle: "Crear un grupo",
