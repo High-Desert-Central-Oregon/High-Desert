@@ -31,7 +31,7 @@ update documents set body = $tos$
 - **We verify, then forget.** Your residency documents are deleted as soon as we've checked them.
 - **You govern this place.** Major decisions are made by member vote, and your ballot is secret.
 - **Enforcement comes with a voice.** Any action against you can be appealed, and you're told why.
-- **Fair, flat pricing.** One low price with a sliding scale (free during the founding period) — and never raised without a member vote.
+- **Fair, flat pricing.** One low flat price (free during the founding period) — and never raised without a member vote.
 
 ## 1 · What Steppe is
 
@@ -92,7 +92,7 @@ Why — member-owned, non-extractive, exportable.
 
 ## 9 · Cost, and our promise on advertising
 
-Steppe is funded by its members, never by advertising. **During the founding and beta period, membership is free.** When paid membership begins, it will be one low flat price with an income-based sliding scale down to free; choosing a higher "supporter" amount funds others' access, not extra features. **The price will never increase without a community vote**, and there will be no advertising, ever.
+Steppe is funded by its members, never by advertising. **During the founding and beta period, membership is free.** When paid membership begins, it will be one low flat price; choosing a higher "supporter" amount funds others' access, not extra features. **The price will never increase without a community vote**, and there will be no advertising, ever.
 
 Why — price by means not scope; no-ads is structural and immutable.
 
