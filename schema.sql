@@ -689,6 +689,210 @@ begin
 end; $$;
 grant execute on function public.delete_my_account() to authenticated;
 
+-- ----------------------------------------------------------------------------
+-- 5d · GROUPS RPCs (migration 0013). All group/membership writes go through these
+--      security-definer functions — group_members has NO insert/update/delete
+--      policies, so status and role can never be client-forged (G8-G10/G12). Each
+--      is verified- or maintainer-gated and writes an audit entry (G13). Maintainer
+--      actions act ONLY on the passed group (G9). No DELETE on groups (archive).
+-- ----------------------------------------------------------------------------
+create or replace function public.create_group(
+  p_name text, p_slug text, p_description text,
+  p_category_id uuid, p_visibility group_visibility, p_join_policy group_join_policy)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare v_uid uuid := auth.uid(); v_group uuid;
+begin
+  if not public.is_verified() then raise exception 'only verified members may create groups'; end if;
+  if p_name is null or length(btrim(p_name)) = 0 then raise exception 'a group name is required'; end if;
+  if p_slug is null or length(btrim(p_slug)) = 0 then raise exception 'a group slug is required'; end if;
+
+  insert into groups (slug, name, description, category_id, visibility, join_policy, is_system, created_by)
+  values (lower(btrim(p_slug)), btrim(p_name), p_description, p_category_id,
+          coalesce(p_visibility,'members_only'), coalesce(p_join_policy,'request'), false, v_uid)
+  returning id into v_group;
+
+  insert into group_members (group_id, user_id, role, status)
+  values (v_group, v_uid, 'maintainer', 'active');
+
+  perform public.log_audit('group.created', 'group', v_group,
+    jsonb_build_object('slug', lower(btrim(p_slug)),
+                       'visibility', coalesce(p_visibility,'members_only'),
+                       'join_policy', coalesce(p_join_policy,'request')));
+  return v_group;
+end; $$;
+
+-- join_group: open -> active; request -> pending; locked -> rejected (G10).
+create or replace function public.join_group(p_group uuid)
+returns group_member_status language plpgsql security definer set search_path = public as $$
+declare v_uid uuid := auth.uid(); v_policy group_join_policy; v_system boolean;
+        v_archived timestamptz; v_status group_member_status;
+begin
+  if not public.is_verified() then raise exception 'only verified members may join groups'; end if;
+
+  select join_policy, is_system, archived_at into v_policy, v_system, v_archived
+    from groups where id = p_group;
+  if v_policy is null then raise exception 'group not found'; end if;
+  if v_archived is not null then raise exception 'this group is archived'; end if;
+  if v_system then raise exception 'membership in the Everyone group is automatic'; end if;
+
+  if exists (select 1 from group_members where group_id = p_group and user_id = v_uid) then
+    raise exception 'you already have a membership or pending request for this group';
+  end if;
+  if v_policy = 'locked' then
+    raise exception 'this group is invite-only; a maintainer must add you';
+  end if;
+
+  v_status := case when v_policy = 'open' then 'active' else 'pending' end::group_member_status;
+  insert into group_members (group_id, user_id, role, status)
+  values (p_group, v_uid, 'member', v_status);
+
+  perform public.log_audit(
+    case when v_status = 'active' then 'group.joined' else 'group.join_requested' end,
+    'group', p_group, jsonb_build_object('status', v_status));
+  return v_status;
+end; $$;
+
+-- leave_group: remove own membership; refuse if sole active maintainer.
+create or replace function public.leave_group(p_group uuid)
+returns void language plpgsql security definer set search_path = public as $$
+declare v_uid uuid := auth.uid(); v_role group_member_role; v_status group_member_status;
+begin
+  select role, status into v_role, v_status
+    from group_members where group_id = p_group and user_id = v_uid;
+  if v_role is null then raise exception 'you are not a member of this group'; end if;
+  if v_role = 'maintainer' and v_status = 'active'
+     and (select count(*) from group_members
+            where group_id = p_group and role = 'maintainer' and status = 'active') = 1 then
+    raise exception 'you are the only maintainer; assign another before leaving';
+  end if;
+  delete from group_members where group_id = p_group and user_id = v_uid;
+  perform public.log_audit('group.left', 'group', p_group, '{}'::jsonb);
+end; $$;
+
+-- Maintainer actions — each requires is_group_maintainer(p_group), acting ONLY on
+-- p_group (G9, G12). status/role are set here, never by the client.
+create or replace function public.approve_member(p_group uuid, p_user uuid)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_group_maintainer(p_group) then
+    raise exception 'only a maintainer of this group may approve members'; end if;
+  update group_members set status = 'active'
+   where group_id = p_group and user_id = p_user and status in ('pending','invited');
+  if not found then raise exception 'no pending request for that member in this group'; end if;
+  perform public.log_audit('group.member_approved', 'group', p_group,
+    jsonb_build_object('user_id', p_user));
+end; $$;
+
+create or replace function public.deny_member(p_group uuid, p_user uuid)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_group_maintainer(p_group) then
+    raise exception 'only a maintainer of this group may deny requests'; end if;
+  delete from group_members
+   where group_id = p_group and user_id = p_user and status in ('pending','invited');
+  if not found then raise exception 'no pending request for that member in this group'; end if;
+  perform public.log_audit('group.member_denied', 'group', p_group,
+    jsonb_build_object('user_id', p_user));
+end; $$;
+
+create or replace function public.remove_member(p_group uuid, p_user uuid)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_group_maintainer(p_group) then
+    raise exception 'only a maintainer of this group may remove members'; end if;
+  if p_user = auth.uid() then raise exception 'use leave_group to remove yourself'; end if;
+  if exists (select 1 from group_members
+               where group_id = p_group and user_id = p_user
+                 and role = 'maintainer' and status = 'active')
+     and (select count(*) from group_members
+            where group_id = p_group and role = 'maintainer' and status = 'active') = 1 then
+    raise exception 'cannot remove the only maintainer'; end if;
+  delete from group_members where group_id = p_group and user_id = p_user;
+  if not found then raise exception 'that member is not in this group'; end if;
+  perform public.log_audit('group.member_removed', 'group', p_group,
+    jsonb_build_object('user_id', p_user));
+end; $$;
+
+-- add_member: maintainer adds a verified member directly (the locked-group path).
+create or replace function public.add_member(p_group uuid, p_user uuid)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_group_maintainer(p_group) then
+    raise exception 'only a maintainer of this group may add members'; end if;
+  if not exists (select 1 from profiles where id = p_user and verified and deleted_at is null) then
+    raise exception 'can only add a verified member'; end if;
+  insert into group_members (group_id, user_id, role, status)
+  values (p_group, p_user, 'member', 'active')
+  on conflict (group_id, user_id) do update set status = 'active';
+  perform public.log_audit('group.member_added', 'group', p_group,
+    jsonb_build_object('user_id', p_user));
+end; $$;
+
+-- set_member_role: maintainer-only; refuse demoting the last maintainer.
+create or replace function public.set_member_role(p_group uuid, p_user uuid, p_role group_member_role)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_group_maintainer(p_group) then
+    raise exception 'only a maintainer of this group may change roles'; end if;
+  if p_role = 'member'
+     and exists (select 1 from group_members
+                   where group_id = p_group and user_id = p_user
+                     and role = 'maintainer' and status = 'active')
+     and (select count(*) from group_members
+            where group_id = p_group and role = 'maintainer' and status = 'active') = 1 then
+    raise exception 'cannot demote the last maintainer'; end if;
+  update group_members set role = p_role
+   where group_id = p_group and user_id = p_user and status = 'active';
+  if not found then raise exception 'that active member is not in this group'; end if;
+  perform public.log_audit('group.role_set', 'group', p_group,
+    jsonb_build_object('user_id', p_user, 'role', p_role));
+end; $$;
+
+-- update_group_settings: maintainer-only (G9); the Everyone system group is fixed.
+create or replace function public.update_group_settings(
+  p_group uuid, p_name text, p_description text, p_category_id uuid,
+  p_visibility group_visibility, p_join_policy group_join_policy)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_group_maintainer(p_group) then
+    raise exception 'only a maintainer of this group may edit its settings'; end if;
+  if exists (select 1 from groups where id = p_group and is_system) then
+    raise exception 'the Everyone group cannot be reconfigured'; end if;
+  update groups set
+    name        = coalesce(nullif(btrim(p_name), ''), name),
+    description = coalesce(p_description, description),
+    category_id = coalesce(p_category_id, category_id),
+    visibility  = coalesce(p_visibility, visibility),
+    join_policy = coalesce(p_join_policy, join_policy)
+  where id = p_group;
+  perform public.log_audit('group.settings_updated', 'group', p_group, '{}'::jsonb);
+end; $$;
+
+-- suggest_category: any verified member; dedupe on slug (returns the existing id).
+create or replace function public.suggest_category(p_name text)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare v_uid uuid := auth.uid(); v_slug text; v_id uuid;
+begin
+  if not public.is_verified() then raise exception 'only verified members may suggest categories'; end if;
+  if p_name is null or length(btrim(p_name)) = 0 then raise exception 'a category name is required'; end if;
+  v_slug := btrim(regexp_replace(lower(btrim(p_name)), '[^a-z0-9]+', '-', 'g'), '-');
+  if v_slug = '' then raise exception 'invalid category name'; end if;
+
+  select id into v_id from categories where slug = v_slug;
+  if v_id is not null then return v_id; end if;          -- dedupe: return existing
+
+  insert into categories (slug, name, created_by) values (v_slug, btrim(p_name), v_uid)
+  on conflict (slug) do nothing
+  returning id into v_id;
+  if v_id is null then                                   -- lost a concurrent race
+    select id into v_id from categories where slug = v_slug;
+    return v_id;
+  end if;
+  perform public.log_audit('category.suggested', 'category', v_id,
+    jsonb_build_object('slug', v_slug));
+  return v_id;
+end; $$;
+
 -- ============================================================================
 -- 6 · VIEW: proposal_results  (aggregate, weighted, SECRET UNTIL CLOSE)
 --     Owned by the migration role, so it reads votes past RLS to aggregate —
@@ -743,6 +947,22 @@ select distinct on (target_type, target_id)
 from moderation_actions
 where action in ('remove','restore')
 order by target_type, target_id, created_at desc, id desc;
+
+-- Groups directory (migration 0013). Owner-rights view, same idiom as
+-- public_profiles: it reads past the base `groups` RLS but exposes ONLY directory-
+-- safe columns to any verified member — name, category, visibility, join_policy,
+-- and an active-member count. description is shown for `public` groups only;
+-- members_only groups are listed by name + category, contents gated (G8). The full
+-- row (incl. a members_only description) is reachable only via the base table's
+-- grp_read, i.e. by active members.
+create or replace view groups_directory as
+  select g.id, g.slug, g.name, g.category_id, g.visibility, g.join_policy,
+         g.is_system, g.created_at, g.archived_at,
+         case when g.visibility = 'public' then g.description end as description,
+         (select count(*) from group_members gm
+           where gm.group_id = g.id and gm.status = 'active') as member_count
+  from groups g
+  where public.is_verified();
 
 -- ============================================================================
 -- 7 · ROW-LEVEL SECURITY
@@ -881,6 +1101,22 @@ create policy ap_read   on appeals for select to authenticated
 -- log_audit(), which clients cannot call (its EXECUTE was revoked — see GRANTS)
 create policy al_read on audit_log for select to authenticated using (true);
 
+-- Groups (migration 0013). READS ONLY — every write flows through the section-5d
+-- RPCs, so there are deliberately no insert/update/delete policies (status/role
+-- can't be client-forged; G8-G10/G12).
+--   • categories: any verified member reads; suggestions via suggest_category.
+--   • groups (base = full row): a public group to any verified member; a
+--     members_only group's full row only to its active members (G8/G12). The
+--     groups_directory view (section 6) carries the limited cross-group listing.
+--   • group_members: your own row (any status, so a pending request is visible),
+--     plus the full roster only if you're an active member of that group (G8/G12).
+create policy cat_read on categories for select to authenticated
+  using (public.is_verified());
+create policy grp_read on groups for select to authenticated
+  using (public.is_verified() and (visibility = 'public' or public.is_group_member(id)));
+create policy gm_read on group_members for select to authenticated
+  using (user_id = auth.uid() or public.is_group_member(group_id));
+
 -- ============================================================================
 -- 8 · GRANTS  (RLS still gates every row; these are the table-level privileges
 --     PostgREST needs. Supabase usually manages these — included for portability.)
@@ -891,6 +1127,8 @@ grant select on neighborhoods, documents to anon, authenticated;
 -- cohort voted and is withheld below MIN_TURNOUT (rls-audit N3). public_profiles
 -- exposes only the public member columns; tenure_start stays on the base table.
 grant select on proposal_results, public_profiles, content_moderation to authenticated;
+-- Groups core (migration 0013): reads only — writes go through the section-5d RPCs.
+grant select on categories, groups, group_members, groups_directory to authenticated;
 grant select, insert, update, delete on
   profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log
