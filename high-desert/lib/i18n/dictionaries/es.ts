@@ -31,6 +31,8 @@ export const es: Dictionary = {
     signIn: "Iniciar sesión",
     signOut: "Cerrar sesión",
     skipToContent: "Saltar al contenido principal",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
     verifyLink: "Verificar",
     reviewLink: "Revisiones",
     neighborhoodLink: "Vecindario",

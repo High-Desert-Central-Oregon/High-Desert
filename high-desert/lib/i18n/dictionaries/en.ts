@@ -27,6 +27,8 @@ export const en = {
     signIn: "Sign in",
     signOut: "Sign out",
     skipToContent: "Skip to main content",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
     verifyLink: "Verify",
     reviewLink: "Reviews",
     neighborhoodLink: "Neighborhood",

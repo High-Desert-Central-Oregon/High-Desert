@@ -1,9 +1,6 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AuthButton } from "@/components/auth-button";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { Wordmark } from "@/components/wordmark";
+import { AppNav, type NavItem } from "./app-nav";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -43,75 +40,53 @@ async function SkipLink() {
   );
 }
 
-/** A nav link with a thumb-sized hit area and a visible keyboard-focus style. */
-function NavLink({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      className="py-1 text-muted-foreground hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none"
-    >
-      {children}
-    </Link>
-  );
-}
-
 async function NavBar() {
   const { locale, dict } = await getServerDictionary();
   const profile = await getMyProfile();
+  const user = await getCurrentUser();
   const isMod = profile?.role === "moderator" || profile?.role === "admin";
   const verified = profile?.verified ?? false;
 
-  // Mobile-first: the whole bar is one wrapping flex row, so on a narrow phone
-  // the links flow onto extra lines instead of forcing horizontal scroll. The
-  // controls sit right via ml-auto on a wide screen and drop to their own line
-  // when wrapped. Height comes from padding, not a fixed h-16.
+  // Primary destinations sit inline at md+ and in the mobile sheet; the rest
+  // (account + role-gated surfaces) consolidate into one menu at md+ so the bar
+  // never wraps. The mobile sheet lists primary + account together.
+  const primary: NavItem[] = [
+    ...(verified
+      ? [
+          { href: "/protected/events", label: dict.nav.eventsLink },
+          { href: "/protected/groups", label: dict.nav.groupsLink },
+          { href: "/protected/governance", label: dict.nav.governanceLink },
+        ]
+      : []),
+    { href: "/protected/neighborhoods", label: dict.nav.neighborhoodLink },
+    { href: "/protected/transparency", label: dict.nav.transparencyLink },
+  ];
+
+  const account: NavItem[] = [
+    { href: "/protected/account", label: dict.nav.accountLink },
+    ...(!verified ? [{ href: "/protected/verify", label: dict.nav.verifyLink }] : []),
+    ...(isMod
+      ? [
+          { href: "/protected/review", label: dict.nav.reviewLink },
+          { href: "/protected/moderation", label: dict.nav.appealsLink },
+        ]
+      : []),
+  ];
+
   return (
-    <nav lang={locale} className="flex w-full justify-center border-b">
-      <div className="flex w-full max-w-3xl flex-wrap items-center gap-x-4 gap-y-1 p-3 px-5 text-sm">
-        <Link href="/protected" className="py-1">
-          <Wordmark name={dict.app.name} />
-        </Link>
-        {verified && (
-          <NavLink href="/protected/events">{dict.nav.eventsLink}</NavLink>
-        )}
-        {verified && (
-          <NavLink href="/protected/groups">{dict.nav.groupsLink}</NavLink>
-        )}
-        {verified && (
-          <NavLink href="/protected/governance">
-            {dict.nav.governanceLink}
-          </NavLink>
-        )}
-        <NavLink href="/protected/neighborhoods">
-          {dict.nav.neighborhoodLink}
-        </NavLink>
-        <NavLink href="/protected/transparency">
-          {dict.nav.transparencyLink}
-        </NavLink>
-        <NavLink href="/protected/account">{dict.nav.accountLink}</NavLink>
-        {!verified && (
-          <NavLink href="/protected/verify">{dict.nav.verifyLink}</NavLink>
-        )}
-        {isMod && (
-          <NavLink href="/protected/review">{dict.nav.reviewLink}</NavLink>
-        )}
-        {isMod && (
-          <NavLink href="/protected/moderation">{dict.nav.appealsLink}</NavLink>
-        )}
-        <div className="ml-auto flex items-center gap-3">
-          <LanguageSwitcher current={locale} />
-          <Suspense>
-            <AuthButton />
-          </Suspense>
-        </div>
-      </div>
-    </nav>
+    <AppNav
+      primary={primary}
+      account={account}
+      locale={locale}
+      wordmark={dict.app.name}
+      email={user?.email ?? null}
+      labels={{
+        menu: dict.nav.openMenu,
+        close: dict.nav.closeMenu,
+        signOut: dict.nav.signOut,
+        account: dict.nav.accountLink,
+      }}
+    />
   );
 }
 
