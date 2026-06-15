@@ -25,7 +25,7 @@ paste block.
 
 1. Apply `schema.sql` to a fresh staging DB — that's all. `schema.sql` is the
    complete current schema (the snapshot through head). The numbered migrations
-   `0001`–`0011` are historical deltas already folded into it; they exist only to
+   `0001`–`0013` are historical deltas already folded into it; they exist only to
    bring an *existing* DB forward and must **not** be replayed on top of
    `schema.sql` (doing so collides — e.g. `0003` fails with `cannot drop columns
    from view`, since the snapshot already has the evolved `proposal_results`). If
@@ -33,6 +33,9 @@ paste block.
    without the `pg_cron` extension, skip it — the manual close still works.
 2. Run [seed/dry-run-accounts.sql](../seed/dry-run-accounts.sql). Confirm the
    roster check at the end prints the six accounts spanning weights 1.0 / 1.5 / 2.0 / 3.0.
+   Then run [seed/dry-run-groups.sql](../seed/dry-run-groups.sql) (it depends on the
+   accounts) for the §D groups checks; its roster check prints the three preset
+   groups and their members.
 3. Run the blocks below **in order**, as the project owner (Supabase SQL editor =
    `postgres`, or `psql` as a superuser). Select a whole block and run it as one
    statement batch.
@@ -848,6 +851,129 @@ begin;
   select count(*) as base_rows_visible from profiles
   where id = '00000000-0000-0000-0000-0000000000a1';
   -- Expected: 0 — Carla can read only her own base profiles row (and moderators all).
+rollback;
+```
+
+---
+
+## D · Groups hardening checks (G8–G10, G12) — phase 1a
+
+Requires [seed/dry-run-groups.sql](../seed/dry-run-groups.sql). Test groups (paste
+as the group id):
+
+| Short | Group | UUID | Preset (visibility / join) | Wiring |
+|---|---|---|---|---|
+| g1 | Public board | `90000000-0000-0000-0000-000000000001` | public / open | maintainer Aida · member Ben |
+| g2 | Curated | `90000000-0000-0000-0000-000000000002` | public / request | maintainer Carla · member Aida · **pending** Ben |
+| g3 | Private | `90000000-0000-0000-0000-000000000003` | members_only / locked | maintainer Esther · member Frank |
+
+Phase 1a stays inside the verified-only read model — **no anon/public reads yet**
+(G6/G7 are phase 2). Writes are RPC-only; `group_members` has no insert/update/
+delete policy, so status/role can't be client-forged.
+
+### D-G8 · Membership-scoped reads — a non-member can't see a private roster/description
+
+**▶ as Aida** (`…a1`, NOT a member of Private g3) — `rollback`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000a1","role":"authenticated"}', true);
+  set local role authenticated;
+
+  select count(*) as roster_rows from group_members
+   where group_id = '90000000-0000-0000-0000-000000000003';
+  -- Expected: 0 — gm_read shows only your own row + rosters of groups you're active in.
+
+  select count(*) as base_rows from groups
+   where id = '90000000-0000-0000-0000-000000000003';
+  -- Expected: 0 — grp_read hides a members_only group's full row from non-members (G8).
+
+  select name, description, member_count from groups_directory
+   where id = '90000000-0000-0000-0000-000000000003';
+  -- Expected: 1 row — name + member_count VISIBLE, description NULL (listed, contents gated).
+rollback;
+```
+
+**▶ as Frank** (`…f6`, an active member of g3) — `rollback`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000f6","role":"authenticated"}', true);
+  set local role authenticated;
+  select count(*) as roster_rows from group_members
+   where group_id = '90000000-0000-0000-0000-000000000003';            -- Expected: 2
+  select description is not null as sees_desc from groups
+   where id = '90000000-0000-0000-0000-000000000003';                  -- Expected: true
+rollback;
+```
+
+### D-G10 · Join-policy enforcement
+
+```sql
+-- open → instant active.  ▶ as Carla (not in g1) — rollback
+begin; select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-0000000000c3","role":"authenticated"}', true); set local role authenticated;
+  select public.join_group('90000000-0000-0000-0000-000000000001');    -- Expected: active
+rollback;
+-- request → pending.     ▶ as Frank (not in g2) — rollback
+begin; select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-0000000000f6","role":"authenticated"}', true); set local role authenticated;
+  select public.join_group('90000000-0000-0000-0000-000000000002');    -- Expected: pending
+rollback;
+-- locked → rejected.     ▶ as Aida (not in g3) — rollback
+begin; select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-0000000000a1","role":"authenticated"}', true); set local role authenticated;
+  select public.join_group('90000000-0000-0000-0000-000000000003');
+  -- Expected: ERROR  this group is invite-only; a maintainer must add you
+rollback;
+```
+
+### D-G9 / G12 · Maintainer scoping — a maintainer of A can't act in B
+
+**▶ as Aida** (maintainer of g1, NOT g3) — `rollback`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000a1","role":"authenticated"}', true);
+  set local role authenticated;
+
+  select public.approve_member('90000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000f6');
+  -- Expected: ERROR  only a maintainer of this group may approve members
+  select public.remove_member ('90000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000f6');
+  -- Expected: ERROR  only a maintainer of this group may remove members
+  select public.update_group_settings('90000000-0000-0000-0000-000000000003','Hacked',null,null,null,null);
+  -- Expected: ERROR  only a maintainer of this group may edit its settings
+rollback;
+```
+
+**▶ as Carla** (maintainer of g2) approves Ben's pending request — the positive path — `rollback`
+
+```sql
+begin;
+  select set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-0000000000c3","role":"authenticated"}', true);
+  set local role authenticated;
+  select public.approve_member('90000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000b2');
+  select status from group_members
+   where group_id = '90000000-0000-0000-0000-000000000002'
+     and user_id  = '00000000-0000-0000-0000-0000000000b2';            -- Expected: active
+rollback;
+```
+
+### D-forge · status/role can't be set by a direct client write
+
+```sql
+-- ▶ as Carla — try to insert herself as a maintainer of g1 — rollback
+begin; select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-0000000000c3","role":"authenticated"}', true); set local role authenticated;
+  insert into group_members (group_id,user_id,role,status)
+  values ('90000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000c3','maintainer','active');
+  -- Expected: ERROR permission denied for table group_members (reads-only grant; writes via RPC)
+rollback;
+-- ▶ as Ben — try to self-approve his pending g2 request — rollback
+begin; select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-0000000000b2","role":"authenticated"}', true); set local role authenticated;
+  update group_members set status='active'
+   where group_id='90000000-0000-0000-0000-000000000002' and user_id='00000000-0000-0000-0000-0000000000b2';
+  -- Expected: ERROR permission denied for table group_members
 rollback;
 ```
 
