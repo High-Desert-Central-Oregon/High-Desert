@@ -36,6 +36,11 @@ create type mod_action           as enum ('warn','temp_ban','extended_ban','revi
 create type appeal_status        as enum ('open','upheld','overturned');
 create type doc_kind             as enum ('terms','privacy');
 create type neighborhood_request_status as enum ('open','resolved');
+-- Groups core (Spec v2 §1; migration 0013)
+create type group_visibility    as enum ('public','members_only');
+create type group_join_policy   as enum ('open','request','locked');
+create type group_member_role   as enum ('maintainer','member');
+create type group_member_status as enum ('active','pending','invited');
 
 -- ============================================================================
 -- 2 · TABLES
@@ -184,6 +189,42 @@ create table audit_log (                    -- append-only; public for transpare
   created_at timestamptz not null default now()
 );
 
+-- Groups core (Spec v2 §1/§6; migration 0013). The community-hub container:
+-- categories (open taxonomy), groups (visibility × join_policy), and membership
+-- (role × status). Writes flow through the security-definer RPCs in section 5d so
+-- status/role are never client-forgeable; the only base policies are reads.
+create table categories (
+  id         uuid primary key default gen_random_uuid(),
+  slug       text unique not null,
+  name       text not null,
+  created_by uuid references profiles(id),     -- null for the seeded taxonomy
+  created_at timestamptz not null default now()
+);
+
+create table groups (
+  id          uuid primary key default gen_random_uuid(),
+  slug        text unique not null,
+  name        text not null,
+  description text,
+  category_id uuid references categories(id),
+  visibility  group_visibility  not null default 'members_only',
+  join_policy group_join_policy not null default 'request',
+  is_system   boolean not null default false,  -- the built-in Everyone group
+  created_by  uuid references profiles(id),     -- null for system groups
+  created_at  timestamptz not null default now(),
+  archived_at timestamptz                       -- soft-delete; there is no hard DELETE
+);
+
+create table group_members (
+  id         uuid primary key default gen_random_uuid(),
+  group_id   uuid not null references groups(id) on delete cascade,
+  user_id    uuid not null references profiles(id) on delete cascade,
+  role       group_member_role   not null default 'member',
+  status     group_member_status not null default 'active',
+  created_at timestamptz not null default now(),
+  unique (group_id, user_id)
+);
+
 -- ============================================================================
 -- 3 · HELPERS  (SECURITY DEFINER so they bypass RLS and never cause policy recursion)
 -- ============================================================================
@@ -234,6 +275,28 @@ returns boolean language sql stable security definer set search_path = public as
       order by m.created_at desc, m.id desc
       limit 1),
     false);
+$$;
+
+-- Group membership helpers (Spec §1; migration 0013). Same shape as is_verified()
+-- — security definer, so they read group_members past RLS without policy recursion.
+-- is_group_member: an ACTIVE member of the group, OR — for the built-in Everyone
+-- group, whose membership is implicit (never materialized) — any verified member.
+create or replace function public.is_group_member(p_group uuid)
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from group_members gm
+                  where gm.group_id = p_group and gm.user_id = auth.uid()
+                    and gm.status = 'active')
+      or exists (select 1 from groups g
+                  where g.id = p_group and g.is_system and g.slug = 'everyone'
+                    and public.is_verified());
+$$;
+
+-- is_group_maintainer: an ACTIVE maintainer of the group.
+create or replace function public.is_group_maintainer(p_group uuid)
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from group_members gm
+                  where gm.group_id = p_group and gm.user_id = auth.uid()
+                    and gm.role = 'maintainer' and gm.status = 'active');
 $$;
 
 -- ============================================================================
@@ -697,6 +760,9 @@ alter table votes              enable row level security;
 alter table moderation_actions enable row level security;
 alter table appeals            enable row level security;
 alter table audit_log          enable row level security;
+alter table categories         enable row level security;
+alter table groups             enable row level security;
+alter table group_members      enable row level security;
 
 -- Public reference data
 create policy nb_read  on neighborhoods for select to anon, authenticated using (true);
@@ -898,6 +964,33 @@ insert into documents (kind, version, body) values
   ('privacy','0.1',
    'PLACEHOLDER — replace with the final plain-language Privacy Policy '
    '(companion: highdesert-terms-privacy-v1). Pending Oregon legal review.');
+
+-- ============================================================================
+-- 11 · SEED — Groups: the §6 category taxonomy (12) + the built-in Everyone group
+--      (migration 0013). Everyone is system-owned, public, and every verified
+--      member belongs implicitly — no materialized membership rows (see
+--      is_group_member). Its calendar/board is the community-wide surface.
+-- ============================================================================
+insert into categories (slug, name) values
+  ('neighborhood-place',  'Neighborhood & Place'),
+  ('housing-rentals',     'Housing & Rentals'),
+  ('pets-sitting',        'Pets & Sitting'),
+  ('buy-sell-trade-free', 'Buy / Sell / Trade / Free'),
+  ('help-mutual-aid',     'Help & Mutual Aid'),
+  ('services-skills',     'Services & Skills'),
+  ('civic-government',    'Civic & Government'),
+  ('families-schools',    'Families & Schools'),
+  ('interests-hobbies',   'Interests & Hobbies'),
+  ('health-wellbeing',    'Health & Wellbeing'),
+  ('arts-culture',        'Arts & Culture'),
+  ('events-happenings',   'Events & Happenings')
+on conflict (slug) do nothing;
+
+insert into groups (slug, name, description, category_id, visibility, join_policy, is_system, created_by)
+values ('everyone', 'Everyone',
+        'The community-wide board and calendar. Every verified member is here.',
+        null, 'public', 'open', true, null)
+on conflict (slug) do nothing;
 
 -- ============================================================================
 -- NOTES — what to do alongside this file
