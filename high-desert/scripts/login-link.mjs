@@ -12,4 +12,10 @@ const supabase = createClient(
 )
 const { data, error } = await supabase.auth.admin.generateLink({ type: 'magiclink', email })
 if (error) { console.error(error); process.exit(1) }
-console.log(`${base}/auth/confirm?token_hash=${data.properties.hashed_token}&type=email`)
+// The verify type MUST match the token we minted (`magiclink`). Using `type=email`
+// for a magiclink token makes GoTrue treat an already-seeded email as a brand-new
+// signup — creating a fresh, PROFILE-LESS auth user (and orphaning the seeded one).
+// The /welcome consent insert then fails the consents.user_id -> profiles FK
+// ("save-failed"). Verifying as `magiclink` signs in as the seeded user, profile
+// intact, so onboarding completes.
+console.log(`${base}/auth/confirm?token_hash=${data.properties.hashed_token}&type=magiclink`)

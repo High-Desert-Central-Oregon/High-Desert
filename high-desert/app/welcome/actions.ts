@@ -54,6 +54,16 @@ export async function acceptCurrentDocuments(
   if (rows.length > 0) {
     const { error } = await supabase.from("consents").insert(rows);
     if (error) {
+      // Surface the real cause in server logs instead of swallowing it — a bare
+      // "save-failed" is undiagnosable. (A historical cause: signing in with a
+      // mismatched OTP type produced a profile-less auth user, so this insert hit
+      // the consents.user_id -> profiles foreign key; see scripts/login-link.mjs.)
+      console.error("acceptCurrentDocuments: consents insert failed", {
+        userId,
+        code: error.code,
+        message: error.message,
+        details: error.details,
+      });
       return { error: "save-failed" };
     }
   }
