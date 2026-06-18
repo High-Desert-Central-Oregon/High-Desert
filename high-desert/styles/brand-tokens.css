@@ -1,0 +1,37 @@
+/* ============================================================================
+ * Steppe brand design tokens — the marketing "north star" palette.
+ *
+ * These are the hand-authored colors from the approved marketing design
+ * (_design-source/*.html), promoted here verbatim so the public marketing layer
+ * and, later, the member app can share one source of truth. The member app's own
+ * re-skin onto these tokens is OUT OF SCOPE for the marketing port — for now only
+ * the (site) route group consumes them (loaded by app/(site)/layout.tsx).
+ *
+ * Names are distinct from the app's existing tokens (--background, --foreground,
+ * …), so defining them at :root is additive and cannot collide with app styles.
+ * Fonts that pair with these tokens: Fraunces (display) + Public Sans (text),
+ * self-hosted via @fontsource and loaded in the marketing layout.
+ * ========================================================================== */
+:root {
+  --bone: #ECE4D4;
+  --bone-soft: #F4EEE1;
+  --bone-deep: #E2D8C4;
+  --basalt: #24211B;
+  --basalt-soft: #4A463E;
+  --juniper: #36503E;
+  --juniper-deep: #273B2E;
+  --juniper-line: #425B49;
+  --sage: #9CAA8A;
+  --sage-light: #C2CBB1;
+  --rust: #A65530;
+  --sky-high: #D9DDCD;
+  --sky-mid: #E4DCCB;
+  --sky-low: #E8D4B6;
+  --snow: #F4EFE6;
+  --scrim: 236, 228, 212;
+  --focus: #36503E;
+
+  /* Brand font families (self-hosted via @fontsource; see the marketing layout). */
+  --font-fraunces: "Fraunces", serif;
+  --font-public-sans: "Public Sans", system-ui, sans-serif;
+}

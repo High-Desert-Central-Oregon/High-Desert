@@ -47,11 +47,18 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
+  // The public marketing layer (the app/(site) route group) is fully public —
+  // never gated by auth. "/" is the marketing landing; /partners and /preview are
+  // its sibling pages. Anything else still requires a session.
+  const { pathname } = request.nextUrl;
+  const isPublicMarketing =
+    pathname === "/" || pathname === "/partners" || pathname === "/preview";
+
   if (
-    request.nextUrl.pathname !== "/" &&
+    !isPublicMarketing &&
     !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !pathname.startsWith("/login") &&
+    !pathname.startsWith("/auth")
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();

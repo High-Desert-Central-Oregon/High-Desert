@@ -1,0 +1,29 @@
+/* ============================================================================
+ * Marketing layer base — scoped to .site-root so it can't leak into the member
+ * app. This reproduces the approved design's body-level rules (font, colors,
+ * line-height, focus ring) WITHOUT touching the global <body>, which the app
+ * themes with Tailwind (bg-background/text-foreground/font-sans + dark mode).
+ *
+ * The element resets the design's <style> also carried (* box-sizing/margin,
+ * a{color:inherit}, button{font:inherit}) are already provided by Tailwind's
+ * preflight, so they aren't duplicated here. Per-page component CSS lives in
+ * CSS Modules next to each page, keeping every class isolated.
+ * ========================================================================== */
+.site-root {
+  font-family: var(--font-public-sans);
+  color: var(--basalt);
+  background: var(--bone);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100svh;
+  /* Marketing is a light-only design; pin it regardless of system theme so the
+     app's dark mode never tints these surfaces. */
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+.site-root :focus-visible {
+  outline: 2.5px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
