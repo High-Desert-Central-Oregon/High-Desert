@@ -48,11 +48,14 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims;
 
   // The public marketing layer (the app/(site) route group) is fully public —
-  // never gated by auth. "/" is the marketing landing; /partners and /preview are
-  // its sibling pages. Anything else still requires a session.
+  // never gated by auth. "/" is the marketing landing; /partners, /preview, and
+  // /early-access are its sibling pages. Anything else still requires a session.
   const { pathname } = request.nextUrl;
   const isPublicMarketing =
-    pathname === "/" || pathname === "/partners" || pathname === "/preview";
+    pathname === "/" ||
+    pathname === "/partners" ||
+    pathname === "/preview" ||
+    pathname === "/early-access";
 
   if (
     !isPublicMarketing &&

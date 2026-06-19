@@ -96,10 +96,10 @@ const HTML = String.raw`
         <p class="eyebrow" data-i18n="place">Redmond, Oregon</p>
         <h1 class="headline" data-i18n="headline">A neighborhood you can trust.</h1>
         <p class="lede" data-i18n="lede">Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.</p>
-        <button class="cta">
+        <a class="cta" href="/early-access">
           <span data-i18n="cta">Sign in or join</span>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
+        </a>
       </div>
     </div>
   </section>
@@ -146,10 +146,10 @@ const HTML = String.raw`
   <section class="join">
     <h2 data-i18n="joinTitle">Your seat is open.</h2>
     <p data-i18n="joinSub">Join your neighbors in a place that belongs to all of you.</p>
-    <button class="cta"><span data-i18n="joinCta">Sign in or join</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <a class="cta" href="/early-access"><span data-i18n="joinCta">Sign in or join</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </section>
 
-  <footer><span data-i18n="foot">Steppe · Redmond, Oregon</span></footer>
+  <footer><span data-i18n="foot">Steppe · Redmond, Oregon</span> · <a href="/partners" style="color:inherit">For partners &amp; funders</a></footer>
 
 `;
 

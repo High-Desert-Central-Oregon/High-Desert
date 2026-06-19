@@ -1,10 +1,5 @@
-  :root{
-    --bone:#ECE4D4; --bone-soft:#F4EEE1; --bone-deep:#E2D8C4;
-    --basalt:#24211B; --basalt-soft:#4A463E;
-    --juniper:#36503E; --juniper-deep:#273B2E; --juniper-line:#425B49;
-    --sage:#9CAA8A; --sage-light:#C2CBB1;
-    --rust:#A65530; --focus:#36503E;
-  }
+  /* Brand palette + fonts now live in the shared styles/brand-tokens.css,
+     loaded by the (site) layout — see RUN 3. */
   *{box-sizing:border-box; margin:0; padding:0}
   html{scroll-behavior:smooth}
   body{font-family:"Public Sans",system-ui,sans-serif; color:var(--basalt); background:var(--bone);

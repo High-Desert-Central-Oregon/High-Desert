@@ -27,8 +27,8 @@ const HTML = String.raw`
           <strong>This is a preview, not the live app — and it isn't finished.</strong> What you see here is where we <em>begin</em>: the smallest version worth launching. From day one, the members decide what Steppe becomes. Every feature, rule, and number here is theirs to keep, change, or replace by vote — and we'll always be plain about what's built, what's coming, and what's still up for debate.
         </div>
         <div class="introlinks">
-          <a href="#">For neighbors — join Steppe <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          <a href="#">For partners &amp; funders <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="/">For neighbors — join Steppe <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="/partners">For partners &amp; funders <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
 

@@ -1,14 +1,5 @@
-  :root{
-    --bone:#ECE4D4; --bone-soft:#F4EEE1; --bone-deep:#E2D8C4;
-    --basalt:#24211B; --basalt-soft:#4A463E;
-    --juniper:#36503E; --juniper-deep:#273B2E; --juniper-line:#425B49;
-    --sage:#9CAA8A; --sage-light:#C2CBB1;
-    --rust:#A65530;
-    --sky-high:#D9DDCD; --sky-mid:#E4DCCB; --sky-low:#E8D4B6;
-    --snow:#F4EFE6;
-    --scrim:236,228,212;
-    --focus:#36503E;
-  }
+  /* Brand palette + fonts now live in the shared styles/brand-tokens.css,
+     loaded by the (site) layout — see RUN 3. */
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{font-family:"Public Sans",system-ui,sans-serif; color:var(--basalt); background:var(--bone);
@@ -49,7 +40,7 @@
   .lede{font-size:clamp(1.05rem,1.65vw,1.28rem); color:var(--basalt-soft); margin-top:22px; max-width:33em}
   .cta{display:inline-flex; align-items:center; gap:10px; margin-top:34px; font:inherit; font-weight:600;
     font-size:16px; color:var(--bone-soft); background:var(--juniper); border:none; border-radius:999px;
-    padding:14px 28px; cursor:pointer; transition:background .25s ease, transform .25s ease}
+    padding:14px 28px; cursor:pointer; text-decoration:none; transition:background .25s ease, transform .25s ease}
   .cta:hover{background:var(--juniper-deep); transform:translateY(-1px)}
   .cta svg{transition:transform .25s ease}
   .cta:hover svg{transform:translateX(3px)}

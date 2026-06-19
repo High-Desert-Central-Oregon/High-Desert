@@ -116,6 +116,7 @@ const HTML = String.raw`
         <div class="fcard"><h3>Community Fund allocation</h3><p>An annual ranked-choice vote directing the year's surplus to the local causes members choose. Built when there's a surplus to direct.</p><span class="ftag gate">Member-gated</span></div>
         <div class="fcard"><h3>SMS &amp; push alerts</h3><p>Opt-in critical alerts over owned, deliverable channels — so the things that matter reach people, with no notification spam by design.</p><span class="ftag gate">Member-gated</span></div>
       </div>
+      <p style="margin-top:28px"><a href="/preview" style="color:var(--juniper); font-weight:600; text-decoration:none">See a working preview of the app →</a></p>
     </div>
   </section>
 
@@ -205,7 +206,7 @@ const HTML = String.raw`
         <div class="way"><h3>Capacity &amp; introductions</h3><p>Board candidates, legal and nonprofit expertise, and introductions across the Central Oregon ecosystem.</p></div>
         <div class="way"><h3>Spread the word</h3><p>Help us reach Redmond residents and the partners who serve them. Reach is the scarcest resource at launch.</p></div>
       </div>
-      <a class="cta" href="#"><span>Start a conversation</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a class="cta" href="/early-access"><span>Start a conversation</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
 
@@ -213,7 +214,7 @@ const HTML = String.raw`
     <div class="foot">
       <div><strong>Steppe</strong> · a high desert civic commons<br>Oregon Public Benefit Nonprofit · Redmond, OR · Fiscal sponsor: Aspiration<br>Led by Greg Chism, Founding Executive Director · <a href="#">gregtchism.com</a></div>
       <div class="foot-links">
-        <a href="#">The member site</a>
+        <a href="/">The member site</a>
         <a href="#">Governance</a>
         <a href="#">Contact</a>
       </div>
