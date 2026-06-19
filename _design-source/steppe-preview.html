@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steppe — a preview of what we're launching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#ECE4D4; --bone-soft:#F4EEE1; --bone-deep:#E2D8C4;
+    --basalt:#24211B; --basalt-soft:#4A463E;
+    --juniper:#36503E; --juniper-deep:#273B2E; --juniper-line:#425B49;
+    --sage:#9CAA8A; --sage-light:#C2CBB1;
+    --rust:#A65530; --focus:#36503E; --ease:cubic-bezier(.2,.7,.2,1);
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Public Sans",system-ui,sans-serif; color:var(--basalt); background:var(--bone);
+    -webkit-font-smoothing:antialiased; line-height:1.55}
+  a{color:inherit}
+  button{font-family:inherit}
+  :focus-visible{outline:2.5px solid var(--focus); outline-offset:3px; border-radius:3px}
+
+  .page{position:relative; min-height:100vh; overflow:hidden}
+  .toplight{position:absolute; inset:0 0 auto 0; height:420px; z-index:0; pointer-events:none;
+    background:radial-gradient(120% 100% at 76% 0, rgba(232,196,150,.34), rgba(232,196,150,0) 60%)}
+  .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:clamp(40px,7vw,92px) clamp(20px,5vw,64px)}
+
+  .layout{display:grid; grid-template-columns:1fr 420px; gap:clamp(34px,5vw,72px); align-items:start}
+  @media (max-width:900px){ .layout{grid-template-columns:1fr; justify-items:center} }
+
+  /* ---------- intro / framing ---------- */
+  .intro{max-width:36em}
+  .brandrow{display:flex; align-items:baseline; gap:10px; margin-bottom:30px}
+  .brandrow .mark{font-family:"Fraunces",serif; font-weight:600; font-size:24px; color:var(--basalt)}
+  .brandrow .tag{font-size:12px; color:var(--basalt-soft)}
+  .eyebrow2{font-size:12.5px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; color:var(--rust)}
+  .intro h1{font-family:"Fraunces",serif; font-weight:500; font-size:clamp(2rem,4.6vw,3rem); color:var(--basalt); letter-spacing:-.014em; margin-top:12px; line-height:1.06}
+  .intro .lede{font-size:1.12rem; color:var(--basalt-soft); margin-top:20px; line-height:1.6}
+  .callout{margin-top:26px; border-left:3px solid var(--rust); background:var(--bone-soft); border:1px solid var(--bone-deep); border-left-width:3px; border-radius:0 12px 12px 0; padding:18px 20px; font-size:.98rem; color:var(--basalt); line-height:1.62; max-width:38em}
+  .callout strong{color:var(--juniper-deep)}
+  .introlinks{margin-top:24px; font-size:.92rem; display:flex; gap:20px; flex-wrap:wrap}
+  .introlinks a{color:var(--juniper); font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:6px}
+  .introlinks a svg{transition:transform .2s ease}
+  .introlinks a:hover svg{transform:translateX(3px)}
+
+  /* ---------- app facsimile ---------- */
+  .stage{justify-self:center; position:sticky; top:30px}
+  .app{width:392px; max-width:100%; height:min(724px,84vh); background:var(--bone-soft);
+    border:1px solid var(--bone-deep); border-radius:30px; overflow:hidden; display:flex; flex-direction:column;
+    box-shadow:0 32px 72px -34px rgba(36,33,27,.5), 0 12px 30px -22px rgba(36,33,27,.35)}
+  .appbar{flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
+    padding:15px 18px; background:var(--juniper-deep); color:var(--bone-soft)}
+  .appbar .b{font-family:"Fraunces",serif; font-weight:600; font-size:18px; letter-spacing:.01em}
+  .pvbadge{font-size:10px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; color:var(--bone-soft);
+    background:rgba(166,85,48,.92); border-radius:999px; padding:4px 10px}
+
+  .screens{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch}
+  .screen{display:none; padding:18px 18px 26px}
+  .screen.active{display:block; animation:fade .34s ease both}
+  @keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  .scrtitle{font-family:"Fraunces",serif; font-weight:500; font-size:1.28rem; color:var(--juniper-deep)}
+  .scrsub{font-size:.83rem; color:var(--basalt-soft); margin:2px 0 14px}
+
+  .chips{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px}
+  .chip{appearance:none; font-family:inherit; font-size:11.5px; line-height:1.4; border:1px solid var(--bone-deep); background:var(--bone); border-radius:999px; padding:6px 12px; color:var(--basalt-soft); cursor:pointer; transition:border-color .15s ease, background .15s ease}
+  .chip:not(.soon):hover{border-color:var(--sage)}
+  .chip.on{background:var(--juniper); color:var(--bone-soft); border-color:var(--juniper)}
+  .chip.on:hover{border-color:var(--juniper)}
+  .chip.soon{opacity:.5; font-style:italic; cursor:default}
+
+  .flist{display:flex; flex-direction:column; gap:12px}
+  .fc{text-align:left; width:100%; appearance:none; border:1px solid var(--bone-deep); background:var(--bone);
+    border-radius:14px; padding:14px; cursor:pointer; display:flex; flex-direction:column;
+    transition:box-shadow .15s ease, transform .15s ease}
+  .fc:hover{box-shadow:0 8px 20px -12px rgba(36,33,27,.45); transform:translateY(-1px)}
+  .tag{align-self:flex-start; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; border-radius:999px; padding:3px 9px; margin-bottom:9px}
+  .t-offer{background:#E3E8D6; color:#2f4a39}
+  .t-need{background:#F1E0D3; color:#A65530}
+  .t-event{background:#DDE3D4; color:#3b4a40}
+  .t-mutual{background:#EEE3CB; color:#7d5a2a}
+  .fc h4{font-weight:600; font-size:.95rem; color:var(--basalt); margin-bottom:4px}
+  .fc p{font-size:.82rem; color:var(--basalt-soft); margin-bottom:11px; line-height:1.5}
+  .by{display:flex; align-items:center; gap:8px; font-size:.76rem; color:var(--basalt-soft)}
+  .av{width:22px; height:22px; border-radius:999px; background:var(--sage); color:var(--bone-soft);
+    display:flex; align-items:center; justify-content:center; font-size:.64rem; font-weight:700; flex-shrink:0}
+
+  .back{appearance:none; border:none; background:none; cursor:pointer; color:var(--juniper); font-size:.85rem; font-weight:600; display:inline-flex; align-items:center; gap:6px; margin-bottom:14px}
+  .ldbody{font-size:.92rem; color:var(--basalt); line-height:1.62; margin:12px 0 18px}
+  .pill{appearance:none; border:none; cursor:pointer; font-weight:600; font-size:.92rem; color:var(--bone-soft);
+    background:var(--juniper); border-radius:999px; padding:11px 20px; display:inline-flex; align-items:center; gap:8px;
+    transition:background .2s ease, transform .2s ease}
+  .pill:hover{background:var(--juniper-deep); transform:translateY(-1px)}
+  .connect{display:none; margin-top:18px; border-top:1px solid var(--bone-deep); padding-top:16px}
+  .connect.open{display:block; animation:fade .3s ease both}
+  .bubble{max-width:82%; padding:9px 12px; border-radius:14px; font-size:.85rem; line-height:1.45; margin-bottom:9px}
+  .bubble.them{background:var(--bone-deep); color:var(--basalt); border-bottom-left-radius:5px}
+  .bubble.me{background:var(--juniper); color:var(--bone-soft); margin-left:auto; border-bottom-right-radius:5px}
+  .cinput{display:flex; gap:8px; margin-top:12px}
+  .cinput .fake{flex:1; border:1px solid var(--bone-deep); background:var(--bone); border-radius:999px; padding:9px 14px; font-size:.83rem; color:var(--basalt-soft)}
+  .cinput .send{flex:0 0 auto; background:var(--rust); color:var(--bone-soft); border:none; border-radius:999px; padding:0 16px; font-weight:600; font-size:.83rem; cursor:default}
+  .cnote{font-size:.74rem; color:var(--basalt-soft); margin-top:11px}
+  .ld-when{margin:14px 0 4px; padding:13px 15px; background:var(--bone); border:1px solid var(--bone-deep); border-radius:12px; display:flex; flex-direction:column; gap:9px}
+  .ld-when .wr{display:flex; align-items:center; gap:10px; font-size:.9rem; color:var(--basalt); line-height:1.4}
+  .ld-when .wr svg{flex:0 0 auto; color:var(--juniper)}
+  .cal-note{display:none; margin-top:16px; background:var(--sage-light); border:1px solid var(--sage); border-radius:12px; padding:14px; font-size:.84rem; color:var(--juniper-deep); line-height:1.5}
+  .cal-note.show{display:block; animation:fade .3s ease both}
+
+  .prop{border:1px solid var(--bone-deep); background:var(--bone); border-radius:14px; padding:16px}
+  .prop h4{font-family:"Fraunces",serif; font-weight:500; font-size:1.05rem; color:var(--juniper-deep)}
+  .prop .pb{font-size:.86rem; color:var(--basalt-soft); margin-top:7px; line-height:1.55}
+  .meta{display:flex; flex-wrap:wrap; gap:7px; margin:13px 0}
+  .metab{background:var(--bone-soft); border:1px solid var(--bone-deep); border-radius:999px; padding:3px 9px; font-size:.73rem; color:var(--basalt-soft)}
+  .opts{display:flex; flex-direction:column; gap:8px; margin:6px 0 14px}
+  .opt{display:flex; align-items:center; gap:10px; border:1px solid var(--bone-deep); border-radius:10px; padding:11px 13px; cursor:pointer; font-size:.9rem; color:var(--basalt); background:var(--bone-soft)}
+  .opt input{accent-color:var(--juniper); width:16px; height:16px}
+  .voted{display:none; background:var(--sage-light); border:1px solid var(--sage); border-radius:12px; padding:14px; font-size:.85rem; color:var(--juniper-deep); line-height:1.5; margin-top:4px}
+  .voted.show{display:block; animation:fade .3s ease both}
+  .flatnote{font-size:.78rem; color:var(--basalt-soft); margin-top:13px}
+
+  .phead{display:flex; align-items:center; gap:13px}
+  .pav{width:56px; height:56px; border-radius:999px; background:var(--juniper); color:var(--bone-soft); display:flex; align-items:center; justify-content:center; font-family:"Fraunces",serif; font-size:1.2rem; flex-shrink:0}
+  .puser{font-weight:600; font-size:1.08rem; color:var(--basalt)}
+  .pdefault{font-size:.78rem; color:var(--basalt-soft); margin-top:2px}
+  .psectitle{font-size:.74rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--rust); margin:22px 0 4px}
+  .prow{display:flex; align-items:center; justify-content:space-between; gap:10px; border-top:1px solid var(--bone-deep); padding:13px 0}
+  .prow .lab{font-size:.92rem; color:var(--basalt)}
+  .vis{appearance:none; border:1px solid var(--bone-deep); background:var(--bone); border-radius:999px; padding:6px 13px; font-size:.77rem; font-weight:600; cursor:pointer; min-width:104px; text-align:center}
+  .vis[data-v="hidden"]{color:var(--basalt-soft)}
+  .vis[data-v="members"]{color:var(--juniper); border-color:var(--sage)}
+  .vis[data-v="everyone"]{color:var(--rust); border-color:var(--rust)}
+  .pnote{font-size:.8rem; color:var(--basalt-soft); background:var(--bone); border:1px solid var(--bone-deep); border-radius:12px; padding:13px; margin-top:18px; line-height:1.55}
+
+  .glist{display:flex; flex-direction:column; gap:12px; margin-top:4px}
+  .gpost{border:1px solid var(--bone-deep); background:var(--bone); border-radius:14px; padding:13px}
+  .gpost .gp-h{display:flex; align-items:center; gap:8px; font-size:.8rem; color:var(--basalt-soft); margin-bottom:7px}
+  .gpost p{font-size:.86rem; color:var(--basalt); line-height:1.5}
+  .grouphead{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px}
+  .joinbtn{appearance:none; border:1px solid var(--juniper); background:var(--bone-soft); color:var(--juniper); border-radius:999px; padding:7px 16px; font-size:.82rem; font-weight:600; cursor:pointer}
+  .joinbtn.joined{background:var(--juniper); color:var(--bone-soft)}
+  .avrow{display:flex; margin:10px 0 16px}
+  .avrow .av{margin-right:-6px; border:2px solid var(--bone-soft)}
+
+  /* ---------- bottom tabs ---------- */
+  .tabbar{flex:0 0 auto; display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--bone-deep); background:var(--bone-soft)}
+  .tab{appearance:none; border:none; background:none; cursor:pointer; padding:9px 4px 12px; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--basalt-soft); font-size:10.5px; font-weight:500}
+  .tab svg{width:21px; height:21px; stroke:currentColor; fill:none; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round}
+  .tab.active{color:var(--juniper)}
+
+  .footnote{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 clamp(20px,5vw,64px) 48px; color:var(--basalt-soft); font-size:13px}
+
+  @media (max-width:900px){ .stage{position:static} }
+  @media (prefers-reduced-motion:reduce){ .screen.active,.connect.open,.voted.show,.cal-note.show{animation:none} }
+  /* calm scroll-reveal — shared motion language across all Steppe pages */
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  .reveal.shown{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){ .reveal{opacity:1; transform:none; transition:none} }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="toplight" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="layout">
+
+      <!-- INTRO / FRAMING -->
+      <div class="intro">
+        <div class="brandrow"><span class="mark">Steppe</span><span class="tag">a high desert civic commons</span></div>
+        <p class="eyebrow2">A preview</p>
+        <h1>What we're launching.</h1>
+        <p class="lede">A working facsimile of Steppe's first version — the calm, ad-free commons Redmond members will open on day one. Click around the app to the right: browse the local exchange and reach a neighbor, sit in on a vote, and see how private your profile is by default.</p>
+        <div class="callout">
+          <strong>This is a preview, not the live app — and it isn't finished.</strong> What you see here is where we <em>begin</em>: the smallest version worth launching. From day one, the members decide what Steppe becomes. Every feature, rule, and number here is theirs to keep, change, or replace by vote — and we'll always be plain about what's built, what's coming, and what's still up for debate.
+        </div>
+        <div class="introlinks">
+          <a href="#">For neighbors — join Steppe <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a href="#">For partners &amp; funders <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+      </div>
+
+      <!-- APP FACSIMILE -->
+      <div class="stage">
+        <div class="app" role="group" aria-label="Steppe app preview">
+          <div class="appbar"><span class="b">Steppe</span><span class="pvbadge">Preview</span></div>
+
+          <div class="screens">
+
+            <!-- EXCHANGE -->
+            <section class="screen active" id="sc-exchange">
+              <h2 class="scrtitle">Local exchange</h2>
+              <p class="scrsub">One feed for the whole neighborhood — no algorithm deciding what you see.</p>
+              <div class="chips" role="group" aria-label="Filter listings">
+                <button class="chip on" data-filter="all" aria-pressed="true" onclick="filterFeed('all',this)">All</button><button class="chip" data-filter="offer" aria-pressed="false" onclick="filterFeed('offer',this)">Offers</button><button class="chip" data-filter="need" aria-pressed="false" onclick="filterFeed('need',this)">Needs</button><button class="chip" data-filter="event" aria-pressed="false" onclick="filterFeed('event',this)">Events</button><button class="chip" data-filter="mutual" aria-pressed="false" onclick="filterFeed('mutual',this)">Mutual aid</button><button class="chip soon" disabled title="A member-gated growth feature — added only if members vote it in">Marketplace · later, by vote</button>
+              </div>
+              <div class="flist">
+                <button class="fc" data-type="offer" onclick="openListing('tomato')"><span class="tag t-offer">Offer</span><h4>Free tomato starts — 40+ plants</h4><p>Grew too many Early Girls this spring. Free to anyone who'll plant them.</p><span class="by"><span class="av">MK</span> Martha K. · 2h ago</span></button>
+                <button class="fc" data-type="mutual" onclick="openListing('rides')"><span class="tag t-mutual">Mutual aid</span><h4>Rides to medical appointments</h4><p>Two rides a week for neighbors needing transportation to Bend.</p><span class="by"><span class="av">DL</span> Dana L. · 3h ago</span></button>
+                <button class="fc" data-type="need" onclick="openListing('elec')"><span class="tag t-need">Need</span><h4>Electrician who knows older homes</h4><p>Panel upgrade on a 1970s house. Licensed and insured preferred.</p><span class="by"><span class="av">JR</span> James R. · 5h ago</span></button>
+                <button class="fc" data-type="offer" onclick="openListing('washer')"><span class="tag t-offer">Offer</span><h4>Pressure washer to borrow</h4><p>Electric pressure washer, free to borrow for a weekend. Just return it clean.</p><span class="by"><span class="av">SP</span> Sam P. · 6h ago</span></button>
+                <button class="fc" data-type="need" onclick="openListing('carpool')"><span class="tag t-need">Need</span><h4>Carpool to Bend, mornings</h4><p>Splitting the drive for the 9am class block, Tue/Thu. Happy to trade gas or driving.</p><span class="by"><span class="av">PN</span> Priya N. · 1d ago</span></button>
+                <button class="fc" data-type="event" onclick="openListing('event')"><span class="tag t-event">Gathering</span><h4>Member meeting — July</h4><p>Community Fund proposals, governance Q&amp;A, new-member welcome.</p><span class="by"><span class="av">S</span> Sat Jul 12 · Redmond</span></button>
+                <button class="fc" data-type="event" onclick="openListing('cleanup')"><span class="tag t-event">Gathering</span><h4>Trail cleanup — Smith Rock</h4><p>Volunteer morning maintaining trails with the parks crew. Gear provided.</p><span class="by"><span class="av">PC</span> Sun Jul 20 · Terrebonne</span></button>
+                <button class="fc" data-type="event" onclick="openListing('repair')"><span class="tag t-event">Gathering</span><h4>Repair café</h4><p>Bring something broken and fix it alongside neighbors who know how.</p><span class="by"><span class="av">RL</span> Sat Jul 26 · Redmond Library</span></button>
+              </div>
+              <p id="feed-empty" style="display:none; text-align:center; color:var(--basalt-soft); font-size:.9rem; padding:18px 0">Nothing in this category yet.</p>
+            </section>
+
+            <!-- LISTING DETAIL -->
+            <section class="screen" id="sc-listing">
+              <button class="back" onclick="showScreen('sc-exchange','exchange')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Exchange</button>
+              <span class="tag" id="ld-tag">Offer</span>
+              <h2 class="scrtitle" id="ld-title">—</h2>
+              <div class="ld-when" id="ld-when" style="display:none">
+                <div class="wr"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> <span id="ld-when-date">—</span></div>
+                <div class="wr"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg> <span id="ld-when-loc">—</span></div>
+              </div>
+              <p class="ldbody" id="ld-body">—</p>
+              <p class="by" style="margin-bottom:18px"><span class="av" id="ld-av">—</span> <span id="ld-by">—</span></p>
+              <button class="pill" id="ld-connect" onclick="toggleConnect()">Message <span id="ld-who">—</span></button>
+              <div class="connect" id="connect">
+                <div class="bubble them" id="cb-them">Hi! Is this still available?</div>
+                <div class="bubble me">Yes — come by anytime this week.</div>
+                <div class="cinput"><span class="fake">Write a message…</span><button class="send">Send</button></div>
+                <p class="cnote">Messages stay inside Steppe — no third party, no ads, nothing sold.</p>
+              </div>
+              <button class="pill" id="ld-cal" onclick="addToCal()" style="display:none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Add to your calendar</button>
+              <div class="cal-note" id="cal-note">Saved — opens in Apple Calendar, Google Calendar, or Outlook (.ics). The event stays on Steppe.</div>
+            </section>
+
+            <!-- GROUPS -->
+            <section class="screen" id="sc-groups">
+              <div class="grouphead"><h2 class="scrtitle">Redmond Gardeners</h2><button class="joinbtn" onclick="toggleJoin(this)">Join</button></div>
+              <p class="scrsub">A neighborhood group · 48 members</p>
+              <div class="avrow"><span class="av">MK</span><span class="av">DL</span><span class="av">JR</span><span class="av" style="background:var(--rust)">+45</span></div>
+              <div class="glist">
+                <div class="gpost"><div class="gp-h"><span class="av">MK</span> Martha K. · 1d ago</div><p>Seed swap this Saturday at the community garden — bring extras, take what you need.</p></div>
+                <div class="gpost"><div class="gp-h"><span class="av">TW</span> Tomas W. · 2d ago</div><p>Anyone have a tiller I could borrow for the weekend? Happy to trade veggies.</p></div>
+              </div>
+            </section>
+
+            <!-- GOVERN -->
+            <section class="screen" id="sc-govern">
+              <h2 class="scrtitle">Open vote</h2>
+              <p class="scrsub">How the commons makes decisions.</p>
+              <div class="prop">
+                <h4>Waive booth fees for the winter market</h4>
+                <p class="pb">Proposal: drop member booth fees at the indoor winter market to keep local sellers participating through the slow season.</p>
+                <div class="meta"><span class="metab">Quorum 15%</span><span class="metab">Closes in 3 days</span><span class="metab">Your vote is secret</span></div>
+                <div class="opts" id="opts">
+                  <label class="opt"><input type="radio" name="vote"> In favor</label>
+                  <label class="opt"><input type="radio" name="vote"> Opposed</label>
+                  <label class="opt"><input type="radio" name="vote"> Abstain</label>
+                </div>
+                <button class="pill" id="castbtn" onclick="castVote()">Cast vote</button>
+                <div class="voted" id="voted">Vote recorded. Your ballot is secret — no one, not even staff, can see how you voted. You can change it until the vote closes.</div>
+                <p class="flatnote">Flat franchise at launch — every member's vote counts the same. Members can later vote to weight by tenure, if they want to.</p>
+              </div>
+            </section>
+
+            <!-- PROFILE -->
+            <section class="screen" id="sc-profile">
+              <div class="phead"><span class="pav">jj</span><div><div class="puser">juniper_jay</div><div class="pdefault">This is all anyone sees by default.</div></div></div>
+              <p class="psectitle">What others can see</p>
+              <div class="prow"><span class="lab">Display name</span><button class="vis" data-v="hidden" onclick="cycleVis(this)">Hidden</button></div>
+              <div class="prow"><span class="lab">Neighborhood</span><button class="vis" data-v="members" onclick="cycleVis(this)">Members</button></div>
+              <div class="prow"><span class="lab">Skills &amp; offers</span><button class="vis" data-v="hidden" onclick="cycleVis(this)">Hidden</button></div>
+              <div class="prow"><span class="lab">Contact</span><button class="vis" data-v="hidden" onclick="cycleVis(this)">Hidden</button></div>
+              <p class="pnote">Verified, but private. Steppe confirms you're a real Redmond neighbor — then shows only what you choose. Tap a setting to cycle Hidden → Members → Everyone.</p>
+            </section>
+
+          </div>
+
+          <!-- TABS -->
+          <nav class="tabbar">
+            <button class="tab active" data-tab="exchange" onclick="showScreen('sc-exchange','exchange')" aria-label="Exchange"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Exchange</button>
+            <button class="tab" data-tab="groups" onclick="showScreen('sc-groups','groups')" aria-label="Groups"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5M15 19c.3-2 1.6-3.4 3.5-3.4"/></svg>Groups</button>
+            <button class="tab" data-tab="govern" onclick="showScreen('sc-govern','govern')" aria-label="Govern"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M12 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/></svg>Govern</button>
+            <button class="tab" data-tab="profile" onclick="showScreen('sc-profile','profile')" aria-label="You"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>You</button>
+          </nav>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <p class="footnote">Steppe · a high desert civic commons · Redmond, Oregon. This preview is illustrative — a sketch of the launch experience, not the live application.</p>
+</div>
+
+<script>
+  const listings = {
+    tomato:{tag:"Offer", cls:"t-offer", title:"Free tomato starts — 40+ plants", body:"Grew too many Early Girls this spring. Free to anyone who'll actually plant them. Pickup near downtown Redmond — bring a box and take what you need.", av:"MK", by:"Martha K. · 2h ago", who:"Martha"},
+    elec:{tag:"Need", cls:"t-need", title:"Electrician who knows older homes", body:"Panel upgrade on a 1970s house. Looking for someone licensed and insured who's worked on older Redmond homes. Recommendations welcome too.", av:"JR", by:"James R. · 5h ago", who:"James"},
+    event:{tag:"Gathering", cls:"t-event", title:"Member meeting — July", body:"Monthly open meeting: Community Fund proposals, a governance Q&A, and a welcome for new members. Open to all members — drop in for any part of it.", av:"S", by:"Steppe", date:"Saturday, July 12 · 10:00 AM", loc:"Redmond Community Room, Evergreen Ave"},
+    cleanup:{tag:"Gathering", cls:"t-event", title:"Trail cleanup — Smith Rock", body:"Volunteer morning clearing and maintaining trails with the parks crew. Gloves, bags, and water provided — just bring sturdy shoes. Meet at the welcome center.", av:"PC", by:"Parks crew + neighbors", date:"Sunday, July 20 · 8:00 AM", loc:"Smith Rock State Park, Terrebonne"},
+    repair:{tag:"Gathering", cls:"t-event", title:"Repair café", body:"Bring something broken — a small appliance, a torn jacket, a wobbly chair — and fix it alongside neighbors who know how. Free, all skill levels welcome.", av:"RL", by:"Redmond Library", date:"Saturday, July 26 · 1:00 PM", loc:"Redmond Public Library"},
+    rides:{tag:"Mutual aid", cls:"t-mutual", title:"Rides to medical appointments", body:"I can offer two rides a week for neighbors who need transportation to medical appointments in Bend. Flexible on timing — just reach out.", av:"DL", by:"Dana L. · 3h ago", who:"Dana"},
+    washer:{tag:"Offer", cls:"t-offer", title:"Pressure washer to borrow", body:"A decent electric pressure washer, free to borrow for a weekend. Just return it clean and let the next neighbor have a turn.", av:"SP", by:"Sam P. · 6h ago", who:"Sam"},
+    carpool:{tag:"Need", cls:"t-need", title:"Carpool to Bend, mornings", body:"Looking to split the drive to Bend for the 9am class block, Tuesdays and Thursdays. Happy to trade gas money or alternate driving.", av:"PN", by:"Priya N. · 1d ago", who:"Priya"}
+  };
+
+  function showScreen(id, tab){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+    document.querySelector('.screens').scrollTop = 0;
+  }
+
+  const CAL_BTN_HTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Add to your calendar';
+
+  function openListing(key){
+    const l = listings[key];
+    const tagEl = document.getElementById('ld-tag');
+    tagEl.textContent = l.tag; tagEl.className = 'tag ' + l.cls;
+    document.getElementById('ld-title').textContent = l.title;
+    document.getElementById('ld-body').textContent = l.body;
+    document.getElementById('ld-av').textContent = l.av;
+    document.getElementById('ld-by').textContent = l.by;
+
+    const isEvent = !!l.date;
+    // Event date + location block
+    const whenEl = document.getElementById('ld-when');
+    if (isEvent){
+      document.getElementById('ld-when-date').textContent = l.date;
+      document.getElementById('ld-when-loc').textContent = l.loc;
+      whenEl.style.display = 'flex';
+    } else {
+      whenEl.style.display = 'none';
+      document.getElementById('ld-who').textContent = l.who;
+    }
+    // Action: events get "Add to your calendar"; everything else gets "Message"
+    document.getElementById('ld-connect').style.display = isEvent ? 'none' : '';
+    document.getElementById('connect').classList.remove('open');
+    const calBtn = document.getElementById('ld-cal');
+    calBtn.style.display = isEvent ? '' : 'none';
+    calBtn.innerHTML = CAL_BTN_HTML;
+    calBtn.style.opacity = ''; calBtn.style.pointerEvents = '';
+    document.getElementById('cal-note').classList.remove('show');
+
+    showScreen('sc-listing','exchange');
+  }
+
+  function filterFeed(type, btn){
+    document.querySelectorAll('#sc-exchange .chip[data-filter]').forEach(c=>{
+      const on = c === btn;
+      c.classList.toggle('on', on);
+      c.setAttribute('aria-pressed', on);
+    });
+    let shown = 0;
+    document.querySelectorAll('#sc-exchange .fc').forEach(card=>{
+      const match = (type === 'all' || card.dataset.type === type);
+      card.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+    document.getElementById('feed-empty').style.display = shown ? 'none' : 'block';
+  }
+
+  function toggleConnect(){ document.getElementById('connect').classList.toggle('open'); }
+
+  function addToCal(){
+    document.getElementById('cal-note').classList.add('show');
+    const b = document.getElementById('ld-cal');
+    b.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Added to your calendar';
+    b.style.opacity = '.6'; b.style.pointerEvents = 'none';
+  }
+
+  function toggleJoin(btn){
+    const joined = btn.classList.toggle('joined');
+    btn.textContent = joined ? 'Joined ✓' : 'Join';
+  }
+
+  function castVote(){
+    document.getElementById('voted').classList.add('show');
+    const b = document.getElementById('castbtn');
+    b.textContent = 'Vote recorded';
+    b.style.opacity = '.6'; b.style.pointerEvents = 'none';
+  }
+
+  const order = ['hidden','members','everyone'];
+  const label = {hidden:'Hidden', members:'Members', everyone:'Everyone'};
+  function cycleVis(btn){
+    const next = order[(order.indexOf(btn.dataset.v)+1)%order.length];
+    btn.dataset.v = next; btn.textContent = label[next];
+  }
+</script>
+<script>
+/* Steppe — calm scroll-reveal: one restrained motion language shared across the site.
+   Above-the-fold content shows instantly (no flash); only content you scroll to drifts in. */
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+  var sel = '.ptitle,.stitle,.ssub,.pcard,.step,.lcard,.h2,.lead,.subhead,.fcard,.gpanel,.metric,.stream,.note,.pblock,.way,.callout,.introlinks,.intro h1,.intro .lede,.govstrip p,.join p,.cta,.eyebrow2';
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('shown'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  Array.prototype.slice.call(document.querySelectorAll(sel)).forEach(function(el){
+    if (el.closest('.hero') || el.closest('.app')) return;            // hero keeps its entrance; the app facsimile stays still
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.92) return;  // already visible -> instant, no flash
+    el.classList.add('reveal');
+    var i = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+    el.style.transitionDelay = (Math.min(i, 6) * 0.06) + 's';          // gentle stagger within a group
+    io.observe(el);
+  });
+})();
+</script>
+</body>
+</html>
