@@ -3,6 +3,27 @@ import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
 
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Public-first short-circuit: the marketing layer (the app/(site) route group)
+  // and static assets are fully public, so bail out BEFORE creating a Supabase
+  // client or calling getClaims(). This guarantees public requests make zero
+  // auth/DB calls. "/" is the marketing landing; /partners, /preview, and
+  // /early-access are its sibling pages.
+  const isPublicMarketing =
+    pathname === "/" ||
+    pathname === "/partners" ||
+    pathname === "/preview" ||
+    pathname === "/early-access";
+  const isStaticAsset =
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico" ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname);
+
+  if (isPublicMarketing || isStaticAsset) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -47,18 +68,9 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
-  // The public marketing layer (the app/(site) route group) is fully public —
-  // never gated by auth. "/" is the marketing landing; /partners, /preview, and
-  // /early-access are its sibling pages. Anything else still requires a session.
-  const { pathname } = request.nextUrl;
-  const isPublicMarketing =
-    pathname === "/" ||
-    pathname === "/partners" ||
-    pathname === "/preview" ||
-    pathname === "/early-access";
-
+  // Public marketing routes already returned above; everything that reaches here
+  // is gated. Auth pages themselves stay reachable so sign-in can complete.
   if (
-    !isPublicMarketing &&
     !user &&
     !pathname.startsWith("/login") &&
     !pathname.startsWith("/auth")
