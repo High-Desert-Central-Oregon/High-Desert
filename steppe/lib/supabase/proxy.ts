@@ -8,13 +8,15 @@ export async function updateSession(request: NextRequest) {
   // Public-first short-circuit: the marketing layer (the app/(site) route group)
   // and static assets are fully public, so bail out BEFORE creating a Supabase
   // client or calling getClaims(). This guarantees public requests make zero
-  // auth/DB calls. "/" is the marketing landing; /partners, /preview, and
-  // /early-access are its sibling pages.
+  // auth/DB calls. "/" is the marketing landing; /partners, /preview,
+  // /early-access, /join, and /privacy are its sibling pages.
   const isPublicMarketing =
     pathname === "/" ||
     pathname === "/partners" ||
     pathname === "/preview" ||
-    pathname === "/early-access";
+    pathname === "/early-access" ||
+    pathname === "/join" ||
+    pathname === "/privacy";
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
