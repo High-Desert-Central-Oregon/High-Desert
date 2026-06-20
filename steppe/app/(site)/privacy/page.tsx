@@ -52,7 +52,7 @@ export default function PrivacyPage() {
         <h2>Deleting your information</h2>
         <p>
           Email{" "}
-          <a href="mailto:hello@steppe.org">hello@steppe.org</a> and ask us to
+          <a href="mailto:hello@steppe.community">hello@steppe.community</a> and ask us to
           remove you. We&rsquo;ll delete your entry from the interest list, no
           questions asked.
         </p>
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
         <h2>Contact</h2>
         <p>
           Questions about any of this? Reach us at{" "}
-          <a href="mailto:hello@steppe.org">hello@steppe.org</a>.
+          <a href="mailto:hello@steppe.community">hello@steppe.community</a>.
         </p>
       </section>
 
