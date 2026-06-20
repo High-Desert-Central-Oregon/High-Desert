@@ -596,7 +596,7 @@ rollback;
 **Pre-close: the official close is refused, and a forced status flip reveals nothing.**
 
 The server action `recordProposalClose` refuses while `now() <= closes_at`
-([governance/actions.ts:147](../high-desert/app/protected/governance/actions.ts#L147)).
+([governance/actions.ts:147](../steppe/app/protected/governance/actions.ts#L147)).
 At the DB level, even a rogue early status flip exposes no tally — results are
 purely temporal:
 
