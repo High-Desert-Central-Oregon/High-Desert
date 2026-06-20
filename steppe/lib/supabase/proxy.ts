@@ -17,13 +17,28 @@ export async function updateSession(request: NextRequest) {
     pathname === "/early-access" ||
     pathname === "/join" ||
     pathname === "/privacy";
+  // The public interest-signup endpoint must be reachable by anonymous visitors
+  // (the /join form posts here); it enforces its own rules server-side.
+  const isPublicApi = pathname === "/api/interest";
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
     /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname);
 
-  if (isPublicMarketing || isStaticAsset) {
+  if (isPublicMarketing || isPublicApi || isStaticAsset) {
     return NextResponse.next({ request });
+  }
+
+  // Launch-phase gate. LAUNCH_PHASE defaults to "prelaunch"; only the literal
+  // "live" opens the member app. While not live, everything that isn't on the
+  // public allowlist above — including /auth/* and /protected/* — redirects to
+  // the marketing landing, so the member surface stays dormant before go-live.
+  const launchPhase = process.env.LAUNCH_PHASE ?? "prelaunch";
+  if (launchPhase !== "live") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.search = "";
+    return NextResponse.redirect(url);
   }
 
   let supabaseResponse = NextResponse.next({
