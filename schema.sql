@@ -225,6 +225,19 @@ create table group_members (
   unique (group_id, user_id)
 );
 
+-- Pre-launch interest list (migration 0014). Deliberately OUTSIDE the member
+-- trust model — no profile, no auth user, no verification. Just enough to email
+-- people when Steppe opens. RLS-enabled with NO policies (deny-by-default);
+-- only the server-side service-role client writes it (see section 7 + /api/interest).
+create table interest_signups (
+  id         uuid primary key default gen_random_uuid(),
+  email      text not null unique,
+  first_name text,
+  in_area    boolean,
+  consent    boolean not null,
+  created_at timestamptz not null default now()
+);
+
 -- ============================================================================
 -- 3 · HELPERS  (SECURITY DEFINER so they bypass RLS and never cause policy recursion)
 -- ============================================================================
@@ -983,6 +996,9 @@ alter table audit_log          enable row level security;
 alter table categories         enable row level security;
 alter table groups             enable row level security;
 alter table group_members      enable row level security;
+-- interest_signups stays default-DENY: RLS on, NO policies (see migration 0014).
+-- The pre-launch list is written only by the service role; never expose it.
+alter table interest_signups   enable row level security;
 
 -- Public reference data
 create policy nb_read  on neighborhoods for select to anon, authenticated using (true);
@@ -1129,6 +1145,9 @@ grant select on neighborhoods, documents to anon, authenticated;
 grant select on proposal_results, public_profiles, content_moderation to authenticated;
 -- Groups core (migration 0013): reads only — writes go through the section-5d RPCs.
 grant select on categories, groups, group_members, groups_directory to authenticated;
+-- interest_signups (migration 0014): no anon/authenticated grant at all — the
+-- service role is the only writer/reader (it bypasses RLS).
+grant select, insert on interest_signups to service_role;
 grant select, insert, update, delete on
   profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log
