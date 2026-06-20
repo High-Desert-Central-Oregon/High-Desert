@@ -21,8 +21,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * request. We never reveal anything about who else is on the list.
  */
 
-// Service-role usage must run on the Node.js runtime, not the edge.
-export const runtime = "nodejs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
