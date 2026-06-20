@@ -20,7 +20,7 @@
       rgba(var(--scrim),.92) 0%, rgba(var(--scrim),.66) 27%,
       rgba(var(--scrim),.16) 50%, rgba(var(--scrim),0) 64%)}
 
-  .topbar{position:relative; z-index:3; display:flex; align-items:baseline; justify-content:space-between;
+  .topbar{position:relative; z-index:3; display:flex; align-items:baseline; justify-content:flex-end;
     padding:30px clamp(20px,5vw,64px) 0; gap:20px; flex-wrap:wrap}
   .brand{display:flex; flex-direction:column; line-height:1}
   .brand .mark{font-family:"Fraunces",serif; font-weight:600; font-size:30px; color:var(--basalt)}

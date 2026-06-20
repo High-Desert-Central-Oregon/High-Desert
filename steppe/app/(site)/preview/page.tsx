@@ -19,7 +19,6 @@ const HTML = String.raw`
 
       <!-- INTRO / FRAMING -->
       <div class="intro">
-        <div class="brandrow"><span class="mark">Steppe</span><span class="tag">a high desert civic commons</span></div>
         <p class="eyebrow2">A preview</p>
         <h1>What we're launching.</h1>
         <p class="lede">A working facsimile of Steppe's first version — the calm, ad-free commons Redmond members will open on day one. Click around the app to the right: browse the local exchange and reach a neighbor, sit in on a vote, and see how private your profile is by default.</p>

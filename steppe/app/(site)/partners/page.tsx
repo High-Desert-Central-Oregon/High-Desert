@@ -57,10 +57,6 @@ const HTML = String.raw`
     <div class="scrim" aria-hidden="true"></div>
 
     <div class="topbar">
-      <div class="brand">
-        <span class="mark">Steppe</span>
-        <span class="tag">a high desert civic commons</span>
-      </div>
       <div class="byline">A project led by <a href="#">Greg Chism</a></div>
     </div>
 
@@ -209,17 +205,6 @@ const HTML = String.raw`
       <a class="cta" href="/join"><span>Start a conversation</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
   </section>
-
-  <footer>
-    <div class="foot">
-      <div><strong>Steppe</strong> · a high desert civic commons<br>Oregon Public Benefit Nonprofit · Redmond, OR · Fiscal sponsor: Aspiration<br>Led by Greg Chism, Founding Executive Director · <a href="#">gregtchism.com</a></div>
-      <div class="foot-links">
-        <a href="/">The member site</a>
-        <a href="#">Governance</a>
-        <a href="#">Contact</a>
-      </div>
-    </div>
-  </footer>
 
 `;
 

@@ -81,10 +81,6 @@ const HTML = String.raw`
     <div class="scrim" aria-hidden="true"></div>
 
     <div class="topbar">
-      <div class="brand">
-        <span class="mark">Steppe</span>
-        <span class="tag" data-i18n="tagline">a high desert civic commons</span>
-      </div>
       <div class="lang" role="group" aria-label="Language">
         <button id="en" aria-pressed="true">English</button>
         <button id="es" aria-pressed="false">Español</button>
@@ -148,8 +144,6 @@ const HTML = String.raw`
     <p data-i18n="joinSub">Join your neighbors in a place that belongs to all of you.</p>
     <a class="cta" href="/join"><span data-i18n="joinCta">Sign in or join</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </section>
-
-  <footer><span data-i18n="foot">Steppe · Redmond, Oregon</span> · <a href="/partners" style="color:inherit">For partners &amp; funders</a></footer>
 
 `;
 
