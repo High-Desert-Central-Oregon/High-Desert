@@ -27,3 +27,123 @@
   outline-offset: 3px;
   border-radius: 2px;
 }
+
+/* ============================================================================
+ * Shared site chrome — header + footer rendered once by the (site) layout.
+ * Scoped under .site-root so nothing leaks into the member app. Both use the
+ * brand tokens/fonts; the global focus ring above applies to every link.
+ * ========================================================================== */
+
+/* ---- header ---- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bone);
+  border-bottom: 1px solid var(--bone-deep);
+}
+.site-header-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 11px clamp(16px, 4vw, 40px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  flex-wrap: wrap;
+}
+.sh-brand {
+  font-family: var(--font-fraunces);
+  font-weight: 600;
+  font-size: 1.45rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--juniper-deep);
+  text-decoration: none;
+}
+.sh-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 26px);
+  flex-wrap: wrap;
+}
+.sh-link {
+  font-family: var(--font-public-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--basalt);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.sh-link:hover {
+  color: var(--juniper);
+}
+.sh-join {
+  font-family: var(--font-public-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--bone-soft);
+  background: var(--rust);
+  border-radius: 999px;
+  padding: 8px 20px;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.sh-join:hover {
+  background: var(--juniper);
+  transform: translateY(-1px);
+}
+
+/* ---- footer ---- */
+.site-footer {
+  background: var(--bone-soft);
+  border-top: 1px solid var(--bone-deep);
+  color: var(--basalt-soft);
+}
+.site-footer-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 44px) clamp(16px, 4vw, 40px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: var(--font-public-sans);
+}
+.sf-org {
+  font-size: 0.95rem;
+  color: var(--basalt);
+  margin: 0;
+}
+.sf-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+}
+.sf-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--juniper);
+  text-decoration: none;
+}
+.sf-link:hover {
+  text-decoration: underline;
+}
+.sf-credit {
+  font-size: 0.9rem;
+  margin: 0;
+}
+.sf-credit a {
+  color: var(--juniper);
+  font-weight: 600;
+}
+
+/* Calm by default; honor reduced-motion by dropping the hover transitions. */
+@media (prefers-reduced-motion: reduce) {
+  .sh-link,
+  .sh-join {
+    transition: none;
+  }
+  .sh-join:hover {
+    transform: none;
+  }
+}

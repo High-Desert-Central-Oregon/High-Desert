@@ -16,10 +16,19 @@ import "@fontsource/public-sans/600.css";
 import "@/styles/brand-tokens.css";
 import "./site-base.css";
 
+import { SiteHeader } from "./_components/site-header";
+import { SiteFooter } from "./_components/site-footer";
+
 export default function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="site-root">{children}</div>;
+  return (
+    <div className="site-root">
+      <SiteHeader />
+      {children}
+      <SiteFooter />
+    </div>
+  );
 }
