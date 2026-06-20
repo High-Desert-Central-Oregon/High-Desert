@@ -42,7 +42,7 @@ verify-then-forget guarantees live in Postgres RLS and triggers (`schema.sql`), 
 
 ```bash
 # 1. Install
-git clone [repo URL] high-desert && cd high-desert
+git clone [repo URL] steppe && cd steppe
 npm install
 
 # 2. Set up the database
