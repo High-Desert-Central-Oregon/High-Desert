@@ -1,0 +1,220 @@
+/* Pre-launch interest signup — uses the shared brand tokens/fonts
+ * (styles/brand-tokens.css, loaded by the (site) layout). Scoped to .join.
+ * Entrance follows the landing's "settle" convention: a calm fade-up, disabled
+ * under prefers-reduced-motion. */
+.join {
+  max-width: 560px;
+  padding: clamp(56px, 11vw, 132px) clamp(20px, 5vw, 64px);
+}
+
+/* Calm staggered reveal (mirrors landing.css .copy/settle). */
+.join .reveal {
+  animation: joinSettle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.join .join-title {
+  animation-delay: 0.06s;
+}
+.join .join-lede {
+  animation-delay: 0.12s;
+}
+.join .join-form,
+.join .join-done {
+  animation-delay: 0.18s;
+}
+.join .join-foot {
+  animation-delay: 0.24s;
+}
+@keyframes joinSettle {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .join .reveal {
+    animation: none;
+  }
+}
+
+.join-eyebrow {
+  font-family: var(--font-public-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+.join-title {
+  font-family: var(--font-fraunces);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.012em;
+  color: var(--basalt);
+  margin-top: 12px;
+}
+.join-lede {
+  font-family: var(--font-public-sans);
+  font-size: 1.12rem;
+  color: var(--basalt-soft);
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+/* ---- form ---- */
+.join-form {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.jf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.jf-field label,
+.jf-check span {
+  font-family: var(--font-public-sans);
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: var(--basalt);
+}
+.jf-req {
+  color: var(--rust);
+  font-weight: 600;
+}
+.jf-opt {
+  color: var(--basalt-soft);
+  font-weight: 400;
+}
+.jf-field input[type="text"],
+.jf-field input[type="email"] {
+  font-family: var(--font-public-sans);
+  font-size: 1rem;
+  color: var(--basalt);
+  background: var(--bone-soft);
+  border: 1.5px solid var(--bone-deep);
+  border-radius: 10px;
+  padding: 13px 15px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.jf-field input::placeholder {
+  color: var(--basalt-soft);
+  opacity: 0.7;
+}
+.jf-field input:focus-visible {
+  border-color: var(--juniper);
+  background: var(--snow);
+}
+
+.jf-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  cursor: pointer;
+}
+.jf-check input[type="checkbox"] {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  accent-color: var(--juniper);
+  cursor: pointer;
+}
+.jf-check span {
+  font-weight: 400;
+  color: var(--basalt-soft);
+  line-height: 1.5;
+}
+.jf-consent span {
+  font-weight: 600;
+  color: var(--basalt);
+}
+
+/* Honeypot: kept in the layout but pushed out of sight and out of the tab order.
+   display:none would let some bots skip it; this hides it from people only. */
+.jf-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.jf-submit {
+  align-self: flex-start;
+  font-family: var(--font-public-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bone-soft);
+  background: var(--juniper);
+  border: none;
+  border-radius: 999px;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.jf-submit:hover {
+  background: var(--juniper-deep);
+  transform: translateY(-1px);
+}
+.jf-submit:disabled {
+  opacity: 0.65;
+  cursor: default;
+  transform: none;
+}
+
+.jf-error {
+  font-family: var(--font-public-sans);
+  font-size: 0.95rem;
+  color: var(--rust);
+  margin: 0;
+}
+.jf-fine {
+  font-family: var(--font-public-sans);
+  font-size: 0.87rem;
+  color: var(--basalt-soft);
+  line-height: 1.55;
+  margin: 0;
+}
+.jf-fine a,
+.join-foot a {
+  color: var(--juniper);
+  font-weight: 600;
+}
+
+/* ---- success / duplicate ---- */
+.join-done {
+  margin-top: 36px;
+  background: var(--bone-soft);
+  border: 1.5px solid var(--bone-deep);
+  border-left: 4px solid var(--juniper);
+  border-radius: 12px;
+  padding: 24px 26px;
+}
+.join-done-title {
+  font-family: var(--font-fraunces);
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: var(--juniper-deep);
+  margin: 0;
+}
+.join-done-body {
+  font-family: var(--font-public-sans);
+  font-size: 1rem;
+  color: var(--basalt-soft);
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+
+.join-foot {
+  font-family: var(--font-public-sans);
+  font-size: 0.95rem;
+  color: var(--basalt-soft);
+  margin-top: 28px;
+}
