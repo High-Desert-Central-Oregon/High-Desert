@@ -57,7 +57,7 @@ const HTML = String.raw`
     <div class="scrim" aria-hidden="true"></div>
 
     <div class="topbar">
-      <div class="byline">A project led by <a href="#">Greg Chism</a></div>
+      <div class="byline">A project led by <a href="https://gregtchism.com" target="_blank" rel="noopener noreferrer">Greg Chism</a></div>
     </div>
 
     <div class="heromain">
