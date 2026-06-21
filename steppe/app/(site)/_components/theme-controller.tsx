@@ -49,7 +49,12 @@ export function ThemeController() {
         // ignore storage access errors (private mode, etc.)
       }
       if (saved === "light" || saved === "dark") return;
-      const next = e.matches ? "dark" : "light";
+      // Mirror the no-flash script's rule so OS-follow matches initial paint and
+      // a reload: night is dark even if the OS flips to light.
+      const next =
+        e.matches || timeOfDay(new Date().getHours()) === "night"
+          ? "dark"
+          : "light";
       root.setAttribute("data-theme", next);
       setThemeState(next);
     };

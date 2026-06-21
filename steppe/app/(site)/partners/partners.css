@@ -182,6 +182,11 @@ html[data-theme="dark"] .site-root .partners .hero h1 em {
   color: var(--dues);
   padding-top: 2px;
 }
+/* rust on the dark panel card fails AA; use the lighter rust-glow in dark mode */
+html[data-theme="dark"] .site-root .partners .panel .pk,
+html[data-theme="dark"] .site-root .partners .panel li .t {
+  color: var(--rust-glow);
+}
 
 /* funding register */
 .site-root .partners .fund {

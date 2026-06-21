@@ -250,7 +250,9 @@ export function PreviewStage() {
                   <button className="fchip">Offers</button>
                   <button className="fchip">Needs</button>
                   <button className="fchip">Gatherings</button>
-                  <button className="fchip soon">Marketplace · later, by vote</button>
+                  <button className="fchip soon" type="button" disabled>
+                    Marketplace · later, by vote
+                  </button>
                 </div>
                 {LISTINGS.map((l) => (
                   <div
@@ -395,7 +397,7 @@ export function PreviewStage() {
                   >
                     {voted ? "Ballot cast" : "Cast your ballot"}
                   </button>
-                  <div className={`voted${voted ? " show" : ""}`}>
+                  <div className={`voted${voted ? " show" : ""}`} role="status">
                     <b>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path d="M5 12l4 4 10-10" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />

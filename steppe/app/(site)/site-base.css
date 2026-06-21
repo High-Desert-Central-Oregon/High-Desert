@@ -73,14 +73,14 @@ html[data-theme="dark"] .site-root::before {
   padding: 0 var(--pad-x);
 }
 
-/* Theme toggle icon swap. */
-.theme-toggle .moon {
+/* Theme toggle icon swap (scoped to the marketing layer). */
+.site-root .theme-toggle .moon {
   display: none;
 }
-html[data-theme="dark"] .theme-toggle .sun {
+html[data-theme="dark"] .site-root .theme-toggle .sun {
   display: none;
 }
-html[data-theme="dark"] .theme-toggle .moon {
+html[data-theme="dark"] .site-root .theme-toggle .moon {
   display: block;
 }
 
@@ -278,6 +278,11 @@ html[data-theme="dark"] .theme-toggle .moon {
 .site-root .band-alt {
   background: var(--bg-alt);
   color: var(--text);
+}
+/* The light band-alt is sage (#c3cdb6); darken muted text on it to clear WCAG AA
+   (the global --text-muted #736e60 only hits ~3.08:1 on sage). */
+html[data-theme="light"] .site-root .band-alt {
+  --text-muted: #545040;
 }
 .site-root .band-paper {
   background: var(--bg-paper);
@@ -595,6 +600,9 @@ html[data-js] .site-root .rv.in {
   .sky-l,
   .sun-group,
   .sun-g,
+  .sun,
+  .sun-d,
+  .sun-halo,
   .night-group,
   .night-g,
   .day-group {

@@ -85,6 +85,9 @@ html[data-theme="dark"] .site-root .join .hero h1 em {
   color: var(--rust);
   margin-bottom: 6px;
 }
+html[data-theme="dark"] .site-root .join .formcard .fk {
+  color: var(--rust-glow);
+}
 .site-root .join .formcard h2 {
   font-size: 25px;
   font-weight: 480;

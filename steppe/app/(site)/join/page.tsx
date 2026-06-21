@@ -42,7 +42,7 @@ export default function JoinPage() {
         <StrataHorizon variant="compact" />
       </header>
 
-      <section className="section band-alt">
+      <section className="section band-paper">
         <div className="wrap">
           <div className="sec-head">
             <span className="eyebrow">

@@ -34,7 +34,7 @@ export default function PrivacyPage() {
         <StrataHorizon variant="compact" />
       </header>
 
-      <section className="section band-alt">
+      <section className="section band-paper">
         <div className="wrap">
           <div className="sec-head">
             <span className="eyebrow">
@@ -190,7 +190,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      <section className="section band-alt">
+      <section className="section band-paper">
         <div className="wrap">
           <div className="sec-head">
             <span className="eyebrow">

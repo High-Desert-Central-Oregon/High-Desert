@@ -11,7 +11,7 @@ import { SealMark } from "./_components/seal-mark";
 import { Reveal } from "./_components/reveal";
 
 export const metadata = {
-  title: "Steppe — a neighborhood you can trust",
+  title: "Steppe — a high desert civic commons",
   description:
     "Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond, Oregon. No ads. No tracking. Your data stays yours.",
 };
@@ -108,7 +108,7 @@ export default function LandingPage() {
                 <div className="scr-feed">
                   <div className="fcard">
                     <span className="chip offer">Offer</span>
-                    <h4>Free tomato starts — 40+ plants</h4>
+                    <div className="fh">Free tomato starts — 40+ plants</div>
                     <p>Grew too many Early Girls this spring. Free to a good home.</p>
                     <div className="fmeta">
                       <span className="av" style={{ background: "#9CAD8B" }}>MK</span>
@@ -117,7 +117,7 @@ export default function LandingPage() {
                   </div>
                   <div className="fcard">
                     <span className="chip need">Need</span>
-                    <h4>Electrician who knows older homes</h4>
+                    <div className="fh">Electrician who knows older homes</div>
                     <p>Panel upgrade on a 1970s house — licensed &amp; insured.</p>
                     <div className="fmeta">
                       <span className="av" style={{ background: "#A8542C" }}>JR</span>
@@ -126,7 +126,7 @@ export default function LandingPage() {
                   </div>
                   <div className="fcard">
                     <span className="chip gather">Gathering</span>
-                    <h4>Member meeting — July 12</h4>
+                    <div className="fh">Member meeting — July 12</div>
                     <p>Community Fund proposals &amp; new-member welcome.</p>
                     <div className="fmeta">
                       <span className="av" style={{ background: "#36563D" }}>St</span>
