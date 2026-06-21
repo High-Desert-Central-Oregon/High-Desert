@@ -1,6 +1,6 @@
 {
   "locale": { "label": "Language", "en": "EN", "es": "ES" },
-  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join" },
+  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join", "menuOpen": "Open menu", "menuClose": "Close menu" },
   "footer": {
     "explore": "Explore",
     "preview": "Preview",
