@@ -6,8 +6,10 @@ import { sendContactEmail } from "@/lib/contact";
  * honeypot + rate-limited submissions, and delivers via the provider-isolated
  * sendContactEmail(). Email-only: nothing is written to Supabase. On failure it
  * returns a clean error so the UI can fall back to the mailto: link.
+ *
+ * No `runtime` export: pinning "nodejs" is incompatible with cacheComponents
+ * (next.config), and Resend is reached over fetch, so the default runtime is fine.
  */
-export const runtime = "nodejs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TOPICS = new Set([

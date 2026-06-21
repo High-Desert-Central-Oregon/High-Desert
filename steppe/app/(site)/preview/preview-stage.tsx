@@ -313,11 +313,14 @@ function icsEscape(s: string): string {
 // Client-side .ics generation + download (no RSVP, no network).
 function downloadIcs(ev: { id: string; title: string; location: string; start: string }) {
   const allDay = !ev.start.includes("T");
-  const dt = allDay
-    ? ev.start.replace(/-/g, "")
-    : ev.start.replace(/[-:]/g, "").slice(0, 15);
-  const stamp =
-    new Date().toISOString().replace(/[-:.]/g, "").slice(0, 15) + "Z";
+  // Strip separators with chained single-char replaces rather than one regex
+  // character class. A bracketed dash-colon-dot token in source gets misread by
+  // Tailwind's class scanner as an arbitrary-property utility, which emits a
+  // broken rule into the member app's globals.css build — so keep it out of here,
+  // comments included.
+  const strip = (s: string) => s.replace(/-/g, "").replace(/:/g, "").replace(/\./g, "");
+  const dt = allDay ? strip(ev.start) : strip(ev.start).slice(0, 15);
+  const stamp = strip(new Date().toISOString()).slice(0, 15) + "Z";
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
