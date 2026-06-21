@@ -76,26 +76,26 @@ const LISTINGS: Listing[] = [
 const CAPTIONS: Record<Screen, [string, string, string, string]> = {
   exchange: [
     "The exchange",
-    "One calm feed.",
-    "Needs, offers, gatherings, and mutual aid in a single place — no algorithm deciding what you see. Tap any entry to open it and reach the neighbor directly.",
+    "One honest feed.",
+    "Needs, offers, gatherings, and mutual aid, all in one feed. Nothing is ranked or boosted. Tap any entry to open it and reach that neighbor directly.",
     "No ads · no tracking · messages stay inside Steppe",
   ],
   groups: [
     "Groups",
-    "The circles you choose.",
-    "Neighborhood and interest groups you opt into — and leave whenever you want. Each group decides its own messaging.",
+    "Groups you choose.",
+    "Join the neighborhood and interest groups you want and leave any of them whenever you like. Each group sets its own messaging.",
     "You control which groups can message you",
   ],
   govern: [
     "Govern",
     "Your vote, in private.",
-    "Vote on the rules, the budget, and where Steppe goes next. Your ballot is secret, and at launch everyone's vote counts the same.",
+    "Vote on the budget, the rules, and where Steppe goes next. Your ballot is secret, and at launch everyone's counts the same.",
     "15% quorum · secret ballot · reversible by vote",
   ],
   you: [
     "You",
     "Private until you say so.",
-    "Your profile starts private. Reveal each field to no one, to members, or to everyone — field by field, your call.",
+    "Your profile starts private. Show each field to no one, to members, or to everyone. It's field by field, and it's your call. We will never take that from you.",
     "Username always shown · everything else your choice",
   ],
 };
@@ -402,7 +402,7 @@ export function PreviewStage() {
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path d="M5 12l4 4 10-10" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
-                      Ballot recorded — and secret.
+                      Ballot recorded, and secret.
                     </b>
                     <p>
                       No one can see how you voted. At launch every member&rsquo;s

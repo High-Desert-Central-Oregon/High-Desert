@@ -18,19 +18,19 @@ export default function PreviewPage() {
       <header className="hero">
         <div className="hero-in">
           <span className="badge">
-            <span className="dot"></span>A preview — not the finished product
+            <span className="dot"></span>A preview, not the finished product
           </span>
           <h1>
             A first look at <em>Steppe.</em>
           </h1>
           <p>
-            This is where we begin: one calm exchange, the groups you choose, a
-            vote that&rsquo;s yours, and a profile that stays private until you say
-            otherwise.
+            This is the first version. A place to trade help with neighbors,
+            groups you choose to join, a secret vote on how things run, and a
+            profile that stays private until you say so.
           </p>
           <div className="note">
-            Everything here is the shape of the first version. Members decide what
-            it becomes from here — by vote.
+            Everything here is the shape of the first version. Where it goes next
+            is up to the members, by vote.
           </div>
         </div>
       </header>

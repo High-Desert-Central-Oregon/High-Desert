@@ -207,10 +207,10 @@ html[data-time="dawn"] .sun-d{fill:#E18A5B}html[data-time="day"] .sun-d{fill:#C9
 
 <header class="hero">
   <div class="hero-in">
-    <span class="badge"><span class="dot"></span>A preview — not the finished product</span>
+    <span class="badge"><span class="dot"></span>A preview, not the finished product</span>
     <h1>A first look at <em>Steppe.</em></h1>
-    <p>This is where we begin: one calm exchange, the groups you choose, a vote that's yours, and a profile that stays private until you say otherwise.</p>
-    <div class="note">Everything here is the shape of the first version. Members decide what it becomes from here — by vote.</div>
+    <p>This is the first version. A place to trade help with neighbors, groups you choose to join, a secret vote on how things run, and a profile that stays private until you say so.</p>
+    <div class="note">Everything here is the shape of the first version. Where it goes next is up to the members, by vote.</div>
   </div>
 </header>
 
@@ -272,7 +272,7 @@ html[data-time="dawn"] .sun-d{fill:#E18A5B}html[data-time="day"] .sun-d{fill:#C9
             <div class="opt" onclick="rank(this)"><span class="rk">—</span>Little free pantry restock</div>
             <div class="quorum"><div class="ql"><span>Turnout</span><span>62% · quorum met</span></div><div class="qbar"><i></i></div></div>
             <button class="castb" onclick="castVote()">Cast your ballot</button>
-            <div class="voted" id="voted"><b><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#36563D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ballot recorded — and secret.</b><p>No one can see how you voted. At launch every member's vote counts the same; members can later vote to weight by tenure.</p></div>
+            <div class="voted" id="voted"><b><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#36563D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ballot recorded, and secret.</b><p>No one can see how you voted. At launch every member's vote counts the same; members can later vote to weight by tenure.</p></div>
           </div>
         </div>
 
@@ -353,10 +353,10 @@ var L={
  '0407':{cat:'Mutual aid',c:'#4F6B7A',ttl:'Rides to medical appointments',body:"Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing — reach out and we'll coordinate.",who:'Dana L.',init:'DL'}
 };
 var CAP={
- exchange:['The exchange','One calm feed.',"Needs, offers, gatherings, and mutual aid in a single place — no algorithm deciding what you see. Tap any entry to open it and reach the neighbor directly.",'No ads · no tracking · messages stay inside Steppe'],
- groups:['Groups','The circles you choose.',"Neighborhood and interest groups you opt into — and leave whenever you want. Each group decides its own messaging.",'You control which groups can message you'],
- govern:['Govern','Your vote, in private.',"Vote on the rules, the budget, and where Steppe goes next. Your ballot is secret, and at launch everyone's vote counts the same.",'15% quorum · secret ballot · reversible by vote'],
- you:['You','Private until you say so.',"Your profile starts private. Reveal each field to no one, to members, or to everyone — field by field, your call.",'Username always shown · everything else your choice']
+ exchange:['The exchange','One honest feed.',"Needs, offers, gatherings, and mutual aid, all in one feed. Nothing is ranked or boosted. Tap any entry to open it and reach that neighbor directly.",'No ads · no tracking · messages stay inside Steppe'],
+ groups:['Groups','Groups you choose.',"Join the neighborhood and interest groups you want and leave any of them whenever you like. Each group sets its own messaging.",'You control which groups can message you'],
+ govern:['Govern','Your vote, in private.',"Vote on the budget, the rules, and where Steppe goes next. Your ballot is secret, and at launch everyone's counts the same.",'15% quorum · secret ballot · reversible by vote'],
+ you:['You','Private until you say so.',"Your profile starts private. Show each field to no one, to members, or to everyone. It's field by field, and it's your call. We will never take that from you.",'Username always shown · everything else your choice']
 };
 function show(v){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('show',s.getAttribute('data-screen')===v);});
