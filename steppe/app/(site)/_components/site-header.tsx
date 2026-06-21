@@ -1,27 +1,43 @@
-// Shared marketing header for the public (site) route group. Rendered once by
-// the (site) layout above {children}, so every public page gets the same brand +
-// nav. Plain anchors (full navigation, no client JS); styling lives in
-// site-base.css, scoped under .site-root. Keyboard-focusable via the shared
-// .site-root :focus-visible ring.
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { SealMark } from "./seal-mark";
+import { ThemeController } from "./theme-controller";
+
+/**
+ * Shared marketing nav (v5 design). Seal + "Steppe" wordmark home link, the
+ * Preview / For partners links with active-route styling, the day/night theme
+ * toggle, and a Join pill. Client component so usePathname can mark the active
+ * route. On mobile the text links collapse (CSS) leaving the toggle + Join.
+ */
 export function SiteHeader() {
+  const pathname = usePathname();
+  const active = (href: string) =>
+    pathname === href ? "active" : undefined;
+
   return (
-    <header className="site-header">
-      <nav className="site-header-inner" aria-label="Site">
-        <a className="sh-brand" href="/">
+    <nav className="nav">
+      <div className="nav-in">
+        <Link className="brand" href="/">
+          <SealMark clipId="seal-nav" />
           Steppe
-        </a>
-        <div className="sh-links">
-          <a className="sh-link" href="/preview">
-            Preview
-          </a>
-          <a className="sh-link" href="/partners">
-            For partners
-          </a>
-          <a className="sh-join" href="/join">
+        </Link>
+        <div className="nav-right">
+          <div className="nav-links">
+            <Link href="/preview" className={active("/preview")}>
+              Preview
+            </Link>
+            <Link href="/partners" className={active("/partners")}>
+              For partners
+            </Link>
+          </div>
+          <ThemeController />
+          <Link className="btn btn-primary" href="/join">
             Join
-          </a>
+          </Link>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
   );
 }

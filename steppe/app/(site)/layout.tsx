@@ -11,7 +11,6 @@ import "./site-base.css";
 
 import { SiteHeader } from "./_components/site-header";
 import { SiteFooter } from "./_components/site-footer";
-import { ThemeController } from "./_components/theme-controller";
 
 export default function SiteLayout({
   children,
@@ -20,9 +19,6 @@ export default function SiteLayout({
 }) {
   return (
     <div className="site-root">
-      {/* Temporary mount so the theme/time controller is live + testable in
-          Part 2; Part 3 relocates <ThemeController /> into the nav. */}
-      <ThemeController />
       <SiteHeader />
       {children}
       <SiteFooter />

@@ -1,29 +1,35 @@
-// Shared marketing footer for the public (site) route group. Rendered once by
-// the (site) layout below {children}. Plain anchors; styling in site-base.css,
-// scoped under .site-root. The founder credit and contact link out (new tab,
-// noopener); internal links use the same set the header offers plus Privacy.
+import Link from "next/link";
+import { SealMark } from "./seal-mark";
+
+/**
+ * Shared marketing footer (v5 design). Seal + wordmark, the nonprofit/contact
+ * meta block, the Explore links, and the founder credit linking out to
+ * gregtchism.com.
+ */
 export function SiteFooter() {
   return (
-    <footer className="site-footer">
-      <div className="site-footer-inner">
-        <p className="sf-org">
-          Steppe — an Oregon public benefit nonprofit · Redmond, Oregon
-        </p>
-        <nav className="sf-links" aria-label="Footer">
-          <a className="sf-link" href="/preview">
-            Preview
-          </a>
-          <a className="sf-link" href="/partners">
-            For partners
-          </a>
-          <a className="sf-link" href="/privacy">
-            Privacy
-          </a>
-          <a className="sf-link" href="mailto:hello@steppe.community">
-            hello@steppe.community
-          </a>
-        </nav>
-        <p className="sf-credit">
+    <footer className="footer">
+      <div className="wrap footer-in">
+        <div>
+          <Link className="brand" href="/">
+            <SealMark size={28} clipId="seal-foot" />
+            Steppe
+          </Link>
+          <p className="footer-meta" style={{ marginTop: 16 }}>
+            An Oregon public benefit nonprofit
+            <br />
+            Redmond, Oregon · EST. 2026
+            <br />
+            <a href="mailto:hello@steppe.community">hello@steppe.community</a>
+          </p>
+        </div>
+        <div className="footer-links">
+          <span className="head">Explore</span>
+          <Link href="/preview">Preview</Link>
+          <Link href="/partners">For partners</Link>
+          <Link href="/privacy">Privacy</Link>
+        </div>
+        <div className="footer-meta" style={{ alignSelf: "flex-end" }}>
           Led by{" "}
           <a
             href="https://gregtchism.com"
@@ -32,7 +38,7 @@ export function SiteFooter() {
           >
             Greg Chism
           </a>
-        </p>
+        </div>
       </div>
     </footer>
   );
