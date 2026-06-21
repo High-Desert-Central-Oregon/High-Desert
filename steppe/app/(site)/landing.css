@@ -569,6 +569,17 @@ html[data-theme="light"] .site-root .hero h1 .em {
     grid-template-columns: 1fr;
     gap: 8px;
   }
+  /* Keep the time-of-day landscape readable when the hero stacks. The strata SVG
+     scales by width (viewBox 1440x300, ~4.8:1, preserveAspectRatio="none"), so on
+     a phone its auto height collapses to a thin sliver and the sky / sun / stars
+     stop registering — which reads as "the day/night scene doesn't switch on
+     mobile." A min-height holds the scene open (the SVG just stretches to fill, no
+     horizontal crop), so day <-> night reads the same as desktop at every width.
+     The day/night switching itself is driven by data-theme/data-time on <html>
+     and is already viewport-independent; this only restores the scene's height. */
+  .site-root .hero .strata {
+    min-height: clamp(150px, 26vw, 200px);
+  }
   .site-root .phone-stage {
     order: -1;
     margin-bottom: 8px;
