@@ -1,210 +1,396 @@
+// Landing (/) — rebuilt as React from the canonical design
+// (_design-source/steppe-landing-v5.html), on the shared chrome + tokens. Hero
+// (StrataHorizon + phone preview), promises as charter clauses, the exchange as a
+// register on the juniper feature band, governance + rotating seal, and the
+// bedrock CTA. Nav + footer come from the (site) layout; reveal-on-scroll is the
+// reduced-motion- and no-JS-safe <Reveal /> island.
+import Link from "next/link";
 import "./landing.css";
-import { RawPage } from "./_components/raw-page";
+import { StrataHorizon } from "./_components/strata-horizon";
+import { SealMark } from "./_components/seal-mark";
+import { Reveal } from "./_components/reveal";
 
 export const metadata = {
-  title: "Steppe — a high desert civic commons",
+  title: "Steppe — a neighborhood you can trust",
   description:
-    "Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond, Oregon.",
+    "Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond, Oregon. No ads. No tracking. Your data stays yours.",
 };
 
-// Verbatim markup + original EN/ES toggle script from
-// _design-source/steppe-landing.html — see RawPage. Styles in ./landing.css.
-const HTML = String.raw`
-  <section class="hero">
-    <div class="scene" aria-hidden="true">
-      <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
-        <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="var(--sky-high)"/>
-            <stop offset="55%" stop-color="var(--sky-mid)"/>
-            <stop offset="100%" stop-color="var(--sky-low)"/>
-          </linearGradient>
-          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0" stop-color="#F6E2C0"/><stop offset="100%" stop-color="#F6E2C0" stop-opacity="0"/>
-          </radialGradient>
-          <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#E4DCCB" stop-opacity="0"/>
-            <stop offset="100%" stop-color="#E7DECC" stop-opacity=".82"/>
-          </linearGradient>
-          <!-- irregular juniper silhouette -->
-          <g id="pine"><path d="M24 2 L31 20 L27 20 L36 38 L31 38 L43 58 L27 58 L27 66 L21 66 L21 58 L5 58 L17 38 L12 38 L21 20 L17 20 Z" fill="var(--juniper)"/></g>
-        </defs>
-
-        <rect x="0" y="0" width="1440" height="900" fill="url(#sky)"/>
-        <circle class="l-sun" cx="1180" cy="210" r="260" fill="url(#glow)"/>
-
-        <!-- far range: hazed back, gives the horizon depth -->
-        <path class="l-far" d="M0 470 L160 410 L300 452 L470 388 L640 452 L820 404 L1010 456 L1200 402 L1380 452 L1440 432 L1440 480 L0 480 Z"
-              fill="#9BA697" opacity=".34"/>
-
-        <!-- main range: the Three Sisters -->
-        <g class="l-peaks">
-          <path d="M560 474 L700 360 L760 300 L842 384 L900 330 L980 250 L1082 362 L1180 320 L1290 474 Z" fill="#7C8A7E" opacity=".55"/>
-          <path d="M946 286 L980 250 L1016 286 L996 298 L980 290 L964 298 Z" fill="var(--snow)" opacity=".85"/>
-          <path d="M730 332 L760 300 L792 334 L772 344 L760 338 L746 344 Z" fill="var(--snow)" opacity=".8"/>
-        </g>
-
-        <!-- valley haze washes out the peak bases -->
-        <rect x="0" y="356" width="1440" height="150" fill="url(#haze)"/>
-
-        <!-- single soft ridge -->
-        <path class="l-ridge" d="M0 560 C220 548 360 556 560 520 C780 484 1000 502 1240 474 C1330 464 1390 470 1440 466 L1440 900 L0 900 Z"
-              fill="var(--sage)" opacity=".48"/>
-
-        <!-- juniper ground + irregular treeline, weighted right of the copy -->
-        <path class="l-trees" d="M0 650 C240 642 420 650 620 641 C820 632 1000 651 1240 637 C1330 631 1390 641 1440 635 L1440 900 L0 900 Z"
-              fill="var(--juniper)" opacity=".96"/>
-        <g class="l-trees">
-          <use href="#pine" transform="translate(622,563) scale(1.1)"/>
-          <use href="#pine" transform="translate(683,583) scale(.8)"/>
-          <use href="#pine" transform="translate(861,550) scale(1.3)"/>
-          <use href="#pine" transform="translate(926,580) scale(.85)"/>
-          <use href="#pine" transform="translate(1152,560) scale(1.15)"/>
-          <use href="#pine" transform="translate(1213,583) scale(.8)"/>
-          <use href="#pine" transform="translate(1337,557) scale(1.2)"/>
-          <use href="#pine" transform="translate(1394,582) scale(.82)"/>
-        </g>
-
-        <!-- foreground: rust seam + two warm bands (one fewer stripe than before) -->
-        <path d="M0 700 C360 690 760 712 1120 698 C1280 692 1380 707 1440 698 L1440 716 L0 716 Z" fill="var(--rust)" opacity=".15"/>
-        <path d="M0 716 C340 705 720 732 1100 716 C1280 708 1380 726 1440 716 L1440 824 L0 824 Z" fill="var(--bone-deep)"/>
-        <path d="M0 824 C400 815 820 838 1200 823 C1320 818 1400 833 1440 826 L1440 900 L0 900 Z" fill="var(--bone)"/>
-
-        <g class="l-contour" fill="none" stroke="var(--juniper-line)" stroke-opacity=".14" stroke-width="1.4">
-          <path d="M-80 748 C240 736 560 760 880 748 C1140 738 1360 758 1600 748"/>
-          <path d="M-80 800 C260 788 620 812 980 798 C1200 790 1400 808 1600 798"/>
-          <path d="M-80 852 C320 840 740 864 1140 850 C1320 844 1460 860 1600 852"/>
-        </g>
-      </svg>
-    </div>
-    <div class="lightwash" aria-hidden="true"></div>
-    <div class="scrim" aria-hidden="true"></div>
-
-    <div class="topbar">
-      <div class="lang" role="group" aria-label="Language">
-        <button id="en" aria-pressed="true">English</button>
-        <button id="es" aria-pressed="false">Español</button>
-      </div>
-    </div>
-
-    <div class="heromain">
-      <div class="copy">
-        <p class="eyebrow" data-i18n="place">Redmond, Oregon</p>
-        <h1 class="headline" data-i18n="headline">A neighborhood you can trust.</h1>
-        <p class="lede" data-i18n="lede">Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.</p>
-        <a class="cta" href="/join">
-          <span data-i18n="cta">Sign in or join</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="promises">
-    <h2 class="ptitle" data-i18n="promiseTitle">What we promise</h2>
-    <div class="pgrid">
-      <div class="pcard"><span class="ck" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#36503E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><p data-i18n="p1">No advertising, ever — you are the member, not the product.</p></div>
-      <div class="pcard"><span class="ck" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#36503E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><p data-i18n="p2">We verify your residency, then forget the documents.</p></div>
-      <div class="pcard"><span class="ck" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#36503E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><p data-i18n="p3">Members govern this place, and your vote is secret.</p></div>
-      <div class="pcard"><span class="ck" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#36503E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span><p data-i18n="p4">Your data is yours: export it, and leave with it any time.</p></div>
-    </div>
-  </section>
-
-  <section class="how">
-    <p class="eyebrow2" data-i18n="howEy">Joining</p>
-    <h2 class="stitle" data-i18n="howTitle">From neighbor to member</h2>
-    <ol class="steps">
-      <li class="step"><span class="snum">1</span><h3 data-i18n="s1t">Verify you're local</h3><p data-i18n="s1b">Confirm you live in the Redmond area — real neighbors, no anonymous accounts, no bots. We check, then forget the documents.</p></li>
-      <li class="step"><span class="snum">2</span><h3 data-i18n="s2t">Join for $4 a month</h3><p data-i18n="s2b">That's the whole membership. Pay yearly or by bank transfer. Can't swing it right now? A hardship waiver is yours, no questions asked.</p></li>
-      <li class="step"><span class="snum">3</span><h3 data-i18n="s3t">Settle in</h3><p data-i18n="s3b">Join groups, post to the local exchange, find help and offer it, and talk with the people who live around you.</p></li>
-      <li class="step"><span class="snum">4</span><h3 data-i18n="s4t">Help steer it</h3><p data-i18n="s4b">Vote on the rules, the budget, and where Steppe goes next. Your vote is secret, and it counts the same as everyone's.</p></li>
-    </ol>
-  </section>
-
-  <section class="exchange">
-    <p class="eyebrow2" data-i18n="exEy">What neighbors share</p>
-    <h2 class="stitle" data-i18n="exTitle">One local exchange</h2>
-    <p class="ssub" data-i18n="exSub">A need, an offer, a job, goods, mutual aid, a gathering — one calm feed, with no algorithm deciding what you see.</p>
-    <div class="lgrid">
-      <div class="lcard"><span class="ltag t-offer" data-i18n="lc1tag">Offer</span><h3 data-i18n="lc1t">Free tomato starts — 40+ plants</h3><p data-i18n="lc1b">Grew too many Early Girls this spring. Free to anyone who'll plant them. Pickup near downtown.</p><div class="lby"><span class="lav">MK</span><span data-i18n="lc1by">Martha K. · 2h ago</span></div></div>
-      <div class="lcard"><span class="ltag t-need" data-i18n="lc2tag">Need</span><h3 data-i18n="lc2t">Electrician who knows older homes</h3><p data-i18n="lc2b">Panel upgrade on a 1970s house. Looking for someone licensed and insured who's worked on older Redmond homes.</p><div class="lby"><span class="lav">JR</span><span data-i18n="lc2by">James R. · 5h ago</span></div></div>
-      <div class="lcard"><span class="ltag t-event" data-i18n="lc3tag">Gathering</span><h3 data-i18n="lc3t">Member meeting — July</h3><p data-i18n="lc3b">Monthly open meeting: Community Fund proposals, governance Q&amp;A, new-member welcome. Sat July 12.</p><div class="lby"><span class="lav">S</span><span data-i18n="lc3by">Steppe · adds to your calendar</span></div></div>
-      <div class="lcard"><span class="ltag t-mutual" data-i18n="lc4tag">Mutual aid</span><h3 data-i18n="lc4t">Rides to medical appointments</h3><p data-i18n="lc4b">Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing.</p><div class="lby"><span class="lav">DL</span><span data-i18n="lc4by">Dana L. · 3h ago</span></div></div>
-    </div>
-  </section>
-
-  <section class="govstrip">
-    <p class="eyebrow2" data-i18n="govEy">Governed by its members</p>
-    <h2 data-i18n="govTitle">Built so it can't be sold out from under you.</h2>
-    <p data-i18n="govBody">Steppe is an Oregon public benefit nonprofit. No owner, no investors, nothing to sell. The members govern it — and the promises above are written into its founding documents, where they can only change by a vote of the members themselves.</p>
-  </section>
-
-  <section class="join">
-    <h2 data-i18n="joinTitle">Your seat is open.</h2>
-    <p data-i18n="joinSub">Join your neighbors in a place that belongs to all of you.</p>
-    <a class="cta" href="/join"><span data-i18n="joinCta">Sign in or join</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-  </section>
-
-`;
-
-const SCRIPT = String.raw`
-  const dict = {
-    en:{ tagline:"a high desert civic commons", place:"Redmond, Oregon",
-      headline:"A neighborhood you can trust.",
-      lede:"Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.",
-      cta:"Sign in or join", promiseTitle:"What we promise",
-      p1:"No advertising, ever — you are the member, not the product.",
-      p2:"We verify your residency, then forget the documents.",
-      p3:"Members govern this place, and your vote is secret.",
-      p4:"Your data is yours: export it, and leave with it any time.",
-      howEy:"Joining", howTitle:"From neighbor to member",
-      s1t:"Verify you're local", s1b:"Confirm you live in the Redmond area — real neighbors, no anonymous accounts, no bots. We check, then forget the documents.",
-      s2t:"Join for $4 a month", s2b:"That's the whole membership. Pay yearly or by bank transfer. Can't swing it right now? A hardship waiver is yours, no questions asked.",
-      s3t:"Settle in", s3b:"Join groups, post to the local exchange, find help and offer it, and talk with the people who live around you.",
-      s4t:"Help steer it", s4b:"Vote on the rules, the budget, and where Steppe goes next. Your vote is secret, and it counts the same as everyone's.",
-      exEy:"What neighbors share", exTitle:"One local exchange",
-      exSub:"A need, an offer, a job, goods, mutual aid, a gathering — one calm feed, with no algorithm deciding what you see.",
-      lc1tag:"Offer", lc1t:"Free tomato starts — 40+ plants", lc1b:"Grew too many Early Girls this spring. Free to anyone who'll plant them. Pickup near downtown.", lc1by:"Martha K. · 2h ago",
-      lc2tag:"Need", lc2t:"Electrician who knows older homes", lc2b:"Panel upgrade on a 1970s house. Looking for someone licensed and insured who's worked on older Redmond homes.", lc2by:"James R. · 5h ago",
-      lc3tag:"Gathering", lc3t:"Member meeting — July", lc3b:"Monthly open meeting: Community Fund proposals, governance Q&A, new-member welcome. Sat July 12.", lc3by:"Steppe · adds to your calendar",
-      lc4tag:"Mutual aid", lc4t:"Rides to medical appointments", lc4b:"Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing.", lc4by:"Dana L. · 3h ago",
-      govEy:"Governed by its members", govTitle:"Built so it can't be sold out from under you.",
-      govBody:"Steppe is an Oregon public benefit nonprofit. No owner, no investors, nothing to sell. The members govern it — and the promises above are written into its founding documents, where they can only change by a vote of the members themselves.",
-      joinTitle:"Your seat is open.", joinSub:"Join your neighbors in a place that belongs to all of you.", joinCta:"Sign in or join",
-      foot:"Steppe · Redmond, Oregon" },
-    es:{ tagline:"un bien común cívico del alto desierto", place:"Redmond, Oregón",
-      headline:"Un vecindario en el que puedes confiar.",
-      lede:"Steppe es infraestructura cívica verificada, sin anuncios y de propiedad de sus miembros, para la gente de Redmond. Sin anuncios. Sin rastreo. Tus datos son tuyos.",
-      cta:"Inicia sesión o únete", promiseTitle:"Lo que prometemos",
-      p1:"Sin publicidad, nunca: tú eres el miembro, no el producto.",
-      p2:"Verificamos tu residencia y luego olvidamos los documentos.",
-      p3:"Los miembros gobiernan este lugar, y tu voto es secreto.",
-      p4:"Tus datos son tuyos: expórtalos y llévatelos cuando quieras.",
-      howEy:"Cómo unirse", howTitle:"De vecino a miembro",
-      s1t:"Verifica que eres local", s1b:"Confirma que vives en el área de Redmond: vecinos reales, sin cuentas anónimas, sin bots. Verificamos y luego olvidamos los documentos.",
-      s2t:"Únete por $4 al mes", s2b:"Esa es toda la membresía. Paga al año o por transferencia bancaria. ¿No puedes ahora mismo? La exención por dificultad es tuya, sin preguntas.",
-      s3t:"Acomódate", s3b:"Únete a grupos, publica en el intercambio local, encuentra y ofrece ayuda, y habla con quienes viven a tu alrededor.",
-      s4t:"Ayuda a dirigirlo", s4b:"Vota sobre las reglas, el presupuesto y el rumbo de Steppe. Tu voto es secreto y vale igual que el de todos.",
-      exEy:"Lo que comparten los vecinos", exTitle:"Un intercambio local",
-      exSub:"Una necesidad, una oferta, un trabajo, bienes, ayuda mutua, una reunión: un solo espacio tranquilo, sin un algoritmo decidiendo lo que ves.",
-      lc1tag:"Ofrece", lc1t:"Plántulas de tomate gratis — más de 40", lc1b:"Sembré demasiadas esta primavera. Gratis para quien las plante. Recogida cerca del centro.", lc1by:"Martha K. · hace 2h",
-      lc2tag:"Necesita", lc2t:"Electricista que conozca casas antiguas", lc2b:"Mejora del panel en una casa de los años 70. Busco a alguien con licencia y seguro, con experiencia en casas antiguas de Redmond.", lc2by:"James R. · hace 5h",
-      lc3tag:"Reunión", lc3t:"Reunión de miembros — julio", lc3b:"Reunión abierta mensual: propuestas del Fondo Comunitario, preguntas sobre gobernanza, bienvenida a nuevos miembros. Sáb 12 de julio.", lc3by:"Steppe · se añade a tu calendario",
-      lc4tag:"Ayuda mutua", lc4t:"Viajes a citas médicas", lc4b:"Puedo ofrecer dos viajes por semana para vecinos que necesiten transporte a Bend. Horario flexible.", lc4by:"Dana L. · hace 3h",
-      govEy:"Gobernado por sus miembros", govTitle:"Hecho para que no te lo puedan vender.",
-      govBody:"Steppe es una organización sin fines de lucro de beneficio público de Oregón. Sin dueño, sin inversionistas, nada que vender. Los miembros la gobiernan, y las promesas de arriba están escritas en sus documentos fundacionales, donde solo pueden cambiar por el voto de los propios miembros.",
-      joinTitle:"Tu lugar está abierto.", joinSub:"Únete a tus vecinos en un lugar que les pertenece a todos.", joinCta:"Inicia sesión o únete",
-      foot:"Steppe · Redmond, Oregón" }
-  };
-  function setLang(l){
-    document.documentElement.lang = l;
-    document.querySelectorAll("[data-i18n]").forEach(el=>{ const k=el.getAttribute("data-i18n"); if(dict[l][k]) el.textContent=dict[l][k]; });
-    en.setAttribute("aria-pressed", l==="en"); es.setAttribute("aria-pressed", l==="es");
-  }
-  en.addEventListener("click",()=>setLang("en"));
-  es.addEventListener("click",()=>setLang("es"));
-`;
+const ArrowRight = () => (
+  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path
+      d="M3 8h9M8.5 4l4 4-4 4"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
 
 export default function LandingPage() {
-  return <RawPage html={HTML} script={SCRIPT} />;
+  return (
+    <>
+      <Reveal />
+
+      <header className="hero">
+        <svg
+          className="hero-contour"
+          viewBox="0 0 600 500"
+          fill="none"
+          aria-hidden="true"
+        >
+          <g stroke="currentColor" strokeWidth="1.2" opacity=".55" fill="none">
+            <path d="M-20 180 Q150 120 300 170 T620 150" />
+            <path d="M-20 220 Q150 165 300 210 T620 192" />
+            <path d="M-20 262 Q150 212 300 252 T620 236" />
+            <path d="M-20 306 Q150 260 300 296 T620 282" />
+            <path d="M-20 352 Q150 310 300 342 T620 330" />
+            <path d="M-20 400 Q150 360 300 390 T620 380" />
+          </g>
+        </svg>
+
+        <div className="hero-grid">
+          <div className="hero-copy">
+            <span className="eyebrow">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#A8542C" strokeWidth="1.3" />
+                <circle cx="8" cy="6" r="1.7" fill="#A8542C" />
+              </svg>{" "}
+              44.27°N&nbsp; 121.17°W — Redmond, Oregon
+            </span>
+            <h1>
+              A neighborhood
+              <br />
+              you can <span className="em">trust.</span>
+            </h1>
+            <p className="lead">
+              Steppe is verified, ad-free, member-owned civic infrastructure for
+              the people of Redmond. No ads. No tracking. Your data stays yours.
+            </p>
+            <div className="hero-cta">
+              <Link className="btn btn-primary" href="/join">
+                Sign in or join <ArrowRight />
+              </Link>
+              <Link className="btn btn-ghost" href="/preview">
+                See the preview
+              </Link>
+            </div>
+            <div className="trustline">
+              <span>Verified residents</span>
+              <span>No advertising</span>
+              <span>Member-owned</span>
+            </div>
+          </div>
+
+          <div className="phone-stage">
+            <div className="phone">
+              <div className="screen">
+                <div className="scr-status">
+                  <span>9:41</span>
+                  <span className="dots">
+                    <i className="on"></i>
+                    <i className="on"></i>
+                    <i></i>
+                    <span style={{ fontFamily: "var(--mono)", fontSize: 9, marginLeft: 3 }}>▮</span>
+                  </span>
+                </div>
+                <div className="scr-top">
+                  <SealMark size={24} clipId="seal-phone" />
+                  <span className="nm">Steppe</span>
+                  <span className="loc-pill">
+                    <svg width="9" height="9" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#36563D" strokeWidth="1.6" />
+                    </svg>
+                    Redmond
+                  </span>
+                </div>
+                <div className="scr-feed">
+                  <div className="fcard">
+                    <span className="chip offer">Offer</span>
+                    <h4>Free tomato starts — 40+ plants</h4>
+                    <p>Grew too many Early Girls this spring. Free to a good home.</p>
+                    <div className="fmeta">
+                      <span className="av" style={{ background: "#9CAD8B" }}>MK</span>
+                      Martha K.<span className="t">2h</span>
+                    </div>
+                  </div>
+                  <div className="fcard">
+                    <span className="chip need">Need</span>
+                    <h4>Electrician who knows older homes</h4>
+                    <p>Panel upgrade on a 1970s house — licensed &amp; insured.</p>
+                    <div className="fmeta">
+                      <span className="av" style={{ background: "#A8542C" }}>JR</span>
+                      James R.<span className="t">5h</span>
+                    </div>
+                  </div>
+                  <div className="fcard">
+                    <span className="chip gather">Gathering</span>
+                    <h4>Member meeting — July 12</h4>
+                    <p>Community Fund proposals &amp; new-member welcome.</p>
+                    <div className="fmeta">
+                      <span className="av" style={{ background: "#36563D" }}>St</span>
+                      Steppe<span className="t">calendar</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="scr-tab">
+                  <div className="tab active">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M3 6h18M3 12h18M3 18h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
+                    Exchange
+                  </div>
+                  <div className="tab">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="8" cy="9" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+                      <circle cx="16" cy="9" r="2.6" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M3.5 19c0-2.8 2-4.5 4.5-4.5S12.5 16.2 12.5 19M11.5 19c0-2.8 2-4.5 4.5-4.5s4.5 1.7 4.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    Groups
+                  </div>
+                  <div className="tab">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <rect x="4" y="9" width="16" height="11" rx="1.4" stroke="currentColor" strokeWidth="1.5" />
+                      <path d="M12 9V5m-3 9h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
+                    Govern
+                  </div>
+                  <div className="tab">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle cx="12" cy="8.5" r="3.4" stroke="currentColor" strokeWidth="1.6" />
+                      <path d="M5.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                    </svg>
+                    You
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <StrataHorizon variant="hero" />
+      </header>
+
+      <section className="section band-alt">
+        <div className="wrap">
+          <div className="section-head rv">
+            <span className="eyebrow">
+              <span className="pip"></span>What we promise
+            </span>
+            <h2>Written down, and hard to undo.</h2>
+            <p className="dek">
+              Four commitments, entrenched in the founding documents — they can
+              only change by a vote of the members themselves.
+            </p>
+          </div>
+          <div className="charter">
+            <div className="clause rv">
+              <div className="ltr">a.</div>
+              <div>
+                <h3>No advertising, ever</h3>
+                <p>You are the member, not the product. Nothing here is for sale to advertisers.</p>
+              </div>
+              <span className="mark">Entrenched</span>
+            </div>
+            <div className="clause rv">
+              <div className="ltr">b.</div>
+              <div>
+                <h3>Verify residency, then forget it</h3>
+                <p>We confirm you live in Redmond, then forget the documents. No data hoard.</p>
+              </div>
+              <span className="mark">Entrenched</span>
+            </div>
+            <div className="clause rv">
+              <div className="ltr">c.</div>
+              <div>
+                <h3>Members govern, by secret ballot</h3>
+                <p>Vote on the rules, the budget, and the direction. Your vote counts the same as everyone&rsquo;s.</p>
+              </div>
+              <span className="mark">Entrenched</span>
+            </div>
+            <div className="clause rv">
+              <div className="ltr">d.</div>
+              <div>
+                <h3>Your data leaves with you</h3>
+                <p>Export everything and walk away with it any time. No lock-in, by design.</p>
+              </div>
+              <span className="mark">Entrenched</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section band-paper">
+        <div className="wrap">
+          <div className="section-head rv">
+            <span className="eyebrow">
+              <span className="pip"></span>Joining
+            </span>
+            <h2>From neighbor to member.</h2>
+            <p className="dek">
+              Four steps, start to finish. No anonymous accounts, no bots — just
+              the people who live around you.
+            </p>
+          </div>
+          <div className="stations">
+            <div className="station rv">
+              <div className="no">01</div>
+              <div>
+                <h3>Verify you&rsquo;re local</h3>
+                <p>Confirm you live in the Redmond area — real neighbors, no anonymous accounts. We check, then forget the documents.</p>
+              </div>
+            </div>
+            <div className="station rv">
+              <div className="no">02</div>
+              <div>
+                <h3>
+                  Join for <span className="stamp">$4 / month</span>
+                </h3>
+                <p>That&rsquo;s the whole membership. Pay yearly or by bank transfer. Can&rsquo;t swing it right now? A hardship waiver is yours, no questions asked.</p>
+              </div>
+            </div>
+            <div className="station rv">
+              <div className="no">03</div>
+              <div>
+                <h3>Settle in</h3>
+                <p>Join groups, post to the local exchange, find help and offer it, and talk with the people who live around you.</p>
+              </div>
+            </div>
+            <div className="station rv">
+              <div className="no">04</div>
+              <div>
+                <h3>Help steer it</h3>
+                <p>Vote on the rules, the budget, and where Steppe goes next. Your vote is secret, and it counts the same as everyone&rsquo;s.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section band-feature on-dark">
+        <div className="wrap">
+          <div className="section-head rv">
+            <span className="eyebrow on-dark">
+              <span className="pip"></span>What neighbors share
+            </span>
+            <h2>One local exchange.</h2>
+            <p className="dek">
+              A need, an offer, a job, goods, mutual aid, a gathering — one calm
+              feed, with no algorithm deciding what you see.
+            </p>
+          </div>
+          <div className="register">
+            <div className="lx-row cat-offer rv">
+              <div className="lx-main">
+                <div className="lx-cat">
+                  <span className="dot"></span>Offer
+                </div>
+                <div className="lx-ttl">Free tomato starts — 40+ plants</div>
+                <div className="lx-desc">Grew too many Early Girls this spring. Free to anyone who&rsquo;ll plant them. Pickup near downtown.</div>
+              </div>
+              <div className="lx-who">
+                <div className="av2">MK</div>
+                <div className="lx-meta">Martha K.<span>2h ago</span></div>
+              </div>
+            </div>
+            <div className="lx-row cat-need rv">
+              <div className="lx-main">
+                <div className="lx-cat">
+                  <span className="dot"></span>Need
+                </div>
+                <div className="lx-ttl">Electrician who knows older homes</div>
+                <div className="lx-desc">Panel upgrade on a 1970s house. Looking for someone licensed and insured who&rsquo;s worked on older Redmond homes.</div>
+              </div>
+              <div className="lx-who">
+                <div className="av2">JR</div>
+                <div className="lx-meta">James R.<span>5h ago</span></div>
+              </div>
+            </div>
+            <div className="lx-row cat-gather rv">
+              <div className="lx-main">
+                <div className="lx-cat">
+                  <span className="dot"></span>Gathering
+                </div>
+                <div className="lx-ttl">Member meeting — July 12</div>
+                <div className="lx-desc">Monthly open meeting: Community Fund proposals, governance Q&amp;A, new-member welcome.</div>
+              </div>
+              <div className="lx-who">
+                <div className="av2">St</div>
+                <div className="lx-meta">Steppe<span>adds to calendar</span></div>
+              </div>
+            </div>
+            <div className="lx-row cat-aid rv">
+              <div className="lx-main">
+                <div className="lx-cat">
+                  <span className="dot"></span>Mutual aid
+                </div>
+                <div className="lx-ttl">Rides to medical appointments</div>
+                <div className="lx-desc">Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing.</div>
+              </div>
+              <div className="lx-who">
+                <div className="av2">DL</div>
+                <div className="lx-meta">Dana L.<span>3h ago</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section band-base">
+        <div className="wrap gov">
+          <div className="copy rv">
+            <span className="eyebrow">
+              <span className="pip"></span>Governed by its members
+            </span>
+            <h2>Built so it can&rsquo;t be sold out from under you.</h2>
+            <p>
+              Steppe is an Oregon public benefit nonprofit. No owner, no
+              investors, nothing to sell. The members govern it — and the promises
+              here are written into its founding documents, where they can only
+              change by a vote of the members themselves.
+            </p>
+          </div>
+          <div className="seal-wrap rv">
+            <svg width="220" height="220" viewBox="0 0 220 220" fill="none" aria-label="Steppe community seal">
+              <circle cx="110" cy="110" r="106" fill="#FBF7EE" stroke="#36563D" strokeWidth="2" />
+              <circle cx="110" cy="110" r="96" fill="none" stroke="#A8542C" strokeWidth="1" strokeDasharray="2 5" />
+              <g className="seal-spin" style={{ transformOrigin: "110px 110px" }}>
+                <path id="sealpath" d="M110 24 a86 86 0 1 1 0 172 a86 86 0 1 1 0 -172" fill="none" />
+                <text fontFamily="DM Mono, monospace" fontSize="11" letterSpacing="2.6" fill="#36563D">
+                  <textPath href="#sealpath" startOffset="0%">
+                    STEPPE · REDMOND, OREGON · EST. 2026 · MEMBER-GOVERNED ·{" "}
+                  </textPath>
+                </text>
+              </g>
+              <clipPath id="sealdisc">
+                <circle cx="110" cy="112" r="58" />
+              </clipPath>
+              <g clipPath="url(#sealdisc)">
+                <rect x="48" y="120" width="124" height="60" fill="#34383D" />
+                <rect x="48" y="108" width="124" height="14" fill="#36563D" />
+                <path d="M48 110 Q82 96 110 106 T172 102 V122 H48Z" fill="#9CAD8B" />
+                <path d="M48 124 Q90 114 132 122 T172 120 V140 H48Z" fill="#2B4733" />
+                <circle cx="140" cy="100" r="13" fill="#A8542C" />
+              </g>
+              <circle cx="110" cy="112" r="58" fill="none" stroke="#36563D" strokeWidth="2" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section className="section band-bedrock on-dark">
+        <div className="wrap cta-final rv">
+          <span className="eyebrow on-dark" style={{ justifyContent: "center" }}>
+            <span className="pip"></span>Your seat is open
+          </span>
+          <h2>Pull up a chair.</h2>
+          <p>Join your neighbors in a place that belongs to all of you.</p>
+          <Link className="btn btn-primary" href="/join">
+            Sign in or join <ArrowRight />
+          </Link>
+        </div>
+      </section>
+    </>
+  );
 }
