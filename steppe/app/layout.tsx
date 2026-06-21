@@ -35,6 +35,15 @@ const dmMono = DM_Mono({
 });
 const marketingFontVars = `${newsreader.variable} ${libreFranklin.variable} ${dmMono.variable}`;
 
+// No-flash ambient init for the marketing layer. Runs synchronously before first
+// paint so the (site) pages never flash the wrong theme or sky. Sets, on <html>:
+//   data-time  from the local hour (dawn 5–8, day 8–17, dusk 17–20, else night)
+//   data-theme by priority: saved choice → OS prefers-color-scheme → night-is-dark
+//   data-js    a marker so reveal-on-scroll only hides content when JS can show it
+// This only writes data-* attributes the member app ignores (it themes via the
+// next-themes `class`), so it is safe to run document-wide.
+const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=new Date().getHours();var t=(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night';d.setAttribute('data-time',t);var s=null;try{s=localStorage.getItem('steppe-theme')}catch(e){}var th;if(s==='light'||s==='dark'){th=s}else{var o=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;th=(o||t==='night')?'dark':'light'}d.setAttribute('data-theme',th)}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
+
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -56,6 +65,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={marketingFontVars}>
       <body className="font-sans antialiased">
+        {/* Marketing no-flash ambient init — must run before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

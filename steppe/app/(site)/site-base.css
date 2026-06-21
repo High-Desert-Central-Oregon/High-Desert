@@ -72,3 +72,14 @@ html[data-theme="dark"] .site-root::before {
   margin: 0 auto;
   padding: 0 var(--pad-x);
 }
+
+/* Theme toggle icon swap (full button chrome lands with the header in Part 3). */
+.theme-toggle .moon {
+  display: none;
+}
+html[data-theme="dark"] .theme-toggle .sun {
+  display: none;
+}
+html[data-theme="dark"] .theme-toggle .moon {
+  display: block;
+}
