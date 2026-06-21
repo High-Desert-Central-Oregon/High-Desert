@@ -129,8 +129,8 @@ export default function JoinPage() {
             </span>
             <h2>From neighbor to member.</h2>
             <p>
-              Four steps, start to finish. No anonymous accounts, no bots — just
-              the people who live around you.
+              Four steps, start to finish. No anonymous handles and no bots.
+              Everyone here is a real neighbor.
             </p>
           </div>
           <div className="stations">
