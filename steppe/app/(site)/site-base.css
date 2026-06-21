@@ -620,30 +620,8 @@ html[data-theme="dark"] .night-g {
   30.5% { opacity: 0; transform: translate(122px, 50px); }
   100% { opacity: 0; }
 }
-.day-group {
-  opacity: 0;
-  transition: opacity 0.9s ease;
-}
-html[data-theme="light"] .day-group {
-  opacity: 1;
-}
-.gust {
-  opacity: 0;
-  animation: gust 14s linear infinite;
-}
-.gust.b {
-  animation-delay: 5.5s;
-}
-.gust.c {
-  animation-delay: 9.5s;
-}
-@keyframes gust {
-  0% { opacity: 0; transform: translateX(-26px); }
-  14% { opacity: 0.45; }
-  52% { opacity: 0.45; }
-  80% { opacity: 0; }
-  100% { opacity: 0; transform: translateX(150px); }
-}
+/* The day-mode wind is the Canvas particle field (hero-sky.tsx). The old drawn
+   "gust" marks were removed — no static wind marks remain in the scene. */
 
 /* ---- reveal-on-scroll (no-JS safe: hidden only when data-js is present) ---- */
 .site-root .rv {
@@ -749,8 +727,7 @@ html[data-js] .site-root .rv.in {
   .sun-d,
   .sun-halo,
   .night-group,
-  .night-g,
-  .day-group {
+  .night-g {
     transition: none;
   }
   .site-root {

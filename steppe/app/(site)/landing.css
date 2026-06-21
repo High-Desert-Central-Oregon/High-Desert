@@ -79,21 +79,134 @@ html[data-theme="light"] .site-root .hero h1 .em {
   z-index: 0;
   color: var(--contour);
 }
-.site-root .hero .strata {
+/* The hero splits into a copy area (.hero-top) and the landscape band
+   (.hero-band). On desktop the band is tall (strata height is width-driven, so the
+   sun stays round) and a single whole-hero wind sits behind everything. On mobile
+   the band is short and forced to a fixed height, which would squash the in-SVG
+   sun — so there the celestial bodies + wind are non-distorted overlays instead
+   (revealed in the responsive block below). All of it follows data-theme /
+   data-time and is disabled under prefers-reduced-motion. */
+.site-root .hero-top {
   position: relative;
   z-index: 1;
 }
+.site-root .hero-band {
+  position: relative;
+  z-index: 1;
+}
+.site-root .hero .strata {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+}
 
-/* Day-mode wind canvas — fills the hero, sits behind the copy/phone and the
-   strata; particles are confined to the sky region in JS. (WindField) */
+/* Desktop wind — fills the hero, sits behind the copy/phone and the strata;
+   particles are confined to the sky region in JS. (hero-sky.tsx) */
 .site-root .hero .windcanvas {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
+
+/* Mobile atmosphere overlays — hidden by default (desktop), revealed at the
+   mobile breakpoint. The JS for each also gates on its own media query, so these
+   never animate while hidden. */
+.site-root .hero-wind,
+.site-root .hero-stars,
+.site-root .band-wind,
+.site-root .band-stars,
+.site-root .sun-orb {
+  display: none;
+}
+.site-root .hero-wind,
+.site-root .hero-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.site-root .band-wind,
+.site-root .band-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+/* Night star dots + meteors (opacity gated to dark). */
+.site-root .hero-stars,
+.site-root .band-stars {
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+html[data-theme="dark"] .site-root .hero-stars,
+html[data-theme="dark"] .site-root .band-stars {
+  opacity: 1;
+}
+.site-root .hero-stars .dot,
+.site-root .band-stars .dot {
+  position: absolute;
+  border-radius: 50%;
+  background: #ede6d5;
+  opacity: 0.5;
+  animation: tw 4s ease-in-out infinite;
+}
+.site-root .hero-stars .meteor,
+.site-root .band-stars .meteor {
+  position: absolute;
+  border-radius: 2px;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  background: linear-gradient(90deg, rgba(237, 230, 213, 0), rgba(237, 230, 213, 1));
+}
+
+/* Round sun (day) / moon (night) — its own fixed-aspect overlay, never squashed. */
+.site-root .sun-orb {
+  position: absolute;
+  z-index: 3;
+  width: clamp(56px, 8.5vw, 104px);
+  aspect-ratio: 1;
+  top: clamp(24px, 3vw, 44px);
+  right: clamp(42px, 17vw, 290px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.site-root .sun-orb .orb-halo {
+  position: absolute;
+  inset: -18px;
+  border-radius: 50%;
+}
+.site-root .sun-orb .orb-disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition: background 0.6s ease;
+}
+html[data-theme="light"] .site-root .sun-orb .orb-halo {
+  background: radial-gradient(circle, rgba(217, 140, 86, 0.45), rgba(217, 140, 86, 0) 70%);
+}
+html[data-theme="light"] .site-root .sun-orb .orb-disc {
+  background: #c97a45;
+}
+html[data-theme="light"][data-time="dawn"] .site-root .sun-orb .orb-disc {
+  background: #e18a5b;
+}
+html[data-theme="light"][data-time="dusk"] .site-root .sun-orb .orb-disc {
+  background: #b0532a;
+}
+html[data-theme="dark"] .site-root .sun-orb .orb-halo {
+  background: radial-gradient(circle, rgba(233, 227, 212, 0.18), rgba(0, 0, 0, 0) 70%);
+}
+html[data-theme="dark"] .site-root .sun-orb .orb-disc {
+  background: radial-gradient(circle at 64% 40%, #ece6da 60%, #ccc6b6 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .site-root .hero .windcanvas {
+  .site-root .hero .windcanvas,
+  .site-root .hero-wind,
+  .site-root .band-wind {
     display: none;
   }
 }
@@ -569,16 +682,39 @@ html[data-theme="light"] .site-root .hero h1 .em {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  /* Keep the time-of-day landscape readable when the hero stacks. The strata SVG
-     scales by width (viewBox 1440x300, ~4.8:1, preserveAspectRatio="none"), so on
-     a phone its auto height collapses to a thin sliver and the sky / sun / stars
-     stop registering — which reads as "the day/night scene doesn't switch on
-     mobile." A min-height holds the scene open (the SVG just stretches to fill, no
-     horizontal crop), so day <-> night reads the same as desktop at every width.
-     The day/night switching itself is driven by data-theme/data-time on <html>
-     and is already viewport-independent; this only restores the scene's height. */
-  .site-root .hero .strata {
-    min-height: clamp(150px, 26vw, 200px);
+  /* The landscape reflows to a short divider band below the copy. Give it a fixed
+     height and let the SVG (sky + hills) stretch to fill it — the sun/moon + stars
+     ride on top as non-distorted overlays, so the squash doesn't matter. */
+  .site-root .hero-band {
+    height: clamp(180px, 44vw, 240px);
+  }
+  .site-root .hero-band .strata {
+    height: 100%;
+  }
+  /* Hide the in-SVG sun + night groups (they'd be squashed here); the round orb,
+     star layers, and wind overlays take over. Sky + hills keep stretching. */
+  .site-root .hero .sun-group,
+  .site-root .hero .night-group {
+    display: none;
+  }
+  .site-root .hero .windcanvas {
+    display: none;
+  }
+  .site-root .hero-wind,
+  .site-root .band-wind,
+  .site-root .hero-stars,
+  .site-root .band-stars,
+  .site-root .sun-orb {
+    display: block;
+  }
+  /* Day parity: a barely-there daylight warmth behind the copy (day's quiet
+     ambient, matching how the night starfield rises into the copy area). */
+  html[data-theme="light"] .site-root .hero-top {
+    background: linear-gradient(
+      180deg,
+      rgba(241, 236, 220, 0.6) 0%,
+      rgba(237, 230, 213, 0) 60%
+    );
   }
   .site-root .phone-stage {
     order: -1;

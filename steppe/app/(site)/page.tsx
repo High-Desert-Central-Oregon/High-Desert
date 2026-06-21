@@ -8,7 +8,7 @@ import "./landing.css";
 import { StrataHorizon } from "./_components/strata-horizon";
 import { SealMark } from "./_components/seal-mark";
 import { Reveal } from "./_components/reveal";
-import { WindField } from "./_components/wind-field";
+import { WindCanvas, StarLayer, SunOrb } from "./_components/hero-sky";
 
 export const metadata = {
   title: "Steppe — a high desert civic commons",
@@ -35,7 +35,8 @@ export default async function LandingPage() {
       <Reveal />
 
       <header className="hero">
-        <WindField />
+        {/* Desktop: one natural wind across the whole hero (hidden on mobile). */}
+        <WindCanvas className="windcanvas" variant="desktop" />
         <svg
           className="hero-contour"
           viewBox="0 0 600 500"
@@ -52,7 +53,21 @@ export default async function LandingPage() {
           </g>
         </svg>
 
-        <div className="hero-grid">
+        <div className="hero-top">
+          {/* Mobile copy-area atmosphere: subtle day wind + night stars/meteors,
+              behind the copy. (Desktop uses the whole-hero wind above.) */}
+          <WindCanvas className="hero-wind" variant="hero" />
+          <StarLayer
+            className="hero-stars"
+            count={26}
+            meteor
+            doubleChance={0.18}
+            meteorMin={650}
+            meteorMax={2600}
+            activeQuery="(max-width: 860px)"
+          />
+
+          <div className="hero-grid">
           <div className="hero-copy">
             <span className="eyebrow">
               <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -167,8 +182,24 @@ export default async function LandingPage() {
             </div>
           </div>
         </div>
+        </div>
 
-        <StrataHorizon variant="hero" />
+        <div className="hero-band">
+          {/* Mobile band atmosphere: fuller day wind + night stars/meteors, and a
+              true-circle sun/moon overlay (the in-SVG sun is hidden on mobile, where
+              the stretch-to-fill SVG would squash it). */}
+          <WindCanvas className="band-wind" variant="band" />
+          <StarLayer
+            className="band-stars"
+            count={16}
+            meteor
+            meteorMin={1800}
+            meteorMax={5200}
+            activeQuery="(max-width: 860px)"
+          />
+          <SunOrb />
+          <StrataHorizon variant="hero" />
+        </div>
       </header>
 
       <section className="section band-alt">

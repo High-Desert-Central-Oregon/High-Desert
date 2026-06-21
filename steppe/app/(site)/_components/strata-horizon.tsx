@@ -1,9 +1,13 @@
-// The layered-ground horizon with a time-of-day sky + sun/moon, lifted verbatim
-// from the canonical design (_design-source/steppe-landing-v5.html for the hero;
+// The layered-ground horizon with a time-of-day sky + sun/moon, lifted from the
+// canonical design (_design-source/steppe-landing-v5.html for the hero;
 // steppe-partners-v2.html for the compact interior band). Pure SVG — every
 // transition is driven by the data-theme / data-time attributes on <html> and the
-// strata CSS in site-base.css; no client JS. The hero variant carries the night
-// shooting-stars and daytime wind gusts; interior pages use the compact band.
+// strata CSS in site-base.css; no client JS. The hero variant carries the desktop
+// night shooting-stars; interior pages use the compact band. Day wind is the
+// Canvas particle field (hero-sky.tsx), and on the short MOBILE hero band the
+// sun/moon and stars are non-distorted overlays (see page.tsx / landing.css) — the
+// in-SVG sun-group/night-group are hidden there so the stretch-to-fill SVG can't
+// squash the celestial bodies.
 export function StrataHorizon({
   variant = "compact",
 }: {
@@ -49,26 +53,7 @@ export function StrataHorizon({
         <rect className="sky-layer sky-dusk" x="0" y="0" width="1440" height="300" fill="url(#skyDusk)" />
         <rect className="sky-layer sky-night" x="0" y="0" width="1440" height="300" fill="url(#skyNight)" />
 
-        <g className="day-group">
-          <g transform="translate(250,66)">
-            <g className="gust">
-              <path d="M0 4 H30 q10 0 10 -8 q0 -6 -7 -6" fill="none" stroke="#8FA07E" strokeWidth="2" strokeLinecap="round" />
-              <path d="M-6 14 H22 q9 0 9 7 q0 5 -6 5" fill="none" stroke="#8FA07E" strokeWidth="2" strokeLinecap="round" />
-            </g>
-          </g>
-          <g transform="translate(640,50)">
-            <g className="gust b">
-              <path d="M0 4 H26 q9 0 9 -7 q0 -5 -6 -5" fill="none" stroke="#8FA07E" strokeWidth="1.8" strokeLinecap="round" />
-              <path d="M-5 12 H20 q8 0 8 6 q0 5 -5 5" fill="none" stroke="#8FA07E" strokeWidth="1.8" strokeLinecap="round" />
-            </g>
-          </g>
-          <g transform="translate(980,92)">
-            <g className="gust c">
-              <path d="M0 4 H32 q10 0 10 -8 q0 -6 -7 -6" fill="none" stroke="#8FA07E" strokeWidth="2" strokeLinecap="round" />
-              <path d="M-6 14 H24 q9 0 9 7 q0 5 -6 5" fill="none" stroke="#8FA07E" strokeWidth="2" strokeLinecap="round" />
-            </g>
-          </g>
-        </g>
+        {/* Day wind is the Canvas particle field (WindCanvas), not drawn marks. */}
 
         <g className="night-group">
           <circle className="twinkle" cx="220" cy="70" r="1.6" fill="#EDE6D5" />
