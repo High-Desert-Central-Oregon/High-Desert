@@ -256,7 +256,7 @@ export default function PrivacyPage() {
                 steppe.community/legal/privacy
               </a>
               <br />
-              Questions — <a href="mailto:hello@steppe.community">hello@steppe.community</a>
+              Questions — <a href="/contact">Contact us</a>
             </p>
           </div>
         </div>

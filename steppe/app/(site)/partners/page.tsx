@@ -4,6 +4,7 @@
 // panels, the five-stream funding register + "no single funder over 30%" mix bar,
 // and the partner ask + contact CTA. Static content; conservative claims carried
 // as-is (Aspiration is the only named fiscal sponsor).
+import Link from "next/link";
 import "./partners.css";
 import { StrataHorizon } from "../_components/strata-horizon";
 
@@ -304,7 +305,7 @@ export default function PartnersPage() {
             </div>
           </div>
           <div className="cta-row">
-            <a className="btn btn-primary" href="mailto:hello@steppe.community">
+            <Link className="btn btn-primary" href="/contact">
               Get in touch{" "}
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                 <path
@@ -315,7 +316,7 @@ export default function PartnersPage() {
                   strokeLinejoin="round"
                 />
               </svg>
-            </a>
+            </Link>
             <span className="contact">hello@steppe.community</span>
           </div>
         </div>

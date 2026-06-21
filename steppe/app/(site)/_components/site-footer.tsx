@@ -28,6 +28,7 @@ export function SiteFooter() {
           <Link href="/preview">Preview</Link>
           <Link href="/partners">For partners</Link>
           <Link href="/privacy">Privacy</Link>
+          <Link href="/contact">Contact</Link>
         </div>
         <div className="footer-meta" style={{ alignSelf: "flex-end" }}>
           Led by{" "}

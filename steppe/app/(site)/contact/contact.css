@@ -1,0 +1,244 @@
+/* Contact-specific styles — text hero + the message form card. Ported from
+ * _design-source/steppe-contact.html, scoped under .site-root .contact. Shared
+ * chrome / tokens / strata live in site-base.css + tokens.css. */
+.site-root .contact {
+  --offer: #6e8a5b;
+  --field: #f4eee0;
+}
+html[data-theme="dark"] .site-root .contact {
+  --field: #23282d;
+}
+
+/* hero */
+.site-root .contact .hero {
+  position: relative;
+  padding: clamp(44px, 6vw, 76px) 0 0;
+  overflow: hidden;
+}
+.site-root .contact .hero-grid {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad-x) clamp(40px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
+}
+.site-root .contact .hero h1 {
+  font-size: clamp(40px, 6vw, 66px);
+  margin: 16px 0 0;
+}
+.site-root .contact .hero h1 em {
+  font-style: italic;
+  color: var(--juniper);
+}
+html[data-theme="dark"] .site-root .contact .hero h1 em {
+  color: var(--offer);
+}
+.site-root .contact .hero p.lead {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 44ch;
+  margin-top: 20px;
+  line-height: 1.55;
+}
+.site-root .contact .aside {
+  margin-top: 28px;
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
+  max-width: 46ch;
+}
+.site-root .contact .aside .k {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.site-root .contact .aside p {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.site-root .contact .aside a {
+  color: var(--rust);
+  font-weight: 500;
+}
+.site-root .contact .aside .resp {
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* form card */
+.site-root .contact .formcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(22px, 3vw, 32px);
+  box-shadow: 0 18px 42px -24px rgba(0, 0, 0, 0.45);
+}
+.site-root .contact .formcard .fk {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 6px;
+}
+.site-root .contact .formcard h2 {
+  font-size: 25px;
+  font-weight: 480;
+  margin-bottom: 7px;
+}
+.site-root .contact .formcard .fsub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.site-root .contact .frow {
+  margin-bottom: 14px;
+}
+.site-root .contact label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.site-root .contact input,
+.site-root .contact select,
+.site-root .contact textarea {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 12px 13px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--field);
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+.site-root .contact textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+.site-root .contact select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23736E60' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 34px;
+}
+.site-root .contact input:focus,
+.site-root .contact select:focus,
+.site-root .contact textarea:focus {
+  outline: none;
+  border-color: var(--rust);
+}
+/* honeypot — off-screen, out of the tab order */
+.site-root .contact .hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.site-root .contact .submitb {
+  width: 100%;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 15px;
+  color: #fbf7ee;
+  background: var(--rust);
+  border: none;
+  border-radius: 11px;
+  padding: 13px;
+  cursor: pointer;
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  transition: transform 0.15s;
+}
+.site-root .contact .submitb:hover {
+  transform: translateY(-1px);
+}
+.site-root .contact .submitb:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+.site-root .contact .formerr {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--rust);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.site-root .contact .formerr a {
+  color: var(--rust);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.site-root .contact .formnote {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  line-height: 1.65;
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
+}
+.site-root .contact .formnote a {
+  color: var(--rust);
+}
+
+/* success */
+.site-root .contact .success {
+  text-align: center;
+  padding: 16px 4px;
+}
+.site-root .contact .success .ck {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(110, 138, 91, 0.18);
+  border: 1.5px solid var(--offer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.site-root .contact .success h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+.site-root .contact .success p {
+  color: var(--text-muted);
+  font-size: 15px;
+  max-width: 36ch;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* dark mode: rust on the dark card/bg fails AA; use the lighter rust-glow */
+html[data-theme="dark"] .site-root .contact .formcard .fk,
+html[data-theme="dark"] .site-root .contact .aside a,
+html[data-theme="dark"] .site-root .contact .formnote a,
+html[data-theme="dark"] .site-root .contact .formerr,
+html[data-theme="dark"] .site-root .contact .formerr a {
+  color: var(--rust-glow);
+}
+
+@media (max-width: 840px) {
+  .site-root .contact .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+}

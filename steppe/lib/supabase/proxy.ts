@@ -16,10 +16,12 @@ export async function updateSession(request: NextRequest) {
     pathname === "/preview" ||
     pathname === "/join" ||
     pathname === "/privacy" ||
-    pathname === "/legal/privacy";
-  // The public interest-signup endpoint must be reachable by anonymous visitors
-  // (the /join form posts here); it enforces its own rules server-side.
-  const isPublicApi = pathname === "/api/interest";
+    pathname === "/legal/privacy" ||
+    pathname === "/contact";
+  // Public endpoints reachable by anonymous visitors (the /join and /contact
+  // forms post here); each enforces its own rules server-side.
+  const isPublicApi =
+    pathname === "/api/interest" || pathname === "/api/contact";
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
