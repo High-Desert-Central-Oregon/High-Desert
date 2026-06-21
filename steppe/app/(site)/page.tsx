@@ -9,6 +9,7 @@ import "./landing.css";
 import { StrataHorizon } from "./_components/strata-horizon";
 import { SealMark } from "./_components/seal-mark";
 import { Reveal } from "./_components/reveal";
+import { WindField } from "./_components/wind-field";
 
 export const metadata = {
   title: "Steppe — a high desert civic commons",
@@ -34,6 +35,7 @@ export default function LandingPage() {
       <Reveal />
 
       <header className="hero">
+        <WindField />
         <svg
           className="hero-contour"
           viewBox="0 0 600 500"

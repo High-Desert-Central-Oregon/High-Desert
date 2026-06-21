@@ -84,6 +84,20 @@ html[data-theme="light"] .site-root .hero h1 .em {
   z-index: 1;
 }
 
+/* Day-mode wind canvas — fills the hero, sits behind the copy/phone and the
+   strata; particles are confined to the sky region in JS. (WindField) */
+.site-root .hero .windcanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-root .hero .windcanvas {
+    display: none;
+  }
+}
+
 /* phone mock */
 .site-root .phone-stage {
   display: flex;
