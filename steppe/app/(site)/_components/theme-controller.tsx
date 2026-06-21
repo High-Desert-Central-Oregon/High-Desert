@@ -5,83 +5,104 @@ import { useEffect, useState } from "react";
 /**
  * Marketing theme + time-of-day controller.
  *
- * The no-flash inline script in app/layout.tsx has already set data-theme,
- * data-time and data-js on <html> synchronously before paint, reading the same
- * priority order used here (saved choice → OS prefers-color-scheme → night-is-
- * dark). This client component:
- *   - re-asserts data-time on mount (covers a statically-cached page loaded at a
- *     different hour),
- *   - exposes the manual light/dark toggle, persisting the choice to
- *     localStorage("steppe-theme") so it survives reloads,
- *   - follows OS theme changes only while the member hasn't made a manual choice.
+ * The no-flash inline script in app/layout.tsx already set data-time, data-theme
+ * and data-js on <html> before paint, using the same rule as here. This client
+ * component keeps it live and exposes the toggle:
+ *   - data-time tracks the local clock; data-theme follows it automatically
+ *     (night → dark, otherwise → light) so the theme moves with the strata,
+ *   - re-evaluates on a timer and when the tab returns (visibilitychange/focus),
+ *     so a session left open across sunset switches itself,
+ *   - the toggle is a manual override cycling Auto → Light → Dark → Auto; a manual
+ *     choice persists to localStorage("steppe-theme") and stops auto-switching;
+ *     "Auto" (the default, no stored value) resumes following time.
  *
- * Renders the design's sun/moon toggle button; the sun/moon swap is handled in
- * CSS via html[data-theme="dark"].
+ * The sun/moon icon swap is pure CSS keyed on html[data-theme].
  */
+type Mode = "auto" | "light" | "dark";
+type Time = "dawn" | "day" | "dusk" | "night";
 const STORAGE_KEY = "steppe-theme";
+const REEVAL_MS = 5 * 60_000;
 
-function timeOfDay(hour: number): "dawn" | "day" | "dusk" | "night" {
+function timeOfDay(hour: number): Time {
   if (hour >= 5 && hour < 8) return "dawn";
   if (hour >= 8 && hour < 17) return "day";
   if (hour >= 17 && hour < 20) return "dusk";
   return "night";
 }
 
+function readMode(): Mode {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s === "light" || s === "dark") return s;
+  } catch {
+    // ignore storage access errors (private mode, etc.)
+  }
+  return "auto";
+}
+
+// Apply data-time (always by clock) and data-theme (manual override, else by time).
+function apply(mode: Mode) {
+  const root = document.documentElement;
+  const t = timeOfDay(new Date().getHours());
+  root.setAttribute("data-time", t);
+  root.setAttribute(
+    "data-theme",
+    mode === "auto" ? (t === "night" ? "dark" : "light") : mode,
+  );
+}
+
 export function ThemeController() {
-  // Tracked only to re-render the button's aria-pressed; the source of truth is
-  // the data-theme attribute on <html>.
-  const [theme, setThemeState] = useState<"light" | "dark">("light");
+  const [mode, setMode] = useState<Mode>("auto");
 
   useEffect(() => {
-    const root = document.documentElement;
+    const m = readMode();
+    setMode(m);
+    apply(m);
 
-    // Keep the sky honest if this page was statically generated/cached earlier.
-    root.setAttribute("data-time", timeOfDay(new Date().getHours()));
-    setThemeState(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
-
-    // Follow the OS only until the member makes (and persists) a manual choice.
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const onOSChange = (e: MediaQueryListEvent) => {
-      let saved: string | null = null;
-      try {
-        saved = localStorage.getItem(STORAGE_KEY);
-      } catch {
-        // ignore storage access errors (private mode, etc.)
-      }
-      if (saved === "light" || saved === "dark") return;
-      // Mirror the no-flash script's rule so OS-follow matches initial paint and
-      // a reload: night is dark even if the OS flips to light.
-      const next =
-        e.matches || timeOfDay(new Date().getHours()) === "night"
-          ? "dark"
-          : "light";
-      root.setAttribute("data-theme", next);
-      setThemeState(next);
+    // Re-evaluate periodically and when the tab regains focus, so an open session
+    // tracks sunrise/sunset on its own (only changes theme while in auto mode).
+    const tick = () => apply(readMode());
+    const id = window.setInterval(tick, REEVAL_MS);
+    const onVis = () => {
+      if (!document.hidden) tick();
     };
-    mq.addEventListener("change", onOSChange);
-    return () => mq.removeEventListener("change", onOSChange);
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("focus", tick);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("focus", tick);
+    };
   }, []);
 
-  function toggle() {
-    const root = document.documentElement;
-    const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
-    root.setAttribute("data-theme", next);
-    setThemeState(next);
+  function cycle() {
+    const next: Mode =
+      mode === "auto" ? "light" : mode === "light" ? "dark" : "auto";
+    setMode(next);
     try {
-      localStorage.setItem(STORAGE_KEY, next);
+      if (next === "auto") localStorage.removeItem(STORAGE_KEY);
+      else localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // persistence is best-effort
     }
+    apply(next);
   }
+
+  const label =
+    mode === "auto"
+      ? "Theme: automatic by time of day. Activate to set light."
+      : mode === "light"
+        ? "Theme: light. Activate to set dark."
+        : "Theme: dark. Activate to return to automatic.";
 
   return (
     <button
       type="button"
       className="theme-toggle"
-      onClick={toggle}
-      aria-label="Toggle day and night"
-      aria-pressed={theme === "dark"}
-      title="Toggle day and night"
+      onClick={cycle}
+      aria-label={label}
+      title={label}
+      data-mode={mode}
     >
       <svg
         className="sun"

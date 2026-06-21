@@ -38,11 +38,14 @@ const marketingFontVars = `${newsreader.variable} ${libreFranklin.variable} ${dm
 // No-flash ambient init for the marketing layer. Runs synchronously before first
 // paint so the (site) pages never flash the wrong theme or sky. Sets, on <html>:
 //   data-time  from the local hour (dawn 5–8, day 8–17, dusk 17–20, else night)
-//   data-theme by priority: saved choice → OS prefers-color-scheme → night-is-dark
+//   data-theme = saved manual override if present, otherwise AUTOMATIC by time of
+//                day (night → dark, otherwise → light) so it tracks the strata.
+//                Time wins; prefers-color-scheme is no longer the primary source.
 //   data-js    a marker so reveal-on-scroll only hides content when JS can show it
 // This only writes data-* attributes the member app ignores (it themes via the
-// next-themes `class`), so it is safe to run document-wide.
-const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=new Date().getHours();var t=(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night';d.setAttribute('data-time',t);var s=null;try{s=localStorage.getItem('steppe-theme')}catch(e){}var th;if(s==='light'||s==='dark'){th=s}else{var o=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;th=(o||t==='night')?'dark':'light'}d.setAttribute('data-theme',th)}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
+// next-themes `class`), so it is safe to run document-wide. ThemeController keeps
+// it current across sunset/sunrise and handles the manual override.
+const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=new Date().getHours();var t=(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night';d.setAttribute('data-time',t);var s=null;try{s=localStorage.getItem('steppe-theme')}catch(e){}var th=(s==='light'||s==='dark')?s:(t==='night'?'dark':'light');d.setAttribute('data-theme',th)}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
