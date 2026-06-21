@@ -1,149 +1,74 @@
 /* ============================================================================
  * Marketing layer base — scoped to .site-root so it can't leak into the member
- * app. This reproduces the approved design's body-level rules (font, colors,
- * line-height, focus ring) WITHOUT touching the global <body>, which the app
- * themes with Tailwind (bg-background/text-foreground/font-sans + dark mode).
+ * app. Reproduces the v5 design's body-level rules (font, colors, line-height,
+ * grain, focus ring) on .site-root instead of the global <body>, which the member
+ * app themes with Tailwind/next-themes. Tokens come from tokens.css; the
+ * data-theme / data-time ambient systems live on <html>.
  *
- * The element resets the design's <style> also carried (* box-sizing/margin,
- * a{color:inherit}, button{font:inherit}) are already provided by Tailwind's
- * preflight, so they aren't duplicated here. Per-page component CSS lives in
- * CSS Modules next to each page, keeping every class isolated.
+ * Tailwind's preflight already provides the design's *{box-sizing/margin:0},
+ * a{color:inherit}, button{font:inherit} resets, so they aren't duplicated here.
+ * Shared chrome (header/footer/strata), the section/band system, the .btn/.eyebrow
+ * primitives, and the reveal/animation rules are appended in Part 3; per-page
+ * component CSS lives next to each page.
  * ========================================================================== */
 .site-root {
-  font-family: var(--font-public-sans);
-  color: var(--basalt);
-  background: var(--bone);
-  line-height: 1.55;
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   min-height: 100svh;
-  /* Marketing is a light-only design; pin it regardless of system theme so the
-     app's dark mode never tints these surfaces. */
-  color-scheme: light;
+  overflow-x: hidden;
   scroll-behavior: smooth;
+  transition:
+    background 0.6s ease,
+    color 0.6s ease;
+}
+html[data-theme="light"] .site-root {
+  color-scheme: light;
+}
+html[data-theme="dark"] .site-root {
+  color-scheme: dark;
 }
 
+/* Paper grain — a faint multiply texture over the marketing surface only. */
+.site-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html[data-theme="dark"] .site-root::before {
+  mix-blend-mode: overlay;
+  opacity: 0.05;
+}
+
+.site-root h1,
+.site-root h2,
+.site-root h3 {
+  font-family: var(--display);
+  font-weight: 430;
+  line-height: 1.04;
+  letter-spacing: -0.014em;
+  font-optical-sizing: auto;
+}
+.site-root a {
+  color: inherit;
+  text-decoration: none;
+}
 .site-root :focus-visible {
-  outline: 2.5px solid var(--focus);
+  outline: 2.5px solid var(--rust);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
-/* ============================================================================
- * Shared site chrome — header + footer rendered once by the (site) layout.
- * Scoped under .site-root so nothing leaks into the member app. Both use the
- * brand tokens/fonts; the global focus ring above applies to every link.
- * ========================================================================== */
-
-/* ---- header ---- */
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bone);
-  border-bottom: 1px solid var(--bone-deep);
-}
-.site-header-inner {
-  max-width: 1180px;
+.site-root .wrap {
+  max-width: var(--maxw);
   margin: 0 auto;
-  padding: 11px clamp(16px, 4vw, 40px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px 20px;
-  flex-wrap: wrap;
-}
-.sh-brand {
-  font-family: var(--font-fraunces);
-  font-weight: 600;
-  font-size: 1.45rem;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  color: var(--juniper-deep);
-  text-decoration: none;
-}
-.sh-links {
-  display: flex;
-  align-items: center;
-  gap: clamp(14px, 3vw, 26px);
-  flex-wrap: wrap;
-}
-.sh-link {
-  font-family: var(--font-public-sans);
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--basalt);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-.sh-link:hover {
-  color: var(--juniper);
-}
-.sh-join {
-  font-family: var(--font-public-sans);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--bone-soft);
-  background: var(--rust);
-  border-radius: 999px;
-  padding: 8px 20px;
-  text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-.sh-join:hover {
-  background: var(--juniper);
-  transform: translateY(-1px);
-}
-
-/* ---- footer ---- */
-.site-footer {
-  background: var(--bone-soft);
-  border-top: 1px solid var(--bone-deep);
-  color: var(--basalt-soft);
-}
-.site-footer-inner {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: clamp(28px, 5vw, 44px) clamp(16px, 4vw, 40px);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  font-family: var(--font-public-sans);
-}
-.sf-org {
-  font-size: 0.95rem;
-  color: var(--basalt);
-  margin: 0;
-}
-.sf-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 22px;
-}
-.sf-link {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--juniper);
-  text-decoration: none;
-}
-.sf-link:hover {
-  text-decoration: underline;
-}
-.sf-credit {
-  font-size: 0.9rem;
-  margin: 0;
-}
-.sf-credit a {
-  color: var(--juniper);
-  font-weight: 600;
-}
-
-/* Calm by default; honor reduced-motion by dropping the hover transitions. */
-@media (prefers-reduced-motion: reduce) {
-  .sh-link,
-  .sh-join {
-    transition: none;
-  }
-  .sh-join:hover {
-    transform: none;
-  }
+  padding: 0 var(--pad-x);
 }
