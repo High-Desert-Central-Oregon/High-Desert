@@ -2,6 +2,8 @@
 // (_design-source/steppe-preview-v3.html) on the shared chrome + tokens. The
 // interactive app facsimile is a state-driven client island (PreviewStage); the
 // hero + compact strata are static. The phone screen stays light in both themes.
+// Copy is localized from the "preview" catalog.
+import { getTranslations } from "next-intl/server";
 import "./preview.css";
 import { PreviewStage } from "./preview-stage";
 import { StrataHorizon } from "../_components/strata-horizon";
@@ -12,26 +14,18 @@ export const metadata = {
     "A first look at Steppe: one calm exchange, the groups you choose, a vote that's yours, and a profile that stays private until you say otherwise.",
 };
 
-export default function PreviewPage() {
+export default async function PreviewPage() {
+  const t = await getTranslations("preview");
   return (
     <div className="preview">
       <header className="hero">
         <div className="hero-in">
           <span className="badge">
-            <span className="dot"></span>A preview, not the finished product
+            <span className="dot"></span>{t("heroBadge")}
           </span>
-          <h1>
-            A first look at <em>Steppe.</em>
-          </h1>
-          <p>
-            This is the first version. A place to trade help with neighbors,
-            groups you choose to join, a secret vote on how things run, and a
-            profile that stays private until you say so.
-          </p>
-          <div className="note">
-            Everything here is the shape of the first version. Where it goes next
-            is up to the members, by vote.
-          </div>
+          <h1>{t.rich("heroTitle", { em: (c) => <em>{c}</em> })}</h1>
+          <p>{t("heroLead")}</p>
+          <div className="note">{t("heroNote")}</div>
         </div>
       </header>
 

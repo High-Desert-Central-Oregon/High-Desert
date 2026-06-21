@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { SealMark } from "../_components/seal-mark";
 
 /**
@@ -24,6 +25,11 @@ import { SealMark } from "../_components/seal-mark";
  * Deliberately absent (deferred growth-ladder features): the marketplace, RSVP /
  * month-grid / recurrence / reminders, the Neighbor tier / "everyone" audience,
  * SMS, and tenure-weighted voting.
+ *
+ * i18n: the app CHROME (tabs, filters, taxonomy, buttons, captions, the privacy
+ * controls) is localized from the "preview" catalog. The fabricated RECORD —
+ * listing titles/bodies/authors, group names/posts/events, message threads, the
+ * sample ballot, and sample profile values — stays English as the facsimile.
  */
 type Tab = "exchange" | "groups" | "govern" | "you";
 type ExchangeView = "feed" | "detail" | "message" | "compose";
@@ -67,14 +73,15 @@ type Group = {
 };
 
 // Category inks (light values; the phone screen is always light paper, so dark
-// variants aren't needed here — see preview.css).
-const CATS: { key: CatKey; label: string; c: string }[] = [
-  { key: "need", label: "Need", c: "#A8542C" },
-  { key: "offer", label: "Offer", c: "#6E8A5B" },
-  { key: "job", label: "Job", c: "#7E5A74" },
-  { key: "goods", label: "Goods", c: "#8C6A46" },
-  { key: "aid", label: "Mutual aid", c: "#4F6B7A" },
-  { key: "event", label: "Event", c: "#A8842F" },
+// variants aren't needed here — see preview.css). The display label comes from
+// the catalog at render time (CAT_LABEL); `c` and `key` are the stable identity.
+const CATS: { key: CatKey; c: string }[] = [
+  { key: "need", c: "#A8542C" },
+  { key: "offer", c: "#6E8A5B" },
+  { key: "job", c: "#7E5A74" },
+  { key: "goods", c: "#8C6A46" },
+  { key: "aid", c: "#4F6B7A" },
+  { key: "event", c: "#A8842F" },
 ];
 const catClass = (k: CatKey) => `c-${k}`;
 const catMeta = (k: CatKey) => CATS.find((c) => c.key === k)!;
@@ -203,15 +210,8 @@ const SEED_THREADS: Record<string, Msg[]> = {
   ],
 };
 
-const FILTERS: { key: "all" | CatKey; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "need", label: "Need" },
-  { key: "offer", label: "Offer" },
-  { key: "job", label: "Job" },
-  { key: "goods", label: "Goods" },
-  { key: "aid", label: "Mutual aid" },
-  { key: "event", label: "Event" },
-];
+// Category filters. "all" plus the six type tags; labels resolve from the catalog.
+const FILTERS: ("all" | CatKey)[] = ["all", "need", "offer", "job", "goods", "aid", "event"];
 
 const GROUPS: Group[] = [
   {
@@ -260,49 +260,24 @@ const GROUPS: Group[] = [
   },
 ];
 
-const CAPTIONS: Record<Tab, [string, string, string, string]> = {
-  exchange: [
-    "The exchange",
-    "One honest feed.",
-    "Needs, offers, jobs, goods, mutual aid, and events, all on one listing. Nothing is ranked or boosted. Tap any entry to open it and reach that neighbor directly.",
-    "No ads · no tracking · messages stay inside Steppe",
-  ],
-  groups: [
-    "Groups",
-    "Groups you choose.",
-    "Join the neighborhood and interest groups you want and leave any of them whenever you like. Open a group to see its feed and upcoming events.",
-    "You control which groups can message you",
-  ],
-  govern: [
-    "Govern",
-    "Your vote, in private.",
-    "Vote on the budget, the rules, and where Steppe goes next. Your ballot is secret, and at launch everyone's counts the same.",
-    "15% quorum · secret ballot · reversible by vote",
-  ],
-  you: [
-    "You",
-    "Private until you say so.",
-    "Your profile starts private. Keep each field hidden, or show it to members. It's field by field, and it's your call. We will never take that from you.",
-    "Username always shown · everything else your choice",
-  ],
-};
-
+// Sample ballot — fabricated proposal content, stays English (the facsimile).
 const OPTIONS = [
   "Dry Canyon trail repair",
   "Winter warming-shelter supplies",
   "Little free pantry restock",
 ];
 
-const FIELDS = [
-  { k: "Real name", sub: "Sarah Okafor" },
-  { k: "Neighborhood", sub: "SE Redmond" },
-  { k: "Email", sub: "For messages & receipts" },
-  { k: "Phone", sub: "Optional" },
+// Profile fields. Label resolves from the catalog; `sub` is a sample value (stays
+// English), `subKey` is a localized chrome sub. Order maps to the vis[] indices.
+const FIELDS: { labelKey: string; sub?: string; subKey?: string }[] = [
+  { labelKey: "fieldName", sub: "Sarah Okafor" },
+  { labelKey: "fieldNeighborhood", sub: "SE Redmond" },
+  { labelKey: "fieldEmail", subKey: "fieldEmailSub" },
+  { labelKey: "fieldPhone", subKey: "fieldPhoneSub" },
 ];
 
 // MVP: members-only privacy (no "everyone"/Neighbor-tier audience at launch).
 const VIS_ORDER: Vis[] = ["hidden", "members"];
-const VIS_LABEL: Record<Vis, string> = { hidden: "Hidden", members: "Members" };
 
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -407,12 +382,7 @@ const TAB_ICONS: Record<Tab, React.ReactNode> = {
   ),
 };
 
-const TABS: { v: Tab; label: string }[] = [
-  { v: "exchange", label: "Exchange" },
-  { v: "groups", label: "Groups" },
-  { v: "govern", label: "Govern" },
-  { v: "you", label: "You" },
-];
+const TAB_ORDER: Tab[] = ["exchange", "groups", "govern", "you"];
 
 const EventMeta = ({ dateLabel, location }: { dateLabel: string; location: string }) => (
   <div className="evmeta">
@@ -431,6 +401,32 @@ const EventMeta = ({ dateLabel, location }: { dateLabel: string; location: strin
 );
 
 export function PreviewStage() {
+  const t = useTranslations("preview");
+
+  // Catalog-resolved chrome maps, built once per render.
+  const CAT_LABEL: Record<CatKey, string> = {
+    need: t("catNeed"),
+    offer: t("catOffer"),
+    job: t("catJob"),
+    goods: t("catGoods"),
+    aid: t("catAid"),
+    event: t("catEvent"),
+  };
+  const TAB_LABEL: Record<Tab, string> = {
+    exchange: t("tabExchange"),
+    groups: t("tabGroups"),
+    govern: t("tabGovern"),
+    you: t("tabYou"),
+  };
+  const CAP: Record<Tab, [string, string, string, string]> = {
+    exchange: [t("capExchangeK"), t("capExchangeH"), t("capExchangeP"), t("capExchangeM")],
+    groups: [t("capGroupsK"), t("capGroupsH"), t("capGroupsP"), t("capGroupsM")],
+    govern: [t("capGovernK"), t("capGovernH"), t("capGovernP"), t("capGovernM")],
+    you: [t("capYouK"), t("capYouH"), t("capYouP"), t("capYouM")],
+  };
+  const visLabel = (v: Vis) => (v === "hidden" ? t("visHidden") : t("visMembers"));
+  const filterLabel = (k: "all" | CatKey) => (k === "all" ? t("filterAll") : CAT_LABEL[k]);
+
   const [tab, setTab] = useState<Tab>("exchange");
 
   // exchange
@@ -460,8 +456,8 @@ export function PreviewStage() {
   const [vis, setVis] = useState<Vis[]>(["hidden", "members", "hidden", "hidden"]);
 
   // Switching tabs returns the active tab to its root sub-view.
-  const switchTab = (t: Tab) => {
-    setTab(t);
+  const switchTab = (next: Tab) => {
+    setTab(next);
     setExView("feed");
     setGrView("list");
     setGroupTab("feed");
@@ -500,7 +496,7 @@ export function PreviewStage() {
     const listing: Listing = {
       id: `n${nextId.current++}`,
       catKey: cCat,
-      cat: meta.label,
+      cat: cCat, // display uses CAT_LABEL[catKey]; this is just stable identity
       c: meta.c,
       ttl: title,
       init: "YO",
@@ -525,19 +521,19 @@ export function PreviewStage() {
     setFilter("all");
   };
 
-  const [capK, capH, capP, capM] = CAPTIONS[tab];
+  const [capK, capH, capP, capM] = CAP[tab];
 
   return (
     <div className="stage">
       <div className="stage-l">
         <div className="vchips">
-          {TABS.map((t) => (
+          {TAB_ORDER.map((v) => (
             <button
-              key={t.v}
-              className={`vchip${tab === t.v ? " active" : ""}`}
-              onClick={() => switchTab(t.v)}
+              key={v}
+              className={`vchip${tab === v ? " active" : ""}`}
+              onClick={() => switchTab(v)}
             >
-              {t.label}
+              {TAB_LABEL[v]}
             </button>
           ))}
         </div>
@@ -547,7 +543,7 @@ export function PreviewStage() {
             <div className="appbar">
               <SealMark size={22} clipId="seal-app" />
               <span className="nm">Steppe</span>
-              <span className="pv-badge">Preview</span>
+              <span className="pv-badge">{t("badge")}</span>
               <span className="loc">
                 <svg width="9" height="9" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#36563D" strokeWidth="1.6" />
@@ -561,27 +557,27 @@ export function PreviewStage() {
               {tab === "exchange" && exView === "feed" && (
                 <div className="screen show">
                   <div className="xhead">
-                    <span className="xh-t">Exchange</span>
-                    <button className="postb" onClick={() => setExView("compose")} aria-label="Post a listing">
+                    <span className="xh-t">{t("tabExchange")}</span>
+                    <button className="postb" onClick={() => setExView("compose")} aria-label={t("postAria")}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       </svg>
-                      Post
+                      {t("post")}
                     </button>
                   </div>
-                  <div className="filters" role="group" aria-label="Filter by category">
+                  <div className="filters" role="group" aria-label={t("filtersAria")}>
                     {FILTERS.map((f) => (
                       <button
-                        key={f.key}
-                        className={`fchip${filter === f.key ? " on" : ""}`}
-                        aria-pressed={filter === f.key}
-                        onClick={() => setFilter(f.key)}
+                        key={f}
+                        className={`fchip${filter === f ? " on" : ""}`}
+                        aria-pressed={filter === f}
+                        onClick={() => setFilter(f)}
                       >
-                        {f.label}
+                        {filterLabel(f)}
                       </button>
                     ))}
                     <button className="fchip soon" type="button" disabled>
-                      Marketplace · later, by vote
+                      {t("marketplaceSoon")}
                     </button>
                   </div>
                   {feed.map((l) => (
@@ -606,7 +602,7 @@ export function PreviewStage() {
                       <div>
                         <div className="ecat">
                           <span className="dot"></span>
-                          {l.cat}
+                          {CAT_LABEL[l.catKey]}
                         </div>
                         <div className="ettl">{l.ttl}</div>
                         <div className="eby">{l.by}</div>
@@ -615,7 +611,7 @@ export function PreviewStage() {
                     </div>
                   ))}
                   {feed.length === 0 && (
-                    <div className="emptyfeed">Nothing in this category yet.</div>
+                    <div className="emptyfeed">{t("emptyFeed")}</div>
                   )}
                 </div>
               )}
@@ -625,7 +621,7 @@ export function PreviewStage() {
                 <div className="detail show" style={{ ["--c"]: open.c } as React.CSSProperties}>
                   <button className="back" onClick={() => setExView("feed")}>
                     <BackArrow />
-                    Exchange
+                    {t("backExchange")}
                   </button>
                   <div className="d-photo" style={{ background: `color-mix(in srgb, ${open.c} 20%, #FBF7EE)` }}>
                     {open.catKey === "event" ? (
@@ -642,7 +638,7 @@ export function PreviewStage() {
                   </div>
                   <div className="d-cat" style={{ color: open.c }}>
                     <span className="dot" style={{ background: open.c }}></span>
-                    {open.cat}
+                    {CAT_LABEL[open.catKey]}
                   </div>
                   <div className="d-ttl">{open.ttl}</div>
                   {open.catKey === "event" && open.dateLabel && open.location && (
@@ -653,7 +649,7 @@ export function PreviewStage() {
                     <div className="eav">{open.init}</div>
                     <div className="w">
                       {open.who}
-                      <small>{open.catKey === "event" ? "Organizer · Redmond" : "Member · Redmond"}</small>
+                      <small>{open.catKey === "event" ? t("organizerRedmond") : t("memberRedmond")}</small>
                     </div>
                   </div>
                   {open.catKey === "event" ? (
@@ -670,16 +666,16 @@ export function PreviewStage() {
                         }
                       >
                         <CalIcon />
-                        Add to your calendar
+                        {t("addCalendar")}
                       </button>
-                      <span className="inside ev-inside">Downloads an .ics calendar file</span>
+                      <span className="inside ev-inside">{t("icsNote")}</span>
                     </div>
                   ) : (
                     <div className="d-act">
                       <button className="msgbtn" onClick={() => setExView("message")}>
-                        Message {open.who.split(" ")[0]}
+                        {t("message", { name: open.who.split(" ")[0] })}
                       </button>
-                      <span className="inside">Messages stay inside Steppe</span>
+                      <span className="inside">{t("messagesInside")}</span>
                     </div>
                   )}
                 </div>
@@ -702,17 +698,14 @@ export function PreviewStage() {
                   </div>
                   <div className="msgs">
                     {openThread.length === 0 && (
-                      <div className="thread-empty">No messages yet. Say hello.</div>
+                      <div className="thread-empty">{t("threadEmpty")}</div>
                     )}
                     {openThread.map((m, i) => (
                       <div key={i} className={`bubble ${m.from === "me" ? "me" : "them"}`}>
                         {m.text}
                       </div>
                     ))}
-                    <div className="thread-note">
-                      Messages stay inside Steppe. Your email and phone are never
-                      shared.
-                    </div>
+                    <div className="thread-note">{t("threadNote")}</div>
                   </div>
                   <form
                     className="msgbar"
@@ -725,11 +718,11 @@ export function PreviewStage() {
                       type="text"
                       value={draft}
                       onChange={(e) => setDraft(e.target.value)}
-                      placeholder={`Message ${open.who.split(" ")[0]}…`}
-                      aria-label="Message text"
+                      placeholder={t("messagePlaceholder", { name: open.who.split(" ")[0] })}
+                      aria-label={t("messageInputAria")}
                     />
                     <button className="sendb" type="submit" disabled={!draft.trim()}>
-                      Send
+                      {t("send")}
                     </button>
                   </form>
                 </div>
@@ -740,17 +733,17 @@ export function PreviewStage() {
                 <div className="compose">
                   <button className="back" onClick={() => setExView("feed")}>
                     <BackArrow />
-                    Exchange
+                    {t("backExchange")}
                   </button>
-                  <div className="scr-h">Post to the exchange</div>
+                  <div className="scr-h">{t("composeH")}</div>
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
                       post();
                     }}
                   >
-                    <label className="clab">Category</label>
-                    <div className="catpick" role="group" aria-label="Category">
+                    <label className="clab">{t("labelCategory")}</label>
+                    <div className="catpick" role="group" aria-label={t("labelCategory")}>
                       {CATS.map((c) => (
                         <button
                           key={c.key}
@@ -760,47 +753,47 @@ export function PreviewStage() {
                           style={cCat === c.key ? { background: c.c, borderColor: c.c, color: "#FBF7EE" } : { color: c.c, borderColor: c.c }}
                           onClick={() => setCCat(c.key)}
                         >
-                          {c.label}
+                          {CAT_LABEL[c.key]}
                         </button>
                       ))}
                     </div>
-                    <label className="clab" htmlFor="c-title">Title</label>
+                    <label className="clab" htmlFor="c-title">{t("labelTitle")}</label>
                     <input
                       id="c-title"
                       type="text"
                       value={cTitle}
                       onChange={(e) => setCTitle(e.target.value)}
-                      placeholder="What are you offering or asking for?"
+                      placeholder={t("titlePh")}
                     />
                     {cCat === "event" && (
                       <>
-                        <label className="clab" htmlFor="c-date">Date</label>
+                        <label className="clab" htmlFor="c-date">{t("labelDate")}</label>
                         <input
                           id="c-date"
                           type="date"
                           value={cDate}
                           onChange={(e) => setCDate(e.target.value)}
                         />
-                        <label className="clab" htmlFor="c-loc">Location</label>
+                        <label className="clab" htmlFor="c-loc">{t("labelLocation")}</label>
                         <input
                           id="c-loc"
                           type="text"
                           value={cLoc}
                           onChange={(e) => setCLoc(e.target.value)}
-                          placeholder="Where is it?"
+                          placeholder={t("locationPh")}
                         />
                       </>
                     )}
-                    <label className="clab" htmlFor="c-body">Description</label>
+                    <label className="clab" htmlFor="c-body">{t("labelDescription")}</label>
                     <textarea
                       id="c-body"
                       value={cBody}
                       onChange={(e) => setCBody(e.target.value)}
                       rows={4}
-                      placeholder="Add the details a neighbor would want to know."
+                      placeholder={t("descriptionPh")}
                     />
                     <button className="castb" type="submit" disabled={!cTitle.trim()}>
-                      Post listing
+                      {t("postListing")}
                     </button>
                   </form>
                 </div>
@@ -809,8 +802,8 @@ export function PreviewStage() {
               {/* ===== GROUPS: LIST ===== */}
               {tab === "groups" && grView === "list" && (
                 <div className="screen show">
-                  <div className="scr-h">Groups</div>
-                  <div className="scr-sub">Join what you like. You can leave any time.</div>
+                  <div className="scr-h">{t("groupsH")}</div>
+                  <div className="scr-sub">{t("groupsSub")}</div>
                   {GROUPS.map((g, i) => (
                     <div
                       className="grp"
@@ -844,7 +837,7 @@ export function PreviewStage() {
                           setJoined((p) => ({ ...p, [g.id]: !p[g.id] }));
                         }}
                       >
-                        {joined[g.id] ? "Joined ✓" : "Join"}
+                        {joined[g.id] ? t("joined") : t("join")}
                       </button>
                     </div>
                   ))}
@@ -856,27 +849,27 @@ export function PreviewStage() {
                 <div className="gdetail">
                   <button className="back" onClick={() => setGrView("list")}>
                     <BackArrow />
-                    Groups
+                    {t("backGroups")}
                   </button>
                   <div className="gd-name">{group.name}</div>
-                  <div className="gd-meta">{group.members} members · Redmond</div>
+                  <div className="gd-meta">{t("membersRedmond", { count: group.members })}</div>
                   <p className="gd-desc">{group.desc}</p>
                   <button
                     className={`joinb gd-join${joined[group.id] ? " joined" : ""}`}
                     aria-pressed={!!joined[group.id]}
                     onClick={() => setJoined((p) => ({ ...p, [group.id]: !p[group.id] }))}
                   >
-                    {joined[group.id] ? "Joined ✓" : "Join group"}
+                    {joined[group.id] ? t("joined") : t("joinGroup")}
                   </button>
 
-                  <div className="gtabs" role="tablist" aria-label="Group sections">
+                  <div className="gtabs" role="tablist" aria-label={t("groupSectionsAria")}>
                     <button
                       className={`gtab${groupTab === "feed" ? " on" : ""}`}
                       role="tab"
                       aria-selected={groupTab === "feed"}
                       onClick={() => setGroupTab("feed")}
                     >
-                      Feed
+                      {t("tabFeed")}
                     </button>
                     <button
                       className={`gtab${groupTab === "events" ? " on" : ""}`}
@@ -884,7 +877,7 @@ export function PreviewStage() {
                       aria-selected={groupTab === "events"}
                       onClick={() => setGroupTab("events")}
                     >
-                      Events
+                      {t("tabEvents")}
                     </button>
                   </div>
 
@@ -920,12 +913,12 @@ export function PreviewStage() {
                             }
                           >
                             <CalIcon />
-                            Add to your calendar
+                            {t("addCalendar")}
                           </button>
                         </div>
                       ))}
                       {group.events.length === 0 && (
-                        <div className="emptyfeed">No upcoming events.</div>
+                        <div className="emptyfeed">{t("noEvents")}</div>
                       )}
                     </div>
                   )}
@@ -935,8 +928,8 @@ export function PreviewStage() {
               {/* ===== GOVERN ===== */}
               {tab === "govern" && (
                 <div className="screen show">
-                  <div className="scr-h">Govern</div>
-                  <div className="scr-sub">One open vote right now.</div>
+                  <div className="scr-h">{t("governH")}</div>
+                  <div className="scr-sub">{t("governSub")}</div>
                   <div className="prop">
                     <div className="pc">Proposal 03 · ranked choice</div>
                     <div className="pt">Community Fund — which project this quarter?</div>
@@ -967,8 +960,8 @@ export function PreviewStage() {
                     })}
                     <div className="quorum">
                       <div className="ql">
-                        <span>Turnout</span>
-                        <span>62% · quorum met</span>
+                        <span>{t("turnout")}</span>
+                        <span>{t("quorumMet")}</span>
                       </div>
                       <div className="qbar">
                         <i></i>
@@ -980,20 +973,16 @@ export function PreviewStage() {
                       disabled={voted}
                       style={voted ? { opacity: 0.55, pointerEvents: "none" } : undefined}
                     >
-                      {voted ? "Ballot cast" : "Cast your ballot"}
+                      {voted ? t("ballotCast") : t("castBallot")}
                     </button>
                     <div className={`voted${voted ? " show" : ""}`} role="status">
                       <b>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                           <path d="M5 12l4 4 10-10" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
-                        Ballot recorded, and secret.
+                        {t("votedH")}
                       </b>
-                      <p>
-                        No one can see how you voted. At launch every member&rsquo;s
-                        vote counts the same; members can later vote to weight by
-                        tenure.
-                      </p>
+                      <p>{t("votedP")}</p>
                     </div>
                   </div>
                 </div>
@@ -1005,40 +994,40 @@ export function PreviewStage() {
                   <div className="prof">
                     <div className="pa">YO</div>
                     <div className="ph">
-                      <b>You</b>
-                      <span>@you · private by default</span>
+                      <b>{t("tabYou")}</b>
+                      <span>{t("youHandle")}</span>
                     </div>
                   </div>
                   <div className="field">
                     <div className="fk">
-                      <b>Username</b>
-                      <span>How neighbors find you</span>
+                      <b>{t("username")}</b>
+                      <span>{t("usernameSub")}</span>
                     </div>
-                    <span className="locked-field">Always shown</span>
+                    <span className="locked-field">{t("alwaysShown")}</span>
                   </div>
                   {FIELDS.map((f, i) => (
-                    <div className="field" key={f.k}>
+                    <div className="field" key={f.labelKey}>
                       <div className="fk">
-                        <b>{f.k}</b>
-                        <span>{f.sub}</span>
+                        <b>{t(f.labelKey)}</b>
+                        <span>{f.subKey ? t(f.subKey) : f.sub}</span>
                       </div>
                       <button className="vis" data-v={vis[i]} onClick={() => cycleVis(i)}>
-                        {VIS_LABEL[vis[i]]}
+                        {visLabel(vis[i])}
                       </button>
                     </div>
                   ))}
                   <div className="activity">
-                    <div className="act-h">Your activity</div>
+                    <div className="act-h">{t("activityH")}</div>
                     <div className="act-row">
-                      <span>Listings posted</span>
+                      <span>{t("listingsPosted")}</span>
                       <b>{posted.length}</b>
                     </div>
                     <div className="act-row">
-                      <span>Groups joined</span>
+                      <span>{t("groupsJoined")}</span>
                       <b>{Object.values(joined).filter(Boolean).length}</b>
                     </div>
                     <div className="act-row">
-                      <span>Ballots cast</span>
+                      <span>{t("ballotsCast")}</span>
                       <b>{voted ? 1 : 0}</b>
                     </div>
                   </div>
@@ -1047,15 +1036,15 @@ export function PreviewStage() {
             </div>
 
             <div className="tabbar">
-              {TABS.map((t) => (
+              {TAB_ORDER.map((v) => (
                 <button
-                  key={t.v}
-                  className={`tab${tab === t.v ? " active" : ""}`}
-                  data-v={t.v}
-                  onClick={() => switchTab(t.v)}
+                  key={v}
+                  className={`tab${tab === v ? " active" : ""}`}
+                  data-v={v}
+                  onClick={() => switchTab(v)}
                 >
-                  {TAB_ICONS[t.v]}
-                  {t.label}
+                  {TAB_ICONS[v]}
+                  {TAB_LABEL[v]}
                 </button>
               ))}
             </div>
