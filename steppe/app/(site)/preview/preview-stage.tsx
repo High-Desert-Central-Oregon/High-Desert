@@ -4,29 +4,33 @@ import { useRef, useState } from "react";
 import { SealMark } from "../_components/seal-mark";
 
 /**
- * Interactive MVP facsimile for /preview — a faithful, fully client-side preview
- * of the Steppe app for prospective members (design:
- * _design-source/steppe-preview-v3.html). Everything runs on in-memory sample
- * data: NO backend, NO network, NO localStorage, NO auth/RLS/governance code.
+ * Interactive MVP facsimile for /preview — a fully client-side preview of the
+ * Steppe app for prospective members (design: _design-source/steppe-preview-v3
+ * .html), reconciled to the locked MVP scope. In-memory sample data only: NO
+ * backend, NO network, NO localStorage, NO auth/RLS/governance code.
  *
- * Feature set previewed (the shipping MVP, honestly — the marketplace stays
- * visibly deferred):
- *  - Exchange: filter by category, open a listing, message the poster in an
- *    in-app thread, and post a new listing (compose sheet, prepends to the feed).
- *  - Groups: browse, open a group to see inside (description + mini-feed), and
- *    Join/Joined kept in sync between the list and the detail.
- *  - Govern: ranked-choice + cast a secret ballot.
- *  - You: per-field privacy cycling, plus a small read-only activity summary.
+ * Mirrors what ships:
+ *  - Exchange: ONE listing primitive with six type tags (Need / Offer / Job /
+ *    Goods / Mutual aid / Event), category filtering, listing detail. Non-event
+ *    types open an in-app message thread (connect → chat). Event listings show
+ *    date + location and an Add-to-calendar (.ics) action — no Message, no RSVP.
+ *    Post a listing (compose; events also capture date + location).
+ *  - Groups: browse + Join/Leave, group detail with a Feed tab and an Events tab
+ *    (basic events with add-to-calendar; no RSVP, no month-grid). Join stays in
+ *    sync between list and detail.
+ *  - Govern: ranked-choice + secret ballot, flat franchise.
+ *  - You: per-field visibility, members-only at launch (Hidden / Members).
  *
- * Tabs and in-phone tab bar both switch screens; switching a tab resets its
- * sub-view to the root (closes any open detail / message / compose / group
- * detail). The phone screen stays light paper in both themes.
+ * Deliberately absent (deferred growth-ladder features): the marketplace, RSVP /
+ * month-grid / recurrence / reminders, the Neighbor tier / "everyone" audience,
+ * SMS, and tenure-weighted voting.
  */
 type Tab = "exchange" | "groups" | "govern" | "you";
 type ExchangeView = "feed" | "detail" | "message" | "compose";
 type GroupsView = "list" | "detail";
-type Vis = "hidden" | "members" | "everyone";
-type CatKey = "offer" | "need" | "gather" | "aid";
+type GroupTab = "feed" | "events";
+type Vis = "hidden" | "members";
+type CatKey = "need" | "offer" | "job" | "goods" | "aid" | "event";
 
 type Listing = {
   id: string;
@@ -38,9 +42,20 @@ type Listing = {
   by: string;
   who: string;
   body: string;
+  // event-only:
+  dateLabel?: string;
+  location?: string;
+  start?: string; // "YYYY-MM-DD" (all-day) or "YYYY-MM-DDTHH:MM:SS" (timed)
 };
 type Msg = { from: "me" | "them"; text: string };
 type GroupPost = { author: string; init: string; text: string };
+type GroupEvent = {
+  id: string;
+  title: string;
+  dateLabel: string;
+  location: string;
+  start: string;
+};
 type Group = {
   id: string;
   name: string;
@@ -48,13 +63,18 @@ type Group = {
   members: number;
   desc: string;
   feed: GroupPost[];
+  events: GroupEvent[];
 };
 
+// Category inks (light values; the phone screen is always light paper, so dark
+// variants aren't needed here — see preview.css).
 const CATS: { key: CatKey; label: string; c: string }[] = [
-  { key: "offer", label: "Offer", c: "#6E8A5B" },
   { key: "need", label: "Need", c: "#A8542C" },
-  { key: "gather", label: "Gathering", c: "#A8842F" },
+  { key: "offer", label: "Offer", c: "#6E8A5B" },
+  { key: "job", label: "Job", c: "#7E5A74" },
+  { key: "goods", label: "Goods", c: "#8C6A46" },
   { key: "aid", label: "Mutual aid", c: "#4F6B7A" },
+  { key: "event", label: "Event", c: "#A8842F" },
 ];
 const catClass = (k: CatKey) => `c-${k}`;
 const catMeta = (k: CatKey) => CATS.find((c) => c.key === k)!;
@@ -72,17 +92,6 @@ const LISTINGS: Listing[] = [
     body: "Grew too many Early Girls this spring. Free to anyone who'll plant them. Pickup near downtown — evenings and weekends work best.",
   },
   {
-    id: "0413",
-    catKey: "offer",
-    cat: "Offer",
-    c: "#6E8A5B",
-    ttl: "Seasoned juniper firewood, you haul",
-    init: "TB",
-    by: "Tomás B. · 6h",
-    who: "Tomás B.",
-    body: "Half a cord of seasoned juniper left over from a property cleanup. Free if you can load and haul it this week off NW Maple.",
-  },
-  {
     id: "0411",
     catKey: "need",
     cat: "Need",
@@ -95,6 +104,39 @@ const LISTINGS: Listing[] = [
   },
   {
     id: "0410",
+    catKey: "job",
+    cat: "Job",
+    c: "#7E5A74",
+    ttl: "Part-time barista, downtown café",
+    init: "BC",
+    by: "Birdie Coffee · 1d",
+    who: "Birdie Coffee",
+    body: "Hiring a friendly part-timer for morning shifts, about 20 hours a week. No experience needed, we'll train. Walk a résumé in any morning.",
+  },
+  {
+    id: "0409",
+    catKey: "goods",
+    cat: "Goods",
+    c: "#8C6A46",
+    ttl: "Solid oak dresser, free to haul",
+    init: "RP",
+    by: "Rosa P. · 7h",
+    who: "Rosa P.",
+    body: "Heavy six-drawer dresser, good shape aside from one sticky drawer. Free if you can pick it up off NW Larch this week. Bring a friend, it's heavy.",
+  },
+  {
+    id: "0408",
+    catKey: "aid",
+    cat: "Mutual aid",
+    c: "#4F6B7A",
+    ttl: "Rides to medical appointments",
+    init: "DL",
+    by: "Dana L. · 3h",
+    who: "Dana L.",
+    body: "Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing — reach out and we'll coordinate.",
+  },
+  {
+    id: "0407",
     catKey: "need",
     cat: "Need",
     c: "#A8542C",
@@ -105,41 +147,46 @@ const LISTINGS: Listing[] = [
     body: "Need a 24-foot extension ladder to clear the gutters Saturday. Happy to leave a deposit and return it the same day.",
   },
   {
-    id: "0409",
-    catKey: "gather",
-    cat: "Gathering",
+    id: "0406",
+    catKey: "offer",
+    cat: "Offer",
+    c: "#6E8A5B",
+    ttl: "Seasoned juniper firewood, you haul",
+    init: "TB",
+    by: "Tomás B. · 1d",
+    who: "Tomás B.",
+    body: "Half a cord of seasoned juniper left over from a property cleanup. Free if you can load and haul it this week off NW Maple.",
+  },
+  {
+    id: "0405",
+    catKey: "event",
+    cat: "Event",
     c: "#A8842F",
     ttl: "Member meeting — July 12",
     init: "St",
-    by: "Steppe · adds to calendar",
+    by: "Steppe · event",
     who: "Steppe",
-    body: "Monthly open meeting: Community Fund proposals, governance Q&A, and a new-member welcome. All members invited — it adds to your calendar.",
+    body: "Monthly open meeting: Community Fund proposals, governance Q&A, and a new-member welcome. All members invited.",
+    dateLabel: "Sat, Jul 12 · 10:00 AM",
+    location: "Redmond Public Library, Community Room",
+    start: "2026-07-12T10:00:00",
   },
   {
-    id: "0408",
-    catKey: "gather",
-    cat: "Gathering",
+    id: "0404",
+    catKey: "event",
+    cat: "Event",
     c: "#A8842F",
-    ttl: "Saturday trail cleanup, Dry Canyon",
-    init: "DC",
-    by: "Dry Canyon Stewards · 1d",
-    who: "Dry Canyon Stewards",
-    body: "Quarterly cleanup along the Dry Canyon rim. Gloves and bags provided. We start at the NE trailhead at 9am and wrap by noon.",
-  },
-  {
-    id: "0407",
-    catKey: "aid",
-    cat: "Mutual aid",
-    c: "#4F6B7A",
-    ttl: "Rides to medical appointments",
-    init: "DL",
-    by: "Dana L. · 3h",
-    who: "Dana L.",
-    body: "Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing — reach out and we'll coordinate.",
+    ttl: "Repair café at the Grange",
+    init: "RC",
+    by: "Repair Collective · event",
+    who: "Repair Collective",
+    body: "Bring a broken lamp, bike, or jacket and fix it alongside neighbors who know how. Tools and parts on hand. Drop in any time.",
+    dateLabel: "Sun, Jul 20 · 1:00 PM",
+    location: "Redmond Grange Hall",
+    start: "2026-07-20T13:00:00",
   },
 ];
 
-// Seeded threads keyed by listing id; anything not listed starts empty.
 const SEED_THREADS: Record<string, Msg[]> = {
   "0412": [
     { from: "me", text: "Hi Martha, are the tomato starts still available?" },
@@ -148,7 +195,7 @@ const SEED_THREADS: Record<string, Msg[]> = {
       text: "Yes, plenty left. Any evening this week works for pickup near downtown.",
     },
   ],
-  "0407": [
+  "0408": [
     {
       from: "them",
       text: "Happy to help with rides. Which day works for your appointment?",
@@ -158,10 +205,12 @@ const SEED_THREADS: Record<string, Msg[]> = {
 
 const FILTERS: { key: "all" | CatKey; label: string }[] = [
   { key: "all", label: "All" },
-  { key: "offer", label: "Offers" },
-  { key: "need", label: "Needs" },
-  { key: "gather", label: "Gatherings" },
+  { key: "need", label: "Need" },
+  { key: "offer", label: "Offer" },
+  { key: "job", label: "Job" },
+  { key: "goods", label: "Goods" },
   { key: "aid", label: "Mutual aid" },
+  { key: "event", label: "Event" },
 ];
 
 const GROUPS: Group[] = [
@@ -175,6 +224,10 @@ const GROUPS: Group[] = [
       { author: "Priya N.", init: "PN", text: "Saturday's cleanup starts at 9am at the NE trailhead. Bring gloves and water." },
       { author: "Marcus T.", init: "MT", text: "Found a downed juniper across the lower loop. Flagged it, crew can clear it this weekend." },
     ],
+    events: [
+      { id: "g1e1", title: "Dry Canyon trail cleanup", dateLabel: "Sat, Jul 19 · 9:00 AM", location: "NE trailhead, Dry Canyon", start: "2026-07-19T09:00:00" },
+      { id: "g1e2", title: "Trail stewards potluck", dateLabel: "Fri, Aug 8 · 6:00 PM", location: "Sam Johnson Park", start: "2026-08-08T18:00:00" },
+    ],
   },
   {
     id: "g2",
@@ -185,6 +238,9 @@ const GROUPS: Group[] = [
     feed: [
       { author: "Dana L.", init: "DL", text: "Reminder: street sweeping on Quartz comes through Thursday morning." },
       { author: "Sam O.", init: "SO", text: "Anyone have a recommendation for a fence repair? Wind took out a panel." },
+    ],
+    events: [
+      { id: "g2e1", title: "Southeast block meetup", dateLabel: "Thu, Jul 17 · 6:30 PM", location: "Quartz Avenue Park", start: "2026-07-17T18:30:00" },
     ],
   },
   {
@@ -197,6 +253,10 @@ const GROUPS: Group[] = [
       { author: "Steppe", init: "St", text: "New this month: a tile saw and two more cordless drills are now on the shelf." },
       { author: "Lena R.", init: "LR", text: "Returned the pressure washer, works great. Thanks to whoever donated it." },
     ],
+    events: [
+      { id: "g3e1", title: "Repair café", dateLabel: "Sat, Aug 2 · 11:00 AM", location: "Tool Library, NW Maple Ave", start: "2026-08-02T11:00:00" },
+      { id: "g3e2", title: "Sharpening clinic", dateLabel: "Sat, Aug 16 · 10:00 AM", location: "Tool Library, NW Maple Ave", start: "2026-08-16T10:00:00" },
+    ],
   },
 ];
 
@@ -204,13 +264,13 @@ const CAPTIONS: Record<Tab, [string, string, string, string]> = {
   exchange: [
     "The exchange",
     "One honest feed.",
-    "Needs, offers, gatherings, and mutual aid, all in one feed. Nothing is ranked or boosted. Tap any entry to open it and reach that neighbor directly.",
+    "Needs, offers, jobs, goods, mutual aid, and events, all on one listing. Nothing is ranked or boosted. Tap any entry to open it and reach that neighbor directly.",
     "No ads · no tracking · messages stay inside Steppe",
   ],
   groups: [
     "Groups",
     "Groups you choose.",
-    "Join the neighborhood and interest groups you want and leave any of them whenever you like. Each group sets its own messaging.",
+    "Join the neighborhood and interest groups you want and leave any of them whenever you like. Open a group to see its feed and upcoming events.",
     "You control which groups can message you",
   ],
   govern: [
@@ -222,7 +282,7 @@ const CAPTIONS: Record<Tab, [string, string, string, string]> = {
   you: [
     "You",
     "Private until you say so.",
-    "Your profile starts private. Show each field to no one, to members, or to everyone. It's field by field, and it's your call. We will never take that from you.",
+    "Your profile starts private. Keep each field hidden, or show it to members. It's field by field, and it's your call. We will never take that from you.",
     "Username always shown · everything else your choice",
   ],
 };
@@ -240,12 +300,49 @@ const FIELDS = [
   { k: "Phone", sub: "Optional" },
 ];
 
-const VIS_ORDER: Vis[] = ["hidden", "members", "everyone"];
-const VIS_LABEL: Record<Vis, string> = {
-  hidden: "Hidden",
-  members: "Members",
-  everyone: "Everyone",
-};
+// MVP: members-only privacy (no "everyone"/Neighbor-tier audience at launch).
+const VIS_ORDER: Vis[] = ["hidden", "members"];
+const VIS_LABEL: Record<Vis, string> = { hidden: "Hidden", members: "Members" };
+
+function slugify(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+function icsEscape(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+}
+// Client-side .ics generation + download (no RSVP, no network).
+function downloadIcs(ev: { id: string; title: string; location: string; start: string }) {
+  const allDay = !ev.start.includes("T");
+  const dt = allDay
+    ? ev.start.replace(/-/g, "")
+    : ev.start.replace(/[-:]/g, "").slice(0, 15);
+  const stamp =
+    new Date().toISOString().replace(/[-:.]/g, "").slice(0, 15) + "Z";
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Steppe//Preview//EN",
+    "BEGIN:VEVENT",
+    `UID:${ev.id}-${dt}@steppe.preview`,
+    `DTSTAMP:${stamp}`,
+    allDay ? `DTSTART;VALUE=DATE:${dt}` : `DTSTART:${dt}`,
+    `SUMMARY:${icsEscape(ev.title)}`,
+    `LOCATION:${icsEscape(ev.location)}`,
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ];
+  const blob = new Blob([lines.join("\r\n")], {
+    type: "text/calendar;charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${slugify(ev.title) || "event"}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 const Chevron = () => (
   <svg className="echev" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -255,6 +352,12 @@ const Chevron = () => (
 const BackArrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+const CalIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="1.7" />
+    <path d="M4 9h16M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
   </svg>
 );
 
@@ -308,6 +411,22 @@ const TABS: { v: Tab; label: string }[] = [
   { v: "you", label: "You" },
 ];
 
+const EventMeta = ({ dateLabel, location }: { dateLabel: string; location: string }) => (
+  <div className="evmeta">
+    <div className="evrow">
+      <CalIcon />
+      {dateLabel}
+    </div>
+    <div className="evrow">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="8" cy="6" r="1.6" stroke="currentColor" strokeWidth="1.4" />
+      </svg>
+      {location}
+    </div>
+  </div>
+);
+
 export function PreviewStage() {
   const [tab, setTab] = useState<Tab>("exchange");
 
@@ -319,14 +438,17 @@ export function PreviewStage() {
   const [threads, setThreads] = useState<Record<string, Msg[]>>(SEED_THREADS);
   const [draft, setDraft] = useState("");
   // compose form
-  const [cCat, setCCat] = useState<CatKey>("offer");
+  const [cCat, setCCat] = useState<CatKey>("need");
   const [cTitle, setCTitle] = useState("");
   const [cBody, setCBody] = useState("");
+  const [cDate, setCDate] = useState("");
+  const [cLoc, setCLoc] = useState("");
   const nextId = useRef(900);
 
   // groups
   const [grView, setGrView] = useState<GroupsView>("list");
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [groupTab, setGroupTab] = useState<GroupTab>("feed");
   const [joined, setJoined] = useState<Record<string, boolean>>({ g1: true });
 
   // govern + you
@@ -339,15 +461,14 @@ export function PreviewStage() {
     setTab(t);
     setExView("feed");
     setGrView("list");
+    setGroupTab("feed");
     setOpenId(null);
     setOpenGroup(null);
   };
 
   const allListings = [...posted, ...LISTINGS];
   const feed =
-    filter === "all"
-      ? allListings
-      : allListings.filter((l) => l.catKey === filter);
+    filter === "all" ? allListings : allListings.filter((l) => l.catKey === filter);
   const open = openId ? allListings.find((l) => l.id === openId) ?? null : null;
   const group = openGroup ? GROUPS.find((g) => g.id === openGroup) ?? null : null;
 
@@ -355,7 +476,9 @@ export function PreviewStage() {
     setRanked((p) => (p.includes(i) ? p.filter((x) => x !== i) : [...p, i]));
   const cycleVis = (i: number) =>
     setVis((p) =>
-      p.map((v, j) => (j === i ? VIS_ORDER[(VIS_ORDER.indexOf(v) + 1) % 3] : v)),
+      p.map((v, j) =>
+        j === i ? VIS_ORDER[(VIS_ORDER.indexOf(v) + 1) % VIS_ORDER.length] : v,
+      ),
     );
 
   const openThread = open ? threads[open.id] ?? [] : [];
@@ -370,6 +493,7 @@ export function PreviewStage() {
     const title = cTitle.trim();
     if (!title) return;
     const meta = catMeta(cCat);
+    const isEvent = cCat === "event";
     const listing: Listing = {
       id: `n${nextId.current++}`,
       catKey: cCat,
@@ -377,14 +501,23 @@ export function PreviewStage() {
       c: meta.c,
       ttl: title,
       init: "YO",
-      by: "You · just now",
+      by: isEvent ? "You · event" : "You · just now",
       who: "You",
       body: cBody.trim() || "No description added.",
+      ...(isEvent
+        ? {
+            dateLabel: cDate || "Date to be set",
+            location: cLoc.trim() || "Location to be set",
+            start: cDate || "2026-01-01",
+          }
+        : {}),
     };
     setPosted((p) => [listing, ...p]);
     setCTitle("");
     setCBody("");
-    setCCat("offer");
+    setCDate("");
+    setCLoc("");
+    setCCat("need");
     setExView("feed");
     setFilter("all");
   };
@@ -426,11 +559,7 @@ export function PreviewStage() {
                 <div className="screen show">
                   <div className="xhead">
                     <span className="xh-t">Exchange</span>
-                    <button
-                      className="postb"
-                      onClick={() => setExView("compose")}
-                      aria-label="Post a listing"
-                    >
+                    <button className="postb" onClick={() => setExView("compose")} aria-label="Post a listing">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                       </svg>
@@ -495,39 +624,66 @@ export function PreviewStage() {
                     <BackArrow />
                     Exchange
                   </button>
-                  <div
-                    className="d-photo"
-                    style={{ background: `color-mix(in srgb, ${open.c} 20%, #FBF7EE)` }}
-                  >
-                    <svg width="50" height="50" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                      <path d="M16 27c5 0 9-3.5 9-9 0-3-2-6-5-7 .5 4-2 6-4 6.5 1-3-1-7-4-8.5C16 4 12 6 11 10c-2 1-3 4-3 8 0 5.5 4 9 8 9z" fill="#6E8A5B" opacity=".5" />
-                      <path d="M16 27V13" stroke="#36563D" strokeWidth="1.4" strokeLinecap="round" />
-                    </svg>
+                  <div className="d-photo" style={{ background: `color-mix(in srgb, ${open.c} 20%, #FBF7EE)` }}>
+                    {open.catKey === "event" ? (
+                      <svg width="46" height="46" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="4" y="5" width="16" height="16" rx="2" stroke="#A8842F" strokeWidth="1.6" />
+                        <path d="M4 9h16M8 3v4M16 3v4" stroke="#A8842F" strokeWidth="1.6" strokeLinecap="round" />
+                      </svg>
+                    ) : (
+                      <svg width="50" height="50" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                        <path d="M16 27c5 0 9-3.5 9-9 0-3-2-6-5-7 .5 4-2 6-4 6.5 1-3-1-7-4-8.5C16 4 12 6 11 10c-2 1-3 4-3 8 0 5.5 4 9 8 9z" fill="#6E8A5B" opacity=".5" />
+                        <path d="M16 27V13" stroke="#36563D" strokeWidth="1.4" strokeLinecap="round" />
+                      </svg>
+                    )}
                   </div>
                   <div className="d-cat" style={{ color: open.c }}>
                     <span className="dot" style={{ background: open.c }}></span>
                     {open.cat}
                   </div>
                   <div className="d-ttl">{open.ttl}</div>
+                  {open.catKey === "event" && open.dateLabel && open.location && (
+                    <EventMeta dateLabel={open.dateLabel} location={open.location} />
+                  )}
                   <div className="d-body">{open.body}</div>
                   <div className="d-owner">
                     <div className="eav">{open.init}</div>
                     <div className="w">
                       {open.who}
-                      <small>Member · Redmond</small>
+                      <small>{open.catKey === "event" ? "Organizer · Redmond" : "Member · Redmond"}</small>
                     </div>
                   </div>
-                  <div className="d-act">
-                    <button className="msgbtn" onClick={() => setExView("message")}>
-                      Message {open.who.split(" ")[0]}
-                    </button>
-                    <span className="inside">Messages stay inside Steppe</span>
-                  </div>
+                  {open.catKey === "event" ? (
+                    <div className="d-act">
+                      <button
+                        className="msgbtn"
+                        onClick={() =>
+                          downloadIcs({
+                            id: open.id,
+                            title: open.ttl,
+                            location: open.location ?? "",
+                            start: open.start ?? "2026-01-01",
+                          })
+                        }
+                      >
+                        <CalIcon />
+                        Add to your calendar
+                      </button>
+                      <span className="inside ev-inside">Downloads an .ics calendar file</span>
+                    </div>
+                  ) : (
+                    <div className="d-act">
+                      <button className="msgbtn" onClick={() => setExView("message")}>
+                        Message {open.who.split(" ")[0]}
+                      </button>
+                      <span className="inside">Messages stay inside Steppe</span>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* ===== EXCHANGE: MESSAGE THREAD ===== */}
-              {tab === "exchange" && exView === "message" && open && (
+              {tab === "exchange" && exView === "message" && open && open.catKey !== "event" && (
                 <div className="thread">
                   <div className="thread-head">
                     <button className="back" onClick={() => setExView("detail")}>
@@ -613,6 +769,25 @@ export function PreviewStage() {
                       onChange={(e) => setCTitle(e.target.value)}
                       placeholder="What are you offering or asking for?"
                     />
+                    {cCat === "event" && (
+                      <>
+                        <label className="clab" htmlFor="c-date">Date</label>
+                        <input
+                          id="c-date"
+                          type="date"
+                          value={cDate}
+                          onChange={(e) => setCDate(e.target.value)}
+                        />
+                        <label className="clab" htmlFor="c-loc">Location</label>
+                        <input
+                          id="c-loc"
+                          type="text"
+                          value={cLoc}
+                          onChange={(e) => setCLoc(e.target.value)}
+                          placeholder="Where is it?"
+                        />
+                      </>
+                    )}
                     <label className="clab" htmlFor="c-body">Description</label>
                     <textarea
                       id="c-body"
@@ -641,12 +816,14 @@ export function PreviewStage() {
                       tabIndex={0}
                       onClick={() => {
                         setOpenGroup(g.id);
+                        setGroupTab("feed");
                         setGrView("detail");
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
                           setOpenGroup(g.id);
+                          setGroupTab("feed");
                           setGrView("detail");
                         }
                       }}
@@ -684,24 +861,71 @@ export function PreviewStage() {
                   <button
                     className={`joinb gd-join${joined[group.id] ? " joined" : ""}`}
                     aria-pressed={!!joined[group.id]}
-                    onClick={() =>
-                      setJoined((p) => ({ ...p, [group.id]: !p[group.id] }))
-                    }
+                    onClick={() => setJoined((p) => ({ ...p, [group.id]: !p[group.id] }))}
                   >
                     {joined[group.id] ? "Joined ✓" : "Join group"}
                   </button>
-                  <div className="gd-feedhead">Recent posts</div>
-                  <div className="gfeed">
-                    {group.feed.map((p, i) => (
-                      <div className="gpost" key={i}>
-                        <div className="gp-av">{p.init}</div>
-                        <div className="gp-body">
-                          <b>{p.author}</b>
-                          {p.text}
-                        </div>
-                      </div>
-                    ))}
+
+                  <div className="gtabs" role="tablist" aria-label="Group sections">
+                    <button
+                      className={`gtab${groupTab === "feed" ? " on" : ""}`}
+                      role="tab"
+                      aria-selected={groupTab === "feed"}
+                      onClick={() => setGroupTab("feed")}
+                    >
+                      Feed
+                    </button>
+                    <button
+                      className={`gtab${groupTab === "events" ? " on" : ""}`}
+                      role="tab"
+                      aria-selected={groupTab === "events"}
+                      onClick={() => setGroupTab("events")}
+                    >
+                      Events
+                    </button>
                   </div>
+
+                  {groupTab === "feed" && (
+                    <div className="gfeed">
+                      {group.feed.map((p, i) => (
+                        <div className="gpost" key={i}>
+                          <div className="gp-av">{p.init}</div>
+                          <div className="gp-body">
+                            <b>{p.author}</b>
+                            {p.text}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {groupTab === "events" && (
+                    <div className="gevents">
+                      {group.events.map((ev) => (
+                        <div className="gevent" key={ev.id}>
+                          <div className="gev-ttl">{ev.title}</div>
+                          <EventMeta dateLabel={ev.dateLabel} location={ev.location} />
+                          <button
+                            className="calb"
+                            onClick={() =>
+                              downloadIcs({
+                                id: ev.id,
+                                title: ev.title,
+                                location: ev.location,
+                                start: ev.start,
+                              })
+                            }
+                          >
+                            <CalIcon />
+                            Add to your calendar
+                          </button>
+                        </div>
+                      ))}
+                      {group.events.length === 0 && (
+                        <div className="emptyfeed">No upcoming events.</div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

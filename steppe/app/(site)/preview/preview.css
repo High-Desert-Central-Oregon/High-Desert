@@ -5,11 +5,14 @@
  * phone screen stays light (#FBF7EE) in both themes by design. Shared chrome /
  * tokens / strata live in site-base.css + tokens.css. */
 .site-root .preview {
-  /* category inks — the phone screen is always light paper */
-  --offer: #6e8a5b;
-  --need: #a8542c;
-  --gather: #a8842f;
-  --aid: #4f6b7a;
+  /* category inks — six listing types on one primitive. Light values only: the
+     phone screen is always light paper, so dark variants aren't needed here. */
+  --need: #a8542c; /* rust */
+  --offer: #6e8a5b; /* sage */
+  --job: #7e5a74; /* plum */
+  --goods: #8c6a46; /* umber */
+  --aid: #4f6b7a; /* range-blue */
+  --event: #a8842f; /* ochre */
 }
 
 /* hero */
@@ -326,17 +329,23 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
 .site-root .preview .echev {
   color: #736e60;
 }
-.site-root .preview .c-offer {
-  --c: var(--offer);
-}
 .site-root .preview .c-need {
   --c: var(--need);
 }
-.site-root .preview .c-gather {
-  --c: var(--gather);
+.site-root .preview .c-offer {
+  --c: var(--offer);
+}
+.site-root .preview .c-job {
+  --c: var(--job);
+}
+.site-root .preview .c-goods {
+  --c: var(--goods);
 }
 .site-root .preview .c-aid {
   --c: var(--aid);
+}
+.site-root .preview .c-event {
+  --c: var(--event);
 }
 
 /* listing detail */
@@ -1100,6 +1109,92 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   font-size: 12.5px;
   color: #2a2e2c;
   margin-bottom: 2px;
+}
+
+/* event meta (date + location) — used in listing detail and group events */
+.site-root .preview .evmeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 4px;
+}
+.site-root .preview .evrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #46473f;
+  line-height: 1.3;
+}
+.site-root .preview .evrow svg {
+  flex: none;
+  color: var(--event);
+}
+.site-root .preview .ev-inside::before {
+  background: var(--event);
+}
+
+/* group detail tabs (Feed / Events) */
+.site-root .preview .gtabs {
+  display: flex;
+  gap: 4px;
+  margin: 18px 0 6px;
+  border-bottom: 1px solid rgba(54, 86, 61, 0.14);
+}
+.site-root .preview .gtab {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #736e60;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 12px;
+  margin-bottom: -1px;
+  cursor: pointer;
+}
+.site-root .preview .gtab.on {
+  color: var(--rust);
+  border-bottom-color: var(--rust);
+}
+
+/* group events list */
+.site-root .preview .gevents {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.site-root .preview .gevent {
+  border: 1px solid rgba(54, 86, 61, 0.14);
+  border-left: 3px solid var(--event);
+  border-radius: 12px;
+  padding: 13px 14px;
+}
+.site-root .preview .gev-ttl {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  color: #2a2e2c;
+}
+.site-root .preview .calb {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--juniper);
+  background: transparent;
+  border: 1.5px solid var(--juniper);
+  border-radius: 18px;
+  padding: 7px 14px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+.site-root .preview .calb svg {
+  flex: none;
 }
 
 /* You activity stub (read-only) */
