@@ -1,25 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 /**
- * Contact form card for /contact (design: _design-source/steppe-contact.html).
- * The design's client-only success is a stand-in; here the form POSTs to the real
- * /api/contact route, which emails hello@steppe.community via Resend (email-only,
- * nothing stored). On failure it surfaces the error and points to the direct
- * mailto: fallback. The `company` field is a honeypot.
+ * Contact form card for /contact. POSTs to the real /api/contact route (emails
+ * hello@steppe.community via Resend, email-only). On failure it surfaces the error
+ * and points to the mailto: fallback. The `company` field is a honeypot. Copy is
+ * localized from the "contact" namespace; topic option VALUES stay English so the
+ * route's topic validation contract is unchanged (only the labels are localized).
  */
 type Status = "idle" | "submitting" | "success" | "error";
 
-const TOPICS = [
-  "General question",
-  "Partnership or funding",
-  "Press or media",
-  "Privacy",
-  "Something else",
+const TOPICS: { value: string; key: string }[] = [
+  { value: "General question", key: "topicGeneral" },
+  { value: "Partnership or funding", key: "topicPartnership" },
+  { value: "Press or media", key: "topicPress" },
+  { value: "Privacy", key: "topicPrivacy" },
+  { value: "Something else", key: "topicOther" },
 ];
 
 export function ContactForm() {
+  const t = useTranslations("contact");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -51,11 +53,11 @@ export function ContactForm() {
       if (res.ok && data.ok) {
         setStatus("success");
       } else {
-        setError(data.error || "Could not send your message.");
+        setError(data.error || t("errGeneric"));
         setStatus("error");
       }
     } catch {
-      setError("Couldn't reach the server.");
+      setError(t("errNetwork"));
       setStatus("error");
     }
   }
@@ -69,11 +71,8 @@ export function ContactForm() {
               <path d="M5 12l4 4 10-10" stroke="#6E8A5B" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h2>Message sent.</h2>
-          <p>
-            Thanks for reaching out. We&rsquo;ll reply to the email you gave us as
-            soon as we can.
-          </p>
+          <h2>{t("successH")}</h2>
+          <p>{t("successP")}</p>
         </div>
       </div>
     );
@@ -82,11 +81,9 @@ export function ContactForm() {
   return (
     <div className="formcard" id="contact-card">
       <form onSubmit={handleSubmit} noValidate>
-        <div className="fk">Send a message</div>
-        <h2>Tell us what&rsquo;s on your mind.</h2>
-        <p className="fsub">
-          Fill in a few details and we&rsquo;ll reply to the email you give us.
-        </p>
+        <div className="fk">{t("formKicker")}</div>
+        <h2>{t("formH")}</h2>
+        <p className="fsub">{t("fsub")}</p>
 
         {/* Honeypot — real people leave this empty. */}
         <input
@@ -99,33 +96,30 @@ export function ContactForm() {
         />
 
         <div className="frow">
-          <label htmlFor="nm">Name</label>
-          <input id="nm" name="name" type="text" required placeholder="Your name" autoComplete="name" />
+          <label htmlFor="nm">{t("labelName")}</label>
+          <input id="nm" name="name" type="text" required placeholder={t("phName")} autoComplete="name" />
         </div>
         <div className="frow">
-          <label htmlFor="em">Email</label>
+          <label htmlFor="em">{t("labelEmail")}</label>
           <input id="em" name="email" type="email" required placeholder="you@example.com" autoComplete="email" />
         </div>
         <div className="frow">
-          <label htmlFor="tp">Topic</label>
-          <select id="tp" name="topic" defaultValue={TOPICS[0]}>
-            {TOPICS.map((t) => (
-              <option key={t}>{t}</option>
+          <label htmlFor="tp">{t("labelTopic")}</label>
+          <select id="tp" name="topic" defaultValue={TOPICS[0].value}>
+            {TOPICS.map((topic) => (
+              <option key={topic.value} value={topic.value}>
+                {t(topic.key)}
+              </option>
             ))}
           </select>
         </div>
         <div className="frow">
-          <label htmlFor="msg">Message</label>
-          <textarea
-            id="msg"
-            name="message"
-            required
-            placeholder="What would you like to tell us?"
-          />
+          <label htmlFor="msg">{t("labelMessage")}</label>
+          <textarea id="msg" name="message" required placeholder={t("phMessage")} />
         </div>
 
         <button className="submitb" type="submit" disabled={status === "submitting"}>
-          {status === "submitting" ? "Sending…" : "Send message"}
+          {status === "submitting" ? t("submitting") : t("submit")}
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -133,14 +127,17 @@ export function ContactForm() {
 
         {status === "error" && (
           <p className="formerr" role="alert">
-            {error} You can{" "}
-            <a href="mailto:hello@steppe.community">email us directly</a> instead.
+            {error}{" "}
+            {t.rich("errMail", {
+              link: (c) => <a href="mailto:hello@steppe.community">{c}</a>,
+            })}
           </p>
         )}
 
         <p className="formnote">
-          We&rsquo;ll only use your message to reply, and for nothing else. See our{" "}
-          <a href="/privacy">privacy commitments</a>.
+          {t.rich("formnote", {
+            link: (c) => <a href="/privacy">{c}</a>,
+          })}
         </p>
       </form>
     </div>

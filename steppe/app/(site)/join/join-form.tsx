@@ -1,26 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 /**
- * Interest-signup form card for /join (design: _design-source/steppe-join.html).
- * The design's client-only success state is a stand-in; here the form POSTs to the
- * real /api/interest endpoint (service-role insert into interest_signups) and only
- * shows the confirmation once the server accepts it.
+ * Interest-signup form card for /join. POSTs to the real /api/interest endpoint
+ * (service-role insert into interest_signups) and shows the confirmation only once
+ * the server accepts it. Copy is localized from the "join" catalog namespace.
  *
- * Field mapping to the existing /api/interest contract (kept unchanged):
- *   email        → email (required)
- *   name         → first_name (optional)
- *   neighborhood → in_area: true when provided (the schema has no free-text
- *                  neighborhood column; a Redmond-area neighborhood signals
- *                  in-area, the closest existing field)
- *   consent      → true, implied by submitting under the visible privacy notice
- *                  (the v-join design has no checkbox)
- *   company      → honeypot (visually hidden); a filled value is dropped server-side
+ * Field mapping to the unchanged /api/interest contract: email → email; name →
+ * first_name; neighborhood → in_area (true when provided); consent → true (implied
+ * by submitting under the visible privacy notice); company → honeypot.
  */
 type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
 
 export function JoinForm() {
+  const t = useTranslations("join");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -56,11 +51,11 @@ export function JoinForm() {
       if (res.ok && data.ok) {
         setStatus(data.duplicate ? "duplicate" : "success");
       } else {
-        setError(data.error || "Something went wrong. Please try again.");
+        setError(data.error || t("errGeneric"));
         setStatus("error");
       }
     } catch {
-      setError("Couldn't reach the server. Please try again.");
+      setError(t("errNetwork"));
       setStatus("error");
     }
   }
@@ -74,14 +69,8 @@ export function JoinForm() {
               <path d="M5 12l4 4 10-10" stroke="#6E8A5B" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h2>
-            {status === "duplicate" ? "You're already on the list." : "You're on the list."}
-          </h2>
-          <p>
-            {status === "duplicate"
-              ? "We already have your email, so we'll reach out the moment membership opens in Redmond."
-              : "We'll email you the moment membership opens in Redmond. We're glad you're here."}
-          </p>
+          <h2>{status === "duplicate" ? t("dupH") : t("successH")}</h2>
+          <p>{status === "duplicate" ? t("dupP") : t("successP")}</p>
         </div>
       </div>
     );
@@ -90,28 +79,24 @@ export function JoinForm() {
   return (
     <div className="formcard" id="join-form">
       <form onSubmit={handleSubmit} noValidate>
-        <div className="fk">Opening in Redmond soon</div>
-        <h2>Get on the list.</h2>
-        <p className="fsub">
-          We&rsquo;re getting Steppe ready to open in Redmond. Leave your email and
-          we&rsquo;ll tell you the moment it does. And don&rsquo;t worry, we will
-          scale to all of Central Oregon.
-        </p>
+        <div className="fk">{t("formKicker")}</div>
+        <h2>{t("formH")}</h2>
+        <p className="fsub">{t("fsub")}</p>
         <div className="frow">
-          <label htmlFor="em">Email</label>
+          <label htmlFor="em">{t("labelEmail")}</label>
           <input id="em" name="email" type="email" required placeholder="you@example.com" autoComplete="email" />
         </div>
         <div className="frow">
           <label htmlFor="nm">
-            Name <span className="opt">Optional</span>
+            {t("labelName")} <span className="opt">{t("optional")}</span>
           </label>
-          <input id="nm" name="name" type="text" placeholder="First name" autoComplete="given-name" />
+          <input id="nm" name="name" type="text" placeholder={t("phName")} autoComplete="given-name" />
         </div>
         <div className="frow">
           <label htmlFor="nb">
-            Neighborhood <span className="opt">Optional</span>
+            {t("labelNeighborhood")} <span className="opt">{t("optional")}</span>
           </label>
-          <input id="nb" name="neighborhood" type="text" placeholder="e.g. SE Redmond" />
+          <input id="nb" name="neighborhood" type="text" placeholder={t("phNeighborhood")} />
         </div>
 
         {/* Honeypot — real people leave this empty. */}
@@ -121,7 +106,7 @@ export function JoinForm() {
         </div>
 
         <button className="submitb" type="submit" disabled={status === "submitting"}>
-          {status === "submitting" ? "Joining…" : "Join the list"}
+          {status === "submitting" ? t("submitting") : t("submit")}
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -134,9 +119,9 @@ export function JoinForm() {
         )}
 
         <p className="formnote">
-          We&rsquo;ll only use your email to let you know when Steppe opens, and for
-          nothing else. Our <a href="/privacy">privacy commitments</a> spell out
-          the rest.
+          {t.rich("formnote", {
+            link: (c) => <a href="/privacy">{c}</a>,
+          })}
         </p>
       </form>
     </div>

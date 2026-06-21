@@ -1,8 +1,8 @@
-// Privacy (/privacy) — rebuilt from the canonical design
-// (_design-source/steppe-privacy.html) on the shared chrome + tokens. Plain-
-// language document: the six commitments, what we collect and why, your rights,
-// and the closing. Static content. The full legal policy is referenced; questions
-// route to hello@steppe.community.
+// Privacy (/privacy) — plain-language document from the canonical design
+// (steppe-privacy.html) on the shared chrome + tokens. Copy is localized from the
+// active catalog ("privacy" namespace). The formal policy at /legal/privacy stays
+// English-only and governs (see the legalGoverns note by the policy link).
+import { getTranslations } from "next-intl/server";
 import "./privacy.css";
 import { StrataHorizon } from "../_components/strata-horizon";
 
@@ -12,23 +12,18 @@ export const metadata = {
     "Privacy at Steppe is the structure, not a setting: a member-owned nonprofit with no ads, no trackers, and no data to sell. What we collect, why, and your rights — in plain language.",
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const t = await getTranslations("privacy");
   return (
     <div className="privacy">
       <header className="hero">
         <div className="hero-in">
           <span className="eyebrow">
-            <span className="pip"></span>Privacy
+            <span className="pip"></span>{t("heroEyebrow")}
           </span>
-          <h1>
-            We have <em>nothing to gain</em> from your data.
-          </h1>
-          <p>
-            Most platforms bury privacy in a menu you have to go find. Here
-            it&rsquo;s part of what Steppe is: a member-owned nonprofit that runs no
-            ads, keeps no trackers, and has nothing to gain from your information.
-          </p>
-          <div className="updated">Last updated — June 2026</div>
+          <h1>{t.rich("heroTitle", { em: (c) => <em>{c}</em> })}</h1>
+          <p>{t("heroLead")}</p>
+          <div className="updated">{t("updated")}</div>
         </div>
         <StrataHorizon variant="compact" />
       </header>
@@ -37,70 +32,51 @@ export default function PrivacyPage() {
         <div className="wrap">
           <div className="sec-head">
             <span className="eyebrow">
-              <span className="pip"></span>Our commitments
+              <span className="pip"></span>{t("commitEyebrow")}
             </span>
-            <h2>Six promises we keep.</h2>
+            <h2>{t("commitTitle")}</h2>
           </div>
           <div className="charter">
             <div className="clause">
               <div className="ltr">a.</div>
               <div>
-                <h3>We never sell or share your data</h3>
-                <p>
-                  There&rsquo;s no one to sell it to, and no business here that
-                  wants it. Steppe runs on member dues, full stop.
-                </p>
+                <h3>{t("cAH")}</h3>
+                <p>{t("cAB")}</p>
               </div>
             </div>
             <div className="clause">
               <div className="ltr">b.</div>
               <div>
-                <h3>No advertising, no ad-tech</h3>
-                <p>
-                  No third-party trackers, no advertising pixels, and no
-                  behavioral profiles. Nothing watches what you do in order to sell
-                  you something or to someone later.
-                </p>
+                <h3>{t("cBH")}</h3>
+                <p>{t("cBB")}</p>
               </div>
             </div>
             <div className="clause">
               <div className="ltr">c.</div>
               <div>
-                <h3>We verify residency, then forget it</h3>
-                <p>
-                  We confirm you live in the area, then delete the documents you
-                  used to prove it. We don&rsquo;t keep a file on you.
-                </p>
+                <h3>{t("cCH")}</h3>
+                <p>{t("cCB")}</p>
               </div>
             </div>
             <div className="clause">
               <div className="ltr">d.</div>
               <div>
-                <h3>Your profile is private by default</h3>
-                <p>
-                  Every field starts hidden. You choose, one at a time, whether
-                  it&rsquo;s visible to no one, to members, or to everyone.
-                </p>
+                <h3>{t("cDH")}</h3>
+                <p>{t("cDB")}</p>
               </div>
             </div>
             <div className="clause">
               <div className="ltr">e.</div>
               <div>
-                <h3>Messages stay inside Steppe</h3>
-                <p>
-                  Conversations between neighbors stay between neighbors. We
-                  don&rsquo;t read them. They&rsquo;re yours.
-                </p>
+                <h3>{t("cEH")}</h3>
+                <p>{t("cEB")}</p>
               </div>
             </div>
             <div className="clause">
               <div className="ltr">f.</div>
               <div>
-                <h3>You can leave with everything</h3>
-                <p>
-                  Export all of your data any time, and delete your account
-                  whenever you want. When you go, we delete our copy.
-                </p>
+                <h3>{t("cFH")}</h3>
+                <p>{t("cFB")}</p>
               </div>
             </div>
           </div>
@@ -111,78 +87,60 @@ export default function PrivacyPage() {
         <div className="wrap">
           <div className="sec-head">
             <span className="eyebrow">
-              <span className="pip"></span>The record
+              <span className="pip"></span>{t("recordEyebrow")}
             </span>
-            <h2>What we collect, and why.</h2>
-            <p>
-              Only what we need to run a verified, member-owned community. Nothing
-              is kept &ldquo;just in case.&rdquo;
-            </p>
+            <h2>{t("recordTitle")}</h2>
+            <p>{t("recordDek")}</p>
           </div>
           <div className="collect">
             <div className="crow">
               <div className="cn">
-                <b>Account basics</b>
-                <span className="tag">Required</span>
+                <b>{t("r1Name")}</b>
+                <span className="tag">{t("r1Tag")}</span>
               </div>
-              <div className="cw">
-                Your email and username, so you can sign in and neighbors can reach
-                you.
-              </div>
+              <div className="cw">{t("r1Cw")}</div>
               <div className="cr">
-                <b>While a member</b>deleted on leaving
+                <b>{t("r1CrB")}</b>{t("r1CrN")}
               </div>
             </div>
             <div className="crow">
               <div className="cn">
-                <b>Dues &amp; payment</b>
-                <span className="tag">Required</span>
+                <b>{t("r2Name")}</b>
+                <span className="tag">{t("r2Tag")}</span>
               </div>
-              <div className="cw">
-                Handled by our payment processor. We see that you&rsquo;ve paid, and
-                we never store your card.
-              </div>
+              <div className="cw">{t("r2Cw")}</div>
               <div className="cr">
-                <b>Processor</b>not held by us
+                <b>{t("r2CrB")}</b>{t("r2CrN")}
               </div>
             </div>
             <div className="crow">
               <div className="cn">
-                <b>Residency check</b>
-                <span className="tag">Once</span>
+                <b>{t("r3Name")}</b>
+                <span className="tag">{t("r3Tag")}</span>
               </div>
-              <div className="cw">
-                Proof that you live in the area, reviewed to confirm eligibility,
-                then removed.
-              </div>
+              <div className="cw">{t("r3Cw")}</div>
               <div className="cr">
-                <b>Deleted</b>after verification
+                <b>{t("r3CrB")}</b>{t("r3CrN")}
               </div>
             </div>
             <div className="crow">
               <div className="cn">
-                <b>What you post</b>
-                <span className="tag">You choose</span>
+                <b>{t("r4Name")}</b>
+                <span className="tag">{t("r4Tag")}</span>
               </div>
-              <div className="cw">
-                Listings, messages, group activity, and the votes you cast. You
-                create it, and you can remove it.
-              </div>
+              <div className="cw">{t("r4Cw")}</div>
               <div className="cr">
-                <b>Until you</b>delete it
+                <b>{t("r4CrB")}</b>{t("r4CrN")}
               </div>
             </div>
             <div className="crow">
               <div className="cn">
-                <b>Minimal logs</b>
-                <span className="tag">Security</span>
+                <b>{t("r5Name")}</b>
+                <span className="tag">{t("r5Tag")}</span>
               </div>
-              <div className="cw">
-                Basic technical records to keep the service running and safe. No
-                tracking profiles.
-              </div>
+              <div className="cw">{t("r5Cw")}</div>
               <div className="cr">
-                <b>Short-term</b>then purged
+                <b>{t("r5CrB")}</b>{t("r5CrN")}
               </div>
             </div>
           </div>
@@ -193,9 +151,9 @@ export default function PrivacyPage() {
         <div className="wrap">
           <div className="sec-head">
             <span className="eyebrow">
-              <span className="pip"></span>Your rights
+              <span className="pip"></span>{t("rightsEyebrow")}
             </span>
-            <h2>You&rsquo;re in charge of it.</h2>
+            <h2>{t("rightsTitle")}</h2>
           </div>
           <div className="rights">
             <div className="right">
@@ -206,8 +164,8 @@ export default function PrivacyPage() {
                 </svg>
               </div>
               <div>
-                <b>See it</b>
-                <span>View everything we hold about you.</span>
+                <b>{t("rSeeH")}</b>
+                <span>{t("rSeeD")}</span>
               </div>
             </div>
             <div className="right">
@@ -217,8 +175,8 @@ export default function PrivacyPage() {
                 </svg>
               </div>
               <div>
-                <b>Export it</b>
-                <span>Download your data and take it with you.</span>
+                <b>{t("rExportH")}</b>
+                <span>{t("rExportD")}</span>
               </div>
             </div>
             <div className="right">
@@ -228,8 +186,8 @@ export default function PrivacyPage() {
                 </svg>
               </div>
               <div>
-                <b>Correct it</b>
-                <span>Fix anything that&rsquo;s wrong, any time.</span>
+                <b>{t("rCorrectH")}</b>
+                <span>{t("rCorrectD")}</span>
               </div>
             </div>
             <div className="right">
@@ -239,24 +197,22 @@ export default function PrivacyPage() {
                 </svg>
               </div>
               <div>
-                <b>Delete it</b>
-                <span>Close your account and we erase our copy.</span>
+                <b>{t("rDeleteH")}</b>
+                <span>{t("rDeleteD")}</span>
               </div>
             </div>
           </div>
           <div className="closing">
-            <p>
-              This plain-language page is the one we actually live by. There&rsquo;s
-              a full legal policy with the formal detail if you want it, and
-              we&rsquo;re always glad to answer questions.
-            </p>
+            <p>{t("closeP")}</p>
             <p className="legal">
-              Full policy —{" "}
+              {t("fullPolicy")}{" "}
               <a href="https://steppe.community/legal/privacy" target="_blank" rel="noopener noreferrer">
                 steppe.community/legal/privacy
               </a>
               <br />
-              Questions — <a href="/contact">Contact us</a>
+              {t("questions")} <a href="/contact">{t("contactUs")}</a>
+              <br />
+              {t("legalGoverns")}
             </p>
           </div>
         </div>

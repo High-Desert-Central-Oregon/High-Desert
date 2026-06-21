@@ -1,7 +1,8 @@
-// Contact (/contact) — rebuilt from the canonical design
-// (_design-source/steppe-contact.html) on the shared chrome + tokens. Text hero +
-// compact strata, with the real ContactForm (posts to /api/contact → Resend →
-// hello@steppe.community). The direct mailto: stays visible as the fallback.
+// Contact (/contact) — from the canonical design (steppe-contact.html) on the
+// shared chrome + tokens. Text hero + compact strata + the real ContactForm
+// (posts to /api/contact → Resend). Copy is localized from the "contact" catalog;
+// the direct mailto: stays visible as the fallback.
+import { getTranslations } from "next-intl/server";
 import "./contact.css";
 import { ContactForm } from "./contact-form";
 import { StrataHorizon } from "../_components/strata-horizon";
@@ -12,29 +13,26 @@ export const metadata = {
     "A question, a partnership idea, or just want to know more about Steppe? Send a note and we'll get back to you.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const t = await getTranslations("contact");
   return (
     <div className="contact">
       <header className="hero">
         <div className="hero-grid">
           <div>
             <span className="eyebrow">
-              <span className="pip"></span>Contact
+              <span className="pip"></span>{t("heroEyebrow")}
             </span>
-            <h1>
-              Get in <em>touch.</em>
-            </h1>
-            <p className="lead">
-              A question, a partnership idea, or just want to know more about
-              Steppe? Send a note and we&rsquo;ll get back to you.
-            </p>
+            <h1>{t.rich("heroTitle", { em: (c) => <em>{c}</em> })}</h1>
+            <p className="lead">{t("heroLead")}</p>
             <div className="aside">
-              <div className="k">Prefer your own mail app?</div>
+              <div className="k">{t("asideK")}</div>
               <p>
-                Write to us directly at{" "}
-                <a href="mailto:hello@steppe.community">hello@steppe.community</a>.
+                {t.rich("asideP", {
+                  link: (c) => <a href="mailto:hello@steppe.community">{c}</a>,
+                })}
               </p>
-              <div className="resp">We usually reply within a few days.</div>
+              <div className="resp">{t("resp")}</div>
             </div>
           </div>
           <ContactForm />
