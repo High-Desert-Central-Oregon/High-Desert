@@ -49,7 +49,7 @@ export default function JoinPage() {
             <span className="eyebrow">
               <span className="pip"></span>What membership is
             </span>
-            <h2>Four dollars a month, and that&rsquo;s the whole thing.</h2>
+            <h2>One price, the same for everyone.</h2>
           </div>
           <div className="terms">
             <div className="tlist">

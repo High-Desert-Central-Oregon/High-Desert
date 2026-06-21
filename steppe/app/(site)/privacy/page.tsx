@@ -21,7 +21,7 @@ export default function PrivacyPage() {
             <span className="pip"></span>Privacy
           </span>
           <h1>
-            Your privacy, already <em>taken care of.</em>
+            We have <em>nothing to gain</em> from your data.
           </h1>
           <p>
             Most platforms bury privacy in a menu you have to go find. Here

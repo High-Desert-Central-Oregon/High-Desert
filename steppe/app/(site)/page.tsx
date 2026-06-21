@@ -60,9 +60,7 @@ export default function LandingPage() {
               44.27°N&nbsp; 121.17°W — Redmond, Oregon
             </span>
             <h1>
-              A neighborhood
-              <br />
-              you can <span className="em">trust.</span>
+              A place that <span className="em">belongs</span> to the people in it.
             </h1>
             <p className="lead">
               Steppe is civic infrastructure for the people of Central Oregon,

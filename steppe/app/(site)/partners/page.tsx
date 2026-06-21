@@ -102,7 +102,7 @@ export default function PartnersPage() {
             <span className="eyebrow on-dark">
               <span className="pip"></span>Structural guarantees
             </span>
-            <h2>Every protection below is built into the legal structure.</h2>
+            <h2>Written into the legal form, where goodwill can&rsquo;t undo them.</h2>
           </div>
           <div className="panels">
             <div className="panel">
