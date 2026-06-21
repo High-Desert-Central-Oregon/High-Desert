@@ -1,220 +1,357 @@
-/* Pre-launch interest signup — uses the shared brand tokens/fonts
- * (styles/brand-tokens.css, loaded by the (site) layout). Scoped to .join.
- * Entrance follows the landing's "settle" convention: a calm fade-up, disabled
- * under prefers-reduced-motion. */
-.join {
-  max-width: 560px;
-  padding: clamp(56px, 11vw, 132px) clamp(20px, 5vw, 64px);
+/* Join-specific styles (v-join) — membership hero + interest-signup form card,
+ * the "what membership is" terms, and the joining stations. Ported from
+ * _design-source/steppe-join.html, scoped under .site-root .join. Shared chrome /
+ * tokens / strata live in site-base.css + tokens.css. */
+.site-root .join {
+  --offer: #6e8a5b;
+  --field: #f4eee0;
+}
+html[data-theme="dark"] .site-root .join {
+  --field: #23282d;
 }
 
-/* Calm staggered reveal (mirrors landing.css .copy/settle). */
-.join .reveal {
-  animation: joinSettle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+/* hero + form */
+.site-root .join .hero {
+  position: relative;
+  padding: clamp(44px, 6vw, 76px) 0 0;
+  overflow: hidden;
 }
-.join .join-title {
-  animation-delay: 0.06s;
+.site-root .join .hero-grid {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad-x) clamp(40px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: start;
 }
-.join .join-lede {
-  animation-delay: 0.12s;
+.site-root .join .hero h1 {
+  font-size: clamp(40px, 6vw, 66px);
+  margin: 16px 0 0;
 }
-.join .join-form,
-.join .join-done {
-  animation-delay: 0.18s;
+.site-root .join .hero h1 em {
+  font-style: italic;
+  color: var(--juniper);
 }
-.join .join-foot {
-  animation-delay: 0.24s;
+html[data-theme="dark"] .site-root .join .hero h1 em {
+  color: var(--offer);
 }
-@keyframes joinSettle {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.site-root .join .hero p.lead {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 42ch;
+  margin-top: 20px;
+  line-height: 1.55;
 }
-@media (prefers-reduced-motion: reduce) {
-  .join .reveal {
-    animation: none;
-  }
+.site-root .join .price {
+  margin-top: 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
 }
-
-.join-eyebrow {
-  font-family: var(--font-public-sans);
+.site-root .join .price b {
+  font-family: var(--display);
+  font-weight: 480;
+  font-size: 46px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.site-root .join .price span {
+  font-family: var(--mono);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.site-root .join .price-note {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.site-root .join .formcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(22px, 3vw, 32px);
+  box-shadow: 0 18px 42px -24px rgba(0, 0, 0, 0.45);
+}
+.site-root .join .formcard .fk {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--rust);
+  margin-bottom: 6px;
 }
-.join-title {
-  font-family: var(--font-fraunces);
-  font-weight: 500;
-  font-size: clamp(2.2rem, 6vw, 3.4rem);
-  line-height: 1.04;
-  letter-spacing: -0.012em;
-  color: var(--basalt);
-  margin-top: 12px;
+.site-root .join .formcard h2 {
+  font-size: 25px;
+  font-weight: 480;
+  margin-bottom: 7px;
 }
-.join-lede {
-  font-family: var(--font-public-sans);
-  font-size: 1.12rem;
-  color: var(--basalt-soft);
-  line-height: 1.6;
-  margin-top: 20px;
-}
-
-/* ---- form ---- */
-.join-form {
-  margin-top: 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.jf-field {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.jf-field label,
-.jf-check span {
-  font-family: var(--font-public-sans);
-  font-size: 0.97rem;
-  font-weight: 600;
-  color: var(--basalt);
-}
-.jf-req {
-  color: var(--rust);
-  font-weight: 600;
-}
-.jf-opt {
-  color: var(--basalt-soft);
-  font-weight: 400;
-}
-.jf-field input[type="text"],
-.jf-field input[type="email"] {
-  font-family: var(--font-public-sans);
-  font-size: 1rem;
-  color: var(--basalt);
-  background: var(--bone-soft);
-  border: 1.5px solid var(--bone-deep);
-  border-radius: 10px;
-  padding: 13px 15px;
-  transition: border-color 0.2s ease, background 0.2s ease;
-}
-.jf-field input::placeholder {
-  color: var(--basalt-soft);
-  opacity: 0.7;
-}
-.jf-field input:focus-visible {
-  border-color: var(--juniper);
-  background: var(--snow);
-}
-
-.jf-check {
-  display: flex;
-  align-items: flex-start;
-  gap: 11px;
-  cursor: pointer;
-}
-.jf-check input[type="checkbox"] {
-  margin-top: 2px;
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  accent-color: var(--juniper);
-  cursor: pointer;
-}
-.jf-check span {
-  font-weight: 400;
-  color: var(--basalt-soft);
+.site-root .join .formcard .fsub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
   line-height: 1.5;
 }
-.jf-consent span {
-  font-weight: 600;
-  color: var(--basalt);
+.site-root .join .frow {
+  margin-bottom: 14px;
 }
-
-/* Honeypot: kept in the layout but pushed out of sight and out of the tab order.
-   display:none would let some bots skip it; this hides it from people only. */
-.jf-hp {
+.site-root .join label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.site-root .join label .opt {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 9.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-left: 8px;
+}
+.site-root .join input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 15px;
+  padding: 12px 13px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--field);
+  color: var(--text);
+  transition: border-color 0.15s;
+}
+.site-root .join input:focus {
+  outline: none;
+  border-color: var(--rust);
+}
+/* honeypot — visually hidden, off the tab order */
+.site-root .join .hp {
   position: absolute;
   left: -9999px;
   width: 1px;
   height: 1px;
   overflow: hidden;
 }
-
-.jf-submit {
-  align-self: flex-start;
-  font-family: var(--font-public-sans);
-  font-size: 1rem;
+.site-root .join .submitb {
+  width: 100%;
+  font-family: var(--sans);
   font-weight: 600;
-  color: var(--bone-soft);
-  background: var(--juniper);
+  font-size: 15px;
+  color: #fbf7ee;
+  background: var(--rust);
   border: none;
-  border-radius: 999px;
-  padding: 14px 28px;
+  border-radius: 11px;
+  padding: 13px;
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.25s ease;
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+  transition: transform 0.15s;
 }
-.jf-submit:hover {
-  background: var(--juniper-deep);
+.site-root .join .submitb:hover {
   transform: translateY(-1px);
 }
-.jf-submit:disabled {
-  opacity: 0.65;
+.site-root .join .submitb:disabled {
+  opacity: 0.6;
   cursor: default;
   transform: none;
 }
-
-.jf-error {
-  font-family: var(--font-public-sans);
-  font-size: 0.95rem;
+.site-root .join .formerr {
+  font-family: var(--sans);
+  font-size: 13px;
   color: var(--rust);
-  margin: 0;
+  margin-top: 12px;
 }
-.jf-fine {
-  font-family: var(--font-public-sans);
-  font-size: 0.87rem;
-  color: var(--basalt-soft);
-  line-height: 1.55;
-  margin: 0;
+.site-root .join .formnote {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  line-height: 1.65;
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
 }
-.jf-fine a,
-.join-foot a {
-  color: var(--juniper);
+.site-root .join .formnote a {
+  color: var(--rust);
+}
+.site-root .join .success {
+  text-align: center;
+  padding: 14px 4px;
+}
+.site-root .join .success .ck {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(110, 138, 91, 0.18);
+  border: 1.5px solid var(--offer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+.site-root .join .success h2 {
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+.site-root .join .success p {
+  color: var(--text-muted);
+  font-size: 15px;
+  max-width: 34ch;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* sections */
+.site-root .join .sec-head {
+  max-width: 62ch;
+  margin-bottom: 8px;
+}
+.site-root .join .sec-head h2 {
+  font-size: clamp(28px, 4vw, 44px);
+  margin-top: 14px;
+}
+.site-root .join .sec-head p {
+  font-size: 17px;
+  color: var(--text-muted);
+  margin-top: 16px;
+  max-width: 54ch;
+}
+
+.site-root .join .terms {
+  margin-top: 42px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(28px, 5vw, 56px);
+  align-items: start;
+}
+.site-root .join .tlist {
+  border-top: 1px solid var(--border);
+}
+.site-root .join .trow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  padding: 18px 2px;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
+}
+.site-root .join .trow .tn {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--rust);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.site-root .join .trow h3 {
+  font-size: 18px;
+  font-weight: 560;
+  font-family: var(--sans);
+  margin-bottom: 3px;
+}
+.site-root .join .trow p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.site-root .join .incl {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.site-root .join .incl .ik {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rust);
+  margin-bottom: 14px;
+}
+.site-root .join .incl ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.site-root .join .incl li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 11px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+.site-root .join .incl li .c {
+  color: var(--offer);
+  padding-top: 2px;
+}
+.site-root .join .incl li b {
   font-weight: 600;
 }
-
-/* ---- success / duplicate ---- */
-.join-done {
-  margin-top: 36px;
-  background: var(--bone-soft);
-  border: 1.5px solid var(--bone-deep);
-  border-left: 4px solid var(--juniper);
-  border-radius: 12px;
-  padding: 24px 26px;
+.site-root .join .incl li span {
+  color: var(--text-muted);
 }
-.join-done-title {
-  font-family: var(--font-fraunces);
+
+.site-root .join .stations {
+  margin-top: 44px;
+  display: grid;
+  gap: 0;
+}
+.site-root .join .stn {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  align-items: start;
+}
+.site-root .join .stn:last-child {
+  border-bottom: 1px solid var(--border);
+}
+.site-root .join .stn .no {
+  font-family: var(--mono);
   font-weight: 500;
-  font-size: 1.4rem;
-  color: var(--juniper-deep);
-  margin: 0;
+  color: var(--rust);
+  font-size: 13px;
+  padding-top: 4px;
+  min-width: 42px;
 }
-.join-done-body {
-  font-family: var(--font-public-sans);
-  font-size: 1rem;
-  color: var(--basalt-soft);
+.site-root .join .stn h3 {
+  font-size: 22px;
+  font-weight: 480;
+  margin-bottom: 7px;
+}
+.site-root .join .stn p {
+  font-size: 15px;
+  color: var(--text-muted);
   line-height: 1.6;
-  margin: 10px 0 0;
+  max-width: 62ch;
+}
+.site-root .join .stn .stamp {
+  font-family: var(--mono);
+  background: rgba(168, 84, 44, 0.12);
+  color: var(--rust);
+  padding: 1px 7px;
+  border-radius: 5px;
+  font-size: 0.85em;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.join-foot {
-  font-family: var(--font-public-sans);
-  font-size: 0.95rem;
-  color: var(--basalt-soft);
-  margin-top: 28px;
+@media (max-width: 840px) {
+  .site-root .join .hero-grid,
+  .site-root .join .terms {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+  .site-root .join .stn {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
 }

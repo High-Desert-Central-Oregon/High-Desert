@@ -1,56 +1,233 @@
-/* Minimal pre-launch privacy notice — uses the shared brand tokens/fonts
- * (styles/brand-tokens.css, loaded by the (site) layout). Scoped to .privacy. */
-.privacy {
-  max-width: 640px;
-  padding: clamp(56px, 11vw, 132px) clamp(20px, 5vw, 64px);
+/* Privacy-specific styles (v-privacy) — hero, the six-commitment charter, the
+ * "what we collect" register, the rights grid, and the closing. Ported from
+ * _design-source/steppe-privacy.html, scoped under .site-root .privacy. Shared
+ * chrome / tokens / strata live in site-base.css + tokens.css. */
+.site-root .privacy {
+  --offer: #6e8a5b;
+  --maxw: 920px;
 }
-.pv-eyebrow {
-  font-family: var(--font-public-sans);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--rust);
+
+/* hero */
+.site-root .privacy .hero {
+  position: relative;
+  padding: clamp(44px, 6vw, 76px) 0 0;
+  overflow: hidden;
 }
-.pv-title {
-  font-family: var(--font-fraunces);
-  font-weight: 500;
-  font-size: clamp(2.2rem, 6vw, 3.4rem);
-  line-height: 1.04;
-  letter-spacing: -0.012em;
-  color: var(--basalt);
-  margin-top: 12px;
+.site-root .privacy .hero-in {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad-x) clamp(28px, 4vw, 48px);
 }
-.pv-lede {
-  font-family: var(--font-public-sans);
-  font-size: 1.12rem;
-  color: var(--basalt-soft);
-  line-height: 1.6;
-  margin-top: 20px;
+.site-root .privacy .hero h1 {
+  font-size: clamp(38px, 5.6vw, 60px);
+  margin: 16px 0 0;
+  max-width: 18ch;
 }
-.pv-section {
-  margin-top: 34px;
-}
-.pv-section h2 {
-  font-family: var(--font-fraunces);
-  font-weight: 500;
-  font-size: 1.3rem;
-  color: var(--juniper-deep);
-  margin: 0 0 8px;
-}
-.pv-section p {
-  font-family: var(--font-public-sans);
-  font-size: 1rem;
-  color: var(--basalt-soft);
-  line-height: 1.62;
-  margin: 0;
-}
-.pv-foot {
-  font-family: var(--font-public-sans);
-  font-size: 0.95rem;
-  margin-top: 40px;
-}
-.privacy a {
+.site-root .privacy .hero h1 em {
+  font-style: italic;
   color: var(--juniper);
+}
+html[data-theme="dark"] .site-root .privacy .hero h1 em {
+  color: var(--offer);
+}
+.site-root .privacy .hero p {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 58ch;
+  margin-top: 20px;
+  line-height: 1.55;
+}
+.site-root .privacy .updated {
+  margin-top: 18px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* sections (narrower max-width for the document) */
+.site-root .privacy .wrap {
+  max-width: var(--maxw);
+}
+.site-root .privacy .sec-head {
+  margin-bottom: 6px;
+}
+.site-root .privacy .sec-head h2 {
+  font-size: clamp(26px, 3.6vw, 40px);
+  margin-top: 13px;
+}
+.site-root .privacy .sec-head p {
+  font-size: 16.5px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  max-width: 56ch;
+}
+
+/* charter */
+.site-root .privacy .charter {
+  margin-top: 38px;
+  max-width: 720px;
+}
+.site-root .privacy .clause {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.site-root .privacy .clause:first-child {
+  border-top: 1px solid var(--border);
+}
+.site-root .privacy .clause .ltr {
+  font-family: var(--mono);
+  font-weight: 500;
+  color: var(--rust);
+  font-size: 14px;
+  padding-top: 3px;
+}
+.site-root .privacy .clause h3 {
+  font-family: var(--sans);
   font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 5px;
+  letter-spacing: -0.005em;
+}
+.site-root .privacy .clause p {
+  font-size: 14.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 60ch;
+}
+
+/* collect register */
+.site-root .privacy .collect {
+  margin-top: 38px;
+  border-top: 1px solid var(--border);
+}
+.site-root .privacy .crow {
+  display: grid;
+  grid-template-columns: 180px 1fr 130px;
+  gap: 20px;
+  align-items: baseline;
+  padding: 20px 4px;
+  border-bottom: 1px solid var(--border);
+  border-left: 3px solid var(--offer);
+  padding-left: 16px;
+}
+.site-root .privacy .crow .cn b {
+  font-family: var(--display);
+  font-weight: 480;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  display: block;
+}
+.site-root .privacy .crow .cn .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--offer);
+  margin-top: 4px;
+  display: block;
+}
+.site-root .privacy .crow .cw {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.site-root .privacy .crow .cr {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  text-align: right;
+  line-height: 1.5;
+}
+.site-root .privacy .crow .cr b {
+  color: var(--text);
+  font-weight: 500;
+  display: block;
+}
+
+/* rights */
+.site-root .privacy .rights {
+  margin-top: 38px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.site-root .privacy .right {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+.site-root .privacy .right .ri {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(110, 138, 91, 0.16);
+  color: var(--offer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.site-root .privacy .right b {
+  font-weight: 600;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 2px;
+}
+.site-root .privacy .right span {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* closing */
+.site-root .privacy .closing {
+  margin-top: 40px;
+  border-top: 1px solid var(--border);
+  padding-top: 26px;
+  max-width: 64ch;
+}
+.site-root .privacy .closing p {
+  font-size: 15.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.site-root .privacy .closing a {
+  color: var(--rust);
+  font-weight: 500;
+}
+.site-root .privacy .closing .legal {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .site-root .privacy .rights {
+    grid-template-columns: 1fr;
+  }
+  .site-root .privacy .crow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .site-root .privacy .crow .cr {
+    text-align: left;
+  }
+  .site-root .privacy .clause {
+    grid-template-columns: 24px 1fr;
+    gap: 12px;
+  }
 }

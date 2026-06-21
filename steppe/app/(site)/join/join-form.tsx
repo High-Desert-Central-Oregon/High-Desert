@@ -3,19 +3,26 @@
 import { useState } from "react";
 
 /**
- * Pre-launch interest form. Posts to the server-only /api/interest endpoint
- * (which holds the service-role key — never the client) and shows an inline
- * success / already-on-the-list / error state without leaving the page.
+ * Interest-signup form card for /join (design: _design-source/steppe-join.html).
+ * The design's client-only success state is a stand-in; here the form POSTs to the
+ * real /api/interest endpoint (service-role insert into interest_signups) and only
+ * shows the confirmation once the server accepts it.
  *
- * The `company` field is a honeypot: visually hidden and skipped by keyboard and
- * screen readers, so a real person never fills it. The server drops any
- * submission that does.
+ * Field mapping to the existing /api/interest contract (kept unchanged):
+ *   email        → email (required)
+ *   name         → first_name (optional)
+ *   neighborhood → in_area: true when provided (the schema has no free-text
+ *                  neighborhood column; a Redmond-area neighborhood signals
+ *                  in-area, the closest existing field)
+ *   consent      → true, implied by submitting under the visible privacy notice
+ *                  (the v-join design has no checkbox)
+ *   company      → honeypot (visually hidden); a filled value is dropped server-side
  */
 type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
 
 export function JoinForm() {
   const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,6 +30,7 @@ export function JoinForm() {
 
     const form = e.currentTarget;
     const fd = new FormData(form);
+    const neighborhood = String(fd.get("neighborhood") ?? "").trim();
 
     setStatus("submitting");
     setError("");
@@ -33,9 +41,9 @@ export function JoinForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: String(fd.get("email") ?? ""),
-          first_name: String(fd.get("first_name") ?? ""),
-          in_area: fd.get("in_area") === "on",
-          consent: fd.get("consent") === "on",
+          first_name: String(fd.get("name") ?? ""),
+          in_area: neighborhood !== "" ? true : null,
+          consent: true,
           company: String(fd.get("company") ?? ""), // honeypot
         }),
       });
@@ -47,7 +55,6 @@ export function JoinForm() {
 
       if (res.ok && data.ok) {
         setStatus(data.duplicate ? "duplicate" : "success");
-        form.reset();
       } else {
         setError(data.error || "Something went wrong. Please try again.");
         setStatus("error");
@@ -60,96 +67,76 @@ export function JoinForm() {
 
   if (status === "success" || status === "duplicate") {
     return (
-      <div className="join-done reveal" role="status">
-        <p className="join-done-title">
-          {status === "success"
-            ? "You’re on the list."
-            : "You’re already on the list."}
-        </p>
-        <p className="join-done-body">
-          {status === "success"
-            ? "We’ll email you when Steppe opens to new members. Nothing else — no ads, no selling your data, ever."
-            : "That email is already saved — we’ll be in touch when membership opens. No need to sign up again."}
-        </p>
+      <div className="formcard" id="join-form">
+        <div className="success" role="status">
+          <div className="ck">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 12l4 4 10-10" stroke="#6E8A5B" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h2>
+            {status === "duplicate" ? "You're already on the list." : "You're on the list."}
+          </h2>
+          <p>
+            {status === "duplicate"
+              ? "We already have your email — we'll reach out the moment membership opens in Redmond."
+              : "We'll email you the moment membership opens in Redmond. Welcome — almost."}
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <form className="join-form reveal" onSubmit={handleSubmit} noValidate>
-      <div className="jf-field">
-        <label htmlFor="jf-email">
-          Email <span className="jf-req">(required)</span>
-        </label>
-        <input
-          id="jf-email"
-          name="email"
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          required
-          placeholder="you@example.com"
-        />
-      </div>
-
-      <div className="jf-field">
-        <label htmlFor="jf-first">
-          First name <span className="jf-opt">(optional)</span>
-        </label>
-        <input
-          id="jf-first"
-          name="first_name"
-          type="text"
-          autoComplete="given-name"
-          placeholder="What should we call you?"
-        />
-      </div>
-
-      <label className="jf-check">
-        <input type="checkbox" name="in_area" />
-        <span>
-          I&rsquo;m in the Redmond / Central Oregon area.{" "}
-          <span className="jf-opt">(optional)</span>
-        </span>
-      </label>
-
-      <label className="jf-check jf-consent">
-        <input type="checkbox" name="consent" required />
-        <span>
-          Email me when Steppe is ready. No ads, no selling your data, ever.
-        </span>
-      </label>
-
-      {/* Honeypot: hidden from people, irresistible to bots. */}
-      <div className="jf-hp" aria-hidden="true">
-        <label htmlFor="jf-company">Company</label>
-        <input
-          id="jf-company"
-          name="company"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-        />
-      </div>
-
-      {status === "error" && (
-        <p className="jf-error" role="alert">
-          {error}
+    <div className="formcard" id="join-form">
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="fk">Opening in Redmond soon</div>
+        <h2>Get on the list.</h2>
+        <p className="fsub">
+          We&rsquo;re putting the finishing touches on Steppe. Leave your email and
+          we&rsquo;ll tell you the moment membership opens.
         </p>
-      )}
+        <div className="frow">
+          <label htmlFor="em">Email</label>
+          <input id="em" name="email" type="email" required placeholder="you@example.com" autoComplete="email" />
+        </div>
+        <div className="frow">
+          <label htmlFor="nm">
+            Name <span className="opt">Optional</span>
+          </label>
+          <input id="nm" name="name" type="text" placeholder="First name" autoComplete="given-name" />
+        </div>
+        <div className="frow">
+          <label htmlFor="nb">
+            Neighborhood <span className="opt">Optional</span>
+          </label>
+          <input id="nb" name="neighborhood" type="text" placeholder="e.g. SE Redmond" />
+        </div>
 
-      <button
-        type="submit"
-        className="jf-submit"
-        disabled={status === "submitting"}
-      >
-        {status === "submitting" ? "Sending…" : "Keep me posted"}
-      </button>
+        {/* Honeypot — real people leave this empty. */}
+        <div className="hp" aria-hidden="true">
+          <label htmlFor="company">Company</label>
+          <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+        </div>
 
-      <p className="jf-fine">
-        We store only your email (and name, if you give it) to notify you at
-        launch. Read our <a href="/privacy">privacy notice</a>.
-      </p>
-    </form>
+        <button className="submitb" type="submit" disabled={status === "submitting"}>
+          {status === "submitting" ? "Joining…" : "Join the list"}
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+
+        {status === "error" && (
+          <p className="formerr" role="alert">
+            {error}
+          </p>
+        )}
+
+        <p className="formnote">
+          We&rsquo;ll only use this to tell you when Steppe opens. No spam, no
+          selling, no sharing — see our <a href="/privacy">privacy commitments</a>.
+        </p>
+      </form>
+    </div>
   );
 }
