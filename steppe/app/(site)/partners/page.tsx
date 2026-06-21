@@ -25,10 +25,10 @@ export default function PartnersPage() {
             Civic infrastructure, built so it <em>can&rsquo;t be sold.</em>
           </h1>
           <p>
-            Steppe is a member-governed public benefit nonprofit creating
-            community-owned digital infrastructure for Redmond, Central Oregon —
-            ad-free, residency-verified, and structurally protected from
-            acquisition and enshittification.
+            Steppe is a member-governed public benefit nonprofit building
+            community-owned digital infrastructure for Central Oregon. It carries
+            no advertising, confirms that members are local, and is structurally
+            protected from acquisition and enshittification.
           </p>
           <div className="factline">
             <span>Oregon public benefit nonprofit</span>
@@ -49,8 +49,9 @@ export default function PartnersPage() {
             <h2>Community life moved onto platforms that can be sold.</h2>
             <p>
               The places neighbors gather online are owned by companies that
-              monetize attention and can be acquired, shut down, or degraded at
-              will. Steppe is the structural alternative.
+              monetize attention and can be acquired, shut down, or quietly
+              degraded whenever it suits the owner. Steppe is built so none of that
+              can happen here.
             </p>
           </div>
           <div className="stations">
@@ -71,10 +72,10 @@ export default function PartnersPage() {
               <div>
                 <h3>The approach</h3>
                 <p>
-                  A member-owned commons — a public benefit nonprofit with no
-                  owner and nothing to sell, governed democratically by
-                  residents, with its core promises written into its founding
-                  documents where only the members can change them.
+                  A member-owned commons: a public benefit nonprofit with no owner
+                  and nothing to sell, governed by its residents, with its core
+                  promises written into the founding documents where only members
+                  can change them.
                 </p>
               </div>
             </div>
@@ -84,9 +85,9 @@ export default function PartnersPage() {
                 <h3>What changes</h3>
                 <p>
                   Durable local civic infrastructure that belongs to the
-                  community itself: ad-free, privacy-respecting, and impossible to
-                  acquire or enshittify — a model other towns can adopt and govern
-                  for themselves.
+                  community itself. Always ad-free, privacy-respecting, and
+                  impossible to acquire or enshittify. All towns can adopt the same
+                  model and govern it themselves.
                 </p>
               </div>
             </div>
@@ -101,7 +102,7 @@ export default function PartnersPage() {
             <span className="eyebrow on-dark">
               <span className="pip"></span>Structural guarantees
             </span>
-            <h2>The protections aren&rsquo;t promises. They&rsquo;re the legal form.</h2>
+            <h2>Every protection below is built into the legal structure.</h2>
           </div>
           <div className="panels">
             <div className="panel">
@@ -187,9 +188,9 @@ export default function PartnersPage() {
             </span>
             <h2>Five streams, no single point of capture.</h2>
             <p>
-              Steppe is funded so that no one source can dictate its direction —
-              with member dues as the anchor and a hard ceiling on any single
-              funder.
+              Steppe is funded so that no single source can dictate its direction.
+              Member dues are the anchor, and no one funder is allowed past a hard
+              ceiling.
             </p>
           </div>
           <div className="fund">
@@ -232,7 +233,7 @@ export default function PartnersPage() {
                 <span className="tag">Services</span>
               </div>
               <div className="fd">
-                Mission-aligned services — helping other communities stand up
+                Mission-aligned services, like helping other communities stand up
                 their own instances.
               </div>
               <div className="fw">as capacity allows</div>
@@ -297,7 +298,7 @@ export default function PartnersPage() {
             <div className="ask">
               <h3>Other communities</h3>
               <p>
-                Towns that want civic infrastructure of their own — and want to
+                Towns that want civic infrastructure of their own and intend to
                 govern it themselves.
               </p>
             </div>
