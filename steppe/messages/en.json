@@ -1,0 +1,14 @@
+{
+  "locale": { "label": "Language", "en": "EN", "es": "ES" },
+  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join" },
+  "footer": {
+    "explore": "Explore",
+    "preview": "Preview",
+    "partners": "For partners",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "org1": "An Oregon public benefit nonprofit",
+    "org2": "Redmond, Oregon · EST. 2026",
+    "ledBy": "Led by"
+  }
+}

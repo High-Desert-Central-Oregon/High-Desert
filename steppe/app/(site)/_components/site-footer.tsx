@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { SealMark } from "./seal-mark";
 
 /**
  * Shared marketing footer (v5 design). Seal + wordmark, the nonprofit/contact
  * meta block, the Explore links, and the founder credit linking out to
- * gregtchism.com.
+ * gregtchism.com. Server component; strings come from the active locale catalog.
  */
-export function SiteFooter() {
+export async function SiteFooter() {
+  const t = await getTranslations("footer");
   return (
     <footer className="footer">
       <div className="wrap footer-in">
@@ -16,22 +18,22 @@ export function SiteFooter() {
             Steppe
           </Link>
           <p className="footer-meta" style={{ marginTop: 16 }}>
-            An Oregon public benefit nonprofit
+            {t("org1")}
             <br />
-            Redmond, Oregon · EST. 2026
+            {t("org2")}
             <br />
             <a href="mailto:hello@steppe.community">hello@steppe.community</a>
           </p>
         </div>
         <div className="footer-links">
-          <span className="head">Explore</span>
-          <Link href="/preview">Preview</Link>
-          <Link href="/partners">For partners</Link>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/contact">Contact</Link>
+          <span className="head">{t("explore")}</span>
+          <Link href="/preview">{t("preview")}</Link>
+          <Link href="/partners">{t("partners")}</Link>
+          <Link href="/privacy">{t("privacy")}</Link>
+          <Link href="/contact">{t("contact")}</Link>
         </div>
         <div className="footer-meta" style={{ alignSelf: "flex-end" }}>
-          Led by{" "}
+          {t("ledBy")}{" "}
           <a
             href="https://gregtchism.com"
             target="_blank"

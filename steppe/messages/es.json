@@ -1,0 +1,16 @@
+{
+  "_status": "draft-needs-fluent-review",
+  "_note": "Machine/first-pass Spanish. Authentic Spanish is trust-critical for the community Steppe serves; have a fluent reviewer revise before this ships as final.",
+  "locale": { "label": "Idioma", "en": "EN", "es": "ES" },
+  "nav": { "preview": "Vista previa", "partners": "Para socios", "join": "Únete" },
+  "footer": {
+    "explore": "Explorar",
+    "preview": "Vista previa",
+    "partners": "Para socios",
+    "privacy": "Privacidad",
+    "contact": "Contacto",
+    "org1": "Una organización sin fines de lucro de beneficio público de Oregón",
+    "org2": "Redmond, Oregón · EST. 2026",
+    "ledBy": "Dirigido por"
+  }
+}

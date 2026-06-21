@@ -73,6 +73,34 @@ html[data-theme="dark"] .site-root::before {
   padding: 0 var(--pad-x);
 }
 
+/* EN/ES language control */
+.site-root .lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+.site-root .lang button {
+  font: inherit;
+  letter-spacing: inherit;
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.15s;
+}
+.site-root .lang button:hover {
+  color: var(--text);
+}
+.site-root .lang button.on {
+  color: var(--text);
+  font-weight: 600;
+}
+
 /* Theme toggle icon swap (scoped to the marketing layer). */
 .site-root .theme-toggle .moon {
   display: none;
