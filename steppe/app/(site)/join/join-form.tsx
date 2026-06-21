@@ -79,8 +79,8 @@ export function JoinForm() {
           </h2>
           <p>
             {status === "duplicate"
-              ? "We already have your email — we'll reach out the moment membership opens in Redmond."
-              : "We'll email you the moment membership opens in Redmond. Welcome — almost."}
+              ? "We already have your email, so we'll reach out the moment membership opens in Redmond."
+              : "We'll email you the moment membership opens in Redmond. We're glad you're here."}
           </p>
         </div>
       </div>
@@ -93,8 +93,9 @@ export function JoinForm() {
         <div className="fk">Opening in Redmond soon</div>
         <h2>Get on the list.</h2>
         <p className="fsub">
-          We&rsquo;re putting the finishing touches on Steppe. Leave your email and
-          we&rsquo;ll tell you the moment membership opens.
+          We&rsquo;re getting Steppe ready to open in Redmond. Leave your email and
+          we&rsquo;ll tell you the moment it does. And don&rsquo;t worry, we will
+          scale to all of Central Oregon.
         </p>
         <div className="frow">
           <label htmlFor="em">Email</label>
@@ -133,8 +134,9 @@ export function JoinForm() {
         )}
 
         <p className="formnote">
-          We&rsquo;ll only use this to tell you when Steppe opens. No spam, no
-          selling, no sharing — see our <a href="/privacy">privacy commitments</a>.
+          We&rsquo;ll only use your email to let you know when Steppe opens, and for
+          nothing else. Our <a href="/privacy">privacy commitments</a> spell out
+          the rest.
         </p>
       </form>
     </div>

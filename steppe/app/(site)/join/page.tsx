@@ -26,15 +26,16 @@ export default function JoinPage() {
               Become a member of <em>Steppe.</em>
             </h1>
             <p className="lead">
-              Membership makes you an owner and a voter in a place that belongs to
-              its members — not to advertisers or investors.
+              Membership makes you a part-owner and a voter in a place that belongs
+              to the people who use it, and to no one else.
             </p>
             <div className="price">
               <b>$4</b>
               <span>/ month, flat</span>
             </div>
             <div className="price-note">
-              No tiers. Hardship waiver if you need it. Cancel any time.
+              One tier, the same for everyone. A hardship waiver if you need it.
+              Cancel whenever you like.
             </div>
           </div>
           <JoinForm />
@@ -48,7 +49,7 @@ export default function JoinPage() {
             <span className="eyebrow">
               <span className="pip"></span>What membership is
             </span>
-            <h2>One price, no catch.</h2>
+            <h2>Four dollars a month, and that&rsquo;s the whole thing.</h2>
           </div>
           <div className="terms">
             <div className="tlist">
@@ -57,8 +58,8 @@ export default function JoinPage() {
                 <div>
                   <h3>Flat dues</h3>
                   <p>
-                    Billed yearly or by bank transfer. No tiers, no upsells — the
-                    same membership for everyone.
+                    Billed once a year or by bank transfer. Everyone pays the same,
+                    with no tiers and nothing to upsell.
                   </p>
                 </div>
               </div>
@@ -68,7 +69,7 @@ export default function JoinPage() {
                   <h3>Hardship waiver</h3>
                   <p>
                     Can&rsquo;t swing it right now? Membership is free, no questions
-                    asked. Money never decides who belongs.
+                    asked. What you can pay never decides whether you belong.
                   </p>
                 </div>
               </div>
@@ -77,8 +78,8 @@ export default function JoinPage() {
                 <div>
                   <h3>Give more, if you can</h3>
                   <p>
-                    An optional contribution above dues helps cover waivers and the
-                    Community Fund. Always voluntary.
+                    An optional bit above dues helps cover waivers and the
+                    Community Fund. Always your choice, never expected.
                   </p>
                 </div>
               </div>
@@ -138,8 +139,8 @@ export default function JoinPage() {
               <div>
                 <h3>Verify you&rsquo;re local</h3>
                 <p>
-                  Confirm you live in the Redmond area. We check, then forget the
-                  documents — real neighbors, no data hoard.
+                  Confirm you live in the Central Oregon area. We check once, then
+                  delete what you sent. Real neighbors only.
                 </p>
               </div>
             </div>
@@ -150,8 +151,9 @@ export default function JoinPage() {
                   Join for <span className="stamp">$4 / month</span>
                 </h3>
                 <p>
-                  That&rsquo;s the whole membership. Pay yearly or by bank transfer,
-                  or take the hardship waiver — yours, no questions asked.
+                  That&rsquo;s the whole membership. Pay once a year or by bank
+                  transfer or take the hardship waiver. It&rsquo;s yours, no
+                  questions asked.
                 </p>
               </div>
             </div>
@@ -160,8 +162,8 @@ export default function JoinPage() {
               <div>
                 <h3>Settle in</h3>
                 <p>
-                  Post to the exchange, join groups, find help and offer it, and
-                  talk with the people who live around you.
+                  Post to the exchange, join groups, ask for a hand and lend one,
+                  and get to know the people who live around you.
                 </p>
               </div>
             </div>
@@ -170,8 +172,8 @@ export default function JoinPage() {
               <div>
                 <h3>Help steer it</h3>
                 <p>
-                  Vote on the rules, the budget, and where Steppe goes next. Your
-                  ballot is secret, and it counts the same as everyone&rsquo;s.
+                  Help decide the budget, the rules, and where Steppe goes next.
+                  Your ballot is secret, and it counts the same as anyone&rsquo;s.
                 </p>
               </div>
             </div>
