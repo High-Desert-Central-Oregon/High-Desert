@@ -15,7 +15,8 @@ export async function updateSession(request: NextRequest) {
     pathname === "/partners" ||
     pathname === "/preview" ||
     pathname === "/join" ||
-    pathname === "/privacy";
+    pathname === "/privacy" ||
+    pathname === "/legal/privacy";
   // The public interest-signup endpoint must be reachable by anonymous visitors
   // (the /join form posts here); it enforces its own rules server-side.
   const isPublicApi = pathname === "/api/interest";
