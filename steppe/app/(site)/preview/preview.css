@@ -803,3 +803,329 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
     order: 2;
   }
 }
+
+/* ============================================================================
+ * MVP facsimile additions — exchange post header, message thread, compose sheet,
+ * group detail, and the You activity stub. All on the light phone paper.
+ * ========================================================================== */
+
+/* exchange header + post */
+.site-root .preview .xhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.site-root .preview .xh-t {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #736e60;
+}
+.site-root .preview .postb {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #fbf7ee;
+  background: var(--rust);
+  border: none;
+  border-radius: 16px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.site-root .preview .emptyfeed,
+.site-root .preview .thread-empty {
+  font-size: 12px;
+  color: #736e60;
+  text-align: center;
+  padding: 22px 8px;
+}
+
+/* message thread */
+.site-root .preview .thread {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.site-root .preview .thread-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px 11px;
+  border-bottom: 1px solid rgba(54, 86, 61, 0.12);
+}
+.site-root .preview .thread-head .back {
+  padding: 4px;
+}
+.site-root .preview .thread-who {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  min-width: 0;
+}
+.site-root .preview .thread-who small {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #736e60;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.site-root .preview .msgs {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.site-root .preview .msgs::-webkit-scrollbar {
+  width: 0;
+}
+.site-root .preview .bubble {
+  max-width: 80%;
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.site-root .preview .bubble.them {
+  align-self: flex-start;
+  background: #f1eadb;
+  color: #2a2e2c;
+  border-bottom-left-radius: 4px;
+}
+.site-root .preview .bubble.me {
+  align-self: flex-end;
+  background: var(--juniper);
+  color: #fbf7ee;
+  border-bottom-right-radius: 4px;
+}
+.site-root .preview .thread-note {
+  align-self: center;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  color: #736e60;
+  line-height: 1.5;
+  max-width: 30ch;
+  margin: 6px auto 2px;
+}
+.site-root .preview .msgbar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid rgba(54, 86, 61, 0.12);
+  background: #fbf7ee;
+}
+.site-root .preview .msgbar input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 9px 12px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(54, 86, 61, 0.2);
+  background: #f4eee0;
+  color: #2a2e2c;
+}
+.site-root .preview .msgbar input:focus {
+  outline: none;
+  border-color: var(--juniper);
+}
+.site-root .preview .sendb {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: #fbf7ee;
+  background: var(--juniper);
+  border: none;
+  border-radius: 18px;
+  padding: 9px 16px;
+  cursor: pointer;
+}
+.site-root .preview .sendb:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* compose sheet */
+.site-root .preview .compose {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 8px 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.site-root .preview .compose::-webkit-scrollbar {
+  width: 0;
+}
+.site-root .preview .clab {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #736e60;
+  margin: 12px 0 6px;
+}
+.site-root .preview .catpick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.site-root .preview .catbtn {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 1.5px solid;
+  background: transparent;
+  cursor: pointer;
+}
+.site-root .preview .compose input,
+.site-root .preview .compose textarea {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(54, 86, 61, 0.2);
+  background: #f4eee0;
+  color: #2a2e2c;
+  resize: none;
+}
+.site-root .preview .compose input:focus,
+.site-root .preview .compose textarea:focus {
+  outline: none;
+  border-color: var(--rust);
+}
+.site-root .preview .compose .castb {
+  margin-top: 16px;
+}
+
+/* group detail */
+.site-root .preview .gdetail {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 8px 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.site-root .preview .gdetail::-webkit-scrollbar {
+  width: 0;
+}
+.site-root .preview .gd-name {
+  font-family: var(--display);
+  font-weight: 520;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 6px 0 4px;
+}
+.site-root .preview .gd-meta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #736e60;
+}
+.site-root .preview .gd-desc {
+  font-size: 13.5px;
+  color: #46473f;
+  line-height: 1.55;
+  margin: 12px 0 14px;
+}
+.site-root .preview .gd-join {
+  align-self: flex-start;
+  padding: 9px 18px;
+  font-size: 13px;
+}
+.site-root .preview .gd-feedhead {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #736e60;
+  margin: 20px 0 4px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(54, 86, 61, 0.12);
+}
+.site-root .preview .gfeed {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+.site-root .preview .gpost {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+}
+.site-root .preview .gp-av {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 11px;
+  background: rgba(156, 173, 139, 0.28);
+  color: var(--juniper-deep);
+}
+.site-root .preview .gp-body {
+  font-size: 13px;
+  color: #46473f;
+  line-height: 1.45;
+  min-width: 0;
+}
+.site-root .preview .gp-body b {
+  display: block;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #2a2e2c;
+  margin-bottom: 2px;
+}
+
+/* You activity stub (read-only) */
+.site-root .preview .activity {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(54, 86, 61, 0.12);
+}
+.site-root .preview .act-h {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #736e60;
+  margin-bottom: 8px;
+}
+.site-root .preview .act-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 7px 2px;
+  font-size: 13px;
+  color: #46473f;
+}
+.site-root .preview .act-row b {
+  font-family: var(--mono);
+  font-weight: 500;
+  color: var(--juniper);
+}

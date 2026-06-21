@@ -1,22 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { SealMark } from "../_components/seal-mark";
 
 /**
- * Interactive app facsimile for /preview — a faithful, state-driven rebuild of
- * _design-source/steppe-preview-v3.html (inline handlers → React state). The
- * selector chips and the in-phone tab bar both switch screens; switching screens
- * resets the open listing. Exchange → tap a listing → detail → back. Groups join
- * toggles. Govern ranked-choice + cast ballot. You: each field cycles
- * Hidden → Members → Everyone. The side caption updates per screen.
+ * Interactive MVP facsimile for /preview — a faithful, fully client-side preview
+ * of the Steppe app for prospective members (design:
+ * _design-source/steppe-preview-v3.html). Everything runs on in-memory sample
+ * data: NO backend, NO network, NO localStorage, NO auth/RLS/governance code.
+ *
+ * Feature set previewed (the shipping MVP, honestly — the marketplace stays
+ * visibly deferred):
+ *  - Exchange: filter by category, open a listing, message the poster in an
+ *    in-app thread, and post a new listing (compose sheet, prepends to the feed).
+ *  - Groups: browse, open a group to see inside (description + mini-feed), and
+ *    Join/Joined kept in sync between the list and the detail.
+ *  - Govern: ranked-choice + cast a secret ballot.
+ *  - You: per-field privacy cycling, plus a small read-only activity summary.
+ *
+ * Tabs and in-phone tab bar both switch screens; switching a tab resets its
+ * sub-view to the root (closes any open detail / message / compose / group
+ * detail). The phone screen stays light paper in both themes.
  */
-type Screen = "exchange" | "groups" | "govern" | "you";
+type Tab = "exchange" | "groups" | "govern" | "you";
+type ExchangeView = "feed" | "detail" | "message" | "compose";
+type GroupsView = "list" | "detail";
 type Vis = "hidden" | "members" | "everyone";
+type CatKey = "offer" | "need" | "gather" | "aid";
 
 type Listing = {
   id: string;
-  catClass: string;
+  catKey: CatKey;
   cat: string;
   c: string;
   ttl: string;
@@ -25,11 +39,30 @@ type Listing = {
   who: string;
   body: string;
 };
+type Msg = { from: "me" | "them"; text: string };
+type GroupPost = { author: string; init: string; text: string };
+type Group = {
+  id: string;
+  name: string;
+  meta: string;
+  members: number;
+  desc: string;
+  feed: GroupPost[];
+};
+
+const CATS: { key: CatKey; label: string; c: string }[] = [
+  { key: "offer", label: "Offer", c: "#6E8A5B" },
+  { key: "need", label: "Need", c: "#A8542C" },
+  { key: "gather", label: "Gathering", c: "#A8842F" },
+  { key: "aid", label: "Mutual aid", c: "#4F6B7A" },
+];
+const catClass = (k: CatKey) => `c-${k}`;
+const catMeta = (k: CatKey) => CATS.find((c) => c.key === k)!;
 
 const LISTINGS: Listing[] = [
   {
     id: "0412",
-    catClass: "c-offer",
+    catKey: "offer",
     cat: "Offer",
     c: "#6E8A5B",
     ttl: "Free tomato starts — 40+ plants",
@@ -39,8 +72,19 @@ const LISTINGS: Listing[] = [
     body: "Grew too many Early Girls this spring. Free to anyone who'll plant them. Pickup near downtown — evenings and weekends work best.",
   },
   {
+    id: "0413",
+    catKey: "offer",
+    cat: "Offer",
+    c: "#6E8A5B",
+    ttl: "Seasoned juniper firewood, you haul",
+    init: "TB",
+    by: "Tomás B. · 6h",
+    who: "Tomás B.",
+    body: "Half a cord of seasoned juniper left over from a property cleanup. Free if you can load and haul it this week off NW Maple.",
+  },
+  {
     id: "0411",
-    catClass: "c-need",
+    catKey: "need",
     cat: "Need",
     c: "#A8542C",
     ttl: "Electrician who knows older homes",
@@ -50,8 +94,19 @@ const LISTINGS: Listing[] = [
     body: "Panel upgrade on a 1970s house. Licensed and insured, ideally someone who's worked on older Redmond homes. Daytime works best for a walkthrough.",
   },
   {
+    id: "0410",
+    catKey: "need",
+    cat: "Need",
+    c: "#A8542C",
+    ttl: "Borrow a tall ladder this weekend",
+    init: "PG",
+    by: "Priya G. · 8h",
+    who: "Priya G.",
+    body: "Need a 24-foot extension ladder to clear the gutters Saturday. Happy to leave a deposit and return it the same day.",
+  },
+  {
     id: "0409",
-    catClass: "c-gather",
+    catKey: "gather",
     cat: "Gathering",
     c: "#A8842F",
     ttl: "Member meeting — July 12",
@@ -61,8 +116,19 @@ const LISTINGS: Listing[] = [
     body: "Monthly open meeting: Community Fund proposals, governance Q&A, and a new-member welcome. All members invited — it adds to your calendar.",
   },
   {
+    id: "0408",
+    catKey: "gather",
+    cat: "Gathering",
+    c: "#A8842F",
+    ttl: "Saturday trail cleanup, Dry Canyon",
+    init: "DC",
+    by: "Dry Canyon Stewards · 1d",
+    who: "Dry Canyon Stewards",
+    body: "Quarterly cleanup along the Dry Canyon rim. Gloves and bags provided. We start at the NE trailhead at 9am and wrap by noon.",
+  },
+  {
     id: "0407",
-    catClass: "c-aid",
+    catKey: "aid",
     cat: "Mutual aid",
     c: "#4F6B7A",
     ttl: "Rides to medical appointments",
@@ -73,7 +139,68 @@ const LISTINGS: Listing[] = [
   },
 ];
 
-const CAPTIONS: Record<Screen, [string, string, string, string]> = {
+// Seeded threads keyed by listing id; anything not listed starts empty.
+const SEED_THREADS: Record<string, Msg[]> = {
+  "0412": [
+    { from: "me", text: "Hi Martha, are the tomato starts still available?" },
+    {
+      from: "them",
+      text: "Yes, plenty left. Any evening this week works for pickup near downtown.",
+    },
+  ],
+  "0407": [
+    {
+      from: "them",
+      text: "Happy to help with rides. Which day works for your appointment?",
+    },
+  ],
+};
+
+const FILTERS: { key: "all" | CatKey; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "offer", label: "Offers" },
+  { key: "need", label: "Needs" },
+  { key: "gather", label: "Gatherings" },
+  { key: "aid", label: "Mutual aid" },
+];
+
+const GROUPS: Group[] = [
+  {
+    id: "g1",
+    name: "Dry Canyon Trail Stewards",
+    meta: "214 members · weekly",
+    members: 214,
+    desc: "Neighbors who keep the Dry Canyon trail clear and safe. Monthly work parties, plus quick cleanups after storms.",
+    feed: [
+      { author: "Priya N.", init: "PN", text: "Saturday's cleanup starts at 9am at the NE trailhead. Bring gloves and water." },
+      { author: "Marcus T.", init: "MT", text: "Found a downed juniper across the lower loop. Flagged it, crew can clear it this weekend." },
+    ],
+  },
+  {
+    id: "g2",
+    name: "SE Redmond Neighbors",
+    meta: "389 members · daily",
+    members: 389,
+    desc: "The day-to-day group for southeast Redmond: lost pets, road notices, recommendations, and the occasional block party.",
+    feed: [
+      { author: "Dana L.", init: "DL", text: "Reminder: street sweeping on Quartz comes through Thursday morning." },
+      { author: "Sam O.", init: "SO", text: "Anyone have a recommendation for a fence repair? Wind took out a panel." },
+    ],
+  },
+  {
+    id: "g3",
+    name: "Tool Library",
+    meta: "96 members · lending",
+    members: 96,
+    desc: "A shared shelf of tools members can borrow for free. Check something out, bring it back clean.",
+    feed: [
+      { author: "Steppe", init: "St", text: "New this month: a tile saw and two more cordless drills are now on the shelf." },
+      { author: "Lena R.", init: "LR", text: "Returned the pressure washer, works great. Thanks to whoever donated it." },
+    ],
+  },
+];
+
+const CAPTIONS: Record<Tab, [string, string, string, string]> = {
   exchange: [
     "The exchange",
     "One honest feed.",
@@ -100,12 +227,6 @@ const CAPTIONS: Record<Screen, [string, string, string, string]> = {
   ],
 };
 
-const GROUPS = [
-  { name: "Dry Canyon Trail Stewards", meta: "214 members · weekly" },
-  { name: "SE Redmond Neighbors", meta: "389 members · daily" },
-  { name: "Tool Library", meta: "96 members · lending" },
-];
-
 const OPTIONS = [
   "Dry Canyon trail repair",
   "Winter warming-shelter supplies",
@@ -131,6 +252,11 @@ const Chevron = () => (
     <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+const BackArrow = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 const GROUP_ICONS = [
   <svg key="g0" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -148,7 +274,7 @@ const GROUP_ICONS = [
   </svg>,
 ];
 
-const TAB_ICONS: Record<Screen, React.ReactNode> = {
+const TAB_ICONS: Record<Tab, React.ReactNode> = {
   exchange: (
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M3 6h18M3 12h18M3 18h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -175,7 +301,7 @@ const TAB_ICONS: Record<Screen, React.ReactNode> = {
   ),
 };
 
-const TABS: { v: Screen; label: string }[] = [
+const TABS: { v: Tab; label: string }[] = [
   { v: "exchange", label: "Exchange" },
   { v: "groups", label: "Groups" },
   { v: "govern", label: "Govern" },
@@ -183,35 +309,87 @@ const TABS: { v: Screen; label: string }[] = [
 ];
 
 export function PreviewStage() {
-  const [screen, setScreen] = useState<Screen>("exchange");
+  const [tab, setTab] = useState<Tab>("exchange");
+
+  // exchange
+  const [exView, setExView] = useState<ExchangeView>("feed");
+  const [filter, setFilter] = useState<"all" | CatKey>("all");
   const [openId, setOpenId] = useState<string | null>(null);
-  const [joined, setJoined] = useState<boolean[]>([true, false, false]);
+  const [posted, setPosted] = useState<Listing[]>([]);
+  const [threads, setThreads] = useState<Record<string, Msg[]>>(SEED_THREADS);
+  const [draft, setDraft] = useState("");
+  // compose form
+  const [cCat, setCCat] = useState<CatKey>("offer");
+  const [cTitle, setCTitle] = useState("");
+  const [cBody, setCBody] = useState("");
+  const nextId = useRef(900);
+
+  // groups
+  const [grView, setGrView] = useState<GroupsView>("list");
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [joined, setJoined] = useState<Record<string, boolean>>({ g1: true });
+
+  // govern + you
   const [ranked, setRanked] = useState<number[]>([]);
   const [voted, setVoted] = useState(false);
   const [vis, setVis] = useState<Vis[]>(["hidden", "members", "hidden", "hidden"]);
 
-  // Switching screens always resets the open listing detail.
-  const switchScreen = (v: Screen) => {
-    setScreen(v);
+  // Switching tabs returns the active tab to its root sub-view.
+  const switchTab = (t: Tab) => {
+    setTab(t);
+    setExView("feed");
+    setGrView("list");
     setOpenId(null);
+    setOpenGroup(null);
   };
 
+  const allListings = [...posted, ...LISTINGS];
+  const feed =
+    filter === "all"
+      ? allListings
+      : allListings.filter((l) => l.catKey === filter);
+  const open = openId ? allListings.find((l) => l.id === openId) ?? null : null;
+  const group = openGroup ? GROUPS.find((g) => g.id === openGroup) ?? null : null;
+
   const rank = (i: number) =>
-    setRanked((prev) =>
-      prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i],
-    );
-
+    setRanked((p) => (p.includes(i) ? p.filter((x) => x !== i) : [...p, i]));
   const cycleVis = (i: number) =>
-    setVis((prev) =>
-      prev.map((v, j) =>
-        j === i ? VIS_ORDER[(VIS_ORDER.indexOf(v) + 1) % 3] : v,
-      ),
+    setVis((p) =>
+      p.map((v, j) => (j === i ? VIS_ORDER[(VIS_ORDER.indexOf(v) + 1) % 3] : v)),
     );
 
-  const open = openId ? LISTINGS.find((l) => l.id === openId) ?? null : null;
-  const showExchange = screen === "exchange" && !open;
-  const showDetail = screen === "exchange" && !!open;
-  const [capK, capH, capP, capM] = CAPTIONS[screen];
+  const openThread = open ? threads[open.id] ?? [] : [];
+  const sendMsg = () => {
+    const text = draft.trim();
+    if (!text || !open) return;
+    setThreads((p) => ({ ...p, [open.id]: [...(p[open.id] ?? []), { from: "me", text }] }));
+    setDraft("");
+  };
+
+  const post = () => {
+    const title = cTitle.trim();
+    if (!title) return;
+    const meta = catMeta(cCat);
+    const listing: Listing = {
+      id: `n${nextId.current++}`,
+      catKey: cCat,
+      cat: meta.label,
+      c: meta.c,
+      ttl: title,
+      init: "YO",
+      by: "You · just now",
+      who: "You",
+      body: cBody.trim() || "No description added.",
+    };
+    setPosted((p) => [listing, ...p]);
+    setCTitle("");
+    setCBody("");
+    setCCat("offer");
+    setExView("feed");
+    setFilter("all");
+  };
+
+  const [capK, capH, capP, capM] = CAPTIONS[tab];
 
   return (
     <div className="stage">
@@ -220,8 +398,8 @@ export function PreviewStage() {
           {TABS.map((t) => (
             <button
               key={t.v}
-              className={`vchip${screen === t.v ? " active" : ""}`}
-              onClick={() => switchScreen(t.v)}
+              className={`vchip${tab === t.v ? " active" : ""}`}
+              onClick={() => switchTab(t.v)}
             >
               {t.label}
             </button>
@@ -243,217 +421,411 @@ export function PreviewStage() {
             </div>
 
             <div className="body">
-              {/* EXCHANGE */}
-              <div className={`screen${showExchange ? " show" : ""}`}>
-                <div className="filters">
-                  <button className="fchip on">All</button>
-                  <button className="fchip">Offers</button>
-                  <button className="fchip">Needs</button>
-                  <button className="fchip">Gatherings</button>
-                  <button className="fchip soon" type="button" disabled>
-                    Marketplace · later, by vote
-                  </button>
-                </div>
-                {LISTINGS.map((l) => (
-                  <div
-                    key={l.id}
-                    className={`erow ${l.catClass}`}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => setOpenId(l.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
+              {/* ===== EXCHANGE: FEED ===== */}
+              {tab === "exchange" && exView === "feed" && (
+                <div className="screen show">
+                  <div className="xhead">
+                    <span className="xh-t">Exchange</span>
+                    <button
+                      className="postb"
+                      onClick={() => setExView("compose")}
+                      aria-label="Post a listing"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                      Post
+                    </button>
+                  </div>
+                  <div className="filters" role="group" aria-label="Filter by category">
+                    {FILTERS.map((f) => (
+                      <button
+                        key={f.key}
+                        className={`fchip${filter === f.key ? " on" : ""}`}
+                        aria-pressed={filter === f.key}
+                        onClick={() => setFilter(f.key)}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                    <button className="fchip soon" type="button" disabled>
+                      Marketplace · later, by vote
+                    </button>
+                  </div>
+                  {feed.map((l) => (
+                    <div
+                      key={l.id}
+                      className={`erow ${catClass(l.catKey)}`}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => {
                         setOpenId(l.id);
-                      }
+                        setExView("detail");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setOpenId(l.id);
+                          setExView("detail");
+                        }
+                      }}
+                    >
+                      <div className="eav">{l.init}</div>
+                      <div>
+                        <div className="ecat">
+                          <span className="dot"></span>
+                          {l.cat}
+                        </div>
+                        <div className="ettl">{l.ttl}</div>
+                        <div className="eby">{l.by}</div>
+                      </div>
+                      <Chevron />
+                    </div>
+                  ))}
+                  {feed.length === 0 && (
+                    <div className="emptyfeed">Nothing in this category yet.</div>
+                  )}
+                </div>
+              )}
+
+              {/* ===== EXCHANGE: DETAIL ===== */}
+              {tab === "exchange" && exView === "detail" && open && (
+                <div className="detail show" style={{ ["--c"]: open.c } as React.CSSProperties}>
+                  <button className="back" onClick={() => setExView("feed")}>
+                    <BackArrow />
+                    Exchange
+                  </button>
+                  <div
+                    className="d-photo"
+                    style={{ background: `color-mix(in srgb, ${open.c} 20%, #FBF7EE)` }}
+                  >
+                    <svg width="50" height="50" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                      <path d="M16 27c5 0 9-3.5 9-9 0-3-2-6-5-7 .5 4-2 6-4 6.5 1-3-1-7-4-8.5C16 4 12 6 11 10c-2 1-3 4-3 8 0 5.5 4 9 8 9z" fill="#6E8A5B" opacity=".5" />
+                      <path d="M16 27V13" stroke="#36563D" strokeWidth="1.4" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                  <div className="d-cat" style={{ color: open.c }}>
+                    <span className="dot" style={{ background: open.c }}></span>
+                    {open.cat}
+                  </div>
+                  <div className="d-ttl">{open.ttl}</div>
+                  <div className="d-body">{open.body}</div>
+                  <div className="d-owner">
+                    <div className="eav">{open.init}</div>
+                    <div className="w">
+                      {open.who}
+                      <small>Member · Redmond</small>
+                    </div>
+                  </div>
+                  <div className="d-act">
+                    <button className="msgbtn" onClick={() => setExView("message")}>
+                      Message {open.who.split(" ")[0]}
+                    </button>
+                    <span className="inside">Messages stay inside Steppe</span>
+                  </div>
+                </div>
+              )}
+
+              {/* ===== EXCHANGE: MESSAGE THREAD ===== */}
+              {tab === "exchange" && exView === "message" && open && (
+                <div className="thread">
+                  <div className="thread-head">
+                    <button className="back" onClick={() => setExView("detail")}>
+                      <BackArrow />
+                    </button>
+                    <div className="eav" style={{ ["--c"]: open.c } as React.CSSProperties}>
+                      {open.init}
+                    </div>
+                    <div className="thread-who">
+                      {open.who}
+                      <small>{open.ttl}</small>
+                    </div>
+                  </div>
+                  <div className="msgs">
+                    {openThread.length === 0 && (
+                      <div className="thread-empty">No messages yet. Say hello.</div>
+                    )}
+                    {openThread.map((m, i) => (
+                      <div key={i} className={`bubble ${m.from === "me" ? "me" : "them"}`}>
+                        {m.text}
+                      </div>
+                    ))}
+                    <div className="thread-note">
+                      Messages stay inside Steppe. Your email and phone are never
+                      shared.
+                    </div>
+                  </div>
+                  <form
+                    className="msgbar"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      sendMsg();
                     }}
                   >
-                    <div className="eav">{l.init}</div>
-                    <div>
-                      <div className="ecat">
-                        <span className="dot"></span>
-                        {l.cat}
-                      </div>
-                      <div className="ettl">{l.ttl}</div>
-                      <div className="eby">{l.by}</div>
-                    </div>
-                    <Chevron />
-                  </div>
-                ))}
-              </div>
-
-              {/* LISTING DETAIL */}
-              <div
-                className={`detail${showDetail ? " show" : ""}`}
-                style={open ? ({ ["--c"]: open.c } as React.CSSProperties) : undefined}
-              >
-                {open && (
-                  <>
-                    <button className="back" onClick={() => setOpenId(null)}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      Exchange
+                    <input
+                      type="text"
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      placeholder={`Message ${open.who.split(" ")[0]}…`}
+                      aria-label="Message text"
+                    />
+                    <button className="sendb" type="submit" disabled={!draft.trim()}>
+                      Send
                     </button>
+                  </form>
+                </div>
+              )}
+
+              {/* ===== EXCHANGE: COMPOSE ===== */}
+              {tab === "exchange" && exView === "compose" && (
+                <div className="compose">
+                  <button className="back" onClick={() => setExView("feed")}>
+                    <BackArrow />
+                    Exchange
+                  </button>
+                  <div className="scr-h">Post to the exchange</div>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      post();
+                    }}
+                  >
+                    <label className="clab">Category</label>
+                    <div className="catpick" role="group" aria-label="Category">
+                      {CATS.map((c) => (
+                        <button
+                          key={c.key}
+                          type="button"
+                          className={`catbtn${cCat === c.key ? " on" : ""}`}
+                          aria-pressed={cCat === c.key}
+                          style={cCat === c.key ? { background: c.c, borderColor: c.c, color: "#FBF7EE" } : { color: c.c, borderColor: c.c }}
+                          onClick={() => setCCat(c.key)}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                    <label className="clab" htmlFor="c-title">Title</label>
+                    <input
+                      id="c-title"
+                      type="text"
+                      value={cTitle}
+                      onChange={(e) => setCTitle(e.target.value)}
+                      placeholder="What are you offering or asking for?"
+                    />
+                    <label className="clab" htmlFor="c-body">Description</label>
+                    <textarea
+                      id="c-body"
+                      value={cBody}
+                      onChange={(e) => setCBody(e.target.value)}
+                      rows={4}
+                      placeholder="Add the details a neighbor would want to know."
+                    />
+                    <button className="castb" type="submit" disabled={!cTitle.trim()}>
+                      Post listing
+                    </button>
+                  </form>
+                </div>
+              )}
+
+              {/* ===== GROUPS: LIST ===== */}
+              {tab === "groups" && grView === "list" && (
+                <div className="screen show">
+                  <div className="scr-h">Groups</div>
+                  <div className="scr-sub">Join what you like. You can leave any time.</div>
+                  {GROUPS.map((g, i) => (
                     <div
-                      className="d-photo"
-                      style={{ background: `color-mix(in srgb, ${open.c} 20%, #FBF7EE)` }}
+                      className="grp"
+                      key={g.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => {
+                        setOpenGroup(g.id);
+                        setGrView("detail");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setOpenGroup(g.id);
+                          setGrView("detail");
+                        }
+                      }}
                     >
-                      <svg width="50" height="50" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-                        <path d="M16 27c5 0 9-3.5 9-9 0-3-2-6-5-7 .5 4-2 6-4 6.5 1-3-1-7-4-8.5C16 4 12 6 11 10c-2 1-3 4-3 8 0 5.5 4 9 8 9z" fill="#6E8A5B" opacity=".5" />
-                        <path d="M16 27V13" stroke="#36563D" strokeWidth="1.4" strokeLinecap="round" />
-                      </svg>
-                    </div>
-                    <div className="d-cat" style={{ color: open.c }}>
-                      <span className="dot" style={{ background: open.c }}></span>
-                      {open.cat}
-                    </div>
-                    <div className="d-ttl">{open.ttl}</div>
-                    <div className="d-body">{open.body}</div>
-                    <div className="d-owner">
-                      <div className="eav">{open.init}</div>
-                      <div className="w">
-                        {open.who}
-                        <small>Member · Redmond</small>
+                      <div className="gi">{GROUP_ICONS[i]}</div>
+                      <div className="gt">
+                        <b>{g.name}</b>
+                        <span>{g.meta}</span>
                       </div>
-                    </div>
-                    <div className="d-act">
-                      <button className="msgbtn">Message {open.who.split(" ")[0]}</button>
-                      <span className="inside">Messages stay inside Steppe</span>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* GROUPS */}
-              <div className={`screen${screen === "groups" ? " show" : ""}`}>
-                <div className="scr-h">Groups</div>
-                <div className="scr-sub">Join what you like. You can leave any time.</div>
-                {GROUPS.map((g, i) => (
-                  <div className="grp" key={g.name}>
-                    <div className="gi">{GROUP_ICONS[i]}</div>
-                    <div className="gt">
-                      <b>{g.name}</b>
-                      <span>{g.meta}</span>
-                    </div>
-                    <button
-                      className={`joinb${joined[i] ? " joined" : ""}`}
-                      onClick={() =>
-                        setJoined((prev) => prev.map((j, k) => (k === i ? !j : j)))
-                      }
-                    >
-                      {joined[i] ? "Joined ✓" : "Join"}
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* GOVERN */}
-              <div className={`screen${screen === "govern" ? " show" : ""}`}>
-                <div className="scr-h">Govern</div>
-                <div className="scr-sub">One open vote right now.</div>
-                <div className="prop">
-                  <div className="pc">Proposal 03 · ranked choice</div>
-                  <div className="pt">Community Fund — which project this quarter?</div>
-                  <div className="pd">
-                    Rank the options. Surplus dues fund the top choice the members
-                    pick.
-                  </div>
-                  {OPTIONS.map((opt, i) => {
-                    const r = ranked.indexOf(i);
-                    return (
-                      <div
-                        key={opt}
-                        className={`opt${r >= 0 ? " sel" : ""}`}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => rank(i)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            rank(i);
-                          }
+                      <button
+                        className={`joinb${joined[g.id] ? " joined" : ""}`}
+                        aria-pressed={!!joined[g.id]}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setJoined((p) => ({ ...p, [g.id]: !p[g.id] }));
                         }}
                       >
-                        <span className="rk">{r >= 0 ? r + 1 : "—"}</span>
-                        {opt}
-                      </div>
-                    );
-                  })}
-                  <div className="quorum">
-                    <div className="ql">
-                      <span>Turnout</span>
-                      <span>62% · quorum met</span>
+                        {joined[g.id] ? "Joined ✓" : "Join"}
+                      </button>
                     </div>
-                    <div className="qbar">
-                      <i></i>
-                    </div>
-                  </div>
-                  <button
-                    className="castb"
-                    onClick={() => setVoted(true)}
-                    disabled={voted}
-                    style={voted ? { opacity: 0.55, pointerEvents: "none" } : undefined}
-                  >
-                    {voted ? "Ballot cast" : "Cast your ballot"}
-                  </button>
-                  <div className={`voted${voted ? " show" : ""}`} role="status">
-                    <b>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M5 12l4 4 10-10" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      Ballot recorded, and secret.
-                    </b>
-                    <p>
-                      No one can see how you voted. At launch every member&rsquo;s
-                      vote counts the same; members can later vote to weight by
-                      tenure.
-                    </p>
-                  </div>
+                  ))}
                 </div>
-              </div>
+              )}
 
-              {/* YOU */}
-              <div className={`screen${screen === "you" ? " show" : ""}`}>
-                <div className="prof">
-                  <div className="pa">YO</div>
-                  <div className="ph">
-                    <b>You</b>
-                    <span>@you · private by default</span>
+              {/* ===== GROUPS: DETAIL ===== */}
+              {tab === "groups" && grView === "detail" && group && (
+                <div className="gdetail">
+                  <button className="back" onClick={() => setGrView("list")}>
+                    <BackArrow />
+                    Groups
+                  </button>
+                  <div className="gd-name">{group.name}</div>
+                  <div className="gd-meta">{group.members} members · Redmond</div>
+                  <p className="gd-desc">{group.desc}</p>
+                  <button
+                    className={`joinb gd-join${joined[group.id] ? " joined" : ""}`}
+                    aria-pressed={!!joined[group.id]}
+                    onClick={() =>
+                      setJoined((p) => ({ ...p, [group.id]: !p[group.id] }))
+                    }
+                  >
+                    {joined[group.id] ? "Joined ✓" : "Join group"}
+                  </button>
+                  <div className="gd-feedhead">Recent posts</div>
+                  <div className="gfeed">
+                    {group.feed.map((p, i) => (
+                      <div className="gpost" key={i}>
+                        <div className="gp-av">{p.init}</div>
+                        <div className="gp-body">
+                          <b>{p.author}</b>
+                          {p.text}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="field">
-                  <div className="fk">
-                    <b>Username</b>
-                    <span>How neighbors find you</span>
-                  </div>
-                  <span className="locked-field">Always shown</span>
-                </div>
-                {FIELDS.map((f, i) => (
-                  <div className="field" key={f.k}>
-                    <div className="fk">
-                      <b>{f.k}</b>
-                      <span>{f.sub}</span>
+              )}
+
+              {/* ===== GOVERN ===== */}
+              {tab === "govern" && (
+                <div className="screen show">
+                  <div className="scr-h">Govern</div>
+                  <div className="scr-sub">One open vote right now.</div>
+                  <div className="prop">
+                    <div className="pc">Proposal 03 · ranked choice</div>
+                    <div className="pt">Community Fund — which project this quarter?</div>
+                    <div className="pd">
+                      Rank the options. Surplus dues fund the top choice the members
+                      pick.
+                    </div>
+                    {OPTIONS.map((opt, i) => {
+                      const r = ranked.indexOf(i);
+                      return (
+                        <div
+                          key={opt}
+                          className={`opt${r >= 0 ? " sel" : ""}`}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => rank(i)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              rank(i);
+                            }
+                          }}
+                        >
+                          <span className="rk">{r >= 0 ? r + 1 : "—"}</span>
+                          {opt}
+                        </div>
+                      );
+                    })}
+                    <div className="quorum">
+                      <div className="ql">
+                        <span>Turnout</span>
+                        <span>62% · quorum met</span>
+                      </div>
+                      <div className="qbar">
+                        <i></i>
+                      </div>
                     </div>
                     <button
-                      className="vis"
-                      data-v={vis[i]}
-                      onClick={() => cycleVis(i)}
+                      className="castb"
+                      onClick={() => setVoted(true)}
+                      disabled={voted}
+                      style={voted ? { opacity: 0.55, pointerEvents: "none" } : undefined}
                     >
-                      {VIS_LABEL[vis[i]]}
+                      {voted ? "Ballot cast" : "Cast your ballot"}
                     </button>
+                    <div className={`voted${voted ? " show" : ""}`} role="status">
+                      <b>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M5 12l4 4 10-10" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        Ballot recorded, and secret.
+                      </b>
+                      <p>
+                        No one can see how you voted. At launch every member&rsquo;s
+                        vote counts the same; members can later vote to weight by
+                        tenure.
+                      </p>
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
+
+              {/* ===== YOU ===== */}
+              {tab === "you" && (
+                <div className="screen show">
+                  <div className="prof">
+                    <div className="pa">YO</div>
+                    <div className="ph">
+                      <b>You</b>
+                      <span>@you · private by default</span>
+                    </div>
+                  </div>
+                  <div className="field">
+                    <div className="fk">
+                      <b>Username</b>
+                      <span>How neighbors find you</span>
+                    </div>
+                    <span className="locked-field">Always shown</span>
+                  </div>
+                  {FIELDS.map((f, i) => (
+                    <div className="field" key={f.k}>
+                      <div className="fk">
+                        <b>{f.k}</b>
+                        <span>{f.sub}</span>
+                      </div>
+                      <button className="vis" data-v={vis[i]} onClick={() => cycleVis(i)}>
+                        {VIS_LABEL[vis[i]]}
+                      </button>
+                    </div>
+                  ))}
+                  <div className="activity">
+                    <div className="act-h">Your activity</div>
+                    <div className="act-row">
+                      <span>Listings posted</span>
+                      <b>{posted.length}</b>
+                    </div>
+                    <div className="act-row">
+                      <span>Groups joined</span>
+                      <b>{Object.values(joined).filter(Boolean).length}</b>
+                    </div>
+                    <div className="act-row">
+                      <span>Ballots cast</span>
+                      <b>{voted ? 1 : 0}</b>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="tabbar">
               {TABS.map((t) => (
                 <button
                   key={t.v}
-                  className={`tab${screen === t.v ? " active" : ""}`}
+                  className={`tab${tab === t.v ? " active" : ""}`}
                   data-v={t.v}
-                  onClick={() => switchScreen(t.v)}
+                  onClick={() => switchTab(t.v)}
                 >
                   {TAB_ICONS[t.v]}
                   {t.label}
