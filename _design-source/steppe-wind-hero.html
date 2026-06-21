@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — day-mode wind (reference)</title>
+<style>
+  :root{
+    --bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--juniper:#36563D;--basalt:#34383D;--rust:#A8542C;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#1B1E22;font-family:Georgia,serif;color:#2A2E2C;display:flex;flex-direction:column;align-items:center;gap:18px;padding:30px 16px}
+  .note{font-family:-apple-system,'Segoe UI',sans-serif;font-size:13px;color:#A6A89D;max-width:680px;line-height:1.6}
+  .note code{font-family:'SF Mono',Consolas,monospace;font-size:12px;color:#C4CBBA}
+  .hero{position:relative;width:100%;max-width:980px;height:440px;border-radius:18px;overflow:hidden;background:var(--bone);box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+  /* sky gradient */
+  .sky{position:absolute;inset:0;background:linear-gradient(180deg,#D7E3E0 0%,#E4E2D5 46%,var(--bone) 70%)}
+  .windcanvas{position:absolute;inset:0;z-index:2;pointer-events:none}
+  .scene{position:absolute;inset:0;z-index:3}
+  .hero-copy{position:absolute;z-index:4;left:48px;top:64px;max-width:60%}
+  .eyebrow{font-family:'SF Mono',Consolas,monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#736E60;display:flex;align-items:center;gap:9px}
+  .eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--rust);display:inline-block}
+  .hero-copy h1{font-size:52px;line-height:1.02;letter-spacing:-.015em;color:#2A2E2C;margin-top:14px;font-weight:400}
+  .hero-copy h1 em{font-style:italic;color:var(--juniper)}
+  .controls{font-family:-apple-system,'Segoe UI',sans-serif;font-size:12px;color:#A6A89D;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .controls button{font:inherit;background:#2A2F34;color:#ECE6DA;border:1px solid #3A4047;border-radius:8px;padding:6px 12px;cursor:pointer}
+</style>
+</head>
+<body>
+  <div class="note">
+    Day-mode wind: a Canvas particle field (the <strong>wind-js</strong> technique) advected over a procedural flow field, with fading trails. Tune the constants at the top of the script — <code>PARTICLE_DENSITY</code>, <code>SPEED</code>, <code>FADE</code>, <code>TINT</code>, <code>SKY_FRAC</code>. Respects <code>prefers-reduced-motion</code>. In the app this runs only when <code>data-time==="day"</code> and clears at night.
+  </div>
+
+  <div class="hero" id="hero">
+    <div class="sky"></div>
+    <canvas class="windcanvas" id="wind"></canvas>
+    <svg class="scene" viewBox="0 0 980 440" preserveAspectRatio="none" aria-hidden="true">
+      <!-- sun -->
+      <circle cx="760" cy="150" r="86" fill="#D98C56" opacity="0.20"/>
+      <circle cx="760" cy="150" r="46" fill="#C97A45"/>
+      <!-- layered earth -->
+      <path d="M0 300 Q260 270 520 288 T980 290 V440 H0Z" fill="#9CAD8B"/>
+      <path d="M0 344 Q300 320 640 336 T980 334 V440 H0Z" fill="#36563D"/>
+      <path d="M0 392 Q360 376 720 388 T980 384 V440 H0Z" fill="#34383D"/>
+    </svg>
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pip"></span>Redmond, Oregon</span>
+      <h1>A place that <em>belongs</em><br>to the people in it.</h1>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="toggle">Pause</button>
+    <span id="status">running</span>
+  </div>
+
+<script>
+/* ---- tunables ---------------------------------------------------- */
+const PARTICLE_DENSITY = 0.65;   // particles per px of width (capped)
+const MAX_PARTICLES    = 720;
+const SPEED            = 0.75;     // base drift px/frame
+const FADE             = 0.92;    // trail persistence (0.85 short … 0.97 long)
+const SKY_FRAC         = 0.75;    // wind confined to top fraction of hero
+const TINT_R=251, TINT_G=247, TINT_B=238;   // warm paper white
+const ALPHA_MIN=0.25, ALPHA_MAX=0.65;
+/* ------------------------------------------------------------------ */
+
+const cvs = document.getElementById('wind');
+const ctx = cvs.getContext('2d');
+const hero = document.getElementById('hero');
+let W=0,H=0,DPR=1, particles=[], raf=null, t=0, running=true;
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function resize(){
+  const r = hero.getBoundingClientRect();
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = r.width; H = r.height;
+  cvs.width = Math.round(W*DPR); cvs.height = Math.round(H*DPR);
+  cvs.style.width=W+'px'; cvs.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  const count = Math.min(MAX_PARTICLES, Math.floor(W*PARTICLE_DENSITY));
+  particles = new Array(count).fill(0).map(spawn);
+}
+function spawn(){
+  return {
+    x: Math.random()*W,
+    y: Math.random()*H*SKY_FRAC,
+    life: 60 + Math.random()*160,
+    a: ALPHA_MIN + Math.random()*(ALPHA_MAX-ALPHA_MIN)
+  };
+}
+// procedural flow field: mostly rightward, gentle organic undulation
+function field(x,y){
+  const u = SPEED*(1.1 + 0.45*Math.sin(y*0.013 + t*0.0007) + 0.30*Math.sin(x*0.006 - t*0.0010));
+  const v = 0.55*Math.sin(x*0.010 + y*0.009 + t*0.0009) + 0.20*Math.sin(y*0.02 - t*0.0006);
+  return [u, v];
+}
+function step(){
+  t++;
+  // fade existing trails on a transparent canvas
+  ctx.globalCompositeOperation='destination-out';
+  ctx.fillStyle='rgba(0,0,0,'+(1-FADE)+')';
+  ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='source-over';
+  ctx.lineWidth=1;
+  for(const p of particles){
+    const px=p.x, py=p.y;
+    const [u,v]=field(p.x,p.y);
+    p.x+=u; p.y+=v; p.life--;
+    ctx.strokeStyle='rgba('+TINT_R+','+TINT_G+','+TINT_B+','+p.a+')';
+    ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(p.x,p.y); ctx.stroke();
+    if(p.x>W+4 || p.y<-4 || p.y>H*SKY_FRAC+4 || p.life<=0){ Object.assign(p, spawn(), {x:-4}); }
+  }
+  raf=requestAnimationFrame(step);
+}
+function start(){ if(reduce){document.getElementById('status').textContent='reduced-motion: off';return;} if(!raf){running=true;raf=requestAnimationFrame(step);} }
+function stop(){ if(raf){cancelAnimationFrame(raf);raf=null;} }
+
+window.addEventListener('resize', ()=>{stop();resize();start();});
+document.addEventListener('visibilitychange', ()=>{ document.hidden?stop():start(); });
+document.getElementById('toggle').addEventListener('click', function(){
+  running=!running; this.textContent=running?'Pause':'Resume';
+  document.getElementById('status').textContent=running?'running':'paused';
+  running?start():stop();
+});
+resize(); start();
+</script>
+</body>
+</html>
