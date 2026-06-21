@@ -21,13 +21,12 @@ export default function PrivacyPage() {
             <span className="pip"></span>Privacy
           </span>
           <h1>
-            Your privacy is the structure, not a <em>setting.</em>
+            Your privacy, already <em>taken care of.</em>
           </h1>
           <p>
-            Most platforms bury privacy in a menu you have to find. At Steppe
-            it&rsquo;s built into what we are — a member-owned nonprofit with no
-            ads, no trackers, and no data to sell. Here&rsquo;s exactly what that
-            means, in plain language.
+            Most platforms bury privacy in a menu you have to go find. Here
+            it&rsquo;s part of what Steppe is: a member-owned nonprofit that runs no
+            ads, keeps no trackers, and has nothing to gain from your information.
           </p>
           <div className="updated">Last updated — June 2026</div>
         </div>
@@ -48,9 +47,8 @@ export default function PrivacyPage() {
               <div>
                 <h3>We never sell or share your data</h3>
                 <p>
-                  There&rsquo;s no one to sell it to and no business model that
-                  wants it. Steppe is funded by member dues, not by your
-                  information.
+                  There&rsquo;s no one to sell it to, and no business here that
+                  wants it. Steppe runs on member dues, full stop.
                 </p>
               </div>
             </div>
@@ -59,8 +57,9 @@ export default function PrivacyPage() {
               <div>
                 <h3>No advertising, no ad-tech</h3>
                 <p>
-                  No third-party trackers, no pixels, no behavioral profiling, no
-                  algorithmic feed deciding what you see.
+                  No third-party trackers, no advertising pixels, and no
+                  behavioral profiles. Nothing watches what you do in order to sell
+                  you something or to someone later.
                 </p>
               </div>
             </div>
@@ -89,8 +88,8 @@ export default function PrivacyPage() {
               <div>
                 <h3>Messages stay inside Steppe</h3>
                 <p>
-                  Conversations between neighbors aren&rsquo;t read, scanned, or
-                  mined. They&rsquo;re yours.
+                  Conversations between neighbors stay between neighbors. We
+                  don&rsquo;t read them. They&rsquo;re yours.
                 </p>
               </div>
             </div>
@@ -116,8 +115,8 @@ export default function PrivacyPage() {
             </span>
             <h2>What we collect, and why.</h2>
             <p>
-              The minimum needed to run a verified, member-owned membership —
-              nothing kept &ldquo;just in case.&rdquo;
+              Only what we need to run a verified, member-owned community. Nothing
+              is kept &ldquo;just in case.&rdquo;
             </p>
           </div>
           <div className="collect">
@@ -140,8 +139,8 @@ export default function PrivacyPage() {
                 <span className="tag">Required</span>
               </div>
               <div className="cw">
-                Handled by our payment processor. We see that you&rsquo;ve paid — we
-                don&rsquo;t store your card.
+                Handled by our payment processor. We see that you&rsquo;ve paid, and
+                we never store your card.
               </div>
               <div className="cr">
                 <b>Processor</b>not held by us
@@ -166,8 +165,8 @@ export default function PrivacyPage() {
                 <span className="tag">You choose</span>
               </div>
               <div className="cw">
-                Listings, messages, group activity, and votes you cast — created and
-                removed by you.
+                Listings, messages, group activity, and the votes you cast. You
+                create it, and you can remove it.
               </div>
               <div className="cr">
                 <b>Until you</b>delete it
@@ -247,9 +246,9 @@ export default function PrivacyPage() {
           </div>
           <div className="closing">
             <p>
-              This page is the plain-language version, and it&rsquo;s the one we
-              live by. A complete legal privacy policy with the formal detail is
-              available too, and questions are always welcome.
+              This plain-language page is the one we actually live by. There&rsquo;s
+              a full legal policy with the formal detail if you want it, and
+              we&rsquo;re always glad to answer questions.
             </p>
             <p className="legal">
               Full policy —{" "}
