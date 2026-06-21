@@ -65,8 +65,9 @@ export default function LandingPage() {
               you can <span className="em">trust.</span>
             </h1>
             <p className="lead">
-              Steppe is verified, ad-free, member-owned civic infrastructure for
-              the people of Redmond. No ads. No tracking. Your data stays yours.
+              Steppe is civic infrastructure for the people of Central Oregon,
+              owned by the members who use it. It carries no ads and no tracking,
+              and no investor can ever buy it out. What you share here stays yours.
             </p>
             <div className="hero-cta">
               <Link className="btn btn-primary" href="/join">
@@ -180,8 +181,8 @@ export default function LandingPage() {
             </span>
             <h2>Written down, and hard to undo.</h2>
             <p className="dek">
-              Four commitments, entrenched in the founding documents — they can
-              only change by a vote of the members themselves.
+              Four commitments, written into the founding documents. They can only
+              change if members vote to change them.
             </p>
           </div>
           <div className="charter">
@@ -189,7 +190,7 @@ export default function LandingPage() {
               <div className="ltr">a.</div>
               <div>
                 <h3>No advertising, ever</h3>
-                <p>You are the member, not the product. Nothing here is for sale to advertisers.</p>
+                <p>No ads, now or later. Nobody pays to put a message in front of you, and nothing about you is sold to anyone, ever.</p>
               </div>
               <span className="mark">Entrenched</span>
             </div>
@@ -197,7 +198,7 @@ export default function LandingPage() {
               <div className="ltr">b.</div>
               <div>
                 <h3>Verify residency, then forget it</h3>
-                <p>We confirm you live in Redmond, then forget the documents. No data hoard.</p>
+                <p>We confirm you live in Central Oregon, then instantly delete what you sent. We will never keep a file on you.</p>
               </div>
               <span className="mark">Entrenched</span>
             </div>
@@ -205,7 +206,7 @@ export default function LandingPage() {
               <div className="ltr">c.</div>
               <div>
                 <h3>Members govern, by secret ballot</h3>
-                <p>Vote on the rules, the budget, and the direction. Your vote counts the same as everyone&rsquo;s.</p>
+                <p>Members decide the rules and the budget together, by secret ballot. Your vote counts exactly as much as anyone else&rsquo;s.</p>
               </div>
               <span className="mark">Entrenched</span>
             </div>
@@ -213,7 +214,7 @@ export default function LandingPage() {
               <div className="ltr">d.</div>
               <div>
                 <h3>Your data leaves with you</h3>
-                <p>Export everything and walk away with it any time. No lock-in, by design.</p>
+                <p>Export everything and take it with you whenever you want. Nothing here is built to keep you from leaving.</p>
               </div>
               <span className="mark">Entrenched</span>
             </div>
@@ -229,8 +230,8 @@ export default function LandingPage() {
             </span>
             <h2>From neighbor to member.</h2>
             <p className="dek">
-              Four steps, start to finish. No anonymous accounts, no bots — just
-              the people who live around you.
+              Four steps, start to finish. No anonymous handles and no bots.
+              Everyone here is a real neighbor.
             </p>
           </div>
           <div className="stations">
@@ -238,7 +239,7 @@ export default function LandingPage() {
               <div className="no">01</div>
               <div>
                 <h3>Verify you&rsquo;re local</h3>
-                <p>Confirm you live in the Redmond area — real neighbors, no anonymous accounts. We check, then forget the documents.</p>
+                <p>Confirm you live in the Central Oregon. We check once, then instantly delete what you sent. Real neighbors only.</p>
               </div>
             </div>
             <div className="station rv">
@@ -247,21 +248,21 @@ export default function LandingPage() {
                 <h3>
                   Join for <span className="stamp">$4 / month</span>
                 </h3>
-                <p>That&rsquo;s the whole membership. Pay yearly or by bank transfer. Can&rsquo;t swing it right now? A hardship waiver is yours, no questions asked.</p>
+                <p>That&rsquo;s the whole membership. Pay once a year or by bank transfer. And if money&rsquo;s tight right now, the hardship waiver is yours, no questions asked.</p>
               </div>
             </div>
             <div className="station rv">
               <div className="no">03</div>
               <div>
                 <h3>Settle in</h3>
-                <p>Join groups, post to the local exchange, find help and offer it, and talk with the people who live around you.</p>
+                <p>Join groups, post to the local exchange, ask for a hand and lend one, and get to know the people who actually live around you.</p>
               </div>
             </div>
             <div className="station rv">
               <div className="no">04</div>
               <div>
                 <h3>Help steer it</h3>
-                <p>Vote on the rules, the budget, and where Steppe goes next. Your vote is secret, and it counts the same as everyone&rsquo;s.</p>
+                <p>Help decide the budget, the rules, and where Steppe goes next. Your ballot is secret, and it counts the same as anyone&rsquo;s.</p>
               </div>
             </div>
           </div>
@@ -276,8 +277,9 @@ export default function LandingPage() {
             </span>
             <h2>One local exchange.</h2>
             <p className="dek">
-              A need, an offer, a job, goods, mutual aid, a gathering — one calm
-              feed, with no algorithm deciding what you see.
+              Someone needs a hand. Someone has tomatoes to give away.
+              Someone&rsquo;s calling a meeting. It all lands in one plain feed,
+              newest first within your chosen categories, with no algorithm.
             </p>
           </div>
           <div className="register">
@@ -345,10 +347,10 @@ export default function LandingPage() {
             </span>
             <h2>Built so it can&rsquo;t be sold out from under you.</h2>
             <p>
-              Steppe is an Oregon public benefit nonprofit. No owner, no
-              investors, nothing to sell. The members govern it — and the promises
-              here are written into its founding documents, where they can only
-              change by a vote of the members themselves.
+              Steppe is an Oregon public benefit nonprofit. There&rsquo;s no owner,
+              no investors, and nothing for anyone to buy. The members run it, and
+              the promises on this page are written into its founding documents.
+              Only the members can change them.
             </p>
           </div>
           <div className="seal-wrap rv">
