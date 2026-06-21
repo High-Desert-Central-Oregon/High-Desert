@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-time="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — a first look</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,320..500&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--rust:#A8542C;--rust-glow:#C26B3E;
+  --display:'Newsreader',Georgia,serif;--sans:'Libre Franklin',system-ui,sans-serif;--mono:'DM Mono','SF Mono',monospace;
+  --maxw:1160px;--pad-x:clamp(20px,5vw,40px);
+  /* category inks (screen is always light paper) */
+  --offer:#6E8A5B;--need:#A8542C;--gather:#A8842F;--aid:#4F6B7A;
+}
+html[data-theme="light"]{--bg:#EDE6D5;--bg-alt:#FBF7EE;--text:#2A2E2C;--muted:#736E60;--border:rgba(54,86,61,.16);--card:#FBF7EE;--nav-bg:rgba(237,230,213,.86);--feat-text:#FBF7EE;--feat-muted:#C4CBBA;}
+html[data-theme="dark"]{--bg:#22262B;--bg-alt:#2A2F34;--text:#ECE6DA;--muted:#A6A89D;--border:rgba(237,230,213,.13);--card:#2A2F34;--nav-bg:rgba(28,31,35,.82);--feat-text:#ECE6DA;--feat-muted:#A6A89D;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .5s,color .5s}
+body::before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-theme="dark"] body::before{mix-blend-mode:overlay;opacity:.05}
+h1,h2,h3{font-family:var(--display);font-weight:430;line-height:1.05;letter-spacing:-.014em;font-optical-sizing:auto}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2.5px solid var(--rust);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:9px}
+.eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--rust)}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);transition:background .5s,border-color .5s}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:13px var(--pad-x);display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:-.01em;color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;gap:24px}.nav-links a{font-size:15px;font-weight:500;opacity:.82}.nav-links a:hover{opacity:1}
+.nav-links a.on{opacity:1;color:var(--rust)}
+.theme-toggle{width:37px;height:37px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-toggle .moon{display:none}html[data-theme="dark"] .theme-toggle .sun{display:none}html[data-theme="dark"] .theme-toggle .moon{display:block}
+.btn{font-family:var(--sans);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border-radius:10px;border:1.5px solid transparent;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn-primary{background:var(--rust);color:#FBF7EE;box-shadow:0 6px 16px -8px rgba(168,84,44,.6)}
+.btn-primary:hover{transform:translateY(-1px)}
+
+/* hero */
+.hero{position:relative;padding:clamp(40px,6vw,68px) 0 0;overflow:hidden}
+.hero-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x) 22px;max-width:780px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);border:1px solid var(--rust);border-radius:20px;padding:5px 12px;margin-bottom:18px}
+.badge .dot{width:6px;height:6px;border-radius:50%;background:var(--rust)}
+.hero h1{font-size:clamp(38px,6vw,62px);margin-bottom:18px}
+.hero h1 em{font-style:italic;color:var(--juniper)}html[data-theme="dark"] .hero h1 em{color:var(--offer)}
+.hero p{font-size:18px;color:var(--muted);max-width:54ch;line-height:1.55}
+.note{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--muted);border-left:2px solid var(--rust);padding:4px 0 4px 14px;max-width:60ch;line-height:1.6}
+
+/* app stage */
+.stage{display:grid;grid-template-columns:auto 1fr;gap:clamp(28px,5vw,64px);align-items:start;padding:8px 0 clamp(48px,7vw,86px)}
+.stage-l{display:flex;flex-direction:column;align-items:center;gap:18px}
+.vchips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:330px}
+.vchip{font-family:var(--sans);font-weight:600;font-size:13px;padding:8px 15px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;transition:all .15s}
+.vchip.active{background:var(--juniper);color:#FBF7EE;border-color:var(--juniper)}
+html[data-theme="dark"] .vchip.active{background:var(--offer);color:#1c2024;border-color:var(--offer)}
+
+/* phone */
+.phone{width:clamp(290px,84vw,330px);aspect-ratio:330/680;background:linear-gradient(160deg,#3a3e44,#26292d);border-radius:44px;padding:11px;position:relative;
+  box-shadow:0 2px 2px rgba(0,0,0,.2),0 34px 64px -26px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1.5px 0 rgba(255,255,255,.14)}
+.phone::after{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:36%;height:5px;border-radius:3px;background:rgba(0,0,0,.4);z-index:6}
+.screen-wrap{height:100%;background:#FBF7EE;border-radius:35px;overflow:hidden;display:flex;flex-direction:column;color:#2A2E2C;position:relative;border:1px solid rgba(0,0,0,.06)}
+.appbar{display:flex;align-items:center;gap:9px;padding:15px 16px 11px;border-bottom:1px solid rgba(54,86,61,.12)}
+.appbar .nm{font-family:var(--display);font-weight:560;font-size:18px}
+.pv-badge{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);border:1px solid var(--rust);border-radius:11px;padding:2px 7px}
+.loc{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.03em;color:var(--juniper-deep);text-transform:uppercase;display:flex;align-items:center;gap:5px}
+.body{flex:1;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;overflow-y:auto;padding:13px 14px 16px;display:none;flex-direction:column;gap:11px}
+.screen.show{display:flex}
+.screen::-webkit-scrollbar{width:0}
+.scr-h{font-family:var(--display);font-weight:480;font-size:21px;letter-spacing:-.01em;margin:2px 2px 2px}
+.scr-sub{font-size:12px;color:#736E60;margin:-6px 2px 4px}
+
+/* filter chips */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2px}
+.fchip{font-family:var(--sans);font-weight:600;font-size:10.5px;padding:5px 10px;border-radius:14px;border:1px solid rgba(54,86,61,.18);color:#46473f;background:transparent;cursor:pointer}
+.fchip.on{background:var(--juniper);color:#FBF7EE;border-color:var(--juniper)}
+.fchip.soon{opacity:.5;border-style:dashed;cursor:default}
+
+/* register rows in app */
+.erow{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;padding:12px 8px;border-radius:13px;cursor:pointer;transition:background .14s;border:1px solid transparent}
+.erow:hover,.erow:active{background:#F1EADB}
+.eav{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:var(--sans);background:color-mix(in srgb,var(--c) 20%,#FBF7EE);border:1.5px solid color-mix(in srgb,var(--c) 45%,transparent);color:var(--c)}
+.ecat{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--c);margin-bottom:2px}
+.ecat .dot{width:6px;height:6px;border-radius:50%;background:var(--c)}
+.ettl{font-family:var(--sans);font-weight:600;font-size:14px;line-height:1.25;letter-spacing:-.005em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eby{font-size:11.5px;color:#736E60;margin-top:2px}
+.echev{color:#9a958a}
+.c-offer{--c:var(--offer)}.c-need{--c:var(--need)}.c-gather{--c:var(--gather)}.c-aid{--c:var(--aid)}
+
+/* listing detail */
+.detail{display:none;flex-direction:column;gap:0;height:100%;overflow-y:auto;padding:8px 14px 16px}
+.detail.show{display:flex}
+.back{display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);font-weight:600;font-size:12.5px;color:#736E60;background:none;border:none;cursor:pointer;padding:8px 2px;align-self:flex-start}
+.d-photo{height:120px;border-radius:13px;margin:4px 0 14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--offer) 20%,#FBF7EE)}
+.d-cat{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+.d-cat .dot{width:7px;height:7px;border-radius:50%}
+.d-ttl{font-family:var(--display);font-weight:520;font-size:22px;line-height:1.15;letter-spacing:-.01em;margin:8px 0 8px}
+.d-body{font-size:14px;color:#46473f;line-height:1.55}
+.d-owner{display:flex;align-items:center;gap:10px;margin:16px 0 4px}
+.d-owner .eav{width:36px;height:36px}
+.d-owner .w{font-weight:600;font-size:13.5px}
+.d-owner .w small{display:block;font-family:var(--mono);font-size:10px;color:#736E60;margin-top:1px}
+.d-act{margin-top:16px;display:flex;flex-direction:column;gap:9px}
+.msgbtn{font-family:var(--sans);font-weight:600;font-size:14px;color:#FBF7EE;background:var(--rust);border:none;border-radius:11px;padding:12px;cursor:pointer;display:flex;justify-content:center;gap:8px;align-items:center}
+.inside{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#736E60;display:flex;align-items:center;gap:7px;justify-content:center}
+.inside::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--offer)}
+
+/* groups */
+.grp{display:flex;align-items:center;gap:12px;padding:13px 8px;border-bottom:1px solid rgba(54,86,61,.1)}
+.grp .gi{width:42px;height:42px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;background:rgba(156,173,139,.22);color:var(--juniper)}
+.grp .gt{flex:1;min-width:0}
+.grp .gt b{font-family:var(--sans);font-weight:600;font-size:14px;display:block}
+.grp .gt span{font-size:11.5px;color:#736E60}
+.joinb{font-family:var(--sans);font-weight:600;font-size:12px;padding:7px 14px;border-radius:18px;border:1.5px solid var(--juniper);background:transparent;color:var(--juniper);cursor:pointer;white-space:nowrap;transition:all .15s}
+.joinb.joined{background:var(--juniper);color:#FBF7EE}
+
+/* govern */
+.prop{border:1px solid rgba(54,86,61,.16);border-radius:14px;padding:14px;background:#fff}
+.prop .pc{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--rust);margin-bottom:6px}
+.prop .pt{font-family:var(--display);font-weight:500;font-size:18px;line-height:1.2;letter-spacing:-.01em;margin-bottom:5px}
+.prop .pd{font-size:12.5px;color:#736E60;line-height:1.5;margin-bottom:12px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1.5px solid rgba(54,86,61,.16);border-radius:10px;margin-bottom:7px;cursor:pointer;font-size:13px;font-weight:500;transition:all .14s}
+.opt .rk{font-family:var(--mono);font-size:11px;color:#9a958a;width:18px}
+.opt.sel{border-color:var(--rust);background:rgba(168,84,44,.06)}
+.opt.sel .rk{color:var(--rust);font-weight:700}
+.quorum{margin:12px 0 4px}
+.quorum .ql{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#736E60;margin-bottom:5px}
+.qbar{height:6px;border-radius:4px;background:rgba(54,86,61,.14);overflow:hidden}
+.qbar i{display:block;height:100%;width:62%;background:var(--sage)}
+.castb{width:100%;font-family:var(--sans);font-weight:600;font-size:14px;color:#FBF7EE;background:var(--juniper);border:none;border-radius:11px;padding:12px;cursor:pointer;margin-top:6px}
+.voted{display:none;margin-top:11px;padding:12px;border-radius:11px;background:rgba(156,173,139,.16);border:1px solid rgba(54,86,61,.16)}
+.voted.show{display:block}
+.voted b{font-family:var(--sans);font-weight:600;font-size:13.5px;display:flex;gap:7px;align-items:center;color:var(--juniper-deep)}
+.voted p{font-size:11.5px;color:#46473f;margin-top:6px;line-height:1.5}
+
+/* you / privacy */
+.prof{display:flex;align-items:center;gap:12px;padding:6px 6px 14px;border-bottom:1px solid rgba(54,86,61,.1);margin-bottom:6px}
+.prof .pa{width:52px;height:52px;border-radius:50%;background:color-mix(in srgb,var(--offer) 22%,#FBF7EE);border:1.5px solid color-mix(in srgb,var(--offer) 45%,transparent);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--offer);font-size:16px}
+.prof .ph b{font-family:var(--display);font-weight:520;font-size:18px;display:block}
+.prof .ph span{font-family:var(--mono);font-size:11px;color:#736E60}
+.field{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 6px;border-bottom:1px solid rgba(54,86,61,.08)}
+.field .fk{font-size:13px}.field .fk b{font-weight:600;display:block}.field .fk span{font-size:11px;color:#9a958a}
+.vis{font-family:var(--sans);font-weight:600;font-size:11px;padding:6px 12px;border-radius:16px;border:1.5px solid rgba(54,86,61,.2);background:transparent;cursor:pointer;min-width:86px;text-align:center;transition:all .14s}
+.vis[data-v="hidden"]{color:#9a958a}
+.vis[data-v="members"]{color:var(--juniper);border-color:var(--juniper)}
+.vis[data-v="everyone"]{color:var(--rust);border-color:var(--rust)}
+.locked-field{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--offer)}
+
+/* tab bar */
+.tabbar{display:flex;justify-content:space-around;align-items:center;padding:10px 6px 13px;background:#FBF7EE;border-top:1px solid rgba(54,86,61,.12)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;color:#736E60;font-size:8.5px;font-weight:600;font-family:var(--sans);background:none;border:none;cursor:pointer;padding:2px 6px}
+.tab.active{color:var(--rust)}
+.tab svg{width:21px;height:21px}
+
+/* caption */
+.caption{position:sticky;top:90px;max-width:380px}
+.caption .ck{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.caption .ck .dot{width:6px;height:6px;border-radius:50%;background:var(--rust)}
+.caption h2{font-size:clamp(26px,3.2vw,36px);margin-bottom:14px}
+.caption p{font-size:16.5px;color:var(--muted);line-height:1.6}
+.caption .meta{margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:14px;line-height:1.7}
+
+/* strata */
+.strata{display:block;width:100%;height:auto;line-height:0}
+.sky-l{opacity:0;transition:opacity .8s}
+html[data-theme="light"][data-time="dawn"] .sky-dawn{opacity:1}html[data-theme="light"][data-time="day"] .sky-day{opacity:1}html[data-theme="light"][data-time="dusk"] .sky-dusk{opacity:1}html[data-theme="light"][data-time="night"] .sky-dusk{opacity:1}html[data-theme="dark"] .sky-night{opacity:1}
+.sun-g{opacity:0;transition:opacity .8s}html[data-theme="light"] .sun-g{opacity:1}
+.night-g{opacity:0;transition:opacity .8s}html[data-theme="dark"] .night-g{opacity:1}
+html[data-time="dawn"] .sun-d{fill:#E18A5B}html[data-time="day"] .sun-d{fill:#C97A45}html[data-time="dusk"] .sun-d{fill:#B0532A}html[data-time="night"] .sun-d{fill:#B0532A}
+.breathe{animation:br 7s ease-in-out infinite}@keyframes br{0%,100%{opacity:.3}50%{opacity:.5}}
+
+/* footer */
+.footer{background:#1B1E22;color:#A6A89D;padding:50px 0 44px}
+.footer-in{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer .brand{color:#ECE6DA;font-size:19px}
+.footer-meta{font-family:var(--mono);font-size:12px;line-height:1.9;max-width:38ch}
+.footer-links{display:flex;flex-direction:column;gap:9px;font-size:14px}.footer-links a:hover{color:#ECE6DA}
+.footer-links a.head{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;pointer-events:none}
+
+@media (max-width:900px){
+  .stage{grid-template-columns:1fr;gap:30px}.caption{position:static;max-width:none;order:2}
+  .nav-links{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.sky-l,.sun-g,.night-g{transition:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#"><svg width="29" height="29" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="nc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#nc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+    <div class="nav-right">
+      <div class="nav-links"><a href="#" class="on">Preview</a><a href="#">For partners</a><a href="#">Join</a></div>
+      <button class="theme-toggle" id="tg" aria-label="Toggle day and night">
+        <svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg class="moon" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="btn btn-primary" href="#">Join</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-in">
+    <span class="badge"><span class="dot"></span>A preview — not the finished product</span>
+    <h1>A first look at <em>Steppe.</em></h1>
+    <p>This is where we begin: one calm exchange, the groups you choose, a vote that's yours, and a profile that stays private until you say otherwise.</p>
+    <div class="note">Everything here is the shape of the first version. Members decide what it becomes from here — by vote.</div>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="stage">
+  <div class="stage-l">
+    <div class="vchips">
+      <button class="vchip active" data-v="exchange">Exchange</button>
+      <button class="vchip" data-v="groups">Groups</button>
+      <button class="vchip" data-v="govern">Govern</button>
+      <button class="vchip" data-v="you">You</button>
+    </div>
+    <div class="phone"><div class="screen-wrap">
+      <div class="appbar">
+        <svg width="22" height="22" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="pc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#pc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>
+        <span class="nm">Steppe</span><span class="pv-badge">Preview</span>
+        <span class="loc"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#36563D" stroke-width="1.6"/></svg>Redmond</span>
+      </div>
+      <div class="body">
+
+        <!-- EXCHANGE -->
+        <div class="screen show" data-screen="exchange" id="sc-exchange">
+          <div class="filters"><button class="fchip on">All</button><button class="fchip">Offers</button><button class="fchip">Needs</button><button class="fchip">Gatherings</button><button class="fchip soon">Marketplace · later, by vote</button></div>
+          <div class="erow c-offer" onclick="openListing('0412')"><div class="eav">MK</div><div><div class="ecat"><span class="dot"></span>Offer</div><div class="ettl">Free tomato starts — 40+ plants</div><div class="eby">Martha K. · 2h</div></div><svg class="echev" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="erow c-need" onclick="openListing('0411')"><div class="eav">JR</div><div><div class="ecat"><span class="dot"></span>Need</div><div class="ettl">Electrician who knows older homes</div><div class="eby">James R. · 5h</div></div><svg class="echev" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="erow c-gather" onclick="openListing('0409')"><div class="eav">St</div><div><div class="ecat"><span class="dot"></span>Gathering</div><div class="ettl">Member meeting — July 12</div><div class="eby">Steppe · adds to calendar</div></div><svg class="echev" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="erow c-aid" onclick="openListing('0407')"><div class="eav">DL</div><div><div class="ecat"><span class="dot"></span>Mutual aid</div><div class="ettl">Rides to medical appointments</div><div class="eby">Dana L. · 3h</div></div><svg class="echev" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <!-- LISTING DETAIL (sub-view of exchange) -->
+        <div class="detail" id="sc-detail">
+          <button class="back" onclick="backToList()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Exchange</button>
+          <div class="d-photo" id="d-photo"><svg width="50" height="50" viewBox="0 0 32 32" fill="none"><path d="M16 27c5 0 9-3.5 9-9 0-3-2-6-5-7 .5 4-2 6-4 6.5 1-3-1-7-4-8.5C16 4 12 6 11 10c-2 1-3 4-3 8 0 5.5 4 9 8 9z" fill="#6E8A5B" opacity=".5"/><path d="M16 27V13" stroke="#36563D" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="d-cat" id="d-cat"><span class="dot"></span>Offer</div>
+          <div class="d-ttl" id="d-ttl">Free tomato starts</div>
+          <div class="d-body" id="d-body"></div>
+          <div class="d-owner"><div class="eav" id="d-init">MK</div><div class="w" id="d-who">Martha K.<small>Member · Redmond</small></div></div>
+          <div class="d-act"><button class="msgbtn" id="d-msg">Message</button><span class="inside">Messages stay inside Steppe</span></div>
+        </div>
+
+        <!-- GROUPS -->
+        <div class="screen" data-screen="groups" id="sc-groups">
+          <div class="scr-h">Groups</div>
+          <div class="scr-sub">Join what you like. You can leave any time.</div>
+          <div class="grp"><div class="gi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 18c2-5 5-9 8-11 3 2 6 6 8 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="5" r="1.6" fill="currentColor"/></svg></div><div class="gt"><b>Dry Canyon Trail Stewards</b><span>214 members · weekly</span></div><button class="joinb joined" onclick="toggleJoin(this)">Joined ✓</button></div>
+          <div class="grp"><div class="gi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20v-1a4 4 0 0 1 4-4M16 15a4 4 0 0 1 4 4v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="9" r="2.4" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="9" r="2.4" stroke="currentColor" stroke-width="1.5"/></svg></div><div class="gt"><b>SE Redmond Neighbors</b><span>389 members · daily</span></div><button class="joinb" onclick="toggleJoin(this)">Join</button></div>
+          <div class="grp"><div class="gi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6 7h12l-1 13H7L6 7z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" stroke-width="1.5"/></svg></div><div class="gt"><b>Tool Library</b><span>96 members · lending</span></div><button class="joinb" onclick="toggleJoin(this)">Join</button></div>
+        </div>
+
+        <!-- GOVERN -->
+        <div class="screen" data-screen="govern" id="sc-govern">
+          <div class="scr-h">Govern</div>
+          <div class="scr-sub">One open vote right now.</div>
+          <div class="prop">
+            <div class="pc">Proposal 03 · ranked choice</div>
+            <div class="pt">Community Fund — which project this quarter?</div>
+            <div class="pd">Rank the options. Surplus dues fund the top choice the members pick.</div>
+            <div class="opt" onclick="rank(this)"><span class="rk">—</span>Dry Canyon trail repair</div>
+            <div class="opt" onclick="rank(this)"><span class="rk">—</span>Winter warming-shelter supplies</div>
+            <div class="opt" onclick="rank(this)"><span class="rk">—</span>Little free pantry restock</div>
+            <div class="quorum"><div class="ql"><span>Turnout</span><span>62% · quorum met</span></div><div class="qbar"><i></i></div></div>
+            <button class="castb" onclick="castVote()">Cast your ballot</button>
+            <div class="voted" id="voted"><b><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="#36563D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Ballot recorded — and secret.</b><p>No one can see how you voted. At launch every member's vote counts the same; members can later vote to weight by tenure.</p></div>
+          </div>
+        </div>
+
+        <!-- YOU -->
+        <div class="screen" data-screen="you" id="sc-you">
+          <div class="prof"><div class="pa">YO</div><div class="ph"><b>You</b><span>@you · private by default</span></div></div>
+          <div class="field"><div class="fk"><b>Username</b><span>How neighbors find you</span></div><span class="locked-field">Always shown</span></div>
+          <div class="field"><div class="fk"><b>Real name</b><span>Sarah Okafor</span></div><button class="vis" data-v="hidden" onclick="cycleVis(this)">Hidden</button></div>
+          <div class="field"><div class="fk"><b>Neighborhood</b><span>SE Redmond</span></div><button class="vis" data-v="members" onclick="cycleVis(this)">Members</button></div>
+          <div class="field"><div class="fk"><b>Email</b><span>For messages &amp; receipts</span></div><button class="vis" data-v="hidden" onclick="cycleVis(this)">Hidden</button></div>
+          <div class="field"><div class="fk"><b>Phone</b><span>Optional</span></div><button class="vis" data-v="hidden" onclick="cycleVis(this)">Hidden</button></div>
+        </div>
+
+      </div>
+      <div class="tabbar">
+        <button class="tab active" data-v="exchange"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Exchange</button>
+        <button class="tab" data-v="groups"><svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 19c0-2.8 2-4.5 4.5-4.5s4.5 1.7 4.5 4.5M11.5 19c0-2.8 2-4.5 4.5-4.5s4.5 1.7 4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Groups</button>
+        <button class="tab" data-v="govern"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="11" rx="1.4" stroke="currentColor" stroke-width="1.5"/><path d="M12 9V5m-3 9h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Govern</button>
+        <button class="tab" data-v="you"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>You</button>
+      </div>
+    </div></div>
+  </div>
+
+  <aside class="caption" id="caption">
+    <div class="ck"><span class="dot"></span><span id="cap-k">The exchange</span></div>
+    <h2 id="cap-h">One calm feed.</h2>
+    <p id="cap-p">Needs, offers, gatherings, and mutual aid in a single place — no algorithm deciding what you see. Tap any entry to open it and reach the neighbor directly.</p>
+    <div class="meta" id="cap-m">No ads · no tracking · messages stay inside Steppe</div>
+  </aside>
+</div>
+</div>
+
+<svg class="strata" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="skyDawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0CBB6"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+    <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7E3E0"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+    <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7B98A"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+    <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#161B26"/><stop offset="1" stop-color="#22262B"/></linearGradient>
+  </defs>
+  <rect class="sky-l sky-dawn" width="1440" height="150" fill="url(#skyDawn)"/>
+  <rect class="sky-l sky-day" width="1440" height="150" fill="url(#skyDay)"/>
+  <rect class="sky-l sky-dusk" width="1440" height="150" fill="url(#skyDusk)"/>
+  <rect class="sky-l sky-night" width="1440" height="150" fill="url(#skyNight)"/>
+  <g class="night-g"><circle cx="300" cy="40" r="1.4" fill="#EDE6D5"/><circle cx="680" cy="30" r="1.5" fill="#EDE6D5"/><circle cx="1020" cy="46" r="1.3" fill="#EDE6D5"/><g transform="translate(1140,48)"><circle r="26" fill="#E9E3D4"/><circle r="26" cx="11" cy="-6" fill="#1E2430"/></g></g>
+  <g class="sun-g"><circle class="breathe" cx="1140" cy="50" r="58" fill="#D98C56" opacity=".34"/><circle class="sun-d" cx="1140" cy="50" r="34"/></g>
+  <path d="M0 84 Q360 60 720 76 T1440 78 V150 H0Z" fill="#9CAD8B"/>
+  <path d="M0 110 Q420 92 840 104 T1440 104 V150 H0Z" fill="#36563D"/>
+  <path d="M0 132 Q480 120 960 130 T1440 128 V150 H0Z" fill="#34383D"/>
+</svg>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <div>
+      <a class="brand" href="#"><svg width="27" height="27" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="fc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#fc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+      <p class="footer-meta" style="margin-top:14px">An Oregon public benefit nonprofit<br>Redmond, Oregon · EST. 2026</p>
+    </div>
+    <div class="footer-links"><a class="head">Explore</a><a href="#">Preview</a><a href="#">For partners</a><a href="#">Privacy</a></div>
+    <div class="footer-meta" style="align-self:flex-end">Led by Greg Chism</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var h=new Date().getHours();
+  root.setAttribute('data-time',(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night');
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');var manual=false;
+  function setTheme(t){root.setAttribute('data-theme',t);}
+  setTheme((mq.matches||root.getAttribute('data-time')==='night')?'dark':'light');
+  if(mq.addEventListener)mq.addEventListener('change',function(e){if(!manual)setTheme(e.matches?'dark':'light');});
+  document.getElementById('tg').addEventListener('click',function(){manual=true;setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');});
+})();
+
+var L={
+ '0412':{cat:'Offer',c:'#6E8A5B',ttl:'Free tomato starts — 40+ plants',body:"Grew too many Early Girls this spring. Free to anyone who'll plant them. Pickup near downtown — evenings and weekends work best.",who:'Martha K.',init:'MK'},
+ '0411':{cat:'Need',c:'#A8542C',ttl:'Electrician who knows older homes',body:"Panel upgrade on a 1970s house. Licensed and insured, ideally someone who's worked on older Redmond homes. Daytime works best for a walkthrough.",who:'James R.',init:'JR'},
+ '0409':{cat:'Gathering',c:'#A8842F',ttl:'Member meeting — July 12',body:"Monthly open meeting: Community Fund proposals, governance Q&A, and a new-member welcome. All members invited — it adds to your calendar.",who:'Steppe',init:'St'},
+ '0407':{cat:'Mutual aid',c:'#4F6B7A',ttl:'Rides to medical appointments',body:"Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing — reach out and we'll coordinate.",who:'Dana L.',init:'DL'}
+};
+var CAP={
+ exchange:['The exchange','One calm feed.',"Needs, offers, gatherings, and mutual aid in a single place — no algorithm deciding what you see. Tap any entry to open it and reach the neighbor directly.",'No ads · no tracking · messages stay inside Steppe'],
+ groups:['Groups','The circles you choose.',"Neighborhood and interest groups you opt into — and leave whenever you want. Each group decides its own messaging.",'You control which groups can message you'],
+ govern:['Govern','Your vote, in private.',"Vote on the rules, the budget, and where Steppe goes next. Your ballot is secret, and at launch everyone's vote counts the same.",'15% quorum · secret ballot · reversible by vote'],
+ you:['You','Private until you say so.',"Your profile starts private. Reveal each field to no one, to members, or to everyone — field by field, your call.",'Username always shown · everything else your choice']
+};
+function show(v){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.toggle('show',s.getAttribute('data-screen')===v);});
+  document.getElementById('sc-detail').classList.remove('show');
+  if(v==='exchange'){document.getElementById('sc-exchange').classList.add('show');}
+  document.querySelectorAll('.vchip').forEach(function(c){c.classList.toggle('active',c.getAttribute('data-v')===v);});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active',t.getAttribute('data-v')===v);});
+  var k=CAP[v];document.getElementById('cap-k').textContent=k[0];document.getElementById('cap-h').textContent=k[1];document.getElementById('cap-p').textContent=k[2];document.getElementById('cap-m').textContent=k[3];
+}
+document.querySelectorAll('.vchip,.tab').forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-v'));});});
+
+function openListing(id){
+  var d=L[id];if(!d)return;
+  document.getElementById('sc-exchange').classList.remove('show');
+  var det=document.getElementById('sc-detail');det.classList.add('show');
+  var cat=document.getElementById('d-cat');cat.innerHTML='<span class="dot" style="background:'+d.c+'"></span>'+d.cat;cat.style.color=d.c;
+  document.getElementById('d-ttl').textContent=d.ttl;
+  document.getElementById('d-body').textContent=d.body;
+  document.getElementById('d-who').innerHTML=d.who+'<small>Member · Redmond</small>';
+  var iv=document.getElementById('d-init');iv.textContent=d.init;iv.style.color=d.c;iv.style.background='color-mix(in srgb,'+d.c+' 20%,#FBF7EE)';iv.style.borderColor=d.c;
+  document.getElementById('d-photo').style.background='color-mix(in srgb,'+d.c+' 20%,#FBF7EE)';
+  document.getElementById('d-msg').textContent='Message '+d.who.split(' ')[0];
+}
+function backToList(){document.getElementById('sc-detail').classList.remove('show');document.getElementById('sc-exchange').classList.add('show');}
+function toggleJoin(b){var j=b.classList.toggle('joined');b.textContent=j?'Joined ✓':'Join';}
+function rank(o){
+  var opts=o.parentNode.querySelectorAll('.opt');var sel=Array.prototype.filter.call(opts,function(x){return x.classList.contains('sel');}).length;
+  if(o.classList.contains('sel')){o.classList.remove('sel');o.querySelector('.rk').textContent='—';}
+  else{o.classList.add('sel');o.querySelector('.rk').textContent=(sel+1);}
+}
+function castVote(){var v=document.getElementById('voted');v.classList.add('show');var b=document.querySelector('.castb');b.textContent='Ballot cast';b.style.opacity='.55';b.style.pointerEvents='none';}
+var ORDER=['hidden','members','everyone'],LAB={hidden:'Hidden',members:'Members',everyone:'Everyone'};
+function cycleVis(b){var n=ORDER[(ORDER.indexOf(b.getAttribute('data-v'))+1)%3];b.setAttribute('data-v',n);b.textContent=LAB[n];}
+</script>
+</body>
+</html>

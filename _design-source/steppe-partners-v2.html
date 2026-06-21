@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-time="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — for partners</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,320..500&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--rust:#A8542C;
+  --display:'Newsreader',Georgia,serif;--sans:'Libre Franklin',system-ui,sans-serif;--mono:'DM Mono','SF Mono',monospace;
+  --maxw:1100px;--pad-x:clamp(20px,5vw,40px);--pad-y:clamp(64px,9vw,116px);
+  --dues:#6E8A5B;--grants:#A8842F;--donations:#A8542C;--earned:#4F6B7A;--gov:#7C7768;
+}
+html[data-theme="light"]{--bg:#EDE6D5;--bg-alt:#FBF7EE;--bg-panel:#F4EEE0;--text:#2A2E2C;--muted:#736E60;--border:rgba(54,86,61,.16);--card:#FBF7EE;--nav-bg:rgba(237,230,213,.86);--feat-text:#FBF7EE;--feat-muted:#C4CBBA;}
+html[data-theme="dark"]{--bg:#22262B;--bg-alt:#262B30;--bg-panel:#2A2F34;--text:#ECE6DA;--muted:#A6A89D;--border:rgba(237,230,213,.13);--card:#2A2F34;--nav-bg:rgba(28,31,35,.82);--feat-text:#ECE6DA;--feat-muted:#A6A89D;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .5s,color .5s}
+body::before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-theme="dark"] body::before{mix-blend-mode:overlay;opacity:.05}
+h1,h2,h3{font-family:var(--display);font-weight:430;line-height:1.05;letter-spacing:-.014em;font-optical-sizing:auto}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2.5px solid var(--rust);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:9px}
+.eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--rust)}
+.eyebrow.on-dark{color:var(--feat-muted)}
+
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);transition:background .5s,border-color .5s}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:13px var(--pad-x);display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:-.01em;color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;gap:24px}.nav-links a{font-size:15px;font-weight:500;opacity:.82}.nav-links a:hover{opacity:1}.nav-links a.on{opacity:1;color:var(--rust)}
+.theme-toggle{width:37px;height:37px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-toggle .moon{display:none}html[data-theme="dark"] .theme-toggle .sun{display:none}html[data-theme="dark"] .theme-toggle .moon{display:block}
+.btn{font-family:var(--sans);font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:11px;border:1.5px solid transparent;cursor:pointer;transition:transform .15s}
+.btn-primary{background:var(--rust);color:#FBF7EE;box-shadow:0 8px 18px -9px rgba(168,84,44,.6)}.btn-primary:hover{transform:translateY(-2px)}
+.nav .btn{padding:9px 17px;font-size:14px}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border)}.btn-ghost:hover{border-color:var(--rust)}
+
+/* hero */
+.hero{position:relative;padding:clamp(48px,7vw,84px) 0 0;overflow:hidden}
+.hero-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x) clamp(34px,5vw,56px);max-width:820px}
+.hero h1{font-size:clamp(40px,6.6vw,72px);margin:18px 0 0}
+.hero h1 em{font-style:italic;color:var(--juniper)}html[data-theme="dark"] .hero h1 em{color:var(--dues)}
+.hero p{font-size:19px;color:var(--muted);max-width:56ch;margin-top:22px;line-height:1.55}
+.factline{margin-top:24px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.factline span{display:inline-flex;align-items:center;gap:8px}.factline span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--sage);border:1px solid var(--juniper)}
+
+.section{padding:var(--pad-y) 0;position:relative}
+.band-alt{background:var(--bg-alt)}
+.band-feature{background:var(--juniper);color:var(--feat-text)}
+.band-feature h2,.band-feature h3{color:var(--feat-text)}
+.band-bedrock{background:var(--basalt);color:var(--feat-text)}
+.sec-head{max-width:62ch;margin-bottom:8px}
+.sec-head h2{font-size:clamp(28px,4vw,46px);margin-top:14px}
+.sec-head p{font-size:17px;color:var(--muted);margin-top:16px;max-width:54ch}
+.band-feature .sec-head p{color:var(--feat-muted)}
+
+/* theory stations */
+.stations{margin-top:44px;display:grid;gap:0}
+.stn{display:grid;grid-template-columns:auto 1fr;gap:24px;padding:26px 0;border-top:1px solid var(--border);align-items:start}
+.stn:last-child{border-bottom:1px solid var(--border)}
+.stn .no{font-family:var(--mono);font-weight:500;color:var(--rust);font-size:13px;padding-top:5px;min-width:42px}
+.stn h3{font-size:23px;font-weight:480;margin-bottom:8px}
+.stn p{font-size:15.5px;color:var(--muted);line-height:1.6;max-width:62ch}
+
+/* panels */
+.panels{margin-top:44px;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;box-shadow:0 12px 28px -20px rgba(0,0,0,.4)}
+.panel .pk{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--rust);margin-bottom:12px}
+.panel h3{font-size:21px;font-weight:500;margin-bottom:12px}
+.panel ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.panel li{display:grid;grid-template-columns:auto 1fr;gap:11px;font-size:14.5px;color:var(--muted);line-height:1.45}
+.panel li b{color:var(--text);font-weight:600}
+.panel li .t{font-family:var(--mono);font-size:11.5px;color:var(--rust);font-weight:500;white-space:nowrap;padding-top:1px}
+.panel li .ck{color:var(--dues);padding-top:2px}
+
+/* funding register */
+.fund{margin-top:44px;border-top:1px solid var(--border)}
+.frow{display:grid;grid-template-columns:170px 1fr auto;gap:20px;align-items:baseline;padding:20px 4px;border-bottom:1px solid var(--border);border-left:3px solid var(--c);padding-left:16px}
+.frow .fn{display:flex;flex-direction:column;gap:5px}
+.frow .fn b{font-family:var(--display);font-weight:480;font-size:19px;letter-spacing:-.01em;color:var(--text)}
+.frow .fn .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.frow .fd{font-size:14px;color:var(--muted);line-height:1.5;max-width:54ch}
+.frow .fw{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;text-align:right}
+.f-dues{--c:var(--dues)}.f-grants{--c:var(--grants)}.f-don{--c:var(--donations)}.f-earned{--c:var(--earned)}.f-gov{--c:var(--gov)}
+.guard{margin-top:26px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.guard .mixbar{flex:1;min-width:200px;height:10px;border-radius:5px;overflow:hidden;display:flex;border:1px solid var(--border)}
+.guard .mixbar i{height:100%}
+
+/* ask */
+.ask-grid{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ask{background:rgba(255,255,255,.04);border:1px solid rgba(237,230,213,.16);border-radius:16px;padding:24px}
+html[data-theme="light"] .ask{background:rgba(54,86,61,.04);border-color:rgba(54,86,61,.14)}
+.ask h3{font-size:19px;font-weight:500;margin-bottom:8px}
+.ask p{font-size:14.5px;color:var(--feat-muted);line-height:1.55}
+html[data-theme="light"] .ask p{color:var(--muted)}
+.cta-row{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.contact{font-family:var(--mono);font-size:13px;color:var(--feat-muted)}
+
+/* strata */
+.strata{display:block;width:100%;height:auto;line-height:0}
+.sky-l{opacity:0;transition:opacity .8s}
+html[data-theme="light"][data-time="dawn"] .sky-dawn{opacity:1}html[data-theme="light"][data-time="day"] .sky-day{opacity:1}html[data-theme="light"][data-time="dusk"] .sky-dusk{opacity:1}html[data-theme="light"][data-time="night"] .sky-dusk{opacity:1}html[data-theme="dark"] .sky-night{opacity:1}
+.sun-g{opacity:0;transition:opacity .8s}html[data-theme="light"] .sun-g{opacity:1}
+.night-g{opacity:0;transition:opacity .8s}html[data-theme="dark"] .night-g{opacity:1}
+html[data-time="dawn"] .sun-d{fill:#E18A5B}html[data-time="day"] .sun-d{fill:#C97A45}html[data-time="dusk"] .sun-d{fill:#B0532A}html[data-time="night"] .sun-d{fill:#B0532A}
+.breathe{animation:br 7s ease-in-out infinite}@keyframes br{0%,100%{opacity:.3}50%{opacity:.5}}
+
+.footer{background:#1B1E22;color:#A6A89D;padding:50px 0 44px}
+.footer-in{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer .brand{color:#ECE6DA;font-size:19px}
+.footer-meta{font-family:var(--mono);font-size:12px;line-height:1.9;max-width:38ch}
+.footer-links{display:flex;flex-direction:column;gap:9px;font-size:14px}.footer-links a:hover{color:#ECE6DA}
+.footer-links a.head{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;pointer-events:none}
+
+@media (max-width:780px){.panels,.ask-grid{grid-template-columns:1fr}.frow{grid-template-columns:1fr;gap:8px}.frow .fw{text-align:left}.nav-links{display:none}.stn{grid-template-columns:1fr;gap:6px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.sky-l,.sun-g,.night-g{transition:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#"><svg width="29" height="29" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="nc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#nc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+    <div class="nav-right">
+      <div class="nav-links"><a href="#">Preview</a><a href="#" class="on">For partners</a><a href="#">Join</a></div>
+      <button class="theme-toggle" id="tg" aria-label="Toggle day and night">
+        <svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg class="moon" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="btn btn-primary" href="#">Get in touch</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-in">
+    <span class="eyebrow"><span class="pip"></span>For partners &amp; funders</span>
+    <h1>Civic infrastructure, built so it <em>can't be sold.</em></h1>
+    <p>Steppe is a member-governed public benefit nonprofit creating community-owned digital infrastructure for Redmond, Central Oregon — ad-free, residency-verified, and structurally protected from acquisition and enshittification.</p>
+    <div class="factline"><span>Oregon public benefit nonprofit</span><span>Fiscal sponsor — Aspiration</span><span>Redmond · Central Oregon</span></div>
+  </div>
+  <svg class="strata" viewBox="0 0 1440 150" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyDawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0CBB6"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7E3E0"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7B98A"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#161B26"/><stop offset="1" stop-color="#22262B"/></linearGradient>
+    </defs>
+    <rect class="sky-l sky-dawn" width="1440" height="150" fill="url(#skyDawn)"/>
+    <rect class="sky-l sky-day" width="1440" height="150" fill="url(#skyDay)"/>
+    <rect class="sky-l sky-dusk" width="1440" height="150" fill="url(#skyDusk)"/>
+    <rect class="sky-l sky-night" width="1440" height="150" fill="url(#skyNight)"/>
+    <g class="night-g"><circle cx="300" cy="40" r="1.4" fill="#EDE6D5"/><circle cx="680" cy="30" r="1.5" fill="#EDE6D5"/><circle cx="1020" cy="46" r="1.3" fill="#EDE6D5"/><g transform="translate(1140,48)"><circle r="26" fill="#E9E3D4"/><circle r="26" cx="11" cy="-6" fill="#1E2430"/></g></g>
+    <g class="sun-g"><circle class="breathe" cx="1140" cy="50" r="58" fill="#D98C56" opacity=".34"/><circle class="sun-d" cx="1140" cy="50" r="34"/></g>
+    <path d="M0 84 Q360 60 720 76 T1440 78 V150 H0Z" fill="#9CAD8B"/>
+    <path d="M0 110 Q420 92 840 104 T1440 104 V150 H0Z" fill="#36563D"/>
+    <path d="M0 132 Q480 120 960 130 T1440 128 V150 H0Z" fill="#34383D"/>
+  </svg>
+</header>
+
+<!-- THEORY OF CHANGE -->
+<section class="section band-alt">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow"><span class="pip"></span>Theory of change</span><h2>Community life moved onto platforms that can be sold.</h2><p>The places neighbors gather online are owned by companies that monetize attention and can be acquired, shut down, or degraded at will. Steppe is the structural alternative.</p></div>
+    <div class="stations">
+      <div class="stn"><div class="no">01</div><div><h3>The problem</h3><p>Local connection now runs through extractive, ad-driven platforms with no accountability to the people who use them. They sell attention, harvest data, and can be sold out from under a community overnight.</p></div></div>
+      <div class="stn"><div class="no">02</div><div><h3>The approach</h3><p>A member-owned commons — a public benefit nonprofit with no owner and nothing to sell, governed democratically by residents, with its core promises written into its founding documents where only the members can change them.</p></div></div>
+      <div class="stn"><div class="no">03</div><div><h3>What changes</h3><p>Durable local civic infrastructure that belongs to the community itself: ad-free, privacy-respecting, and impossible to acquire or enshittify — a model other towns can adopt and govern for themselves.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- STRUCTURAL GUARANTEES -->
+<section class="section band-feature">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow on-dark"><span class="pip"></span>Structural guarantees</span><h2>The protections aren't promises. They're the legal form.</h2></div>
+    <div class="panels">
+      <div class="panel">
+        <div class="pk">The form</div>
+        <h3>No owner. Nothing to sell.</h3>
+        <ul>
+          <li><span class="ck">✓</span><span><b>Oregon public benefit nonprofit</b> — no shareholders, no investors, no exit.</span></li>
+          <li><span class="ck">✓</span><span><b>Mission &amp; dissolution clause</b> written into the articles of incorporation.</span></li>
+          <li><span class="ck">✓</span><span><b>Acquisition is structurally impossible</b> — there is no equity to buy.</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="pk">The commitments</div>
+        <h3>Five promises, entrenched.</h3>
+        <ul>
+          <li><span class="ck">✓</span><span>No advertising, ever</span></li>
+          <li><span class="ck">✓</span><span>Residency verified, then forgotten</span></li>
+          <li><span class="ck">✓</span><span>Community-controlled governance</span></li>
+          <li><span class="ck">✓</span><span>Member-owned, exportable data</span></li>
+          <li><span class="ck">✓</span><span>Decisions are reversible by vote</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="pk">The thresholds</div>
+        <h3>How the members decide.</h3>
+        <ul>
+          <li><span class="t">15%</span><span>Quorum for any binding vote</span></li>
+          <li><span class="t">60%</span><span>To pass a major policy</span></li>
+          <li><span class="t">75%</span><span>To amend a foundational rule, with 30-day notice</span></li>
+          <li><span class="t">60%</span><span>To recall a board member</span></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="pk">The surplus</div>
+        <h3>Money flows back to the commons.</h3>
+        <ul>
+          <li><span class="ck">✓</span><span>Any surplus goes to a <b>Community Fund</b>, not to an owner.</span></li>
+          <li><span class="ck">✓</span><span>Members allocate it yearly by <b>ranked-choice vote</b>.</span></li>
+          <li><span class="ck">✓</span><span>Compensation is capped and published.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNDING -->
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow"><span class="pip"></span>Sustainability</span><h2>Five streams, no single point of capture.</h2><p>Steppe is funded so that no one source can dictate its direction — with member dues as the anchor and a hard ceiling on any single funder.</p></div>
+    <div class="fund">
+      <div class="frow f-dues"><div class="fn"><b>Member dues</b><span class="tag">The anchor</span></div><div class="fd">$4 a month, flat, from verified residents. The base that keeps Steppe accountable to members first.</div><div class="fw">live at launch</div></div>
+      <div class="frow f-grants"><div class="fn"><b>Foundation grants</b><span class="tag">Programs</span></div><div class="fd">Project funding for connectivity and digital-equity work, aligned to mission and time-bound.</div><div class="fw">2026 onward</div></div>
+      <div class="frow f-don"><div class="fn"><b>Donations</b><span class="tag">Community</span></div><div class="fd">Voluntary contributions above base dues, from members and local supporters.</div><div class="fw">live at launch</div></div>
+      <div class="frow f-earned"><div class="fn"><b>Earned revenue</b><span class="tag">Services</span></div><div class="fd">Mission-aligned services — helping other communities stand up their own instances.</div><div class="fw">as capacity allows</div></div>
+      <div class="frow f-gov"><div class="fn"><b>Government</b><span class="tag">Last, transparent</span></div><div class="fd">Public funds taken last and only with radical transparency, to protect independence.</div><div class="fw">2028+</div></div>
+    </div>
+    <div class="guard">
+      <span>No single funder over 30%</span>
+      <span class="mixbar"><i style="width:28%;background:var(--dues)"></i><i style="width:26%;background:var(--grants)"></i><i style="width:20%;background:var(--donations)"></i><i style="width:16%;background:var(--earned)"></i><i style="width:10%;background:var(--gov)"></i></span>
+      <span>illustrative target mix</span>
+    </div>
+  </div>
+</section>
+
+<!-- THE ASK -->
+<section class="section band-bedrock">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow on-dark"><span class="pip"></span>Partner with us</span><h2>What we're looking for.</h2></div>
+    <div class="ask-grid">
+      <div class="ask"><h3>Capacity &amp; board pipeline</h3><p>Introductions, governance expertise, and connections to people who'll help steer a member-led organization.</p></div>
+      <div class="ask"><h3>Grants &amp; foundation partners</h3><p>Project funding for rural connectivity and digital-equity programs across Central Oregon.</p></div>
+      <div class="ask"><h3>Program partners</h3><p>Broadband-equity, education, and economic-development organizations building local digital capacity.</p></div>
+      <div class="ask"><h3>Other communities</h3><p>Towns that want civic infrastructure of their own — and want to govern it themselves.</p></div>
+    </div>
+    <div class="cta-row"><a class="btn btn-primary" href="#">Get in touch <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a><span class="contact">hello@steppe.community</span></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <div>
+      <a class="brand" href="#"><svg width="27" height="27" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="fc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#fc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+      <p class="footer-meta" style="margin-top:14px">An Oregon public benefit nonprofit<br>Redmond, Oregon · EST. 2026<br>hello@steppe.community</p>
+    </div>
+    <div class="footer-links"><a class="head">Explore</a><a href="#">Preview</a><a href="#">For partners</a><a href="#">Privacy</a></div>
+    <div class="footer-meta" style="align-self:flex-end">Led by Greg Chism</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;var h=new Date().getHours();
+  root.setAttribute('data-time',(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night');
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');var manual=false;
+  function setTheme(t){root.setAttribute('data-theme',t);}
+  setTheme((mq.matches||root.getAttribute('data-time')==='night')?'dark':'light');
+  if(mq.addEventListener)mq.addEventListener('change',function(e){if(!manual)setTheme(e.matches?'dark':'light');});
+  document.getElementById('tg').addEventListener('click',function(){manual=true;setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');});
+})();
+</script>
+</body>
+</html>

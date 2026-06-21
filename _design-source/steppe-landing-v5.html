@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-time="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — a high desert civic commons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,320..500&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#EDE6D5; --paper:#FBF7EE; --sand:#E4D8BF;
+  --sage:#9CAD8B; --sage-soft:#C3CDB6;
+  --juniper:#36563D; --juniper-deep:#2B4733;
+  --basalt:#34383D; --basalt-deep:#25282D;
+  --rust:#A8542C; --rust-glow:#C26B3E;
+  --display:'Newsreader',Georgia,serif;
+  --sans:'Libre Franklin',system-ui,-apple-system,sans-serif;
+  --mono:'DM Mono','SF Mono',monospace;
+  --maxw:1160px; --pad-x:clamp(20px,5vw,40px); --pad-y:clamp(72px,10vw,132px); --r:14px;
+}
+html[data-theme="light"]{
+  --bg:#EDE6D5; --bg-alt:#C3CDB6; --bg-paper:#FBF7EE;
+  --bg-feature:#36563D; --bg-bedrock:#34383D;
+  --card:#FBF7EE; --border:rgba(54,86,61,.16);
+  --text:#2A2E2C; --text-muted:#736E60;
+  --feat-text:#FBF7EE; --feat-muted:#C4CBBA;
+  --nav-bg:rgba(237,230,213,.86); --nav-border:rgba(54,86,61,.16);
+  --contour:#9CAD8B;
+}
+html[data-theme="dark"]{
+  --bg:#22262B; --bg-alt:#272C29; --bg-paper:#2A2F34;
+  --bg-feature:#2B4733; --bg-bedrock:#1B1E22;
+  --card:#2F343A; --border:rgba(237,230,213,.13);
+  --text:#ECE6DA; --text-muted:#A6A89D;
+  --feat-text:#ECE6DA; --feat-muted:#A6A89D;
+  --nav-bg:rgba(28,31,35,.82); --nav-border:rgba(237,230,213,.12);
+  --contour:#4A6B53;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:17px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .6s ease,color .6s ease}
+body::before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-theme="dark"] body::before{mix-blend-mode:overlay;opacity:.05}
+h1,h2,h3{font-family:var(--display);font-weight:430;line-height:1.04;letter-spacing:-.014em;font-optical-sizing:auto;
+  }
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2.5px solid var(--rust);outline-offset:3px;border-radius:3px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-muted);display:inline-flex;align-items:center;gap:9px}
+.eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--rust);display:inline-block}
+.on-dark .eyebrow,.eyebrow.on-dark{color:var(--feat-muted)}
+
+.btn{font-family:var(--sans);font-weight:600;font-size:15px;letter-spacing:.01em;display:inline-flex;align-items:center;gap:9px;
+  padding:13px 22px;border-radius:11px;border:1.5px solid transparent;cursor:pointer;text-align:center;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease;position:relative}
+.btn-primary{background:var(--rust);color:#FBF7EE;box-shadow:0 1px 0 rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.22),0 8px 20px -10px rgba(168,84,44,.7)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 2px 0 rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.28),0 14px 26px -10px rgba(168,84,44,.75)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border)}
+.btn-ghost:hover{border-color:var(--rust);background:rgba(168,84,44,.06);transform:translateY(-2px)}
+.on-dark .btn-ghost{color:var(--feat-text);border-color:rgba(237,230,213,.34)}
+.on-dark .btn-ghost:hover{background:rgba(237,230,213,.08);border-color:var(--feat-text)}
+
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--nav-border);transition:background .6s ease,border-color .6s ease}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:14px var(--pad-x);display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font-size:15px;font-weight:500;color:var(--text);opacity:.82;transition:opacity .15s}
+.nav-links a:hover{opacity:1}
+.lang{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--text-muted);display:flex;gap:7px;align-items:center}
+.lang b{color:var(--text)} .lang span{cursor:pointer}
+.theme-toggle{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:transparent;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--text);transition:border-color .15s,background .15s}
+.theme-toggle:hover{border-color:var(--rust);background:rgba(168,84,44,.06)}
+.theme-toggle .moon{display:none} html[data-theme="dark"] .theme-toggle .sun{display:none} html[data-theme="dark"] .theme-toggle .moon{display:block}
+.nav .btn{padding:9px 17px;font-size:14px}
+
+.hero{position:relative;padding-top:clamp(48px,7vw,88px);overflow:hidden}
+.hero-grid{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x) clamp(28px,4vw,52px);display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(32px,5vw,72px);align-items:center;position:relative;z-index:1}
+.hero h1{font-size:clamp(42px,6.4vw,82px);margin:20px 0 0;font-weight:420;}
+.hero h1 .em{font-style:italic;color:var(--rust);}
+html[data-theme="light"] .hero h1 .em{color:var(--juniper)}
+.hero p.lead{font-size:clamp(17px,1.7vw,20px);color:var(--text-muted);max-width:30ch;margin:22px 0 30px;line-height:1.55}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.trustline{margin-top:26px;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);display:flex;gap:16px;flex-wrap:wrap}
+.trustline span{display:inline-flex;align-items:center;gap:7px}
+.trustline span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--sage);border:1px solid var(--juniper)}
+.hero-contour{position:absolute;top:-6%;right:-12%;width:62%;max-width:760px;opacity:.45;pointer-events:none;z-index:0;color:var(--contour)}
+.hero .strata{position:relative;z-index:1}
+
+.phone-stage{display:flex;justify-content:center;position:relative}
+.phone{width:clamp(264px,30vw,310px);aspect-ratio:295/600;background:linear-gradient(160deg,#3a3e44,#26292d);border-radius:42px;padding:11px;position:relative;
+  box-shadow:0 2px 2px rgba(0,0,0,.2),0 30px 60px -24px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.06),inset 0 1.5px 0 rgba(255,255,255,.14)}
+.phone::after{content:"";position:absolute;top:18px;left:50%;transform:translateX(-50%);width:38%;height:5px;border-radius:3px;background:rgba(0,0,0,.4);z-index:5}
+.screen{height:100%;background:#FBF7EE;border-radius:33px;overflow:hidden;display:flex;flex-direction:column;position:relative;border:1px solid rgba(0,0,0,.06);color:#2A2E2C}
+.scr-status{display:flex;justify-content:space-between;align-items:center;padding:13px 20px 6px;font-family:var(--mono);font-size:11px}
+.scr-status .dots{display:flex;gap:4px;align-items:center}
+.scr-status .dots i{width:5px;height:5px;border-radius:50%;background:#36563D;opacity:.4;font-style:normal}
+.scr-status .dots i.on{opacity:1}
+.scr-top{display:flex;align-items:center;gap:9px;padding:6px 18px 13px;border-bottom:1px solid rgba(54,86,61,.13)}
+.scr-top .nm{font-family:var(--display);font-size:18px;font-weight:440;}
+.loc-pill{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;background:rgba(156,173,139,.24);color:#2B4733;padding:4px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:5px;text-transform:uppercase}
+.scr-feed{flex:1;overflow:hidden;padding:13px 14px;display:flex;flex-direction:column;gap:11px;background:linear-gradient(180deg,#FBF7EE,#f3eddf)}
+.fcard{background:#FBF7EE;border:1px solid rgba(54,86,61,.14);border-radius:13px;padding:12px 13px;box-shadow:0 4px 12px -8px rgba(54,86,61,.3)}
+.chip{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:6px;font-weight:700;display:inline-block}
+.chip.offer{background:rgba(156,173,139,.3);color:#2B4733}
+.chip.need{background:rgba(168,84,44,.16);color:#A8542C}
+.chip.gather{background:rgba(54,86,61,.13);color:#36563D}
+.fcard h4{font-family:var(--sans);font-weight:600;font-size:13.5px;line-height:1.3;margin:8px 0 4px;letter-spacing:-.005em}
+.fcard p{font-size:11.5px;color:#736E60;line-height:1.4;margin-bottom:9px}
+.fmeta{display:flex;align-items:center;gap:7px;font-size:10.5px;color:#736E60}
+.av{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;font-weight:700;color:#FBF7EE;flex:none}
+.fmeta .t{margin-left:auto;font-family:var(--mono);font-size:9.5px}
+.scr-tab{display:flex;justify-content:space-around;align-items:center;padding:11px 8px 14px;background:#FBF7EE;border-top:1px solid rgba(54,86,61,.13)}
+.tab{display:flex;flex-direction:column;align-items:center;gap:4px;color:#736E60;font-size:8.5px;font-family:var(--sans);font-weight:500}
+.tab.active{color:#A8542C}
+.tab svg{width:21px;height:21px}
+
+.strata{display:block;width:100%;height:auto;line-height:0}
+.sky-layer{opacity:0;transition:opacity .9s ease}
+html[data-theme="light"][data-time="dawn"] .sky-dawn{opacity:1}
+html[data-theme="light"][data-time="day"] .sky-day{opacity:1}
+html[data-theme="light"][data-time="dusk"] .sky-dusk{opacity:1}
+html[data-theme="light"][data-time="night"] .sky-dusk{opacity:1}
+html[data-theme="dark"] .sky-night{opacity:1}
+.sun-group{opacity:0;transition:opacity .9s ease,transform .9s ease}
+html[data-theme="light"] .sun-group{opacity:1}
+html[data-time="dawn"] .sun-group{transform:translateY(18px)}
+html[data-time="day"] .sun-group{transform:translateY(0)}
+html[data-time="dusk"] .sun-group{transform:translateY(22px)}
+.night-group{opacity:0;transition:opacity .9s ease}
+html[data-theme="dark"] .night-group{opacity:1}
+.sun{transition:fill .9s ease}
+html[data-time="dawn"] .sun{fill:#E18A5B} html[data-time="dawn"] .sun-halo{fill:#E8A06F}
+html[data-time="day"] .sun{fill:#C97A45} html[data-time="day"] .sun-halo{fill:#D98C56}
+html[data-time="dusk"] .sun{fill:#B0532A} html[data-time="dusk"] .sun-halo{fill:#C26B3E}
+html[data-time="night"] .sun{fill:#B0532A} html[data-time="night"] .sun-halo{fill:#C26B3E}
+.sun-breathe{animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.30}50%{opacity:.5}}
+.twinkle{animation:tw 4s ease-in-out infinite}
+.twinkle.b{animation-delay:1.3s}.twinkle.c{animation-delay:2.4s}
+@keyframes tw{0%,100%{opacity:.35}50%{opacity:.95}}
+.shoot{opacity:0;will-change:transform,opacity}
+.shoot.s1{animation:sh1 8s ease-in infinite}
+.shoot.s2{animation:sh2 11s linear infinite 3s}
+.shoot.s3{animation:sh3 9.5s ease-out infinite 6s}
+.shoot.s4{animation:sh4 13s ease-in infinite 9.5s}
+.shoot.s5{animation:sh5 7.5s linear infinite 1.5s}
+@keyframes sh1{0%,90%{opacity:0;transform:translate(0,0)}92%{opacity:1;transform:translate(20px,8px)}97%{opacity:.5;transform:translate(232px,92px)}100%{opacity:0;transform:translate(300px,120px)}}
+@keyframes sh2{0%,70%{opacity:0;transform:translate(0,0)}71.5%{opacity:1;transform:translate(14px,7px)}81%{opacity:1;transform:translate(150px,72px)}82%{opacity:0;transform:translate(168px,80px)}100%{opacity:0}}
+@keyframes sh3{0%,40%{opacity:0;transform:translate(0,0)}45%{opacity:.8;transform:translate(40px,12px)}51%{opacity:.45;transform:translate(150px,46px)}54%{opacity:0;transform:translate(206px,62px)}100%{opacity:0}}
+@keyframes sh4{0%,55%{opacity:0;transform:translate(0,0)}60%{opacity:1;transform:translate(40px,16px)}66%{opacity:.4;transform:translate(232px,94px)}70%{opacity:0;transform:translate(300px,122px)}100%{opacity:0}}
+@keyframes sh5{0%,20%{opacity:0;transform:translate(0,0)}23%{opacity:.7;transform:translate(14px,6px)}28%{opacity:.4;transform:translate(90px,38px)}30.5%{opacity:0;transform:translate(122px,50px)}100%{opacity:0}}
+.day-group{opacity:0;transition:opacity .9s ease}
+html[data-theme="light"] .day-group{opacity:1}
+.gust{opacity:0;animation:gust 14s linear infinite}
+.gust.b{animation-delay:5.5s}.gust.c{animation-delay:9.5s}
+@keyframes gust{0%{opacity:0;transform:translateX(-26px)}14%{opacity:.45}52%{opacity:.45}80%{opacity:0}100%{opacity:0;transform:translateX(150px)}}
+
+.section{padding:var(--pad-y) 0;position:relative}
+.section-head{max-width:62ch}
+.section-head h2{font-size:clamp(30px,4.3vw,52px);margin:14px 0 0;font-weight:420}
+.section-head p.dek{font-size:clamp(16px,1.6vw,19px);color:var(--text-muted);margin-top:18px;max-width:54ch}
+.on-dark .section-head p.dek{color:var(--feat-muted)}
+.band-base{background:var(--bg);color:var(--text)}
+.band-alt{background:var(--bg-alt);color:var(--text)}
+.band-paper{background:var(--bg-paper);color:var(--text)}
+.band-feature{background:var(--bg-feature);color:var(--feat-text)}
+.band-feature h2,.band-bedrock h2{color:var(--feat-text)}
+.band-bedrock{background:var(--bg-bedrock);color:var(--feat-text)}
+.section,.nav,.footer{transition:background .6s ease,color .6s ease}
+
+.promises{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:46px}
+.promise{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px 24px 26px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 10px 24px -18px rgba(0,0,0,.4);transition:transform .2s ease,box-shadow .2s ease}
+.promise:hover{transform:translateY(-3px);box-shadow:0 16px 30px -18px rgba(0,0,0,.45)}
+.promise .ic{flex:none;width:42px;height:42px;border-radius:10px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--rust)}
+html[data-theme="light"] .promise .ic{color:var(--juniper)}
+.promise h3{font-size:19px;font-weight:440;line-height:1.18;margin-bottom:6px;letter-spacing:-.01em;color:var(--text)}
+.promise p{font-size:14.5px;color:var(--text-muted);line-height:1.5}
+
+.stations{margin-top:50px;display:grid;gap:0}
+.station{display:grid;grid-template-columns:auto 1fr;gap:24px;padding:26px 0;border-top:1px solid var(--border);align-items:start}
+.station:last-child{border-bottom:1px solid var(--border)}
+.station .no{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--rust);letter-spacing:.05em;padding-top:5px;min-width:46px}
+.station h3{font-size:23px;font-weight:420;margin-bottom:7px;letter-spacing:-.01em;color:var(--text)}
+.station p{font-size:15.5px;color:var(--text-muted);max-width:60ch;line-height:1.55}
+.station .stamp{font-family:var(--mono);background:rgba(168,84,44,.12);color:var(--rust);padding:1px 7px;border-radius:5px;font-size:.85em;font-weight:700;white-space:nowrap}
+
+.xchg{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:48px}
+.xcard{background:var(--card);color:var(--text);border-radius:var(--r);padding:22px 22px 20px;box-shadow:0 18px 40px -22px rgba(0,0,0,.5);border:1px solid var(--border);transition:transform .2s ease}
+.xcard:hover{transform:translateY(-3px)}
+.xcard .chip{margin-bottom:13px}
+.xcard h3{font-size:21px;font-weight:440;line-height:1.16;letter-spacing:-.01em;margin-bottom:9px;color:var(--text)}
+.xcard p{font-size:14.5px;color:var(--text-muted);line-height:1.5;margin-bottom:16px}
+.xmeta{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--text-muted)}
+.xmeta .av{width:26px;height:26px;font-size:10px} .xmeta .t{margin-left:auto;font-family:var(--mono);font-size:11.5px}
+
+/* category inks (separated earthy hues) — used on the dark exchange band */
+.cat-offer{--cat:#9CAD8B}.cat-need{--cat:#C26B3E}.cat-gather{--cat:#CDA452}.cat-aid{--cat:#84A6B6}
+/* exchange register */
+.register{margin-top:42px}
+.lx-row{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start;padding:22px 6px;border-top:1px solid rgba(237,230,213,.16);transition:background .15s ease;border-radius:8px}
+.lx-row:first-child{border-top:none}
+.lx-row:hover{background:rgba(237,230,213,.05)}
+.lx-cat{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--cat)}
+.lx-cat .dot{width:8px;height:8px;border-radius:50%;background:var(--cat);flex:none}
+.lx-ttl{font-family:var(--display);font-weight:440;font-size:21px;letter-spacing:-.01em;line-height:1.2;color:var(--feat-text);margin:9px 0 5px}
+.lx-desc{font-size:14.5px;color:var(--feat-muted);line-height:1.5;max-width:62ch}
+.lx-who{display:flex;align-items:center;gap:11px;padding-top:2px;white-space:nowrap}
+.av2{width:34px;height:34px;border-radius:50%;background:rgba(237,230,213,.08);border:1.5px solid var(--cat);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--feat-text);flex:none}
+.lx-meta{font-size:13.5px;color:var(--feat-text);line-height:1.35}
+.lx-meta span{display:block;color:var(--feat-muted);font-size:12px}
+/* charter clauses (promises) */
+.charter{margin-top:42px;max-width:760px}
+.clause{display:grid;grid-template-columns:26px 1fr auto;gap:16px;align-items:start;padding:20px 0;border-bottom:1px solid var(--border)}
+.clause:first-child{border-top:1px solid var(--border)}
+.clause .ltr{font-family:var(--mono);font-weight:700;color:var(--rust);font-size:14px;padding-top:2px}
+.clause h3{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--text);margin-bottom:4px;letter-spacing:-.005em}
+.clause p{font-size:14.5px;color:var(--text-muted);line-height:1.5;max-width:58ch}
+.clause .mark{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--rust);align-self:center;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.clause .mark::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--rust)}
+@media (max-width:680px){
+  .lx-row{grid-template-columns:1fr;gap:12px}
+  .lx-who{padding-top:0}
+  .clause{grid-template-columns:22px 1fr;gap:12px}.clause .mark{grid-column:2;justify-self:start;margin-top:6px}
+}
+
+.gov{display:grid;grid-template-columns:1.3fr .7fr;gap:clamp(36px,6vw,80px);align-items:center}
+.gov .copy h2{font-size:clamp(28px,3.8vw,46px);color:var(--text)}
+.gov .copy p{font-size:17px;color:var(--text-muted);margin-top:20px;max-width:54ch;line-height:1.6}
+.seal-wrap{display:flex;justify-content:center}
+.seal-spin{animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.cta-final{text-align:center;max-width:46ch;margin:0 auto}
+.cta-final h2{font-size:clamp(34px,5.2vw,66px);font-weight:410}
+.cta-final p{color:var(--feat-muted);font-size:19px;margin:22px 0 34px}
+
+.footer{background:var(--bg-bedrock);color:var(--feat-muted);padding:54px 0 46px}
+.footer-in{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+.footer .brand{color:var(--feat-text);font-size:20px}
+.footer-meta{font-family:var(--mono);font-size:12px;letter-spacing:.03em;line-height:1.9;max-width:38ch}
+.footer-links{display:flex;flex-direction:column;gap:10px;font-size:14px}
+.footer-links a{opacity:.82}.footer-links a:hover{opacity:1;color:var(--feat-text)}
+.footer-links a.head{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.55;margin-bottom:3px;pointer-events:none}
+
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr;gap:8px}
+  .phone-stage{order:-1;margin-bottom:8px}
+  .nav-links,.lang{display:none}
+  .gov{grid-template-columns:1fr;gap:34px}.seal-wrap{order:-1}
+  .promises,.xchg{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .station{grid-template-columns:1fr;gap:6px}.station .no{padding-top:0}
+  .hero h1{font-size:clamp(38px,11vw,52px)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  .rv{opacity:1;transform:none;transition:none}
+  .sky-layer,.sun-group,.night-group{transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top">
+      <svg width="30" height="30" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="nc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#nc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>
+      Steppe
+    </a>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#preview">Preview</a><a href="#partners">For partners</a><a href="#join">Join</a>
+      </div>
+      <div class="lang"><span><b>EN</b></span><span>·</span><span>ES</span></div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle day and night">
+        <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="btn btn-primary" href="#join">Sign in or join</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <svg class="hero-contour" viewBox="0 0 600 500" fill="none" aria-hidden="true">
+    <g stroke="currentColor" stroke-width="1.2" opacity=".55" fill="none">
+      <path d="M-20 180 Q150 120 300 170 T620 150"/><path d="M-20 220 Q150 165 300 210 T620 192"/><path d="M-20 262 Q150 212 300 252 T620 236"/><path d="M-20 306 Q150 260 300 296 T620 282"/><path d="M-20 352 Q150 310 300 342 T620 330"/><path d="M-20 400 Q150 360 300 390 T620 380"/>
+    </g>
+  </svg>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#A8542C" stroke-width="1.3"/><circle cx="8" cy="6" r="1.7" fill="#A8542C"/></svg> 44.27°N&nbsp; 121.17°W — Redmond, Oregon</span>
+      <h1>A neighborhood<br>you can <span class="em">trust.</span></h1>
+      <p class="lead">Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#join">Sign in or join <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="btn btn-ghost" href="#preview">See the preview</a>
+      </div>
+      <div class="trustline"><span>Verified residents</span><span>No advertising</span><span>Member-owned</span></div>
+    </div>
+
+    <div class="phone-stage">
+      <div class="phone"><div class="screen">
+        <div class="scr-status"><span>9:41</span><span class="dots"><i class="on"></i><i class="on"></i><i></i><span style="font-family:var(--mono);font-size:9px;margin-left:3px">▮</span></span></div>
+        <div class="scr-top">
+          <svg width="24" height="24" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="pc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#pc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>
+          <span class="nm">Steppe</span>
+          <span class="loc-pill"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#36563D" stroke-width="1.6"/></svg>Redmond</span>
+        </div>
+        <div class="scr-feed">
+          <div class="fcard"><span class="chip offer">Offer</span><h4>Free tomato starts — 40+ plants</h4><p>Grew too many Early Ones this spring. Free to a good home.</p><div class="fmeta"><span class="av" style="background:#9CAD8B">MK</span>Martha K.<span class="t">2h</span></div></div>
+          <div class="fcard"><span class="chip need">Need</span><h4>Electrician who knows older homes</h4><p>Panel upgrade on a 1970s house — licensed &amp; insured.</p><div class="fmeta"><span class="av" style="background:#A8542C">JR</span>James R.<span class="t">5h</span></div></div>
+          <div class="fcard"><span class="chip gather">Gathering</span><h4>Member meeting — July 12</h4><p>Community Fund proposals &amp; new-member welcome.</p><div class="fmeta"><span class="av" style="background:#36563D">St</span>Steppe<span class="t">calendar</span></div></div>
+        </div>
+        <div class="scr-tab">
+          <div class="tab active"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Exchange</div>
+          <div class="tab"><svg viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><circle cx="16" cy="9" r="2.6" stroke="currentColor" stroke-width="1.5"/><path d="M3.5 19c0-2.8 2-4.5 4.5-4.5S12.5 16.2 12.5 19M11.5 19c0-2.8 2-4.5 4.5-4.5s4.5 1.7 4.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Groups</div>
+          <div class="tab"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="11" rx="1.4" stroke="currentColor" stroke-width="1.5"/><path d="M12 9V5m-3 9h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>Govern</div>
+          <div class="tab"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>You</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <svg class="strata" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyDawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0CBB6"/><stop offset=".55" stop-color="#EBD8C4"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7E3E0"/><stop offset=".6" stop-color="#E4E4D7"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7B98A"/><stop offset=".5" stop-color="#E2B79A"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#161B26"/><stop offset=".6" stop-color="#1E2430"/><stop offset="1" stop-color="#22262B"/></linearGradient>
+      <linearGradient id="trail" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#EDE6D5" stop-opacity="0"/><stop offset=".7" stop-color="#EDE6D5" stop-opacity=".5"/><stop offset="1" stop-color="#FFFDF7" stop-opacity="1"/></linearGradient>
+    </defs>
+    <rect class="sky-layer sky-dawn" x="0" y="0" width="1440" height="300" fill="url(#skyDawn)"/>
+    <rect class="sky-layer sky-day" x="0" y="0" width="1440" height="300" fill="url(#skyDay)"/>
+    <rect class="sky-layer sky-dusk" x="0" y="0" width="1440" height="300" fill="url(#skyDusk)"/>
+    <rect class="sky-layer sky-night" x="0" y="0" width="1440" height="300" fill="url(#skyNight)"/>
+
+    <g class="day-group">
+      <g transform="translate(250,66)"><g class="gust"><path d="M0 4 H30 q10 0 10 -8 q0 -6 -7 -6" fill="none" stroke="#8FA07E" stroke-width="2" stroke-linecap="round"/><path d="M-6 14 H22 q9 0 9 7 q0 5 -6 5" fill="none" stroke="#8FA07E" stroke-width="2" stroke-linecap="round"/></g></g>
+      <g transform="translate(640,50)"><g class="gust b"><path d="M0 4 H26 q9 0 9 -7 q0 -5 -6 -5" fill="none" stroke="#8FA07E" stroke-width="1.8" stroke-linecap="round"/><path d="M-5 12 H20 q8 0 8 6 q0 5 -5 5" fill="none" stroke="#8FA07E" stroke-width="1.8" stroke-linecap="round"/></g></g>
+      <g transform="translate(980,92)"><g class="gust c"><path d="M0 4 H32 q10 0 10 -8 q0 -6 -7 -6" fill="none" stroke="#8FA07E" stroke-width="2" stroke-linecap="round"/><path d="M-6 14 H24 q9 0 9 7 q0 5 -6 5" fill="none" stroke="#8FA07E" stroke-width="2" stroke-linecap="round"/></g></g>
+    </g>
+
+    <g class="night-group">
+      <circle class="twinkle" cx="220" cy="70" r="1.6" fill="#EDE6D5"/><circle class="twinkle b" cx="430" cy="50" r="1.3" fill="#EDE6D5"/><circle class="twinkle c" cx="640" cy="92" r="1.7" fill="#EDE6D5"/><circle class="twinkle b" cx="880" cy="58" r="1.3" fill="#EDE6D5"/><circle class="twinkle" cx="300" cy="120" r="1.2" fill="#EDE6D5"/><circle class="twinkle c" cx="540" cy="140" r="1.4" fill="#EDE6D5"/><circle class="twinkle" cx="1000" cy="110" r="1.5" fill="#EDE6D5"/><circle class="twinkle b" cx="1260" cy="74" r="1.4" fill="#EDE6D5"/>
+      <g transform="translate(1130,80)"><circle r="38" fill="#E9E3D4"/><circle r="38" cx="15" cy="-9" fill="#1E2430"/></g>
+      <g transform="translate(250,40)"><g class="shoot s1"><line x1="-40" y1="-15" x2="0" y2="0" stroke="url(#trail)" stroke-width="2.2" stroke-linecap="round"/><circle r="1.9" fill="#FFFDF7"/></g></g>
+      <g transform="translate(820,28)"><g class="shoot s2"><line x1="-26" y1="-12" x2="0" y2="0" stroke="url(#trail)" stroke-width="2" stroke-linecap="round"/><circle r="1.7" fill="#FFFDF7"/></g></g>
+      <g transform="translate(520,84)"><g class="shoot s3"><line x1="-34" y1="-10" x2="0" y2="0" stroke="url(#trail)" stroke-width="1.8" stroke-linecap="round"/><circle r="1.6" fill="#FFFDF7"/></g></g>
+      <g transform="translate(1080,52)"><g class="shoot s4"><line x1="-44" y1="-18" x2="0" y2="0" stroke="url(#trail)" stroke-width="2.2" stroke-linecap="round"/><circle r="1.9" fill="#FFFDF7"/></g></g>
+      <g transform="translate(160,96)"><g class="shoot s5"><line x1="-22" y1="-9" x2="0" y2="0" stroke="url(#trail)" stroke-width="1.6" stroke-linecap="round"/><circle r="1.4" fill="#FFFDF7"/></g></g>
+    </g>
+
+    <g class="sun-group">
+      <circle class="sun-halo sun-breathe" cx="1130" cy="82" r="88" opacity=".34"/>
+      <circle class="sun" cx="1130" cy="82" r="52"/>
+    </g>
+
+    <path d="M0 168 Q240 132 480 156 T960 150 T1440 160 V300 H0Z" fill="#9CAD8B"/>
+    <path d="M0 206 Q300 182 600 198 T1200 192 T1440 200 V300 H0Z" fill="#36563D"/>
+    <path d="M0 244 Q360 228 720 240 T1440 238 V300 H0Z" fill="#34383D"/>
+  </svg>
+</header>
+
+<section class="section band-alt" id="preview">
+  <div class="wrap">
+    <div class="section-head rv"><span class="eyebrow"><span class="pip"></span>What we promise</span><h2>Written down, and hard to undo.</h2><p class="dek">Four commitments, entrenched in the founding documents — they can only change by a vote of the members themselves.</p></div>
+    <div class="charter">
+      <div class="clause rv"><div class="ltr">a.</div><div><h3>No advertising, ever</h3><p>You are the member, not the product. Nothing here is for sale to advertisers.</p></div><span class="mark">Entrenched</span></div>
+      <div class="clause rv"><div class="ltr">b.</div><div><h3>Verify residency, then forget it</h3><p>We confirm you live in Redmond, then forget the documents. No data hoard.</p></div><span class="mark">Entrenched</span></div>
+      <div class="clause rv"><div class="ltr">c.</div><div><h3>Members govern, by secret ballot</h3><p>Vote on the rules, the budget, and the direction. Your vote counts the same as everyone's.</p></div><span class="mark">Entrenched</span></div>
+      <div class="clause rv"><div class="ltr">d.</div><div><h3>Your data leaves with you</h3><p>Export everything and walk away with it any time. No lock-in, by design.</p></div><span class="mark">Entrenched</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section band-paper" id="join">
+  <div class="wrap">
+    <div class="section-head rv"><span class="eyebrow"><span class="pip"></span>Joining</span><h2>From neighbor to member.</h2><p class="dek">Four steps, start to finish. No anonymous accounts, no bots — just the people who live around you.</p></div>
+    <div class="stations">
+      <div class="station rv"><div class="no">01</div><div><h3>Verify you're local</h3><p>Confirm you live in the Redmond area — real neighbors, no anonymous accounts. We check, then forget the documents.</p></div></div>
+      <div class="station rv"><div class="no">02</div><div><h3>Join for <span class="stamp">$4 / month</span></h3><p>That's the whole membership. Pay yearly or by bank transfer. Can't swing it right now? A hardship waiver is yours, no questions asked.</p></div></div>
+      <div class="station rv"><div class="no">03</div><div><h3>Settle in</h3><p>Join groups, post to the local exchange, find help and offer it, and talk with the people who live around you.</p></div></div>
+      <div class="station rv"><div class="no">04</div><div><h3>Help steer it</h3><p>Vote on the rules, the budget, and where Steppe goes next. Your vote is secret, and it counts the same as everyone's.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section band-feature on-dark">
+  <div class="wrap">
+    <div class="section-head rv"><span class="eyebrow on-dark"><span class="pip"></span>What neighbors share</span><h2>One local exchange.</h2><p class="dek">A need, an offer, a job, goods, mutual aid, a gathering — one calm feed, with no algorithm deciding what you see.</p></div>
+    <div class="register">
+      <div class="lx-row cat-offer rv"><div class="lx-main"><div class="lx-cat"><span class="dot"></span>Offer</div><div class="lx-ttl">Free tomato starts — 40+ plants</div><div class="lx-desc">Grew too many Early Girls this spring. Free to anyone who'll plant them. Pickup near downtown.</div></div><div class="lx-who"><div class="av2">MK</div><div class="lx-meta">Martha K.<span>2h ago</span></div></div></div>
+      <div class="lx-row cat-need rv"><div class="lx-main"><div class="lx-cat"><span class="dot"></span>Need</div><div class="lx-ttl">Electrician who knows older homes</div><div class="lx-desc">Panel upgrade on a 1970s house. Looking for someone licensed and insured who's worked on older Redmond homes.</div></div><div class="lx-who"><div class="av2">JR</div><div class="lx-meta">James R.<span>5h ago</span></div></div></div>
+      <div class="lx-row cat-gather rv"><div class="lx-main"><div class="lx-cat"><span class="dot"></span>Gathering</div><div class="lx-ttl">Member meeting — July 12</div><div class="lx-desc">Monthly open meeting: Community Fund proposals, governance Q&amp;A, new-member welcome.</div></div><div class="lx-who"><div class="av2">St</div><div class="lx-meta">Steppe<span>adds to calendar</span></div></div></div>
+      <div class="lx-row cat-aid rv"><div class="lx-main"><div class="lx-cat"><span class="dot"></span>Mutual aid</div><div class="lx-ttl">Rides to medical appointments</div><div class="lx-desc">Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing.</div></div><div class="lx-who"><div class="av2">DL</div><div class="lx-meta">Dana L.<span>3h ago</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section band-base" id="partners">
+  <div class="wrap gov">
+    <div class="copy rv"><span class="eyebrow"><span class="pip"></span>Governed by its members</span><h2>Built so it can't be sold out from under you.</h2><p>Steppe is an Oregon public benefit nonprofit. No owner, no investors, nothing to sell. The members govern it — and the promises here are written into its founding documents, where they can only change by a vote of the members themselves.</p></div>
+    <div class="seal-wrap rv">
+      <svg width="220" height="220" viewBox="0 0 220 220" fill="none" aria-label="Steppe community seal">
+        <circle cx="110" cy="110" r="106" fill="#FBF7EE" stroke="#36563D" stroke-width="2"/>
+        <circle cx="110" cy="110" r="96" fill="none" stroke="#A8542C" stroke-width="1" stroke-dasharray="2 5"/>
+        <g class="seal-spin" style="transform-origin:110px 110px">
+          <path id="sealpath" d="M110 24 a86 86 0 1 1 0 172 a86 86 0 1 1 0 -172" fill="none"/>
+          <text font-family="DM Mono, monospace" font-size="11" letter-spacing="2.6" fill="#36563D"><textPath href="#sealpath" startOffset="0%">STEPPE · REDMOND, OREGON · EST. 2026 · MEMBER-GOVERNED · </textPath></text>
+        </g>
+        <clipPath id="sealdisc"><circle cx="110" cy="112" r="58"/></clipPath>
+        <g clip-path="url(#sealdisc)"><rect x="48" y="120" width="124" height="60" fill="#34383D"/><rect x="48" y="108" width="124" height="14" fill="#36563D"/><path d="M48 110 Q82 96 110 106 T172 102 V122 H48Z" fill="#9CAD8B"/><path d="M48 124 Q90 114 132 122 T172 120 V140 H48Z" fill="#2B4733"/><circle cx="140" cy="100" r="13" fill="#A8542C"/></g>
+        <circle cx="110" cy="112" r="58" fill="none" stroke="#36563D" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="section band-bedrock on-dark">
+  <div class="wrap cta-final rv">
+    <span class="eyebrow on-dark" style="justify-content:center"><span class="pip"></span>Your seat is open</span>
+    <h2>Pull up a chair.</h2>
+    <p>Join your neighbors in a place that belongs to all of you.</p>
+    <a class="btn btn-primary" href="#top">Sign in or join <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <div>
+      <a class="brand" href="#top"><svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="fc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#fc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+      <p class="footer-meta" style="margin-top:16px">An Oregon public benefit nonprofit<br>Redmond, Oregon · EST. 2026<br>hello@steppe.community</p>
+    </div>
+    <div class="footer-links"><a class="head">Explore</a><a href="#preview">Preview</a><a href="#partners">For partners</a><a href="#join">Privacy</a></div>
+    <div class="footer-meta" style="align-self:flex-end">Led by Greg Chism</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const root=document.documentElement;
+  const h=new Date().getHours();
+  const tod=(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night';
+  root.setAttribute('data-time',tod);
+  const mq=window.matchMedia('(prefers-color-scheme: dark)');
+  let manual=false;
+  function setTheme(t){root.setAttribute('data-theme',t);}
+  setTheme((mq.matches||tod==='night')?'dark':'light');
+  if(mq.addEventListener){mq.addEventListener('change',function(e){if(!manual)setTheme(e.matches?'dark':'light');});}
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    manual=true;setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');
+  });
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.14});
+  document.querySelectorAll('.rv').forEach(function(el,i){el.style.transitionDelay=(Math.min(i%4,3)*70)+'ms';io.observe(el);});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-time="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — privacy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,320..500&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--rust:#A8542C;
+  --display:'Newsreader',Georgia,serif;--sans:'Libre Franklin',system-ui,sans-serif;--mono:'DM Mono','SF Mono',monospace;
+  --maxw:920px;--pad-x:clamp(20px,5vw,40px);--pad-y:clamp(60px,8vw,104px);--offer:#6E8A5B;
+}
+html[data-theme="light"]{--bg:#EDE6D5;--bg-alt:#FBF7EE;--text:#2A2E2C;--muted:#736E60;--border:rgba(54,86,61,.16);--card:#FBF7EE;--nav-bg:rgba(237,230,213,.86);--feat-text:#FBF7EE;--feat-muted:#C4CBBA;}
+html[data-theme="dark"]{--bg:#22262B;--bg-alt:#262B30;--text:#ECE6DA;--muted:#A6A89D;--border:rgba(237,230,213,.13);--card:#2A2F34;--nav-bg:rgba(28,31,35,.82);--feat-text:#ECE6DA;--feat-muted:#A6A89D;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background .5s,color .5s}
+body::before{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.04;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-theme="dark"] body::before{mix-blend-mode:overlay;opacity:.05}
+h1,h2,h3{font-family:var(--display);font-weight:430;line-height:1.05;letter-spacing:-.014em;font-optical-sizing:auto}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2.5px solid var(--rust);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:inline-flex;align-items:center;gap:9px}
+.eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--rust)}
+
+.nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);transition:background .5s,border-color .5s}
+.nav-in{max-width:1100px;margin:0 auto;padding:13px var(--pad-x);display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:-.01em;color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.nav-links{display:flex;gap:24px}.nav-links a{font-size:15px;font-weight:500;opacity:.82}.nav-links a:hover{opacity:1}.nav-links a.on{opacity:1;color:var(--rust)}
+.theme-toggle{width:37px;height:37px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-toggle .moon{display:none}html[data-theme="dark"] .theme-toggle .sun{display:none}html[data-theme="dark"] .theme-toggle .moon{display:block}
+.btn{font-family:var(--sans);font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border-radius:10px;border:1.5px solid transparent;cursor:pointer;background:var(--rust);color:#FBF7EE}
+
+/* hero */
+.hero{position:relative;padding:clamp(44px,6vw,76px) 0 0;overflow:hidden}
+.hero-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x) clamp(28px,4vw,48px)}
+.hero h1{font-size:clamp(38px,5.6vw,60px);margin:16px 0 0;max-width:18ch}
+.hero h1 em{font-style:italic;color:var(--juniper)}html[data-theme="dark"] .hero h1 em{color:var(--offer)}
+.hero p{font-size:18px;color:var(--muted);max-width:58ch;margin-top:20px;line-height:1.55}
+.updated{margin-top:18px;font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+
+.section{padding:var(--pad-y) 0;position:relative}
+.band-alt{background:var(--bg-alt)}
+.sec-head{margin-bottom:6px}
+.sec-head h2{font-size:clamp(26px,3.6vw,40px);margin-top:13px}
+.sec-head p{font-size:16.5px;color:var(--muted);margin-top:14px;max-width:56ch}
+
+/* charter */
+.charter{margin-top:38px;max-width:720px}
+.clause{display:grid;grid-template-columns:28px 1fr;gap:16px;align-items:start;padding:20px 0;border-bottom:1px solid var(--border)}
+.clause:first-child{border-top:1px solid var(--border)}
+.clause .ltr{font-family:var(--mono);font-weight:500;color:var(--rust);font-size:14px;padding-top:3px}
+.clause h3{font-family:var(--sans);font-weight:600;font-size:18px;margin-bottom:5px;letter-spacing:-.005em}
+.clause p{font-size:14.5px;color:var(--muted);line-height:1.55;max-width:60ch}
+
+/* collect register */
+.collect{margin-top:38px;border-top:1px solid var(--border)}
+.crow{display:grid;grid-template-columns:180px 1fr 130px;gap:20px;align-items:baseline;padding:20px 4px;border-bottom:1px solid var(--border);border-left:3px solid var(--offer);padding-left:16px}
+.crow .cn b{font-family:var(--display);font-weight:480;font-size:18px;letter-spacing:-.01em;color:var(--text);display:block}
+.crow .cn .tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--offer);margin-top:4px;display:block}
+.crow .cw{font-size:14px;color:var(--muted);line-height:1.5}
+.crow .cr{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;text-align:right;line-height:1.5}
+.crow .cr b{color:var(--text);font-weight:500;display:block}
+
+/* rights */
+.rights{margin-top:38px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.right{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;display:flex;gap:13px;align-items:flex-start}
+.right .ri{flex:none;width:34px;height:34px;border-radius:9px;background:rgba(110,138,91,.16);color:var(--offer);display:flex;align-items:center;justify-content:center}
+.right b{font-weight:600;font-size:15px;display:block;margin-bottom:2px}
+.right span{font-size:13px;color:var(--muted);line-height:1.45}
+
+.closing{margin-top:40px;border-top:1px solid var(--border);padding-top:26px;max-width:64ch}
+.closing p{font-size:15.5px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.closing a{color:var(--rust);font-weight:500}
+.closing .legal{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7}
+
+.strata{display:block;width:100%;height:auto;line-height:0}
+.sky-l{opacity:0;transition:opacity .8s}
+html[data-theme="light"][data-time="dawn"] .sky-dawn{opacity:1}html[data-theme="light"][data-time="day"] .sky-day{opacity:1}html[data-theme="light"][data-time="dusk"] .sky-dusk{opacity:1}html[data-theme="light"][data-time="night"] .sky-dusk{opacity:1}html[data-theme="dark"] .sky-night{opacity:1}
+.sun-g{opacity:0;transition:opacity .8s}html[data-theme="light"] .sun-g{opacity:1}
+.night-g{opacity:0;transition:opacity .8s}html[data-theme="dark"] .night-g{opacity:1}
+html[data-time="dawn"] .sun-d{fill:#E18A5B}html[data-time="day"] .sun-d{fill:#C97A45}html[data-time="dusk"] .sun-d{fill:#B0532A}html[data-time="night"] .sun-d{fill:#B0532A}
+.breathe{animation:br 7s ease-in-out infinite}@keyframes br{0%,100%{opacity:.3}50%{opacity:.5}}
+
+.footer{background:#1B1E22;color:#A6A89D;padding:50px 0 44px}
+.footer-in{max-width:1100px;margin:0 auto;padding:0 var(--pad-x);display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer .brand{color:#ECE6DA;font-size:19px}
+.footer-meta{font-family:var(--mono);font-size:12px;line-height:1.9;max-width:38ch}
+.footer-links{display:flex;flex-direction:column;gap:9px;font-size:14px}.footer-links a:hover{color:#ECE6DA}
+.footer-links a.head{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.55;pointer-events:none}
+
+@media (max-width:720px){.rights{grid-template-columns:1fr}.crow{grid-template-columns:1fr;gap:8px}.crow .cr{text-align:left}.nav-links{display:none}.clause{grid-template-columns:24px 1fr;gap:12px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.sky-l,.sun-g,.night-g{transition:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#"><svg width="29" height="29" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="nc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#nc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+    <div class="nav-right">
+      <div class="nav-links"><a href="#">Preview</a><a href="#">For partners</a><a href="#">Join</a></div>
+      <button class="theme-toggle" id="tg" aria-label="Toggle day and night">
+        <svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <svg class="moon" width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8 8 0 0 1 9.5 4 7 7 0 1 0 20 14.5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      </button>
+      <a class="btn" href="#">Join</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-in">
+    <span class="eyebrow"><span class="pip"></span>Privacy</span>
+    <h1>Your privacy is the structure, not a <em>setting.</em></h1>
+    <p>Most platforms bury privacy in a menu you have to find. At Steppe it's built into what we are — a member-owned nonprofit with no ads, no trackers, and no data to sell. Here's exactly what that means, in plain language.</p>
+    <div class="updated">Last updated — June 2026</div>
+  </div>
+  <svg class="strata" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyDawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0CBB6"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7E3E0"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7B98A"/><stop offset="1" stop-color="#EDE6D5"/></linearGradient>
+      <linearGradient id="skyNight" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#161B26"/><stop offset="1" stop-color="#22262B"/></linearGradient>
+    </defs>
+    <rect class="sky-l sky-dawn" width="1440" height="120" fill="url(#skyDawn)"/>
+    <rect class="sky-l sky-day" width="1440" height="120" fill="url(#skyDay)"/>
+    <rect class="sky-l sky-dusk" width="1440" height="120" fill="url(#skyDusk)"/>
+    <rect class="sky-l sky-night" width="1440" height="120" fill="url(#skyNight)"/>
+    <g class="night-g"><circle cx="320" cy="34" r="1.4" fill="#EDE6D5"/><circle cx="720" cy="26" r="1.5" fill="#EDE6D5"/><circle cx="1050" cy="40" r="1.3" fill="#EDE6D5"/><g transform="translate(1160,38)"><circle r="21" fill="#E9E3D4"/><circle r="21" cx="9" cy="-5" fill="#1E2430"/></g></g>
+    <g class="sun-g"><circle class="breathe" cx="1160" cy="40" r="48" fill="#D98C56" opacity=".34"/><circle class="sun-d" cx="1160" cy="40" r="28"/></g>
+    <path d="M0 66 Q360 48 720 60 T1440 62 V120 H0Z" fill="#9CAD8B"/>
+    <path d="M0 88 Q420 74 840 84 T1440 84 V120 H0Z" fill="#36563D"/>
+    <path d="M0 106 Q480 98 960 104 T1440 102 V120 H0Z" fill="#34383D"/>
+  </svg>
+</header>
+
+<section class="section band-alt">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow"><span class="pip"></span>Our commitments</span><h2>Six promises we keep.</h2></div>
+    <div class="charter">
+      <div class="clause"><div class="ltr">a.</div><div><h3>We never sell or share your data</h3><p>There's no one to sell it to and no business model that wants it. Steppe is funded by member dues, not by your information.</p></div></div>
+      <div class="clause"><div class="ltr">b.</div><div><h3>No advertising, no ad-tech</h3><p>No third-party trackers, no pixels, no behavioral profiling, no algorithmic feed deciding what you see.</p></div></div>
+      <div class="clause"><div class="ltr">c.</div><div><h3>We verify residency, then forget it</h3><p>We confirm you live in the area, then delete the documents you used to prove it. We don't keep a file on you.</p></div></div>
+      <div class="clause"><div class="ltr">d.</div><div><h3>Your profile is private by default</h3><p>Every field starts hidden. You choose, one at a time, whether it's visible to no one, to members, or to everyone.</p></div></div>
+      <div class="clause"><div class="ltr">e.</div><div><h3>Messages stay inside Steppe</h3><p>Conversations between neighbors aren't read, scanned, or mined. They're yours.</p></div></div>
+      <div class="clause"><div class="ltr">f.</div><div><h3>You can leave with everything</h3><p>Export all of your data any time, and delete your account whenever you want. When you go, we delete our copy.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow"><span class="pip"></span>The record</span><h2>What we collect, and why.</h2><p>The minimum needed to run a verified, member-owned membership — nothing kept "just in case."</p></div>
+    <div class="collect">
+      <div class="crow"><div class="cn"><b>Account basics</b><span class="tag">Required</span></div><div class="cw">Your email and username, so you can sign in and neighbors can reach you.</div><div class="cr"><b>While a member</b>deleted on leaving</div></div>
+      <div class="crow"><div class="cn"><b>Dues &amp; payment</b><span class="tag">Required</span></div><div class="cw">Handled by our payment processor. We see that you've paid — we don't store your card.</div><div class="cr"><b>Processor</b>not held by us</div></div>
+      <div class="crow"><div class="cn"><b>Residency check</b><span class="tag">Once</span></div><div class="cw">Proof that you live in the area, reviewed to confirm eligibility, then removed.</div><div class="cr"><b>Deleted</b>after verification</div></div>
+      <div class="crow"><div class="cn"><b>What you post</b><span class="tag">You choose</span></div><div class="cw">Listings, messages, group activity, and votes you cast — created and removed by you.</div><div class="cr"><b>Until you</b>delete it</div></div>
+      <div class="crow"><div class="cn"><b>Minimal logs</b><span class="tag">Security</span></div><div class="cw">Basic technical records to keep the service running and safe. No tracking profiles.</div><div class="cr"><b>Short-term</b>then purged</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section band-alt">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow"><span class="pip"></span>Your rights</span><h2>You're in charge of it.</h2></div>
+    <div class="rights">
+      <div class="right"><div class="ri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="1.5"/></svg></div><div><b>See it</b><span>View everything we hold about you.</span></div></div>
+      <div class="right"><div class="ri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3v11m0-11l-4 4m4-4l4 4M5 15v4h14v-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><b>Export it</b><span>Download your data and take it with you.</span></div></div>
+      <div class="right"><div class="ri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 20h4L18 10l-4-4L4 16v4zM14 6l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><b>Correct it</b><span>Fix anything that's wrong, any time.</span></div></div>
+      <div class="right"><div class="ri"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M10 7V5h4v2M8 7l1 12h6l1-12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><b>Delete it</b><span>Close your account and we erase our copy.</span></div></div>
+    </div>
+    <div class="closing">
+      <p>This page is the plain-language version, and it's the one we live by. A complete legal privacy policy with the formal detail is available too, and questions are always welcome.</p>
+      <p class="legal">Full policy — <a href="#">steppe.community/legal/privacy</a><br>Questions — <a href="#">hello@steppe.community</a></p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-in">
+    <div>
+      <a class="brand" href="#"><svg width="27" height="27" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18.5" fill="#FBF7EE" stroke="#36563D" stroke-width="1.5"/><clipPath id="fc"><circle cx="20" cy="20" r="15"/></clipPath><g clip-path="url(#fc)"><rect x="5" y="22" width="30" height="14" fill="#34383D"/><rect x="5" y="18" width="30" height="5" fill="#36563D"/><path d="M5 18 Q14 13 22 17 T35 16 V23 H5Z" fill="#9CAD8B"/><circle cx="26" cy="16" r="4.6" fill="#A8542C"/></g></svg>Steppe</a>
+      <p class="footer-meta" style="margin-top:14px">An Oregon public benefit nonprofit<br>Redmond, Oregon · EST. 2026<br>hello@steppe.community</p>
+    </div>
+    <div class="footer-links"><a class="head">Explore</a><a href="#">Preview</a><a href="#">For partners</a><a href="#">Privacy</a></div>
+    <div class="footer-meta" style="align-self:flex-end">Led by Greg Chism</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;var h=new Date().getHours();
+  root.setAttribute('data-time',(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night');
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');var manual=false;
+  function setTheme(t){root.setAttribute('data-theme',t);}
+  setTheme((mq.matches||root.getAttribute('data-time')==='night')?'dark':'light');
+  if(mq.addEventListener)mq.addEventListener('change',function(e){if(!manual)setTheme(e.matches?'dark':'light');});
+  document.getElementById('tg').addEventListener('click',function(){manual=true;setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');});
+})();
+</script>
+</body>
+</html>
