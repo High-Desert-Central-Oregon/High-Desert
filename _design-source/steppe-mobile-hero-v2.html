@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="day">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — mobile hero (corrected)</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..600&family=Libre+Franklin:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--rust:#A8542C;
+    --display:'Newsreader',Georgia,serif;--sans:'Libre Franklin',system-ui,sans-serif;--mono:'DM Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#15171a;font-family:var(--sans);display:flex;flex-direction:column;align-items:center;gap:16px;padding:22px 0 50px}
+  .bar{display:flex;gap:12px;align-items:center;color:#A6A89D;font-size:13px}
+  .bar button{font:inherit;background:#2A2F34;color:#ECE6DA;border:1px solid #3A4047;border-radius:8px;padding:7px 14px;cursor:pointer}
+
+  /* phone frame */
+  .phone{width:390px;max-width:94vw;border-radius:34px;overflow:hidden;box-shadow:0 40px 80px -30px #000;border:8px solid #0c0d0f}
+
+  /* ----- HERO (copy area) ----- */
+  .hero{position:relative;padding:64px 26px 30px;overflow:hidden;transition:background .5s,color .5s}
+  html[data-mode="day"] .hero{background:linear-gradient(180deg,#F1ECDC 0%,var(--bone) 58%);color:#2A2E2C}
+  html[data-mode="night"] .hero{background:#1d2127;color:#ECE6DA}
+  .hero-stars,.herowind{position:absolute;inset:0;z-index:0;opacity:0;transition:opacity .6s;pointer-events:none}
+  html[data-mode="night"] .hero-stars{opacity:1}
+  html[data-mode="day"] .herowind{opacity:1}
+  .hero > *:not(.hero-stars):not(.herowind){position:relative;z-index:1}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a8576;display:flex;gap:8px;align-items:center}
+  html[data-mode="night"] .eyebrow{color:#9aa18f}
+  .eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--rust)}
+  h1{font-family:var(--display);font-size:40px;line-height:1.02;letter-spacing:-.015em;font-weight:430;margin:12px 0 0}
+  h1 em{font-style:italic;color:var(--juniper)}
+  html[data-mode="night"] h1 em{color:var(--sage)}
+  .lead{font-size:16px;line-height:1.5;margin-top:16px;color:#5f5a4e;max-width:32ch}
+  html[data-mode="night"] .lead{color:#b7b3a6}
+  .ctas{display:flex;gap:10px;margin-top:22px}
+  .btn{font-weight:600;font-size:14px;padding:12px 16px;border-radius:11px;border:1.5px solid transparent;display:inline-flex;gap:7px;align-items:center}
+  .btn.p{background:var(--rust);color:#FBF7EE}
+  .btn.s{background:transparent;border-color:rgba(120,110,90,.4);color:inherit}
+  .stats{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:24px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8a8576}
+  html[data-mode="night"] .stats{color:#9aa18f}
+  .stats span{display:flex;gap:7px;align-items:center}
+  .stats i{width:5px;height:5px;border-radius:50%;background:var(--sage);font-style:normal}
+
+  /* shooting stars + static dots (night, in hero) */
+  .dot{position:absolute;width:2px;height:2px;border-radius:50%;background:#EDE6D5;opacity:.0;animation:tw 4s ease-in-out infinite}
+  html[data-mode="night"] .dot{opacity:.5}
+  @keyframes tw{0%,100%{opacity:.25}50%{opacity:.7}}
+  .meteor{position:absolute;border-radius:2px;opacity:0;pointer-events:none;will-change:transform,opacity;
+    background:linear-gradient(90deg,rgba(237,230,213,0),rgba(237,230,213,1))}
+
+  /* ----- LANDSCAPE DIVIDER BAND ----- */
+  .band{position:relative;height:200px;overflow:hidden}
+  .sky{position:absolute;inset:0;transition:background .6s}
+  html[data-mode="day"] .sky{background:linear-gradient(180deg,#cfe0dd 0%,#dfe0d2 55%,#e7e1d2 100%)}
+  html[data-mode="night"] .sky{background:linear-gradient(180deg,#141a26 0%,#1b2330 70%,#222a33 100%)}
+  .windc{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .5s}
+  html[data-mode="day"] .windc{opacity:1}
+  .band-stars{position:absolute;inset:0;z-index:2;opacity:0;transition:opacity .6s}
+  html[data-mode="night"] .band-stars{opacity:1}
+  /* circular sun / moon — NOT stretched (own element, fixed aspect) */
+  .orb{position:absolute;z-index:3;top:34px;right:46px;width:62px;height:62px;border-radius:50%;transition:opacity .5s}
+  .orb .halo{position:absolute;inset:-18px;border-radius:50%}
+  .orb .disc{position:absolute;inset:0;border-radius:50%}
+  html[data-mode="day"] .orb .halo{background:radial-gradient(circle,rgba(217,140,86,.45),rgba(217,140,86,0) 70%)}
+  html[data-mode="day"] .orb .disc{background:#C97A45}
+  html[data-mode="night"] .orb{top:30px}
+  html[data-mode="night"] .orb .halo{background:radial-gradient(circle,rgba(233,227,212,.18),rgba(0,0,0,0) 70%)}
+  html[data-mode="night"] .orb .disc{background:#E4DDCC;box-shadow:inset -16px 6px 0 -2px #20283200}
+  html[data-mode="night"] .orb .disc{background:radial-gradient(circle at 64% 40%, #ECE6DA 60%, #ccc6b6 100%)}
+  /* hills + earth — stretchy is fine here */
+  .hills{position:absolute;left:0;right:0;bottom:0;z-index:4;width:100%;height:115px}
+  @media (prefers-reduced-motion:reduce){.dot{animation:none}}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <span>Mobile hero — landscape reflows to a divider band</span>
+    <button id="toggle">Switch to night</button>
+  </div>
+
+  <div class="phone">
+    <section class="hero">
+      <div class="hero-stars" id="herostars"></div>
+      <canvas class="herowind" id="herowind"></canvas>
+      <span class="eyebrow"><span class="pip"></span>Redmond, Oregon</span>
+      <h1>A place that <em>belongs</em> to the people in it.</h1>
+      <p class="lead">Steppe is civic infrastructure for the people of Central Oregon, owned by the members who use it.</p>
+      <div class="ctas">
+        <a class="btn p" href="#">Sign in or join →</a>
+        <a class="btn s" href="#">See the preview</a>
+      </div>
+      <div class="stats">
+        <span><i></i>Verified residents</span><span><i></i>No advertising</span><span><i></i>Member-owned</span>
+      </div>
+    </section>
+
+    <div class="band">
+      <div class="sky"></div>
+      <canvas class="windc" id="wind"></canvas>
+      <div class="band-stars" id="bandstars"></div>
+      <div class="orb"><div class="halo"></div><div class="disc"></div></div>
+      <svg class="hills" viewBox="0 0 390 115" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 40 Q120 18 230 34 T390 30 V115 H0Z" fill="#9CAD8B"/>
+        <path d="M0 66 Q140 48 280 62 T390 60 V115 H0Z" fill="#36563D"/>
+        <path d="M0 92 Q150 80 300 90 T390 88 V115 H0Z" fill="#34383D"/>
+      </svg>
+    </div>
+  </div>
+
+<script>
+/* day/night + reduced-motion */
+const root=document.documentElement;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---- wind factory: a present pass in the band, a subtle pass in the hero ---- */
+function makeWind(cvs,opt){
+  const ctx=cvs.getContext('2d'); let W,H,DPR,P=[],raf=null,t=0;
+  const o=Object.assign({density:1.1,max:380,speed:0.5,fade:0.92,sky:0.62,aMin:.14,aMax:.55,tint:'251,247,238'},opt);
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const spawn=()=>({x:Math.random()*W,y:Math.random()*H*o.sky,life:40+Math.random()*180,a:rnd(o.aMin,o.aMax),spd:rnd(0.35,1.9)});
+  function size(){const r=cvs.getBoundingClientRect();DPR=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cvs.width=W*DPR|0;cvs.height=H*DPR|0;cvs.style.width=W+'px';cvs.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);P=Array.from({length:Math.min(o.max,W*o.density|0)},spawn);}
+  /* gust: overall strength ebbs and flows over time — not a constant stream */
+  function gust(){let g=0.45+0.36*Math.sin(t*0.0006)+0.22*Math.sin(t*0.0013+1.7)+0.12*Math.sin(t*0.0027+0.4);return g<0.1?0.1:g;}
+  /* turbulent direction: wanders across space and slowly over time, biased to drift across */
+  function field(x,y){
+    const a=1.4*Math.sin(x*0.010+y*0.014+t*0.0006)+1.0*Math.sin(y*0.022-x*0.006+t*0.0009)+0.6*Math.sin((x+y)*0.017+t*0.0004);
+    const ang=a*0.38, sp=o.speed*gust();
+    return [sp*(0.8+0.6*Math.cos(ang)), sp*0.95*Math.sin(ang)];
+  }
+  function step(){t++;ctx.globalCompositeOperation='destination-out';ctx.fillStyle='rgba(0,0,0,'+(1-o.fade)+')';ctx.fillRect(0,0,W,H);ctx.globalCompositeOperation='source-over';ctx.lineWidth=1.1;
+    for(const p of P){const px=p.x,py=p.y,f=field(p.x,p.y);p.x+=f[0]*p.spd;p.y+=f[1]*p.spd;p.life--;
+      ctx.strokeStyle='rgba('+o.tint+','+p.a+')';ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(p.x,p.y);ctx.stroke();
+      if(p.x>W+5||p.x<-24||p.y<-8||p.y>H*o.sky+8||p.life<=0)Object.assign(p,spawn(),{x:-rnd(0,18)});}
+    raf=requestAnimationFrame(step);}
+  return {on(){if(reduce)return;if(!raf){size();raf=requestAnimationFrame(step);}},
+          off(){if(raf){cancelAnimationFrame(raf);raf=null;}try{ctx.clearRect(0,0,W,H);}catch(e){}},
+          resize(){if(raf)size();}};
+}
+/* band = present but inconsistent: slow gusty drift with wandering direction (not a steady stream).
+   hero = day's answer to the night stars: very subtle, darker tint so it reads on the light hero. */
+const bandWind=makeWind(document.getElementById('wind'),{density:1.1,speed:0.5,fade:0.92,sky:0.62,aMin:.14,aMax:.55,tint:'251,247,238'});
+const heroWind=makeWind(document.getElementById('herowind'),{density:0.42,max:150,speed:0.3,fade:0.95,sky:1.0,aMin:.04,aMax:.12,tint:'90,104,80'});
+
+/* star dots + shooting stars, scattered */
+/* static twinkle dots — varied sizes */
+function rand(a,b){return a+Math.random()*(b-a);}
+function dots(el,n){let h='';for(let i=0;i<n;i++){const s=rand(1,2.6).toFixed(1);
+  h+=`<span class="dot" style="width:${s}px;height:${s}px;top:${Math.random()*72}%;left:${Math.random()*100}%;animation-delay:${rand(0,4).toFixed(1)}s"></span>`;}
+  el.insertAdjacentHTML('beforeend',h);}
+const hero=document.getElementById('herostars'), bandS=document.getElementById('bandstars');
+dots(hero,26); dots(bandS,16);
+
+/* meteor shower — every streak randomized (size, tail, speed, angle, brightness), irregular timing */
+function meteor(host){
+  const r=host.getBoundingClientRect();
+  const big=Math.random()<0.16;                       // occasional brighter, longer one
+  const len=big?rand(120,190):rand(38,110);           // tail length
+  const thick=big?rand(1.8,2.6):rand(0.8,1.8);        // thickness
+  const dur=rand(820,2500)*(big?1.25:1);              // speed
+  const ang=rand(12,26);                               // angle (shared radiant, slight spread)
+  const bright=big?rand(0.8,1):rand(0.3,0.8);          // brightness
+  const dist=rand(120,250)+len*0.4;
+  const x=rand(-len*0.3,r.width*0.72), y=rand(0,r.height*0.42);
+  const el=document.createElement('span'); el.className='meteor';
+  el.style.cssText=`width:${len}px;height:${thick}px;left:${x}px;top:${y}px`;
+  if(big)el.style.boxShadow='0 0 6px rgba(237,230,213,.7)';
+  host.appendChild(el);
+  const rad=ang*Math.PI/180, dx=dist*Math.cos(rad), dy=dist*Math.sin(rad);
+  el.animate([
+    {opacity:0,transform:`translate(0,0) rotate(${ang}deg)`},
+    {opacity:bright,offset:0.1},{opacity:bright,offset:0.72},
+    {opacity:0,transform:`translate(${dx}px,${dy}px) rotate(${ang}deg)`}
+  ],{duration:dur,easing:'linear'}).onfinish=()=>el.remove();
+}
+function shower(){
+  if(root.getAttribute('data-mode')==='night' && !reduce){
+    meteor(Math.random()<0.6?hero:bandS);             // mostly in the hero, some in the band
+    if(Math.random()<0.18) meteor(hero);              // rare quick double
+  }
+  setTimeout(shower, rand(650,3200));                  // irregular gaps, not a metronome
+}
+shower();
+
+function apply(){ if(root.getAttribute('data-mode')==='day'){bandWind.on();heroWind.on();} else {bandWind.off();heroWind.off();} }
+addEventListener('resize',()=>{bandWind.resize();heroWind.resize();});
+document.getElementById('toggle').addEventListener('click',function(){
+  const night=root.getAttribute('data-mode')==='day'; root.setAttribute('data-mode',night?'night':'day');
+  this.textContent=night?'Switch to day':'Switch to night'; apply();
+});
+apply();
+</script>
+</body>
+</html>
