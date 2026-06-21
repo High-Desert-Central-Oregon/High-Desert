@@ -46,9 +46,13 @@ is kept "just in case."
 ## 2. How We Use Your Information
 
 We use your information to operate the membership, deliver the local exchange,
-groups, and governance features, send service email through
-[TRANSACTIONAL EMAIL PROVIDER], and keep the platform secure. We do not use it for
-advertising, and there is no behavioral profiling.
+groups, and governance features, send service email through Resend, and keep the
+platform secure. We do not use it for advertising, and there is no behavioral
+profiling.
+
+When you message us through the contact form, your name, email, and message are
+sent through Resend to our inbox so we can reply. We do not store contact messages
+in the app; they live in our email inbox.
 
 ## 3. Legal Bases for Processing
 
@@ -67,8 +71,11 @@ that help us operate, under contract and only as needed.
 | Recipient | Purpose | What they receive |
 | --- | --- | --- |
 | [PAYMENT PROCESSOR] | Process dues | Payment details you enter with them |
-| [TRANSACTIONAL EMAIL PROVIDER] | Send service email | Your email address |
+| Resend | Send service email and deliver contact-form messages | Your email address; contact-message content in transit |
 | Hosting & infrastructure | Run the service | Data needed to operate it |
+
+> [CONFIRM: counsel — confirm Resend as a named subprocessor and the contact-form
+> data flow (message content transits Resend to the inbox; not stored in the app).]
 
 ## 5. Data Retention
 
