@@ -1,10 +1,9 @@
-// Landing (/) — rebuilt as React from the canonical design
-// (_design-source/steppe-landing-v5.html), on the shared chrome + tokens. Hero
-// (StrataHorizon + phone preview), promises as charter clauses, the exchange as a
-// register on the juniper feature band, governance + rotating seal, and the
-// bedrock CTA. Nav + footer come from the (site) layout; reveal-on-scroll is the
-// reduced-motion- and no-JS-safe <Reveal /> island.
+// Landing (/) — React from the canonical design (steppe-landing-v5.html) on the
+// shared chrome + tokens. Marketing copy is localized from the active catalog
+// (messages/*.json, "landing" namespace). The phone-mock in the hero is a
+// decorative facsimile and intentionally stays English.
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import "./landing.css";
 import { StrataHorizon } from "./_components/strata-horizon";
 import { SealMark } from "./_components/seal-mark";
@@ -29,7 +28,8 @@ const ArrowRight = () => (
   </svg>
 );
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const t = await getTranslations("landing");
   return (
     <>
       <Reveal />
@@ -59,28 +59,26 @@ export default function LandingPage() {
                 <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#A8542C" strokeWidth="1.3" />
                 <circle cx="8" cy="6" r="1.7" fill="#A8542C" />
               </svg>{" "}
-              44.27°N&nbsp; 121.17°W — Redmond, Oregon
+              {t("heroLocation")}
             </span>
             <h1>
-              A place that <span className="em">belongs</span> to the people in it.
+              {t.rich("heroTitle", {
+                em: (chunks) => <span className="em">{chunks}</span>,
+              })}
             </h1>
-            <p className="lead">
-              Steppe is civic infrastructure for the people of Central Oregon,
-              owned by the members who use it. It carries no ads and no tracking,
-              and no investor can ever buy it out. What you share here stays yours.
-            </p>
+            <p className="lead">{t("heroLead")}</p>
             <div className="hero-cta">
               <Link className="btn btn-primary" href="/join">
-                Sign in or join <ArrowRight />
+                {t("heroJoin")} <ArrowRight />
               </Link>
               <Link className="btn btn-ghost" href="/preview">
-                See the preview
+                {t("heroPreview")}
               </Link>
             </div>
             <div className="trustline">
-              <span>Verified residents</span>
-              <span>No advertising</span>
-              <span>Member-owned</span>
+              <span>{t("trust1")}</span>
+              <span>{t("trust2")}</span>
+              <span>{t("trust3")}</span>
             </div>
           </div>
 
@@ -177,46 +175,43 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="section-head rv">
             <span className="eyebrow">
-              <span className="pip"></span>What we promise
+              <span className="pip"></span>{t("promiseEyebrow")}
             </span>
-            <h2>Written down, and hard to undo.</h2>
-            <p className="dek">
-              Four commitments, written into the founding documents. They can only
-              change if members vote to change them.
-            </p>
+            <h2>{t("promiseTitle")}</h2>
+            <p className="dek">{t("promiseDek")}</p>
           </div>
           <div className="charter">
             <div className="clause rv">
               <div className="ltr">a.</div>
               <div>
-                <h3>No advertising, ever</h3>
-                <p>No ads, now or later. Nobody pays to put a message in front of you, and nothing about you is sold to anyone, ever.</p>
+                <h3>{t("clauseAH")}</h3>
+                <p>{t("clauseAB")}</p>
               </div>
-              <span className="mark">Entrenched</span>
+              <span className="mark">{t("clauseMark")}</span>
             </div>
             <div className="clause rv">
               <div className="ltr">b.</div>
               <div>
-                <h3>Verify residency, then forget it</h3>
-                <p>We confirm you live in Central Oregon, then instantly delete what you sent. We will never keep a file on you.</p>
+                <h3>{t("clauseBH")}</h3>
+                <p>{t("clauseBB")}</p>
               </div>
-              <span className="mark">Entrenched</span>
+              <span className="mark">{t("clauseMark")}</span>
             </div>
             <div className="clause rv">
               <div className="ltr">c.</div>
               <div>
-                <h3>Members govern, by secret ballot</h3>
-                <p>Members decide the rules and the budget together, by secret ballot. Your vote counts exactly as much as anyone else&rsquo;s.</p>
+                <h3>{t("clauseCH")}</h3>
+                <p>{t("clauseCB")}</p>
               </div>
-              <span className="mark">Entrenched</span>
+              <span className="mark">{t("clauseMark")}</span>
             </div>
             <div className="clause rv">
               <div className="ltr">d.</div>
               <div>
-                <h3>Your data leaves with you</h3>
-                <p>Export everything and take it with you whenever you want. Nothing here is built to keep you from leaving.</p>
+                <h3>{t("clauseDH")}</h3>
+                <p>{t("clauseDB")}</p>
               </div>
-              <span className="mark">Entrenched</span>
+              <span className="mark">{t("clauseMark")}</span>
             </div>
           </div>
         </div>
@@ -226,43 +221,42 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="section-head rv">
             <span className="eyebrow">
-              <span className="pip"></span>Joining
+              <span className="pip"></span>{t("joinEyebrow")}
             </span>
-            <h2>From neighbor to member.</h2>
-            <p className="dek">
-              Four steps, start to finish. No anonymous handles and no bots.
-              Everyone here is a real neighbor.
-            </p>
+            <h2>{t("joinTitle")}</h2>
+            <p className="dek">{t("joinDek")}</p>
           </div>
           <div className="stations">
             <div className="station rv">
               <div className="no">01</div>
               <div>
-                <h3>Verify you&rsquo;re local</h3>
-                <p>Confirm you live in the Central Oregon. We check once, then instantly delete what you sent. Real neighbors only.</p>
+                <h3>{t("step1H")}</h3>
+                <p>{t("step1B")}</p>
               </div>
             </div>
             <div className="station rv">
               <div className="no">02</div>
               <div>
                 <h3>
-                  Join for <span className="stamp">$4 / month</span>
+                  {t.rich("step2H", {
+                    stamp: (chunks) => <span className="stamp">{chunks}</span>,
+                  })}
                 </h3>
-                <p>That&rsquo;s the whole membership. Pay once a year or by bank transfer. And if money&rsquo;s tight right now, the hardship waiver is yours, no questions asked.</p>
+                <p>{t("step2B")}</p>
               </div>
             </div>
             <div className="station rv">
               <div className="no">03</div>
               <div>
-                <h3>Settle in</h3>
-                <p>Join groups, post to the local exchange, ask for a hand and lend one, and get to know the people who actually live around you.</p>
+                <h3>{t("step3H")}</h3>
+                <p>{t("step3B")}</p>
               </div>
             </div>
             <div className="station rv">
               <div className="no">04</div>
               <div>
-                <h3>Help steer it</h3>
-                <p>Help decide the budget, the rules, and where Steppe goes next. Your ballot is secret, and it counts the same as anyone&rsquo;s.</p>
+                <h3>{t("step4H")}</h3>
+                <p>{t("step4B")}</p>
               </div>
             </div>
           </div>
@@ -273,66 +267,62 @@ export default function LandingPage() {
         <div className="wrap">
           <div className="section-head rv">
             <span className="eyebrow on-dark">
-              <span className="pip"></span>What neighbors share
+              <span className="pip"></span>{t("exchEyebrow")}
             </span>
-            <h2>One local exchange.</h2>
-            <p className="dek">
-              Someone needs a hand. Someone has tomatoes to give away.
-              Someone&rsquo;s calling a meeting. It all lands in one plain feed,
-              newest first within your chosen categories, with no algorithm.
-            </p>
+            <h2>{t("exchTitle")}</h2>
+            <p className="dek">{t("exchDek")}</p>
           </div>
           <div className="register">
             <div className="lx-row cat-offer rv">
               <div className="lx-main">
                 <div className="lx-cat">
-                  <span className="dot"></span>Offer
+                  <span className="dot"></span>{t("rowOfferCat")}
                 </div>
-                <div className="lx-ttl">Free tomato starts — 40+ plants</div>
-                <div className="lx-desc">Grew too many Early Girls this spring. Free to anyone who&rsquo;ll plant them. Pickup near downtown.</div>
+                <div className="lx-ttl">{t("rowOfferTtl")}</div>
+                <div className="lx-desc">{t("rowOfferDesc")}</div>
               </div>
               <div className="lx-who">
                 <div className="av2">MK</div>
-                <div className="lx-meta">Martha K.<span>2h ago</span></div>
+                <div className="lx-meta">Martha K.<span>{t("rowOfferMeta")}</span></div>
               </div>
             </div>
             <div className="lx-row cat-need rv">
               <div className="lx-main">
                 <div className="lx-cat">
-                  <span className="dot"></span>Need
+                  <span className="dot"></span>{t("rowNeedCat")}
                 </div>
-                <div className="lx-ttl">Electrician who knows older homes</div>
-                <div className="lx-desc">Panel upgrade on a 1970s house. Looking for someone licensed and insured who&rsquo;s worked on older Redmond homes.</div>
+                <div className="lx-ttl">{t("rowNeedTtl")}</div>
+                <div className="lx-desc">{t("rowNeedDesc")}</div>
               </div>
               <div className="lx-who">
                 <div className="av2">JR</div>
-                <div className="lx-meta">James R.<span>5h ago</span></div>
+                <div className="lx-meta">James R.<span>{t("rowNeedMeta")}</span></div>
               </div>
             </div>
             <div className="lx-row cat-gather rv">
               <div className="lx-main">
                 <div className="lx-cat">
-                  <span className="dot"></span>Gathering
+                  <span className="dot"></span>{t("rowGatherCat")}
                 </div>
-                <div className="lx-ttl">Member meeting — July 12</div>
-                <div className="lx-desc">Monthly open meeting: Community Fund proposals, governance Q&amp;A, new-member welcome.</div>
+                <div className="lx-ttl">{t("rowGatherTtl")}</div>
+                <div className="lx-desc">{t("rowGatherDesc")}</div>
               </div>
               <div className="lx-who">
                 <div className="av2">St</div>
-                <div className="lx-meta">Steppe<span>adds to calendar</span></div>
+                <div className="lx-meta">Steppe<span>{t("rowGatherMeta")}</span></div>
               </div>
             </div>
             <div className="lx-row cat-aid rv">
               <div className="lx-main">
                 <div className="lx-cat">
-                  <span className="dot"></span>Mutual aid
+                  <span className="dot"></span>{t("rowAidCat")}
                 </div>
-                <div className="lx-ttl">Rides to medical appointments</div>
-                <div className="lx-desc">Can offer two rides a week for neighbors needing transportation to Bend. Flexible on timing.</div>
+                <div className="lx-ttl">{t("rowAidTtl")}</div>
+                <div className="lx-desc">{t("rowAidDesc")}</div>
               </div>
               <div className="lx-who">
                 <div className="av2">DL</div>
-                <div className="lx-meta">Dana L.<span>3h ago</span></div>
+                <div className="lx-meta">Dana L.<span>{t("rowAidMeta")}</span></div>
               </div>
             </div>
           </div>
@@ -343,15 +333,10 @@ export default function LandingPage() {
         <div className="wrap gov">
           <div className="copy rv">
             <span className="eyebrow">
-              <span className="pip"></span>Governed by its members
+              <span className="pip"></span>{t("govEyebrow")}
             </span>
-            <h2>Built so it can&rsquo;t be sold out from under you.</h2>
-            <p>
-              Steppe is an Oregon public benefit nonprofit. There&rsquo;s no owner,
-              no investors, and nothing for anyone to buy. The members run it, and
-              the promises on this page are written into its founding documents.
-              Only the members can change them.
-            </p>
+            <h2>{t("govTitle")}</h2>
+            <p>{t("govBody")}</p>
           </div>
           <div className="seal-wrap rv">
             <svg width="220" height="220" viewBox="0 0 220 220" fill="none" aria-label="Steppe community seal">
@@ -384,12 +369,12 @@ export default function LandingPage() {
       <section className="section band-bedrock on-dark">
         <div className="wrap cta-final rv">
           <span className="eyebrow on-dark" style={{ justifyContent: "center" }}>
-            <span className="pip"></span>Your seat is open
+            <span className="pip"></span>{t("bedrockEyebrow")}
           </span>
-          <h2>Pull up a chair.</h2>
-          <p>Join your neighbors in a place that belongs to all of you.</p>
+          <h2>{t("bedrockTitle")}</h2>
+          <p>{t("bedrockBody")}</p>
           <Link className="btn btn-primary" href="/join">
-            Sign in or join <ArrowRight />
+            {t("bedrockCta")} <ArrowRight />
           </Link>
         </div>
       </section>
