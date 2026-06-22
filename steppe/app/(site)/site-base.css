@@ -866,6 +866,17 @@ html[data-js] .site-root .rv.in {
   background: var(--paper);
   border-bottom: 3px solid var(--ink);
 }
+/* Anchor jumps (/#charter, /#exchange) must clear the sticky masthead so the section
+   heading isn't hidden under it. The condensed bar is taller on mobile (the nav wraps
+   to its own row), so give mobile more offset. */
+.site-root [id] {
+  scroll-margin-top: 76px;
+}
+@media (max-width: 720px) {
+  .site-root [id] {
+    scroll-margin-top: 108px;
+  }
+}
 .site-root .masthead::after {
   content: "";
   display: block;
