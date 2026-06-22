@@ -44,12 +44,7 @@ export default async function HomePage() {
             for a new plate; static frame under reduced motion / no-WebGL). Its own
             weather readout is off here; the credit is the only overlay. */}
         <div className="herostrata">
-          <GenerativeScene readout={false} />
-          <span className="credit">
-            {t("bsCredit1")}
-            <br />
-            {t("bsCredit2")}
-          </span>
+          <GenerativeScene readout={false} creditTagline={t("bsMasthead")} />
         </div>
       </section>
 

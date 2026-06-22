@@ -34,24 +34,32 @@ import { weatherToMood } from "@/lib/weather";
 export function GenerativeScene({
   seed = 427,
   readout = true,
+  creditTagline,
 }: {
   seed?: number;
   /** Show the time · weather · location chip. Set false to disable it. */
   readout?: boolean;
+  /** When set, render the masthead credit "Masthead NNN · {tagline}", NNN being the
+   *  plate counter that increments on each New Plate. */
+  creditTagline?: string;
 }) {
   const weather = useHeroWeather();
   const mood = weather
     ? weatherToMood(weather)
     : { cloudCover: 0, overcast: 0, wet: 0, snow: 0 };
   const [plate, setPlate] = useState(seed);
+  const [count, setCount] = useState(1);
 
-  // Pick a fresh plate (a different seed → a new ridgeline composition).
-  const regenerate = () =>
+  // New Plate: a fresh seed (a visibly new ridgeline composition the shader morphs to)
+  // and a bumped plate counter. The seed fully determines the plate (deterministic).
+  const regenerate = () => {
     setPlate((s) => {
       let n = s;
       while (n === s) n = Math.floor(Math.random() * 1000);
       return n;
     });
+    setCount((c) => c + 1);
+  };
 
   return (
     <div className="gl-scene">
@@ -77,12 +85,17 @@ export function GenerativeScene({
         type="button"
         className="gl-tap"
         onClick={regenerate}
-        aria-label={`Generate a new landscape plate (currently plate ${plate})`}
+        aria-label={`Generate a new landscape plate (currently plate ${count})`}
       >
         <span className="gl-tap-hint" aria-hidden="true">
           ↻ New plate
         </span>
       </button>
+      {creditTagline && (
+        <span className="gl-credit" aria-live="polite">
+          Masthead {String(count).padStart(3, "0")} · {creditTagline}
+        </span>
+      )}
     </div>
   );
 }
