@@ -279,6 +279,8 @@
     "formKicker": "Envía un mensaje",
     "formH": "Cuéntanos qué tienes en mente.",
     "fsub": "Completa unos datos y te responderemos al correo que nos des.",
+    "mailtoSub": "Envíanos un correo y te responderemos a la dirección desde la que escribas tan pronto como podamos.",
+    "mailtoCta": "Escribe a hello@steppe.community",
     "labelName": "Nombre",
     "labelEmail": "Correo electrónico",
     "labelTopic": "Tema",

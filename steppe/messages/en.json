@@ -277,6 +277,8 @@
     "formKicker": "Send a message",
     "formH": "Tell us what's on your mind.",
     "fsub": "Fill in a few details and we'll reply to the email you give us.",
+    "mailtoSub": "Send us an email and we'll reply to the address you write from as soon as we can.",
+    "mailtoCta": "Email hello@steppe.community",
     "labelName": "Name",
     "labelEmail": "Email",
     "labelTopic": "Topic",
