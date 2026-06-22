@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — Broadsheet × Plate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{--bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--sage-deep:#6E8A5B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--rust:#A8542C;--ochre:#A8842F;--range:#4F6B7A;--ink:#2A2E2C;--ink-soft:#5f5a4e;--line:rgba(42,46,44,.22);
+--disp:'Besley',Georgia,serif;--body:'Schibsted Grotesk',system-ui,sans-serif;--mono:'Martian Mono','Courier New',monospace;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased}
+.grain{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.045;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{max-width:1040px;margin:0 auto;padding:0 30px}
+h1,h2,h3{font-family:var(--disp);line-height:1.04;letter-spacing:-.012em}
+.kick{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--rust);display:inline-flex;align-items:center}
+.blaze::before{content:"";width:0;height:0;border-left:7px solid var(--rust);border-top:5px solid transparent;border-bottom:5px solid transparent;margin-right:9px;flex:none}
+.band{padding:72px 0}
+.btn{display:inline-block;font-family:var(--body);font-weight:600;font-size:14px;text-decoration:none}
+.btn-rust{background:var(--rust);color:#fff;padding:12px 20px;border-radius:6px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.22)}
+.btn-link{color:var(--juniper);border-bottom:2px solid var(--rust);padding-bottom:2px}
+/* masthead — broadsheet, with a rust under-rule (plate keyline) */
+.masthead{border-bottom:3px solid var(--ink)}
+.masthead::after{content:"";display:block;height:2px;background:var(--rust)}
+.mast-top{border-bottom:1px solid var(--line)}
+.mast-top .wrap{display:flex;justify-content:space-between;align-items:center;height:30px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a8576}
+.mast .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 30px}
+.mast .wm{font-family:var(--disp);font-weight:700;font-size:30px;letter-spacing:-.01em;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.nav{display:flex}
+.nav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none;padding:0 16px;border-left:1px solid var(--line)}
+/* hero */
+.hero{padding:46px 0 0}
+.hero h1{font-size:clamp(40px,7vw,78px);font-weight:700;max-width:16ch;margin:12px 0 0}
+.hero h1 em{font-style:italic;font-weight:500;color:var(--juniper)}
+.lede{display:grid;grid-template-columns:1.5fr 1fr;gap:30px;align-items:start;margin-top:18px;padding-bottom:26px}
+.lede .stand{font-size:clamp(17px,2.1vw,21px);color:var(--ink);line-height:1.5}
+.lede .stand::first-letter{font-family:var(--disp);font-weight:700;font-size:3.4em;line-height:.8;float:left;margin:6px 10px 0 0;color:var(--rust)}
+.lede .aside{border-left:1px solid var(--line);padding-left:22px;font-size:13.5px;color:var(--ink-soft)}
+.lede .aside .kick{display:flex;margin-bottom:6px}
+.lede .actions{display:flex;gap:18px;align-items:center;margin-top:16px}
+.herostrata{position:relative;height:230px;overflow:hidden;border-top:1px solid var(--line)}
+.herostrata svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.herostrata .credit{position:absolute;right:18px;bottom:12px;font-family:var(--mono);font-size:9px;color:rgba(237,230,213,.62);text-align:right;line-height:1.7;letter-spacing:.02em}
+/* charter — ruled sections, no cards (broadsheet), blaze kickers */
+.sec-kicker{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.sec-kicker h2{font-size:clamp(24px,3.4vw,34px);font-weight:700}
+.sec-kicker .line{flex:1;border-top:1px solid var(--line)}
+.articles{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.art{padding:22px 0;border-top:1px solid var(--line)}
+.art .kick{margin-bottom:8px}
+.art h3{font-size:21px;font-weight:600;margin-bottom:6px}
+.art p{color:var(--ink-soft);font-size:14.5px}
+/* exchange — classifieds with ink-square markers (plate scanning cue) */
+.classifieds{background:var(--bone)}
+.cl-list{border-top:3px solid var(--ink)}
+.cl{display:grid;grid-template-columns:150px 1fr auto;gap:18px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--line)}
+.cl .cat{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);display:inline-flex;align-items:center}
+.cl .cat i{width:8px;height:8px;border-radius:2px;margin-right:8px;flex:none}
+.cl .item{font-family:var(--disp);font-size:18px;font-weight:600}
+.cl .loc{font-family:var(--mono);font-size:11px;color:#6f6a5c;letter-spacing:.01em;white-space:nowrap}
+/* cta — warm juniper sign panel (from plate) */
+.cta .wrap{display:flex;justify-content:center}
+.signpanel{max-width:600px;width:100%;background:var(--juniper);color:#ECE6DA;border-radius:14px;padding:36px 30px;text-align:center;box-shadow:inset 0 0 0 2px rgba(237,230,213,.3),inset 0 0 0 4px var(--juniper)}
+.signpanel .kick{color:#9fb094;justify-content:center;display:flex}
+.signpanel h2{color:#fff;font-weight:700;font-size:clamp(28px,4.5vw,44px);margin:10px 0 10px}
+.signpanel p{color:#cfd8c8;margin:0 auto 22px;max-width:38ch}
+/* footer — broadsheet restraint */
+.foot{border-top:3px solid var(--ink);padding:34px 0}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-start}
+.foot .att{max-width:46ch;font-size:12.5px;color:var(--ink-soft);line-height:1.7}.foot .att b{color:var(--ink);font-weight:600}
+.foot .small{width:100%;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#a59f90;margin-top:14px}
+@media(max-width:720px){.nav{display:none}.mast-top .wrap{flex-direction:column;align-items:flex-start;height:auto;gap:2px;padding-top:6px;padding-bottom:7px}.hero h1{line-height:1.07}.lede{grid-template-columns:1fr}.lede .aside{border-left:none;border-top:1px solid var(--line);padding:18px 0 0}.articles{grid-template-columns:1fr}.cl{grid-template-columns:1fr;gap:3px}.cl .loc{text-align:left}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<svg width="0" height="0" style="position:absolute"><defs><clipPath id="sc"><circle cx="60" cy="60" r="27"/></clipPath></defs></svg>
+
+<div class="masthead">
+  <div class="mast-top"><div class="wrap"><span>Vol. I · No. 1</span><span>Redmond · Central Oregon · Est. 2026</span></div></div>
+  <div class="mast"><div class="wrap">
+    <a class="wm" href="#"><svg width="30" height="30" viewBox="0 0 120 120"><circle cx="60" cy="60" r="57" fill="none" stroke="var(--ink)" stroke-width="3"/><g clip-path="url(#sc)"><rect x="33" y="33" width="54" height="20" fill="#cfe0dd"/><rect x="33" y="49" width="54" height="12" fill="var(--sage)"/><rect x="33" y="59" width="54" height="12" fill="var(--juniper)"/><rect x="33" y="69" width="54" height="18" fill="var(--basalt)"/><circle cx="74" cy="46" r="6" fill="var(--rust)"/></g></svg>Steppe</a>
+    <nav class="nav"><a href="#">Charter</a><a href="#">Membership</a><a href="#">Exchange</a><a href="#">Preview</a></nav>
+  </div></div>
+</div>
+
+<section class="hero"><div class="wrap">
+  <p class="kick blaze">The Commons · Redmond</p>
+  <h1>A place that <em>belongs</em> to the people in it.</h1>
+  <div class="lede">
+    <p class="stand">Steppe is civic infrastructure for Central Oregon, owned by the members who use it. Member dues pay for it, so it works for members instead of advertisers.
+      <span class="actions"><a class="btn btn-rust" href="#">Become a member</a><a class="btn btn-link" href="#">See the preview</a></span></p>
+    <div class="aside"><p class="kick blaze">In brief</p>One member, one vote. Verified neighbors only. No ads, and no owner who can sell it. Dues are $4 a month, the same for everyone.</div>
+  </div>
+</div>
+  <div class="herostrata">
+    <svg viewBox="0 0 1200 230" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <rect width="1200" height="230" fill="#dde0d3"/><circle cx="980" cy="78" r="44" fill="var(--rust)" opacity=".9"/>
+      <path d="M0 120 C300 100 720 138 1200 110 V230 H0Z" fill="var(--sage)"/>
+      <path d="M0 162 C320 146 740 172 1200 150 V230 H0Z" fill="var(--juniper)"/>
+      <path d="M0 196 C300 184 760 206 1200 190 V230 H0Z" fill="var(--basalt)"/>
+    </svg>
+    <span class="credit">Generative high-desert strata<br>Local art rotates through here soon</span>
+  </div>
+</section>
+
+<section class="band"><div class="wrap">
+  <div class="sec-kicker"><h2>The Charter</h2><span class="line"></span></div>
+  <div class="articles">
+    <div class="art"><p class="kick blaze">Article I · Entrenched</p><h3>No advertising, ever</h3><p>Member dues pay for Steppe, so it works for members instead of advertisers. The articles forbid changing that.</p></div>
+    <div class="art"><p class="kick blaze">Article II · Entrenched</p><h3>Verify, then forget</h3><p>Joining means proving you live here. After that, the proof is deleted — local membership without tracking.</p></div>
+    <div class="art"><p class="kick blaze">Article III · Entrenched</p><h3>Members govern it</h3><p>One member, one vote. Members set the budget, elect the board, and can recall it. No founder gets the last word.</p></div>
+    <div class="art"><p class="kick blaze">Article IV · Entrenched</p><h3>Your data is yours</h3><p>Take everything you've added and leave whenever you want. Never sold; can't be bought by anyone who would.</p></div>
+  </div>
+</div></section>
+
+<section class="band classifieds"><div class="wrap">
+  <div class="sec-kicker"><h2>One local exchange</h2><span class="line"></span></div>
+  <p class="kick" style="color:var(--ink-soft);margin-bottom:14px">Posted by verified neighbors · newest first · nothing sorted for clicks</p>
+  <div class="cl-list">
+    <div class="cl"><span class="cat"><i style="background:var(--sage-deep)"></i>Offer</span><span class="item">Free tomato starts, 40+ plants</span><span class="loc">M.R. · SW Redmond · 2h</span></div>
+    <div class="cl"><span class="cat"><i style="background:var(--rust)"></i>Need</span><span class="item">Electrician who knows older homes</span><span class="loc">J.T. · Dry Canyon · 5h</span></div>
+    <div class="cl"><span class="cat"><i style="background:var(--ochre)"></i>Gathering</span><span class="item">Member meeting, July</span><span class="loc">Community hall · Jul 18</span></div>
+    <div class="cl"><span class="cat"><i style="background:var(--range)"></i>Mutual aid</span><span class="item">Rides to medical appointments</span><span class="loc">all neighborhoods · ongoing</span></div>
+  </div>
+</div></section>
+
+<section class="band cta"><div class="wrap"><div class="signpanel">
+  <p class="kick blaze">Public notice</p>
+  <h2>Be counted.</h2>
+  <p>Steppe works once enough neighbors join to run it. Add your name to the record.</p>
+  <a class="btn btn-rust" href="#">Become a member</a>
+</div></div></section>
+
+<footer class="foot"><div class="wrap">
+  <div class="att"><b>Steppe</b> is a member-governed Oregon public benefit nonprofit. No owner. It can't be sold, and the mission is written into the articles. <b>hello@steppe.community</b></div>
+  <div class="small">REDMOND · CENTRAL OREGON · EST. 2026 — Broadsheet × Plate</div>
+</div></footer>
+</body>
+</html>
