@@ -96,6 +96,66 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* One local exchange — classifieds. Illustrative sample postings for the
+          marketing page (not live data); bylines use the corrected mono. */}
+      <section className="band classifieds" id="exchange" aria-labelledby="exch-h">
+        <div className="wrap">
+          <div className="sec-kicker">
+            <h2 id="exch-h">{t("bsExchH")}</h2>
+            <span className="line"></span>
+          </div>
+          <p className="kick cl-sub">{t("bsExchSub")}</p>
+          <div className="cl-list">
+            <div className="cl">
+              <span className="cat">
+                <i style={{ background: "var(--sage-deep)" }}></i>
+                {t("bsCatOffer")}
+              </span>
+              <span className="item">Free tomato starts, 40+ plants</span>
+              <span className="loc">M.R. · SW Redmond · 2h</span>
+            </div>
+            <div className="cl">
+              <span className="cat">
+                <i style={{ background: "var(--rust)" }}></i>
+                {t("bsCatNeed")}
+              </span>
+              <span className="item">Electrician who knows older homes</span>
+              <span className="loc">J.T. · Dry Canyon · 5h</span>
+            </div>
+            <div className="cl">
+              <span className="cat">
+                <i style={{ background: "var(--ochre)" }}></i>
+                {t("bsCatGather")}
+              </span>
+              <span className="item">Member meeting, July</span>
+              <span className="loc">Community hall · Jul 18</span>
+            </div>
+            <div className="cl">
+              <span className="cat">
+                <i style={{ background: "var(--range)" }}></i>
+                {t("bsCatAid")}
+              </span>
+              <span className="item">Rides to medical appointments</span>
+              <span className="loc">all neighborhoods · ongoing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA — the juniper sign panel (enamel keyline). */}
+      <section className="band cta" aria-labelledby="cta-h">
+        <div className="wrap">
+          <div className="signpanel">
+            <p className="kick blaze">{t("bsCtaKick")}</p>
+            <h2 id="cta-h">{t("bsCtaH")}</h2>
+            <p>{t("bsCtaP")}</p>
+            <Link className="btn-rust" href="/join">
+              {t("bsCtaMember")}
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
