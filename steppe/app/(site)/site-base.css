@@ -1053,3 +1053,23 @@ html[data-js] .site-root .rv.in {
   color: #a59f90;
   margin-top: 14px;
 }
+
+/* ---- Time-of-day theme (auto day/night by Redmond time) ---- */
+/* Smooth flip on the broadsheet chrome; juniper link text lightens to sage at night
+   for AA contrast on the dark ground. */
+.site-root .masthead,
+.site-root .foot {
+  transition:
+    background-color 0.6s ease,
+    border-color 0.6s ease,
+    color 0.6s ease;
+}
+html[data-theme="dark"] .site-root .btn-link {
+  color: var(--sage);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-root .masthead,
+  .site-root .foot {
+    transition: none;
+  }
+}

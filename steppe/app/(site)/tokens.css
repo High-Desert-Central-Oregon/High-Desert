@@ -87,6 +87,15 @@ html[data-theme="dark"] {
   --nav-bg: rgba(28, 31, 35, 0.82);
   --nav-border: rgba(237, 230, 213, 0.12);
   --contour: #4a6b53;
+
+  /* Broadsheet night palette: basalt-deep grounds, bone/cream text, light hairlines,
+     rust-glow accent for AA contrast on the dark ground. */
+  --paper: #1b1e22;
+  --ink: #ece6da;
+  --bone: #22262b;
+  --rule: rgba(237, 230, 213, 0.16);
+  --ink-soft: #a6a89d;
+  --rust: #c26b3e;
 }
 
 /* Default the ambient attributes so surfaces are themed even before the

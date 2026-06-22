@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { redmondTimeOfDay } from "@/lib/time-of-day";
 
 /**
  * Public weather proxy for the landing hero (Central Oregon / Redmond).
@@ -56,6 +57,9 @@ export async function GET() {
       is_day: c.is_day,
       sunrise: Array.isArray(d.sunrise) ? d.sunrise[0] : null,
       sunset: Array.isArray(d.sunset) ? d.sunset[0] : null,
+      // Server-computed Redmond time-of-day + theme (shared util; mirrors the layout's
+      // no-flash init).
+      ...redmondTimeOfDay(new Date()),
     };
     return NextResponse.json(out, {
       headers: {

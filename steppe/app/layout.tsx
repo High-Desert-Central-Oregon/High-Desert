@@ -36,17 +36,15 @@ const martianMono = Martian_Mono({
 });
 const marketingFontVars = `${besley.variable} ${schibsted.variable} ${martianMono.variable}`;
 
-// No-flash ambient init for the marketing layer. Runs synchronously before first
-// paint so the (site) pages never flash the wrong theme or sky. Sets, on <html>:
-//   data-time  from the local hour (dawn 5–8, day 8–17, dusk 17–20, else night)
-//   data-theme = saved manual override if present, otherwise AUTOMATIC by time of
-//                day (night → dark, otherwise → light) so it tracks the strata.
-//                Time wins; prefers-color-scheme is no longer the primary source.
+// No-flash ambient init for the marketing layer. Runs synchronously before first paint
+// so the (site) pages never flash the wrong theme or sky. Sets, on <html>:
+//   data-time  Redmond's time of day (dawn 5–8, day 8–18, dusk 18–21, else night)
+//   data-theme AUTOMATIC by Redmond time — night → dark, otherwise light. No manual
+//              toggle (consistent with the no-end-user-toggles canon).
 //   data-js    a marker so reveal-on-scroll only hides content when JS can show it
-// This only writes data-* attributes the member app ignores (it themes via the
-// next-themes `class`), so it is safe to run document-wide. ThemeController keeps
-// it current across sunset/sunrise and handles the manual override.
-const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=new Date().getHours();var t=(h>=5&&h<8)?'dawn':(h>=8&&h<17)?'day':(h>=17&&h<20)?'dusk':'night';d.setAttribute('data-time',t);var s=null;try{s=localStorage.getItem('steppe-theme')}catch(e){}var th=(s==='light'||s==='dark')?s:(t==='night'?'dark':'light');d.setAttribute('data-theme',th)}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
+// Mirrors lib/time-of-day.ts (redmondTimeOfDay); keep the hour boundaries in sync. Only
+// writes data-* the member app ignores (it themes via the next-themes `class`).
+const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',hour12:false}).format(new Date()),10)%24;var t=(h>=5&&h<8)?'dawn':(h>=8&&h<18)?'day':(h>=18&&h<21)?'dusk':'night';d.setAttribute('data-time',t);d.setAttribute('data-theme',t==='night'?'dark':'light')}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
