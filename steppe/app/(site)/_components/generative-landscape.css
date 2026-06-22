@@ -20,6 +20,58 @@
   pointer-events: none;
 }
 
+/* Time · weather · location readout chip — understated, above the weather layers,
+   legible on the dark scene at every breakpoint. Fades in via anime.js. */
+.site-root .gl-readout {
+  position: absolute;
+  left: clamp(12px, 3vw, 22px);
+  bottom: clamp(12px, 3vw, 20px);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 24px);
+  font-family: var(--mono);
+  font-size: clamp(10px, 2.4vw, 11.5px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f2efe8;
+  background: rgba(11, 15, 26, 0.42);
+  border: 1px solid rgba(242, 239, 232, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 8px;
+  padding: 6px 11px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.site-root .gl-readout .gl-live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8fb27a;
+  box-shadow: 0 0 0 0 rgba(143, 178, 122, 0.6);
+  flex: 0 0 auto;
+  animation: gl-pulse 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-root .gl-readout .gl-live {
+    animation: none;
+  }
+}
+@keyframes gl-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(143, 178, 122, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(143, 178, 122, 0);
+  }
+}
+
 .site-root .gl-stage {
   position: relative;
   width: 100%;

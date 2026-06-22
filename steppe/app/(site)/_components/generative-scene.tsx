@@ -2,6 +2,7 @@
 
 import "./generative-landscape.css";
 import { GenerativeLandscape } from "./generative-landscape";
+import { GenerativeReadout } from "./generative-readout";
 import { WeatherCanvas, WeatherController, StarLayer } from "./hero-sky";
 import { useHeroWeather } from "./use-hero-weather";
 import { weatherToMood } from "@/lib/weather";
@@ -24,7 +25,14 @@ import { weatherToMood } from "@/lib/weather";
  * internal cached proxy — the browser never calls open-meteo.com — and a proxy failure
  * eases each into the same calm default, so they stay in agreement.
  */
-export function GenerativeScene({ seed = 427 }: { seed?: number }) {
+export function GenerativeScene({
+  seed = 427,
+  readout = true,
+}: {
+  seed?: number;
+  /** Show the time · weather · location chip. Set false to disable it. */
+  readout?: boolean;
+}) {
   const weather = useHeroWeather();
   const mood = weather
     ? weatherToMood(weather)
@@ -40,13 +48,15 @@ export function GenerativeScene({ seed = 427 }: { seed?: number }) {
         snow={mood.snow}
       />
       <div className="gl-weather" aria-hidden="true">
-        {/* Drifting clouds (anime.js) — readout off; Part 4 adds the generative chip. */}
+        {/* Drifting clouds (anime.js) — the engine's own readout is off; we use the
+            generative chip below instead. */}
         <WeatherController readout={false} />
         {/* Wind / rain / snow / fog (day-only, reduced-motion → still frame). */}
         <WeatherCanvas className="band-wind" />
         {/* Night shooting stars (kept; off under reduced motion). */}
         <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
       </div>
+      {readout && <GenerativeReadout weather={weather} />}
     </div>
   );
 }
