@@ -1,18 +1,28 @@
 "use client";
 
+import "./generative-landscape.css";
 import { GenerativeLandscape } from "./generative-landscape";
+import { WeatherCanvas, WeatherController, StarLayer } from "./hero-sky";
 import { useHeroWeather } from "./use-hero-weather";
 import { weatherToMood } from "@/lib/weather";
 
 /**
- * The generative hero scene: the WebGL landscape base (GenerativeLandscape) driven by
- * live Redmond weather, with the moving-weather library layer composited on top.
+ * The generative hero scene: the WebGL landscape base (GenerativeLandscape) with the
+ * existing canvas + anime.js weather engine composited on top for the MOVING weather.
  *
- * One data source: useHeroWeather polls the cached /api/weather and we map it to the
- * shader's mood uniforms (cloud_cover → cloudCover/overcast, precip → wet, snow →
- * snow). The shader eases toward the new values internally, so refreshes glide in
- * rather than snapping. The library weather motion (wind/rain/snow/fog/clouds +
- * shooting stars) and the readout chip are layered in subsequent parts.
+ * Layering (back → front): shader canvas → drifting clouds → weather canvas
+ * (wind/rain/snow/fog) → night shooting stars → readout chip (Part 4) → hero content.
+ *
+ * The shader owns the SCENE (sky/sun/moon/ridges/foreground/stars + mood response);
+ * the engine owns the MOVING weather — so there's no double weather. Notably there is
+ * NO SunOrb here: the shader already draws the sun/moon (no second sun). Clouds and
+ * wind/rain/snow/fog are day-only and reduced-motion-safe (gated in hero-sky.tsx +
+ * landing.css); the shooting stars show at night.
+ *
+ * Weather data: the shader mood comes from useHeroWeather (mapped via weatherToMood);
+ * the engine reads the same cached /api/weather (WeatherController). Both hit only the
+ * internal cached proxy — the browser never calls open-meteo.com — and a proxy failure
+ * eases each into the same calm default, so they stay in agreement.
  */
 export function GenerativeScene({ seed = 427 }: { seed?: number }) {
   const weather = useHeroWeather();
@@ -21,12 +31,22 @@ export function GenerativeScene({ seed = 427 }: { seed?: number }) {
     : { cloudCover: 0, overcast: 0, wet: 0, snow: 0 };
 
   return (
-    <GenerativeLandscape
-      seed={seed}
-      cloudCover={mood.cloudCover}
-      overcast={mood.overcast}
-      wet={mood.wet}
-      snow={mood.snow}
-    />
+    <div className="gl-scene">
+      <GenerativeLandscape
+        seed={seed}
+        cloudCover={mood.cloudCover}
+        overcast={mood.overcast}
+        wet={mood.wet}
+        snow={mood.snow}
+      />
+      <div className="gl-weather" aria-hidden="true">
+        {/* Drifting clouds (anime.js) — readout off; Part 4 adds the generative chip. */}
+        <WeatherController readout={false} />
+        {/* Wind / rain / snow / fog (day-only, reduced-motion → still frame). */}
+        <WeatherCanvas className="band-wind" />
+        {/* Night shooting stars (kept; off under reduced motion). */}
+        <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
+      </div>
+    </div>
   );
 }

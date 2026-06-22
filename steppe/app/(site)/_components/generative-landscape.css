@@ -5,6 +5,21 @@
  * / first paint / no-WebGL / reduced motion (a real pre-rendered plate can replace
  * it later). The moving weather (wind/rain/snow/fog/clouds + shooting stars) is the
  * library layer, layered ABOVE this canvas — see the generative scene wrapper. */
+/* The full generative scene: the shader band (.gl-stage) with the moving-weather
+   library layer (.gl-weather) overlaid. .gl-stage sets the height; .gl-weather fills
+   it. Z-order (back → front): shader canvas (z1, inside gl-stage) → clouds (z2) →
+   weather canvas + stars (z3) → readout chip (Part 4). */
+.site-root .gl-scene {
+  position: relative;
+  overflow: hidden;
+}
+.site-root .gl-weather {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .site-root .gl-stage {
   position: relative;
   width: 100%;
