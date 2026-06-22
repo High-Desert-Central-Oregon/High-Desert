@@ -738,3 +738,120 @@ html[data-js] .site-root .rv.in {
     scroll-behavior: auto;
   }
 }
+
+/* ============================================================================
+ * Broadsheet × Plate — shared presentation primitives.
+ *
+ * Reusable broadsheet pieces (kicker + blaze chevron, hairline rules, ruled
+ * section headers, enamel-keyline buttons, drop cap) plus the GLOBAL Martian Mono
+ * optical pass: mono labels are tightened (.06–.08em, never .12+), kept >= 10.5px,
+ * and darkened on paper / lightened on dark grounds for contrast — one rule, not a
+ * per-component patch.
+ * ========================================================================== */
+
+/* Kicker — a mono label on its own line (never inline into prose). */
+.site-root .kick {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--rust);
+  display: flex;
+  align-items: center;
+}
+/* Blaze — small rust right-pointing chevron before a kicker. */
+.site-root .blaze::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 7px solid var(--rust);
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-right: 9px;
+  flex: none;
+}
+
+/* Hairline rules + ruled section header (heading + trailing rule). */
+.site-root .rule {
+  border-top: 1px solid var(--rule);
+}
+.site-root .sec-kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.site-root .sec-kicker h2 {
+  font-size: clamp(24px, 3.4vw, 34px);
+  font-weight: 700;
+}
+.site-root .sec-kicker .line {
+  flex: 1;
+  border-top: 1px solid var(--rule);
+}
+
+/* Buttons — rust enamel-keyline primary; juniper rust-underline secondary. */
+.site-root .btn-rust {
+  display: inline-block;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  background: var(--rust);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
+  border: 0;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.site-root .btn-rust:hover {
+  background: var(--rust-glow);
+}
+.site-root .btn-link {
+  display: inline-block;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  color: var(--juniper);
+  border-bottom: 2px solid var(--rust);
+  padding-bottom: 2px;
+  background: none;
+  cursor: pointer;
+}
+
+/* Drop cap for a standfirst. */
+.site-root .drop-cap::first-letter {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 3.4em;
+  line-height: 0.8;
+  float: left;
+  margin: 6px 10px 0 0;
+  color: var(--rust);
+}
+
+/* Global Martian Mono optical pass — tighten tracking, hold a legible minimum size,
+   and set label colour per ground. .kick already sets the rust kicker; these cover
+   secondary mono / labels generally. */
+.site-root .mono-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.site-root .mono-byline {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  color: #6f6a5c;
+}
+/* On dark grounds (.on-dark sections, the juniper sign panel) mono reads light. */
+.site-root .on-dark .kick,
+.site-root .on-dark .mono-label,
+.site-root .signpanel .kick {
+  color: rgba(237, 230, 213, 0.6);
+}
