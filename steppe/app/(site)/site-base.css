@@ -52,9 +52,11 @@ html[data-theme="dark"] .site-root::before {
 .site-root h2,
 .site-root h3 {
   font-family: var(--display);
-  font-weight: 430;
-  line-height: 1.04;
-  letter-spacing: -0.014em;
+  /* Besley is a wider, lighter-at-low-weights Clarendon slab; it needs more weight
+     and tighter tracking than Newsreader to read as a confident headline. */
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   font-optical-sizing: auto;
 }
 .site-root a {
@@ -312,8 +314,10 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
 /* ---- eyebrow ---- */
 .site-root .eyebrow {
   font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.13em;
+  /* Martian Mono is much wider than DM Mono — drop a px and cut the tracking so
+     eyebrows don't bloat or overflow on mobile. */
+  font-size: 11px;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-muted);
   display: inline-flex;
@@ -343,7 +347,7 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
 .site-root .section-head h2 {
   font-size: clamp(30px, 4.3vw, 52px);
   margin: 14px 0 0;
-  font-weight: 420;
+  font-weight: 600;
 }
 .site-root .section-head p.dek {
   font-size: clamp(16px, 1.6vw, 19px);
@@ -410,8 +414,8 @@ html[data-theme="light"] .site-root .band-alt {
 }
 .site-root .footer-meta {
   font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.03em;
+  font-size: 11px;
+  letter-spacing: 0.01em;
   line-height: 1.9;
   max-width: 38ch;
 }

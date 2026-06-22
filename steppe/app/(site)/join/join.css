@@ -51,21 +51,21 @@ html[data-theme="dark"] .site-root .join .hero h1 em {
 }
 .site-root .join .price b {
   font-family: var(--display);
-  font-weight: 480;
+  font-weight: 640;
   font-size: 46px;
   letter-spacing: -0.02em;
   color: var(--text);
 }
 .site-root .join .price span {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 .site-root .join .price-note {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
   margin-top: 6px;
 }
