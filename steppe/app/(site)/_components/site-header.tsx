@@ -25,8 +25,23 @@ export function SiteHeader() {
   const [condensed, setCondensed] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setCondensed(window.scrollY > 64);
-    onScroll();
+    // Hysteresis (condense >96, release <32) with an rAF throttle. The dead band is
+    // wider than the ~50px the header loses when it condenses, so the scroll-anchoring
+    // nudge that height change causes can't re-cross the threshold — no condense/expand
+    // loop at the boundary.
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const y = window.scrollY;
+      setCondensed((prev) => (prev ? y > 32 : y > 96));
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
