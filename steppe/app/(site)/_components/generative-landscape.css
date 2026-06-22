@@ -20,6 +20,42 @@
   pointer-events: none;
 }
 
+/* Library weather layer (tsParticles / GSAP clouds / lazy Vanta fog). Full-bleed over
+   the shader, below the tap button + readout/credit; never blocks input. */
+.site-root .wx-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.site-root .wx-clouds {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.site-root .wx-cloud {
+  position: absolute;
+  left: 0;
+  will-change: transform;
+}
+.site-root .wx-fog {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+.site-root .wx-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+.site-root .wx-particles canvas {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* Touch-first "new plate" control — a transparent full-band button over the canvas
    (above the weather layer, below the readout) so a tap / click / Enter anywhere on
    the landscape regenerates the generative seed. Keyboard-accessible. */

@@ -4,7 +4,7 @@ import { useState } from "react";
 import "./generative-landscape.css";
 import { GenerativeLandscape } from "./generative-landscape";
 import { GenerativeReadout } from "./generative-readout";
-import { WeatherCanvas, WeatherController, StarLayer } from "./hero-sky";
+import { WeatherLayer } from "./weather-layer";
 import { useHeroWeather } from "./use-hero-weather";
 import { weatherToMood } from "@/lib/weather";
 
@@ -70,15 +70,9 @@ export function GenerativeScene({
         wet={mood.wet}
         snow={mood.snow}
       />
-      <div className="gl-weather" aria-hidden="true">
-        {/* Drifting clouds (anime.js) — the engine's own readout is off; we use the
-            generative chip below instead. */}
-        <WeatherController readout={false} />
-        {/* Wind / rain / snow / fog (day-only, reduced-motion → still frame). */}
-        <WeatherCanvas className="band-wind" />
-        {/* Night shooting stars (kept; off under reduced motion). */}
-        <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
-      </div>
+      {/* Library weather hybrid (tsParticles wind/rain/snow/haze + GSAP clouds + lazy
+          Vanta fog), locked to live Redmond conditions; full-bleed, no wind cutoff. */}
+      <WeatherLayer weather={weather} />
       {readout && <GenerativeReadout weather={weather} />}
       {/* Full-band, touch-first regenerate control (keyboard-accessible). */}
       <button

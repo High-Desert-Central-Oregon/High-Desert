@@ -12,8 +12,32 @@ export type Weather = {
   wind_speed_10m: number;
   wind_gusts_10m?: number;
   wind_direction_10m: number;
+  /** 1 = daytime, 0 = night (Open-Meteo current.is_day); null on fallback. */
+  is_day?: number | null;
+  /** Today's local-ISO sunrise / sunset; null on fallback. */
+  sunrise?: string | null;
+  sunset?: string | null;
   fallback?: boolean;
 };
+
+/**
+ * Day/night from the proxy reading, with a local-hour fallback when is_day/sunrise/
+ * sunset are absent (proxy failure). Pure + shared by the theme util and the client.
+ */
+export function isDaytime(w: Weather | null, now: Date): boolean {
+  if (w) {
+    if (w.is_day === 1) return true;
+    if (w.is_day === 0) return false;
+    if (w.sunrise && w.sunset) {
+      const t = now.getTime();
+      const rise = Date.parse(w.sunrise);
+      const set = Date.parse(w.sunset);
+      if (!Number.isNaN(rise) && !Number.isNaN(set)) return t >= rise && t < set;
+    }
+  }
+  const h = now.getHours();
+  return h >= 7 && h < 19;
+}
 
 export type Mode = "wind" | "rain" | "snow" | "fog";
 

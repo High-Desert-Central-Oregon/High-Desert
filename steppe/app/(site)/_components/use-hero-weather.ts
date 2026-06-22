@@ -23,6 +23,9 @@ const CALM: Weather = {
   wind_speed_10m: 7,
   wind_gusts_10m: 12,
   wind_direction_10m: 295,
+  is_day: null,
+  sunrise: null,
+  sunset: null,
   fallback: true,
 };
 
