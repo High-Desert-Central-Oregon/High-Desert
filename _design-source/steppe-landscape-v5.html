@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Steppe — Generative Landscape</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Libre+Franklin:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f2efe8;
+    --ink-dim:rgba(242,239,232,0.62);
+    --line:rgba(242,239,232,0.16);
+    --serif:"Newsreader", Georgia, "Times New Roman", serif;
+    --sans:"Libre Franklin", system-ui, -apple-system, sans-serif;
+    --mono:"DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --safe-b:env(safe-area-inset-bottom, 0px);
+    --safe-t:env(safe-area-inset-top, 0px);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; height:100%; }
+  body{ background:#0b0f1a; color:var(--ink); font-family:var(--sans);
+        overflow:hidden; -webkit-font-smoothing:antialiased; }
+  #stage{ position:fixed; inset:0; }
+  #gl{ display:block; width:100%; height:100%; }
+
+  .mark{ position:fixed; left:clamp(18px,4vw,44px);
+    top:calc(var(--safe-t) + clamp(16px,3.5vh,36px)); z-index:3; pointer-events:none;
+    text-shadow:0 1px 14px rgba(0,0,0,0.35); }
+  .mark .name{ font-family:var(--serif); font-weight:500; letter-spacing:0.30em;
+    font-size:clamp(20px,5.2vw,34px); line-height:1; text-transform:uppercase; }
+  .mark .sub{ margin-top:9px; font-family:var(--mono); font-size:clamp(10px,2.6vw,11.5px);
+    letter-spacing:0.13em; color:var(--ink-dim); text-transform:uppercase; }
+
+  .readout{ position:fixed; right:clamp(18px,4vw,44px);
+    top:calc(var(--safe-t) + clamp(16px,3.5vh,36px)); z-index:3; text-align:right;
+    font-family:var(--mono); letter-spacing:0.12em; text-transform:uppercase;
+    text-shadow:0 1px 12px rgba(0,0,0,0.4); pointer-events:none; }
+  .readout .loc{ font-size:11.5px; color:var(--ink); font-weight:500; }
+  .readout .now{ font-size:11.5px; color:var(--ink-dim); margin-top:6px; }
+  .readout .plate{ font-size:10.5px; color:var(--ink-dim); margin-top:6px; }
+  .readout .plate b{ color:var(--ink); font-weight:500; }
+
+  .console{ position:fixed; left:0; right:0; bottom:0; z-index:4;
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px 20px;
+    padding:13px clamp(14px,4vw,40px) calc(13px + var(--safe-b));
+    background:linear-gradient(to top, rgba(8,10,17,0.82), rgba(8,10,17,0.0));
+    backdrop-filter:blur(2px); -webkit-backdrop-filter:blur(2px); }
+  .primary{ display:flex; align-items:center; gap:12px; }
+  .tray{ display:flex; align-items:center; flex-wrap:wrap; gap:14px 20px;
+    border-left:1px solid var(--line); padding-left:20px; }
+  .grp{ display:flex; align-items:center; gap:10px; }
+  .lbl{ font-family:var(--mono); font-size:10.5px; letter-spacing:0.13em;
+    color:var(--ink-dim); text-transform:uppercase; white-space:nowrap; }
+
+  .chips{ display:flex; gap:2px; padding:3px; border:1px solid var(--line); border-radius:999px; }
+  .chip{ font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--ink-dim);
+    background:transparent; border:0; cursor:pointer; padding:8px 13px; border-radius:999px;
+    text-transform:uppercase; white-space:nowrap; touch-action:manipulation;
+    transition:color .2s ease, background .2s ease; }
+  .chip:hover{ color:var(--ink); }
+  .chip[aria-pressed="true"]{ color:#0b0f1a; background:var(--ink); }
+
+  .btn{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; color:var(--ink);
+    background:transparent; cursor:pointer; border:1px solid var(--line); border-radius:999px;
+    padding:9px 15px; text-transform:uppercase; white-space:nowrap; touch-action:manipulation;
+    transition:background .2s ease, border-color .2s ease; }
+  .btn:hover{ background:rgba(242,239,232,0.08); border-color:rgba(242,239,232,0.34); }
+  .btn .seed{ color:var(--ink-dim); margin-left:8px; }
+  .adjust{ display:none; }
+
+  .sliders{ display:flex; align-items:center; gap:14px 18px; flex-wrap:wrap; }
+  .slider{ display:flex; align-items:center; gap:9px; }
+  input[type=range]{ -webkit-appearance:none; appearance:none; width:80px; height:2px;
+    background:var(--line); border-radius:2px; outline:none; cursor:pointer; touch-action:manipulation; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:14px;
+    height:14px; border-radius:50%; background:var(--ink); border:0; cursor:pointer; }
+  input[type=range]::-moz-range-thumb{ width:14px; height:14px; border-radius:50%;
+    background:var(--ink); border:0; cursor:pointer; }
+
+  .moon-ctrl{ display:none; }
+  .is-night .moon-ctrl{ display:flex; }
+  .moon-name{ color:var(--ink); }
+
+  .toggle{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; color:var(--ink-dim);
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer; text-transform:uppercase;
+    user-select:none; touch-action:manipulation; }
+  .toggle .box{ width:30px; height:16px; border-radius:999px; border:1px solid var(--line);
+    position:relative; transition:background .2s ease; flex:0 0 auto; }
+  .toggle .box::after{ content:""; position:absolute; top:1px; left:1px; width:12px; height:12px;
+    border-radius:50%; background:var(--ink-dim); transition:transform .2s ease, background .2s ease; }
+  .toggle.on{ color:var(--ink); }
+  .toggle.on .box{ background:rgba(242,239,232,0.2); }
+  .toggle.on .box::after{ transform:translateX(14px); background:var(--ink); }
+
+  :focus-visible{ outline:2px solid #cfe0ff; outline-offset:2px; border-radius:4px; }
+
+  #err{ position:fixed; inset:0; display:none; place-items:center; z-index:9; background:#0b0f1a;
+    color:var(--ink-dim); font-family:var(--mono); font-size:13px; text-align:center;
+    padding:24px; line-height:1.6; }
+
+  @media (max-width:719px){
+    .readout .plate{ display:none; }
+    .readout .loc, .readout .now{ font-size:10.5px; }
+    .console{ gap:0; padding-top:11px; }
+    .primary{ width:100%; gap:10px; }
+    .chips{ flex:1 1 auto; min-width:0; overflow-x:auto; flex-wrap:nowrap;
+            -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .chips::-webkit-scrollbar{ display:none; }
+    .chip{ flex:0 0 auto; padding:9px 14px; }
+    .adjust{ display:inline-flex; flex:0 0 auto; }
+
+    .tray{ width:100%; flex-direction:column; align-items:stretch; gap:16px;
+      border-left:0; padding-left:0; max-height:0; overflow:hidden; opacity:0; margin-top:0;
+      transition:max-height .3s ease, opacity .22s ease, margin-top .22s ease; }
+    .tray.open{ max-height:72vh; overflow-y:auto; overscroll-behavior:contain; opacity:1; margin-top:14px; }
+
+    .grp{ width:100%; }
+    .grp .lbl{ width:54px; flex:0 0 auto; }
+    .grp .chips{ flex:1 1 auto; min-width:0; }
+    .tray .btn{ width:100%; text-align:center; padding:13px 15px; }
+    .sliders{ flex-direction:column; align-items:stretch; gap:16px; width:100%; }
+    .slider{ justify-content:space-between; gap:16px; width:100%; }
+    .slider .lbl{ width:54px; }
+    .slider input[type=range]{ flex:1 1 auto; width:auto; height:3px; }
+    .slider input[type=range]::-webkit-slider-thumb{ width:20px; height:20px; }
+    .slider input[type=range]::-moz-range-thumb{ width:20px; height:20px; }
+    .toggle{ justify-content:space-between; width:100%; padding:6px 0; }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl"></canvas>
+
+  <div class="mark">
+    <div class="name">Steppe</div>
+    <div class="sub">Generative landscape · Central Oregon</div>
+  </div>
+
+  <div class="readout">
+    <div class="loc">Redmond · Oregon</div>
+    <div class="now" id="now">—</div>
+    <div class="plate"><b id="plate">Plate 427</b></div>
+  </div>
+
+  <div class="console" role="group" aria-label="Landscape controls">
+    <div class="primary">
+      <div class="chips" id="chips" role="group" aria-label="Time of day">
+        <button class="chip" data-tod="dawn">Dawn</button>
+        <button class="chip" data-tod="day">Day</button>
+        <button class="chip" data-tod="golden">Golden</button>
+        <button class="chip" data-tod="dusk">Dusk</button>
+        <button class="chip" data-tod="night">Night</button>
+      </div>
+      <button class="btn adjust" id="adjust" aria-expanded="false" aria-controls="tray">Adjust</button>
+    </div>
+
+    <div class="tray" id="tray">
+      <div class="grp">
+        <span class="lbl">Sky</span>
+        <div class="chips" id="wx" role="group" aria-label="Weather">
+          <button class="chip" data-wx="clear">Clear</button>
+          <button class="chip" data-wx="cloudy">Cloudy</button>
+          <button class="chip" data-wx="overcast">Overcast</button>
+          <button class="chip" data-wx="rain">Rain</button>
+          <button class="chip" data-wx="snow">Snow</button>
+          <button class="chip" data-wx="fog">Fog</button>
+        </div>
+      </div>
+
+      <div class="grp moon-ctrl" id="moonCtrl">
+        <div class="slider"><span class="lbl">Moon</span><input id="moon" type="range" min="0" max="0.999" step="0.001"></div>
+        <span class="lbl moon-name" id="moonName">Full moon</span>
+      </div>
+
+      <div class="sliders">
+        <div class="slider"><span class="lbl">Ridges</span><input id="ridge" type="range" min="0.6" max="1.7" step="0.01" value="1.0"></div>
+        <div class="slider"><span class="lbl">Haze</span><input id="haze" type="range" min="0" max="1.6" step="0.01" value="1.0"></div>
+        <div class="slider"><span class="lbl">Grain</span><input id="grain" type="range" min="0" max="2" step="0.01" value="1.0"></div>
+      </div>
+
+      <span class="toggle" id="motion" role="switch" aria-checked="false" tabindex="0"><span class="t-lbl">Drift</span><span class="box"></span></span>
+
+      <button class="btn" id="regen">Regenerate<span class="seed" id="seedTag">#427</span></button>
+      <button class="btn" id="save">Save frame</button>
+    </div>
+  </div>
+</div>
+
+<div id="err">This view needs WebGL.<br>Try a current browser, or enable hardware acceleration.</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const canvas = document.getElementById("gl");
+  const gl = canvas.getContext("webgl", { antialias:true, preserveDrawingBuffer:true, alpha:false });
+  if(!gl){ document.getElementById("err").style.display = "grid"; return; }
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const FADE  = reduceMotion ? 1.0 : 0.085;
+  const MORPH = reduceMotion ? 1.0 : 0.05;
+
+  const VERT = `
+    attribute vec2 a_position;
+    void main(){ gl_Position = vec4(a_position, 0.0, 1.0); }`;
+
+  const FRAG = `
+    precision highp float;
+    uniform vec2  u_resolution;
+    uniform float u_time;
+    uniform float u_wTime;
+    uniform float u_seed;
+    uniform vec3  u_skyTop, u_skyHorizon, u_sun, u_haze, u_m0, u_m1, u_m2, u_fg;
+    uniform vec2  u_sunPos;
+    uniform float u_grain, u_stars, u_ridge, u_hazeAmt, u_motion;
+    uniform float u_isMoon, u_moonPhase;
+    uniform float u_cloud, u_overcast, u_rain, u_snow, u_fog, u_wind;
+
+    const float TAU = 6.2831853;
+
+    float hash11(float n){ return fract(sin(n)*43758.5453123); }
+    float hash21(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453123); }
+
+    // precision-stable hash for per-pixel sampling (no large-argument sin;
+    // magnitude bounded so it holds up in mediump on mobile, edges included)
+    float hashf(vec2 p){
+      p = mod(p, 2048.0);
+      vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+      p3 += dot(p3, p3.yzx + 33.33);
+      return fract((p3.x + p3.y) * p3.z);
+    }
+
+    float vnoise(float x){
+      float i = floor(x); float f = fract(x);
+      float u = f*f*(3.0-2.0*f);
+      return mix(hash11(i), hash11(i+1.0), u);
+    }
+    float fbm(float x){
+      float v=0.0, a=0.5;
+      for(int i=0;i<6;i++){ v+=a*vnoise(x); x*=2.0; a*=0.5; }
+      return v;
+    }
+    float vnoise2(vec2 p){
+      vec2 i=floor(p), f=fract(p);
+      vec2 u=f*f*(3.0-2.0*f);
+      float a=hash21(i), b=hash21(i+vec2(1.0,0.0)), c=hash21(i+vec2(0.0,1.0)), d=hash21(i+vec2(1.0,1.0));
+      return mix(mix(a,b,u.x), mix(c,d,u.x), u.y);
+    }
+    float fbm2(vec2 p){
+      float v=0.0, a=0.5;
+      for(int i=0;i<4;i++){ v+=a*vnoise2(p); p*=2.0; a*=0.5; }
+      return v;
+    }
+    float ridge(float x, float freq, float seed, float base, float amp){
+      float drift = u_motion * u_time * 0.004;
+      float h = fbm((x + drift)*freq + seed);
+      return base + (h - 0.5)*amp;
+    }
+
+    void main(){
+      vec2 frag = gl_FragCoord.xy;
+      vec2 uv = frag / u_resolution.xy;
+      float aspect = u_resolution.x / max(u_resolution.y, 1.0);
+      float Lsky = dot(mix(u_skyHorizon, u_skyTop, 0.5), vec3(0.299,0.587,0.114));
+
+      // sky
+      float ty = smoothstep(0.0, 1.0, uv.y);
+      vec3 col = mix(u_skyHorizon, u_skyTop, ty);
+
+      // overcast: flatten + desaturate (palette-driven so night stays dark)
+      vec3 ocTop = mix(u_skyTop, vec3(dot(u_skyTop, vec3(0.299,0.587,0.114))), 0.7) * 1.05;
+      vec3 ocHor = mix(u_skyHorizon, vec3(dot(u_skyHorizon, vec3(0.299,0.587,0.114))), 0.7) * 0.95;
+      col = mix(col, mix(ocHor, ocTop, ty), u_overcast);
+
+      vec2 sunVec = (uv - u_sunPos) * vec2(aspect, 1.0);
+      float sunDist = length(sunVec);
+      float skyAtten = (1.0 - u_overcast*0.85) * (1.0 - u_fog*0.5);
+
+      // stars
+      if(u_stars > 0.5){
+        vec2 g = floor(frag/2.5);
+        float s = hashf(g);
+        col += vec3(step(0.9975, s) * smoothstep(0.4, 1.0, uv.y)) * skyAtten;
+      }
+
+      // glow (scaled by moon illumination + sky attenuation)
+      float frac = (1.0 - cos(TAU*u_moonPhase)) * 0.5;
+      float glowAmt = mix(1.0, frac, u_isMoon) * skyAtten;
+      col += u_sun * exp(-sunDist*7.0) * 0.85 * glowAmt;
+      col += u_sun * exp(-sunDist*2.2) * 0.16 * glowAmt;
+
+      // clouds
+      if(u_cloud > 0.01){
+        float drift = u_wTime * (0.015 + u_wind*0.05);
+        float cf  = fbm2(vec2(uv.x*2.4 + drift, uv.y*2.4 + 3.0));
+        float cf2 = fbm2(vec2(uv.x*5.0 - drift*1.6 + 9.0, uv.y*5.0));
+        float field = cf*0.65 + cf2*0.35;
+        float cov = smoothstep(0.62 - u_cloud*0.35, 0.92 - u_cloud*0.30, field);
+        float skyMask = smoothstep(0.28, 0.46, uv.y);
+        float cloudA = cov * skyMask * (0.55 + 0.45*u_cloud);
+        float sunLit = exp(-sunDist*1.6) * (1.0 - u_overcast);
+        vec3 bright = mix(vec3(0.82,0.84,0.88), u_sun, 0.30*sunLit);
+        vec3 cloudCol = mix(bright, vec3(0.50,0.52,0.57), u_overcast);
+        cloudCol *= mix(0.45, 1.0, clamp(Lsky*2.2, 0.0, 1.0));
+        col = mix(col, cloudCol, cloudA);
+      }
+
+      // sun / moon disc with phase
+      float R = 0.05;
+      vec2 md = sunVec / R;
+      float sd = length(md);
+      float edge = smoothstep(1.0, 0.90, sd) * skyAtten;
+      float xl = sqrt(max(0.0, 1.0 - md.y*md.y));
+      float c = cos(TAU*u_moonPhase);
+      float tsd = (u_moonPhase < 0.5) ? (md.x - c*xl) : (-md.x - c*xl);
+      float litMask = mix(1.0, smoothstep(-0.05, 0.05, tsd), u_isMoon);
+      // moon surface: limb darkening + soft maria + fine craters
+      float ld = sqrt(max(0.0, 1.0 - sd*sd));
+      float limb = mix(0.74, 1.0, ld);
+      float seas = fbm2(md*1.7 + 12.0);
+      float maria = 1.0 - smoothstep(0.52, 0.74, seas)*0.18;
+      vec2 cg = md*9.0;
+      vec2 cf = fract(cg) - 0.5;
+      float crater = 0.0;
+      if(hash21(floor(cg)) > 0.86){
+        float rr = length(cf);
+        crater = -smoothstep(0.30, 0.08, rr)*0.12 + smoothstep(0.44, 0.34, rr)*0.05;
+      }
+      float surf = clamp(mix(1.0, limb*maria + crater, u_isMoon), 0.0, 1.3);
+      vec3 discDark = u_sun*0.10;
+      vec3 discCol = mix(discDark, u_sun*1.04*surf, litMask);
+      col = mix(col, discCol, edge);
+
+      // mountains
+      float aa = 1.6 / u_resolution.y;
+      float r0 = ridge(uv.x, 1.4*u_ridge, u_seed + 11.0, 0.62, 0.16);
+      float in0 = 1.0 - smoothstep(r0 - aa, r0 + aa, uv.y);
+      vec3 c0 = u_m0;
+      float snowcap = smoothstep(r0 - 0.10, r0 - 0.004, uv.y) * smoothstep(0.60, 0.78, r0);
+      c0 = mix(c0, vec3(0.93,0.94,0.97), snowcap*0.6);
+      col = mix(col, c0, in0);
+
+      float r1 = ridge(uv.x, 2.3*u_ridge, u_seed + 27.0, 0.46, 0.18);
+      float in1 = 1.0 - smoothstep(r1 - aa, r1 + aa, uv.y);
+      col = mix(col, u_m1, in1);
+
+      float r2 = ridge(uv.x, 3.6*u_ridge, u_seed + 43.0, 0.32, 0.16);
+      float in2 = 1.0 - smoothstep(r2 - aa, r2 + aa, uv.y);
+      col = mix(col, u_m2, in2);
+
+      // foreground
+      float fgLine = 0.20 + fbm(uv.x*5.0 + u_seed + 60.0)*0.03;
+      float inFg = 1.0 - smoothstep(fgLine - aa, fgLine + aa, uv.y);
+      vec3 fg = u_fg;
+      fg *= mix(0.86, 1.06, smoothstep(0.0, fgLine, uv.y));
+      float stip = hashf(floor(frag/3.0) + u_seed);
+      float speck = step(0.94, stip) * inFg * smoothstep(fgLine, 0.0, uv.y);
+      fg = mix(fg, fg*0.82, speck);
+      fg *= 0.96 + 0.06*fbm(uv.x*12.0 + u_seed*2.0);
+      fg = mix(fg, fg*0.72, u_rain*0.45);                  // wet
+      fg = mix(fg, vec3(0.88,0.90,0.93), u_snow*0.55);     // snow accumulation
+      col = mix(col, fg, inFg);
+
+      // fog veil (depth based; dark at night)
+      if(u_fog > 0.01){
+        float fogBand = mix(1.0, 0.35, smoothstep(0.0, 0.72, uv.y));
+        vec3 fogCol = vec3(0.80,0.82,0.85) * mix(0.32, 1.0, clamp(Lsky*2.2, 0.0, 1.0));
+        col = mix(col, fogCol, u_fog * fogBand);
+      }
+
+      // horizon haze
+      float hz = smoothstep(0.20, 0.50, uv.y) * (1.0 - smoothstep(0.50, 0.82, uv.y));
+      col = mix(col, u_haze, hz * u_hazeAmt * 0.45);
+
+      // rain
+      if(u_rain > 0.01){
+        float rAcc = 0.0;
+        for(int i=0;i<2;i++){
+          float fi = float(i);
+          vec2 rp = uv * vec2(aspect, 1.0);
+          rp.x += rp.y*0.18;
+          rp *= vec2(40.0 + fi*30.0, 8.0 + fi*4.0);
+          rp.y += u_wTime * (14.0 + fi*8.0);
+          float h = hash21(floor(rp) + fi*53.0);
+          float fy = fract(rp.y);
+          rAcc += step(0.972, h) * smoothstep(0.0,0.5,fy) * smoothstep(1.0,0.5,fy);
+        }
+        col += vec3(0.16) * rAcc * u_rain;
+      }
+
+      // snow
+      if(u_snow > 0.01){
+        float sAcc = 0.0;
+        for(int i=0;i<3;i++){
+          float fi = float(i);
+          float scale = 6.0 + fi*5.0;
+          vec2 sp = uv * vec2(aspect, 1.0) * scale;
+          sp.y += u_wTime * (0.25 + fi*0.12);
+          sp.x += sin(u_wTime*0.6 + fi*2.0 + sp.y*1.5) * 0.25;
+          vec2 f = fract(sp) - 0.5;
+          float h = hash21(floor(sp) + fi*31.0);
+          sAcc += step(0.92, h) * smoothstep(0.18, 0.02, length(f));
+        }
+        col = mix(col, vec3(0.96), clamp(sAcc, 0.0, 1.0) * u_snow);
+      }
+
+      // grain + vignette
+      col += (hashf(frag) - 0.5) * u_grain;
+      vec2 q = uv - 0.5;
+      float vig = smoothstep(1.15, 0.35, length(q*vec2(aspect,1.0)));
+      col *= mix(0.93, 1.0, vig);
+
+      gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+    }`;
+
+  function compile(type, src){
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src); gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)){ console.error(gl.getShaderInfoLog(sh)); return null; }
+    return sh;
+  }
+  const vs = compile(gl.VERTEX_SHADER, VERT);
+  const fs = compile(gl.FRAGMENT_SHADER, FRAG);
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){
+    console.error(gl.getProgramInfoLog(prog));
+    document.getElementById("err").style.display = "grid"; return;
+  }
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, "a_position");
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  const U = {};
+  ["u_resolution","u_time","u_wTime","u_seed","u_skyTop","u_skyHorizon","u_sun","u_haze",
+   "u_m0","u_m1","u_m2","u_fg","u_sunPos","u_grain","u_stars","u_ridge","u_hazeAmt","u_motion",
+   "u_isMoon","u_moonPhase","u_cloud","u_overcast","u_rain","u_snow","u_fog","u_wind"]
+   .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+
+  /* ---------- palettes ---------- */
+  function hex(h){ h=h.replace("#",""); return [parseInt(h.slice(0,2),16)/255, parseInt(h.slice(2,4),16)/255, parseInt(h.slice(4,6),16)/255]; }
+  const PAL = {
+    dawn:   { skyTop:hex("43507E"), skyHorizon:hex("E7B58E"), sun:hex("FFE7C9"), sunPos:[0.74,0.28],
+              haze:hex("D8C2B2"), m0:hex("97A0C0"), m1:hex("6E6E93"), m2:hex("534B5C"), fg:hex("46453F"),
+              grain:0.050, stars:0, hazeAmt:1.00 },
+    day:    { skyTop:hex("2E6FAE"), skyHorizon:hex("C3DBEA"), sun:hex("FFF8E6"), sunPos:[0.50,0.84],
+              haze:hex("CDDFEA"), m0:hex("9FB2C6"), m1:hex("6E8089"), m2:hex("56685A"), fg:hex("7C7B5B"),
+              grain:0.045, stars:0, hazeAmt:1.00 },
+    golden: { skyTop:hex("6E84A6"), skyHorizon:hex("F6D49A"), sun:hex("FFE2A4"), sunPos:[0.30,0.32],
+              haze:hex("E7C79E"), m0:hex("B6A6A0"), m1:hex("8B7D83"), m2:hex("6C5F46"), fg:hex("897A4D"),
+              grain:0.050, stars:0, hazeAmt:1.05 },
+    dusk:   { skyTop:hex("282C54"), skyHorizon:hex("D2743E"), sun:hex("FF9A52"), sunPos:[0.68,0.18],
+              haze:hex("7C5057"), m0:hex("5A5A78"), m1:hex("43425E"), m2:hex("2E2C3E"), fg:hex("20202C"),
+              grain:0.050, stars:0, hazeAmt:1.10 },
+    night:  { skyTop:hex("0B1330"), skyHorizon:hex("233056"), sun:hex("C7CEDD"), sunPos:[0.66,0.74],
+              haze:hex("2A3556"), m0:hex("2C3556"), m1:hex("1F2742"), m2:hex("161B30"), fg:hex("0F1322"),
+              grain:0.040, stars:1, hazeAmt:0.80 }
+  };
+  function clone(p){ return { skyTop:p.skyTop.slice(), skyHorizon:p.skyHorizon.slice(), sun:p.sun.slice(),
+    sunPos:p.sunPos.slice(), haze:p.haze.slice(), m0:p.m0.slice(), m1:p.m1.slice(), m2:p.m2.slice(),
+    fg:p.fg.slice(), grain:p.grain, stars:p.stars, hazeAmt:p.hazeAmt }; }
+
+  /* ---------- weather presets (cloud, overcast, rain, snow, fog, wind) ---------- */
+  const WX = {
+    clear:    { cloud:0.00, overcast:0.00, rain:0.00, snow:0.00, fog:0.00, wind:0.15 },
+    cloudy:   { cloud:0.55, overcast:0.08, rain:0.00, snow:0.00, fog:0.00, wind:0.35 },
+    overcast: { cloud:0.92, overcast:0.85, rain:0.00, snow:0.00, fog:0.10, wind:0.30 },
+    rain:     { cloud:0.95, overcast:0.80, rain:0.85, snow:0.00, fog:0.15, wind:0.55 },
+    snow:     { cloud:0.85, overcast:0.55, rain:0.00, snow:0.90, fog:0.10, wind:0.30 },
+    fog:      { cloud:0.30, overcast:0.30, rain:0.00, snow:0.00, fog:0.85, wind:0.10 }
+  };
+  function cloneW(w){ return { cloud:w.cloud, overcast:w.overcast, rain:w.rain, snow:w.snow, fog:w.fog, wind:w.wind }; }
+
+  /* ---------- live defaults ---------- */
+  function todForHour(h){
+    if(h >= 5  && h < 7 ) return "dawn";
+    if(h >= 7  && h < 17) return "day";
+    if(h >= 17 && h < 20) return "golden";
+    if(h >= 20 && h < 22) return "dusk";
+    return "night";
+  }
+  function moonPhase(d){
+    const syn = 29.530588853;
+    const ref = Date.UTC(2000,0,6,18,14) / 86400000;
+    let p = (((d.getTime()/86400000) - ref) % syn) / syn;
+    if(p < 0) p += 1;
+    return p;
+  }
+  function phaseName(p){
+    const n = ["New moon","Waxing crescent","First quarter","Waxing gibbous",
+               "Full moon","Waning gibbous","Last quarter","Waning crescent"];
+    return n[Math.round(p*8) % 8];
+  }
+  const defaultTOD = todForHour(new Date().getHours());
+  const defaultWX = "cloudy";
+
+  /* ---------- state ---------- */
+  let cur = clone(PAL[defaultTOD]);
+  let tgt = PAL[defaultTOD];
+  let curW = cloneW(WX[defaultWX]);
+  let tgtW = WX[defaultWX];
+  let curSeed = 427, tgtSeed = 427;
+  let ridgeVal = 1.0, hazeUser = 1.0, grainUser = 1.0, motionOn = false;
+  let moonPhaseVal = moonPhase(new Date());
+  let isMoonCur = (defaultTOD === "night") ? 1.0 : 0.0;
+  let isMoonTgt = isMoonCur;
+  let startT = performance.now();
+  let running = false;
+
+  /* ---------- loop ---------- */
+  function lerpArr(a,b,f){ let m=0; for(let i=0;i<a.length;i++){ const d=b[i]-a[i]; a[i]+=d*f; m=Math.max(m,Math.abs(d)); } return m; }
+  function lerpNum(a,b,f){ return a + (b-a)*f; }
+
+  function step(){
+    let d = 0;
+    d = Math.max(d, lerpArr(cur.skyTop, tgt.skyTop, FADE));
+    d = Math.max(d, lerpArr(cur.skyHorizon, tgt.skyHorizon, FADE));
+    d = Math.max(d, lerpArr(cur.sun, tgt.sun, FADE));
+    d = Math.max(d, lerpArr(cur.sunPos, tgt.sunPos, FADE));
+    d = Math.max(d, lerpArr(cur.haze, tgt.haze, FADE));
+    d = Math.max(d, lerpArr(cur.m0, tgt.m0, FADE));
+    d = Math.max(d, lerpArr(cur.m1, tgt.m1, FADE));
+    d = Math.max(d, lerpArr(cur.m2, tgt.m2, FADE));
+    d = Math.max(d, lerpArr(cur.fg, tgt.fg, FADE));
+    cur.grain   = lerpNum(cur.grain,   tgt.grain,   FADE);
+    cur.hazeAmt = lerpNum(cur.hazeAmt, tgt.hazeAmt, FADE);
+    cur.stars   = lerpNum(cur.stars,   tgt.stars,   FADE);
+
+    let dW = 0;
+    ["cloud","overcast","rain","snow","fog","wind"].forEach(k => {
+      const before = curW[k];
+      curW[k] = lerpNum(curW[k], tgtW[k], FADE);
+      dW = Math.max(dW, Math.abs(curW[k] - before));
+    });
+
+    const isMoonD = Math.abs(isMoonTgt - isMoonCur);
+    isMoonCur = lerpNum(isMoonCur, isMoonTgt, FADE);
+
+    const seedD = Math.abs(tgtSeed - curSeed);
+    curSeed = lerpNum(curSeed, tgtSeed, MORPH);
+
+    draw();
+
+    const weatherAnim = !reduceMotion && (curW.cloud>0.01 || curW.rain>0.01 || curW.snow>0.01 || curW.fog>0.01);
+    if(motionOn || weatherAnim || d>0.0015 || dW>0.0015 || isMoonD>0.001 || seedD>0.05){
+      requestAnimationFrame(step);
+    } else { running = false; draw(); }
+  }
+  function kick(){ if(!running){ running = true; requestAnimationFrame(step); } }
+
+  function draw(){
+    const t = (performance.now() - startT) / 1000;
+    const wt = reduceMotion ? 12.0 : t;
+    gl.uniform2f(U.u_resolution, canvas.width, canvas.height);
+    gl.uniform1f(U.u_time, t);
+    gl.uniform1f(U.u_wTime, wt);
+    gl.uniform1f(U.u_seed, curSeed);
+    gl.uniform3fv(U.u_skyTop, cur.skyTop);
+    gl.uniform3fv(U.u_skyHorizon, cur.skyHorizon);
+    gl.uniform3fv(U.u_sun, cur.sun);
+    gl.uniform3fv(U.u_haze, cur.haze);
+    gl.uniform3fv(U.u_m0, cur.m0);
+    gl.uniform3fv(U.u_m1, cur.m1);
+    gl.uniform3fv(U.u_m2, cur.m2);
+    gl.uniform3fv(U.u_fg, cur.fg);
+    gl.uniform2fv(U.u_sunPos, cur.sunPos);
+    gl.uniform1f(U.u_grain, cur.grain * grainUser);
+    gl.uniform1f(U.u_stars, cur.stars);
+    gl.uniform1f(U.u_ridge, ridgeVal);
+    gl.uniform1f(U.u_hazeAmt, cur.hazeAmt * hazeUser);
+    gl.uniform1f(U.u_motion, motionOn ? 1.0 : 0.0);
+    gl.uniform1f(U.u_isMoon, isMoonCur);
+    gl.uniform1f(U.u_moonPhase, moonPhaseVal);
+    gl.uniform1f(U.u_cloud, curW.cloud);
+    gl.uniform1f(U.u_overcast, curW.overcast);
+    gl.uniform1f(U.u_rain, curW.rain);
+    gl.uniform1f(U.u_snow, curW.snow);
+    gl.uniform1f(U.u_fog, curW.fog);
+    gl.uniform1f(U.u_wind, curW.wind);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  /* ---------- resize ---------- */
+  function resize(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.round(canvas.clientWidth * dpr);
+    const h = Math.round(canvas.clientHeight * dpr);
+    if(canvas.width !== w || canvas.height !== h){ canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
+    kick();
+  }
+  window.addEventListener("resize", resize);
+  window.addEventListener("orientationchange", () => setTimeout(resize, 120));
+
+  /* ---------- controls ---------- */
+  const consoleEl = document.querySelector(".console");
+  const chips = document.getElementById("chips");
+  const moonName = document.getElementById("moonName");
+  const moonSlider = document.getElementById("moon");
+
+  let currentTOD = defaultTOD, currentWX = defaultWX;
+  const TODNAME = { dawn:"Dawn", day:"Day", golden:"Golden", dusk:"Dusk", night:"Night" };
+  const WXNAME  = { clear:"Clear", cloudy:"Cloudy", overcast:"Overcast", rain:"Rain", snow:"Snow", fog:"Fog" };
+  const nowEl = document.getElementById("now");
+  function updateReadout(){ nowEl.textContent = TODNAME[currentTOD] + " · " + WXNAME[currentWX]; }
+
+  function applyTOD(tod){
+    currentTOD = tod;
+    [...chips.children].forEach(c => c.setAttribute("aria-pressed", c.dataset.tod === tod ? "true" : "false"));
+    tgt = PAL[tod];
+    isMoonTgt = (tod === "night") ? 1.0 : 0.0;
+    consoleEl.classList.toggle("is-night", tod === "night");
+    updateReadout(); kick();
+  }
+  chips.addEventListener("click", e => { const b = e.target.closest(".chip"); if(b) applyTOD(b.dataset.tod); });
+
+  const wx = document.getElementById("wx");
+  function applyWX(w){
+    currentWX = w;
+    [...wx.children].forEach(c => c.setAttribute("aria-pressed", c.dataset.wx === w ? "true" : "false"));
+    tgtW = WX[w]; updateReadout(); kick();
+  }
+  wx.addEventListener("click", e => { const b = e.target.closest(".chip"); if(b) applyWX(b.dataset.wx); });
+
+  moonSlider.value = moonPhaseVal;
+  moonName.textContent = phaseName(moonPhaseVal);
+  moonSlider.addEventListener("input", e => {
+    moonPhaseVal = parseFloat(e.target.value);
+    moonName.textContent = phaseName(moonPhaseVal);
+    kick();
+  });
+
+  function setSeed(n){
+    tgtSeed = n;
+    document.getElementById("plate").textContent = "Plate " + n;
+    document.getElementById("seedTag").textContent = "#" + n;
+  }
+  document.getElementById("regen").addEventListener("click", () => { setSeed(Math.floor(Math.random()*999)); kick(); });
+  document.getElementById("ridge").addEventListener("input", e => { ridgeVal = parseFloat(e.target.value); kick(); });
+  document.getElementById("haze").addEventListener("input",  e => { hazeUser = parseFloat(e.target.value); kick(); });
+  document.getElementById("grain").addEventListener("input", e => { grainUser = parseFloat(e.target.value); kick(); });
+
+  const motionEl = document.getElementById("motion");
+  function toggleMotion(){
+    motionOn = !motionOn;
+    motionEl.classList.toggle("on", motionOn);
+    motionEl.setAttribute("aria-checked", motionOn ? "true" : "false");
+    kick();
+  }
+  motionEl.addEventListener("click", toggleMotion);
+  motionEl.addEventListener("keydown", e => { if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggleMotion(); } });
+
+  const adjust = document.getElementById("adjust");
+  const tray = document.getElementById("tray");
+  adjust.addEventListener("click", () => {
+    const open = tray.classList.toggle("open");
+    adjust.setAttribute("aria-expanded", open ? "true" : "false");
+    adjust.textContent = open ? "Close" : "Adjust";
+  });
+
+  document.getElementById("save").addEventListener("click", () => {
+    draw();
+    const tod = [...chips.children].find(c => c.getAttribute("aria-pressed")==="true").dataset.tod;
+    const w = [...wx.children].find(c => c.getAttribute("aria-pressed")==="true").dataset.wx;
+    const a = document.createElement("a");
+    a.download = "steppe-landscape-" + tod + "-" + w + "-plate" + Math.round(curSeed) + ".png";
+    a.href = canvas.toDataURL("image/png");
+    a.click();
+  });
+
+  /* ---------- go ---------- */
+  applyTOD(defaultTOD);
+  applyWX(defaultWX);
+  setSeed(427);
+  resize();
+})();
+</script>
+</body>
+</html>
