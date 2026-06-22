@@ -1,8 +1,8 @@
-// Join (/join) — from the canonical design (steppe-join.html) on the shared chrome
-// + tokens. Membership hero + the real interest-signup form (JoinForm → /api/interest),
-// the "what membership is" terms, and the joining stations. Copy is localized from
-// the active catalog ("join" namespace). The LAUNCH_PHASE gate and signup flow are
-// unchanged.
+// Join (/join) — the membership/conversion page on the shared chrome + tokens. The
+// membership hero + the real interest-signup form (JoinForm → /api/interest) and the
+// "what membership is" terms. The step-by-step "how it works" lives on the home, so it
+// is not repeated here. Copy is localized from the "join" namespace; the LAUNCH_PHASE
+// gate and signup flow are unchanged.
 import { getTranslations } from "next-intl/server";
 import "./join.css";
 import { JoinForm } from "./join-form";
@@ -92,48 +92,6 @@ export default async function JoinPage() {
                   </span>
                 </li>
               </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="wrap">
-          <div className="sec-head">
-            <span className="eyebrow">
-              <span className="pip"></span>{t("howEyebrow")}
-            </span>
-            <h2>{t("howTitle")}</h2>
-            <p>{t("howDek")}</p>
-          </div>
-          <div className="stations">
-            <div className="stn">
-              <div className="no">01</div>
-              <div>
-                <h3>{t("step1H")}</h3>
-                <p>{t("step1B")}</p>
-              </div>
-            </div>
-            <div className="stn">
-              <div className="no">02</div>
-              <div>
-                <h3>{t.rich("step2H", { stamp: (c) => <span className="stamp">{c}</span> })}</h3>
-                <p>{t("step2B")}</p>
-              </div>
-            </div>
-            <div className="stn">
-              <div className="no">03</div>
-              <div>
-                <h3>{t("step3H")}</h3>
-                <p>{t("step3B")}</p>
-              </div>
-            </div>
-            <div className="stn">
-              <div className="no">04</div>
-              <div>
-                <h3>{t("step4H")}</h3>
-                <p>{t("step4B")}</p>
-              </div>
             </div>
           </div>
         </div>

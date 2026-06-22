@@ -19,7 +19,9 @@
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   min-height: 100svh;
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) contains horizontal overflow WITHOUT becoming a scroll
+     container — required so the sticky masthead pins to the viewport. */
+  overflow-x: clip;
   scroll-behavior: smooth;
   transition:
     background 0.6s ease,
