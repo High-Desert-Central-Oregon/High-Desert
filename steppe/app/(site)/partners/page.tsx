@@ -6,7 +6,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import "./partners.css";
-import { StrataHorizon } from "../_components/strata-horizon";
+import { Hero } from "../_components/hero";
 
 export const metadata = {
   title: "Steppe — for partners",
@@ -19,25 +19,20 @@ export default async function PartnersPage() {
   const b = { b: (chunks: React.ReactNode) => <b>{chunks}</b> };
   return (
     <div className="partners">
-      <header className="hero">
-        <div className="hero-in">
-          <span className="eyebrow">
-            <span className="pip"></span>{t("heroEyebrow")}
-          </span>
-          <h1>
-            {t.rich("heroTitle", {
-              em: (chunks) => <em>{chunks}</em>,
-            })}
-          </h1>
-          <p>{t("heroLead")}</p>
-          <div className="factline">
-            <span>{t("fact1")}</span>
-            <span>{t("fact2")}</span>
-            <span>{t("fact3")}</span>
-          </div>
+      <Hero
+        size="band"
+        eyebrow={t("heroEyebrow")}
+        title={t.rich("heroTitle", {
+          em: (chunks) => <em>{chunks}</em>,
+        })}
+        subtitle={t("heroLead")}
+      >
+        <div className="factline">
+          <span>{t("fact1")}</span>
+          <span>{t("fact2")}</span>
+          <span>{t("fact3")}</span>
         </div>
-        <StrataHorizon variant="compact" />
-      </header>
+      </Hero>
 
       {/* THEORY OF CHANGE */}
       <section className="section band-paper">

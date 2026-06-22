@@ -6,7 +6,7 @@
 import { getTranslations } from "next-intl/server";
 import "./join.css";
 import { JoinForm } from "./join-form";
-import { StrataHorizon } from "../_components/strata-horizon";
+import { Hero } from "../_components/hero";
 
 export const metadata = {
   title: "Steppe — become a member",
@@ -18,26 +18,19 @@ export default async function JoinPage() {
   const t = await getTranslations("join");
   return (
     <div className="join">
-      <header className="hero">
-        <div className="hero-grid">
-          <div>
-            <span className="eyebrow">
-              <span className="pip"></span>{t("heroEyebrow")}
-            </span>
-            <h1>
-              {t.rich("heroTitle", { em: (c) => <em>{c}</em> })}
-            </h1>
-            <p className="lead">{t("heroLead")}</p>
-            <div className="price">
-              <b>$4</b>
-              <span>{t("priceUnit")}</span>
-            </div>
-            <div className="price-note">{t("priceNote")}</div>
-          </div>
-          <JoinForm />
+      <Hero
+        size="band"
+        eyebrow={t("heroEyebrow")}
+        title={t.rich("heroTitle", { em: (c) => <em>{c}</em> })}
+        subtitle={t("heroLead")}
+        aside={<JoinForm />}
+      >
+        <div className="price">
+          <b>$4</b>
+          <span>{t("priceUnit")}</span>
         </div>
-        <StrataHorizon variant="compact" />
-      </header>
+        <div className="price-note">{t("priceNote")}</div>
+      </Hero>
 
       <section className="section band-paper">
         <div className="wrap">

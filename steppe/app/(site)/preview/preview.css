@@ -26,35 +26,8 @@
   margin: 0 auto;
   padding: 0 var(--pad-x) 22px;
 }
-.site-root .preview .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--rust);
-  border: 1px solid var(--rust);
-  border-radius: 20px;
-  padding: 5px 12px;
-  margin-bottom: 18px;
-}
-.site-root .preview .badge .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--rust);
-}
-/* In dark mode rust (#a8542c) on the dark page (~2.88:1) fails AA; the badge text
-   + border use the lighter rust-glow for contrast. */
-html[data-theme="dark"] .site-root .preview .badge {
-  color: var(--rust-glow);
-  border-color: var(--rust-glow);
-}
-html[data-theme="dark"] .site-root .preview .badge .dot {
-  background: var(--rust-glow);
-}
+/* The hero eyebrow now uses the shared .eyebrow/.pip (via <Hero>); the old
+   one-off .badge/.dot styles were removed when the hero was unified. */
 .site-root .preview .hero h1 {
   font-size: clamp(38px, 6vw, 62px);
   margin-bottom: 18px;

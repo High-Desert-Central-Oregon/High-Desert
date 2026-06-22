@@ -4,7 +4,7 @@
 // English-only and governs (see the legalGoverns note by the policy link).
 import { getTranslations } from "next-intl/server";
 import "./privacy.css";
-import { StrataHorizon } from "../_components/strata-horizon";
+import { Hero } from "../_components/hero";
 
 export const metadata = {
   title: "Steppe — privacy",
@@ -16,17 +16,14 @@ export default async function PrivacyPage() {
   const t = await getTranslations("privacy");
   return (
     <div className="privacy">
-      <header className="hero">
-        <div className="hero-in">
-          <span className="eyebrow">
-            <span className="pip"></span>{t("heroEyebrow")}
-          </span>
-          <h1>{t.rich("heroTitle", { em: (c) => <em>{c}</em> })}</h1>
-          <p>{t("heroLead")}</p>
-          <div className="updated">{t("updated")}</div>
-        </div>
-        <StrataHorizon variant="compact" />
-      </header>
+      <Hero
+        size="band"
+        eyebrow={t("heroEyebrow")}
+        title={t.rich("heroTitle", { em: (c) => <em>{c}</em> })}
+        subtitle={t("heroLead")}
+      >
+        <div className="updated">{t("updated")}</div>
+      </Hero>
 
       <section className="section band-paper">
         <div className="wrap">

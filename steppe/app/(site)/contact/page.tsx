@@ -7,7 +7,7 @@
 // CONTACT_FROM are set; see lib/contact.ts and app/api/contact/route.ts.
 import { getTranslations } from "next-intl/server";
 import "./contact.css";
-import { StrataHorizon } from "../_components/strata-horizon";
+import { Hero } from "../_components/hero";
 
 export const metadata = {
   title: "Steppe — contact",
@@ -19,24 +19,12 @@ export default async function ContactPage() {
   const t = await getTranslations("contact");
   return (
     <div className="contact">
-      <header className="hero">
-        <div className="hero-grid">
-          <div>
-            <span className="eyebrow">
-              <span className="pip"></span>{t("heroEyebrow")}
-            </span>
-            <h1>{t.rich("heroTitle", { em: (c) => <em>{c}</em> })}</h1>
-            <p className="lead">{t("heroLead")}</p>
-            <div className="aside">
-              <div className="k">{t("asideK")}</div>
-              <p>
-                {t.rich("asideP", {
-                  link: (c) => <a href="mailto:hello@steppe.community">{c}</a>,
-                })}
-              </p>
-              <div className="resp">{t("resp")}</div>
-            </div>
-          </div>
+      <Hero
+        size="band"
+        eyebrow={t("heroEyebrow")}
+        title={t.rich("heroTitle", { em: (c) => <em>{c}</em> })}
+        subtitle={t("heroLead")}
+        aside={
           <div className="formcard" id="contact-card">
             <div className="fk">{t("formKicker")}</div>
             <h2>{t("formH")}</h2>
@@ -56,9 +44,18 @@ export default async function ContactPage() {
               })}
             </p>
           </div>
+        }
+      >
+        <div className="aside">
+          <div className="k">{t("asideK")}</div>
+          <p>
+            {t.rich("asideP", {
+              link: (c) => <a href="mailto:hello@steppe.community">{c}</a>,
+            })}
+          </p>
+          <div className="resp">{t("resp")}</div>
         </div>
-        <StrataHorizon variant="compact" />
-      </header>
+      </Hero>
     </div>
   );
 }

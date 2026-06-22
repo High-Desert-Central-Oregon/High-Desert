@@ -7,6 +7,7 @@ import { getTranslations } from "next-intl/server";
 import "./preview.css";
 import { PreviewStage } from "./preview-stage";
 import { StrataHorizon } from "../_components/strata-horizon";
+import { Hero } from "../_components/hero";
 
 export const metadata = {
   title: "Steppe — a first look",
@@ -18,16 +19,14 @@ export default async function PreviewPage() {
   const t = await getTranslations("preview");
   return (
     <div className="preview">
-      <header className="hero">
-        <div className="hero-in">
-          <span className="badge">
-            <span className="dot"></span>{t("heroBadge")}
-          </span>
-          <h1>{t.rich("heroTitle", { em: (c) => <em>{c}</em> })}</h1>
-          <p>{t("heroLead")}</p>
-          <div className="note">{t("heroNote")}</div>
-        </div>
-      </header>
+      <Hero
+        size="band"
+        eyebrow={t("heroBadge")}
+        title={t.rich("heroTitle", { em: (c) => <em>{c}</em> })}
+        subtitle={t("heroLead")}
+      >
+        <div className="note">{t("heroNote")}</div>
+      </Hero>
 
       <div className="wrap">
         <PreviewStage />
