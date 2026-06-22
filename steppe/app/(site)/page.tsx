@@ -5,15 +5,9 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import "./landing.css";
-import { StrataHorizon } from "./_components/strata-horizon";
+import { Hero } from "./_components/hero";
 import { SealMark } from "./_components/seal-mark";
 import { Reveal } from "./_components/reveal";
-import {
-  WeatherCanvas,
-  WeatherController,
-  StarLayer,
-  SunOrb,
-} from "./_components/hero-sky";
 
 export const metadata = {
   title: "Steppe — a high desert civic commons",
@@ -39,66 +33,33 @@ export default async function LandingPage() {
     <>
       <Reveal />
 
-      <header className="hero">
-        <svg
-          className="hero-contour"
-          viewBox="0 0 600 500"
-          fill="none"
-          aria-hidden="true"
-        >
-          <g stroke="currentColor" strokeWidth="1.2" opacity=".55" fill="none">
-            <path d="M-20 180 Q150 120 300 170 T620 150" />
-            <path d="M-20 220 Q150 165 300 210 T620 192" />
-            <path d="M-20 262 Q150 212 300 252 T620 236" />
-            <path d="M-20 306 Q150 260 300 296 T620 282" />
-            <path d="M-20 352 Q150 310 300 342 T620 330" />
-            <path d="M-20 400 Q150 360 300 390 T620 380" />
-          </g>
-        </svg>
-
-        <div className="hero-top">
-          {/* Copy-area atmosphere: a subtle weather-driven day wind drift across the
-              whole copy area + night stars/meteors, behind the copy. */}
-          <WeatherCanvas className="hero-wind" subtle />
-          <StarLayer
-            className="hero-stars"
-            count={26}
-            meteor
-            doubleChance={0.18}
-            meteorMin={650}
-            meteorMax={2600}
-          />
-
-          <div className="hero-grid">
-          <div className="hero-copy">
-            <span className="eyebrow">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#A8542C" strokeWidth="1.3" />
-                <circle cx="8" cy="6" r="1.7" fill="#A8542C" />
-              </svg>{" "}
-              {t("heroLocation")}
-            </span>
-            <h1>
-              {t.rich("heroTitle", {
-                em: (chunks) => <span className="em">{chunks}</span>,
-              })}
-            </h1>
-            <p className="lead">{t("heroLead")}</p>
-            <div className="hero-cta">
-              <Link className="btn btn-primary" href="/join">
-                {t("heroJoin")} <ArrowRight />
-              </Link>
-              <Link className="btn btn-ghost" href="/preview">
-                {t("heroPreview")}
-              </Link>
-            </div>
-            <div className="trustline">
-              <span>{t("trust1")}</span>
-              <span>{t("trust2")}</span>
-              <span>{t("trust3")}</span>
-            </div>
-          </div>
-
+      <Hero
+        size="tall"
+        pip={false}
+        eyebrow={
+          <>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1C5 1 3 3.2 3 6c0 3.6 5 9 5 9s5-5.4 5-9c0-2.8-2-5-5-5z" stroke="#A8542C" strokeWidth="1.3" />
+              <circle cx="8" cy="6" r="1.7" fill="#A8542C" />
+            </svg>{" "}
+            {t("heroLocation")}
+          </>
+        }
+        title={t.rich("heroTitle", {
+          em: (chunks) => <span className="em">{chunks}</span>,
+        })}
+        subtitle={t("heroLead")}
+        cta={
+          <>
+            <Link className="btn btn-primary" href="/join">
+              {t("heroJoin")} <ArrowRight />
+            </Link>
+            <Link className="btn btn-ghost" href="/preview">
+              {t("heroPreview")}
+            </Link>
+          </>
+        }
+        aside={
           <div className="phone-stage">
             <div className="phone">
               <div className="screen">
@@ -183,21 +144,14 @@ export default async function LandingPage() {
               </div>
             </div>
           </div>
+        }
+      >
+        <div className="trustline">
+          <span>{t("trust1")}</span>
+          <span>{t("trust2")}</span>
+          <span>{t("trust3")}</span>
         </div>
-        </div>
-
-        <div className="hero-band">
-          {/* Live weather band: clouds + readout + sun/sky softening (controller),
-              the 4-mode weather canvas (wind/rain/snow/fog), night stars/meteors,
-              and a round sun/moon overlay above the weather so particles pass behind
-              it. The strata SVG provides only the sky gradient + hills. */}
-          <WeatherController />
-          <WeatherCanvas className="band-wind" />
-          <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
-          <SunOrb />
-          <StrataHorizon variant="hero" />
-        </div>
-      </header>
+      </Hero>
 
       <section className="section band-alt">
         <div className="wrap">
