@@ -332,7 +332,7 @@ export default async function LandingPage() {
               <circle cx="110" cy="110" r="96" fill="none" stroke="#A8542C" strokeWidth="1" strokeDasharray="2 5" />
               <g className="seal-spin" style={{ transformOrigin: "110px 110px" }}>
                 <path id="sealpath" d="M110 24 a86 86 0 1 1 0 172 a86 86 0 1 1 0 -172" fill="none" />
-                <text fontFamily="DM Mono, monospace" fontSize="11" letterSpacing="2.6" fill="#36563D">
+                <text style={{ fontFamily: "var(--mono)" }} fontSize="9.5" letterSpacing="1.2" fill="#36563D">
                   <textPath href="#sealpath" startOffset="0%">
                     STEPPE · REDMOND, OREGON · EST. 2026 · MEMBER-GOVERNED ·{" "}
                   </textPath>

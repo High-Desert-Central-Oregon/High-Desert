@@ -1,7 +1,7 @@
 /* /legal/privacy — civic-document treatment for the formal policy, matching the
- * plain-language page (design: _design-source/steppe-privacy.html). Newsreader for
- * title/headings, Libre Franklin for body, DM Mono for the metadata block + inline
- * code, ~70ch measure, --- as subtle rules, ledger-styled tables. Scoped under
+ * plain-language page (design: _design-source/steppe-privacy.html). Besley for
+ * title/headings, Schibsted Grotesk for body, Martian Mono for the metadata block +
+ * inline code, ~70ch measure, --- as subtle rules, ledger-styled tables. Scoped under
  * .site-root .legal; tokens + dark mode inherited from the shared chrome. */
 .site-root .legal {
   padding: clamp(40px, 6vw, 72px) 0 clamp(64px, 9vw, 110px);
@@ -81,7 +81,7 @@
   margin-bottom: 6px;
 }
 
-/* metadata block + inline code — DM Mono ledger card */
+/* metadata block + inline code — Martian Mono ledger card */
 .site-root .legal-doc pre {
   font-family: var(--mono);
   font-size: 13px;
