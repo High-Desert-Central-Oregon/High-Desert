@@ -40,7 +40,7 @@
 }
 .site-root .gl-tap-hint {
   position: absolute;
-  right: clamp(12px, 3vw, 22px);
+  left: clamp(12px, 3vw, 22px);
   bottom: clamp(12px, 3vw, 20px);
   font-family: var(--mono);
   font-size: clamp(10px, 2.4vw, 11px);

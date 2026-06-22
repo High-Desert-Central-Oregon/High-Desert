@@ -1,0 +1,250 @@
+/* Broadsheet × Plate — the home page, translated from
+ * _design-source/steppe-align-broadsheet-mix.html. Scoped under .broadsheet so it
+ * can't leak into the shared chrome or the other routes (which keep their own bodies).
+ * Shared primitives (kick/blaze/sec-kicker/rule/btn-rust/btn-link/drop-cap + the mono
+ * optical pass) live in site-base.css. Fixed paper/ink palette (a single light scene). */
+.site-root .broadsheet {
+  background: var(--paper);
+  color: var(--ink);
+}
+.site-root .broadsheet .band {
+  padding: clamp(48px, 7vw, 72px) 0;
+}
+
+/* ---- hero ---- */
+.site-root .broadsheet .hero {
+  padding: 46px 0 0;
+}
+.site-root .broadsheet .hero h1 {
+  font-size: clamp(40px, 7vw, 78px);
+  font-weight: 700;
+  max-width: 16ch;
+  margin: 12px 0 0;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+.site-root .broadsheet .hero h1 em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--juniper);
+}
+.site-root .broadsheet .lede {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 30px;
+  align-items: start;
+  margin-top: 18px;
+  padding-bottom: 26px;
+}
+.site-root .broadsheet .stand {
+  font-size: clamp(17px, 2.1vw, 21px);
+  color: var(--ink);
+  line-height: 1.5;
+}
+.site-root .broadsheet .actions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.site-root .broadsheet .aside {
+  border-left: 1px solid var(--rule);
+  padding-left: 22px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+.site-root .broadsheet .aside .kick {
+  margin-bottom: 6px;
+}
+
+/* ---- generative landscape band (full-width living masthead) ---- */
+.site-root .broadsheet .herostrata {
+  position: relative;
+  border-top: 1px solid var(--rule);
+  overflow: hidden;
+}
+.site-root .broadsheet .herostrata .credit {
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  z-index: 5;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: rgba(237, 230, 213, 0.62);
+  text-align: right;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- charter — ruled articles, no cards (Part 4) ---- */
+.site-root .broadsheet .articles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 40px;
+}
+.site-root .broadsheet .art {
+  padding: 22px 0;
+  border-top: 1px solid var(--rule);
+}
+.site-root .broadsheet .art .kick {
+  margin-bottom: 8px;
+}
+.site-root .broadsheet .art h3 {
+  font-size: 21px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.site-root .broadsheet .art p {
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+/* ---- how it works — ruled numbered list (Part 4) ---- */
+.site-root .broadsheet .steps {
+  border-top: 1px solid var(--rule);
+}
+.site-root .broadsheet .step {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 18px;
+  align-items: baseline;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.site-root .broadsheet .step .no {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--rust);
+}
+.site-root .broadsheet .step h3 {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.site-root .broadsheet .step p {
+  color: var(--ink-soft);
+  font-size: 14.5px;
+}
+
+/* ---- exchange — classifieds with ink-square markers (Part 5) ---- */
+.site-root .broadsheet .classifieds {
+  background: var(--bone);
+}
+.site-root .broadsheet .cl-sub {
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.site-root .broadsheet .cl-list {
+  border-top: 3px solid var(--ink);
+}
+.site-root .broadsheet .cl {
+  display: grid;
+  grid-template-columns: 150px 1fr auto;
+  gap: 18px;
+  align-items: baseline;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.site-root .broadsheet .cl .cat {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+}
+.site-root .broadsheet .cl .cat i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 8px;
+  flex: none;
+}
+.site-root .broadsheet .cl .item {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+}
+.site-root .broadsheet .cl .loc {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #6f6a5c;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ---- partners — restrained ruled list (Part 5) ---- */
+.site-root .broadsheet .partners-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  border-top: 1px solid var(--rule);
+  padding-top: 16px;
+}
+.site-root .broadsheet .partners-row .pname {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ---- cta — juniper sign panel (Part 5) ---- */
+.site-root .broadsheet .cta .wrap {
+  display: flex;
+  justify-content: center;
+}
+.site-root .broadsheet .signpanel {
+  max-width: 600px;
+  width: 100%;
+  background: var(--juniper);
+  color: #ece6da;
+  border-radius: 14px;
+  padding: 36px 30px;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 2px rgba(237, 230, 213, 0.3),
+    inset 0 0 0 4px var(--juniper);
+}
+.site-root .broadsheet .signpanel .kick {
+  justify-content: center;
+}
+.site-root .broadsheet .signpanel h2 {
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 44px);
+  margin: 10px 0;
+}
+.site-root .broadsheet .signpanel p {
+  color: #cfd8c8;
+  margin: 0 auto 22px;
+  max-width: 38ch;
+}
+
+@media (max-width: 720px) {
+  .site-root .broadsheet .hero h1 {
+    line-height: 1.07;
+  }
+  .site-root .broadsheet .lede {
+    grid-template-columns: 1fr;
+  }
+  .site-root .broadsheet .aside {
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+    padding: 18px 0 0;
+  }
+  .site-root .broadsheet .articles {
+    grid-template-columns: 1fr;
+  }
+  .site-root .broadsheet .cl {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .site-root .broadsheet .cl .loc {
+    text-align: left;
+    white-space: normal;
+  }
+}
