@@ -29,12 +29,16 @@ const ArrowRight = () => (
 
 export default async function LandingPage() {
   const t = await getTranslations("landing");
+  // Hero scenery is server-selected (default the approved classic scene); a non-prod
+  // ?scene=generative|classic dev hook can override it client-side (HeroBandScene).
+  const bandScene = process.env.HERO_SCENE === "generative" ? "generative" : "classic";
   return (
     <>
       <Reveal />
 
       <Hero
         size="tall"
+        bandScene={bandScene}
         pip={false}
         eyebrow={
           <>

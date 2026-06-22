@@ -24,7 +24,8 @@
 //   children — extra below-copy content (factline, price, "updated", note, the
 //              landing trustline) that lives inside the copy column.
 import { StrataHorizon } from "./strata-horizon";
-import { WeatherCanvas, WeatherController, StarLayer, SunOrb } from "./hero-sky";
+import { WeatherCanvas, StarLayer } from "./hero-sky";
+import { HeroBandScene, type Scene } from "./hero-band-scene";
 
 export type HeroProps = {
   /** "tall" = the landing's full atmospheric scene; "band" = inner-page band. */
@@ -43,6 +44,8 @@ export type HeroProps = {
   aside?: React.ReactNode;
   /** Extra below-copy content inside the copy column (factline, price, note…). */
   children?: React.ReactNode;
+  /** tall only: which landscape band scenery to open with (default "classic"). */
+  bandScene?: Scene;
 };
 
 // The copy column — identical shape for both sizes, so the visual language matches.
@@ -79,6 +82,7 @@ export function Hero({
   cta,
   aside,
   children,
+  bandScene = "classic",
 }: HeroProps) {
   const copy = (
     <HeroCopy eyebrow={eyebrow} pip={pip} title={title} subtitle={subtitle} cta={cta}>
@@ -125,17 +129,9 @@ export function Hero({
           </div>
         </div>
 
-        <div className="hero-band">
-          {/* Live weather band: clouds + readout + sun/sky softening (controller),
-              the 4-mode weather canvas (wind/rain/snow/fog), night stars/meteors,
-              and a round sun/moon overlay above the weather so particles pass behind
-              it. The strata SVG provides only the sky gradient + hills. */}
-          <WeatherController />
-          <WeatherCanvas className="band-wind" />
-          <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
-          <SunOrb />
-          <StrataHorizon variant="hero" />
-        </div>
+        {/* The scenic band: the approved classic weather scene, or the selectable
+            generative WebGL landscape (env HERO_SCENE / ?scene dev hook). */}
+        <HeroBandScene defaultScene={bandScene} />
       </header>
     );
   }
