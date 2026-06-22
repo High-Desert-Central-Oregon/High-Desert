@@ -1,0 +1,84 @@
+/* Generative landscape — the WebGL hero base scene (shader from
+ * _design-source/steppe-landscape-v5.html). The <canvas> fills a fixed-height
+ * band so there is no layout shift when it takes over from the static fallback.
+ * The fallback is a lightweight, theme-aware sky+ridgeline stand-in shown for SSR
+ * / first paint / no-WebGL / reduced motion (a real pre-rendered plate can replace
+ * it later). The moving weather (wind/rain/snow/fog/clouds + shooting stars) is the
+ * library layer, layered ABOVE this canvas — see the generative scene wrapper. */
+.site-root .gl-stage {
+  position: relative;
+  width: 100%;
+  height: clamp(240px, 30vw, 380px);
+  overflow: hidden;
+  /* fallback palette defaults (day) — overridden per data-time below */
+  --gl-sky-top: #2e6fae;
+  --gl-sky-horizon: #c3dbea;
+  --gl-m0: #9fb2c6;
+  --gl-m1: #6e8089;
+  --gl-m2: #56685a;
+  --gl-fg: #7c7b5b;
+}
+
+/* The shader canvas sits above the fallback; it's opaque once it draws its first
+   frame (alpha:false), so it cleanly covers the fallback. Held at opacity 0 until
+   the first frame to avoid a black flash; no-WebGL leaves it transparent. */
+.site-root .gl-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 1;
+}
+.site-root .gl-canvas.is-live {
+  opacity: 1;
+}
+
+/* Static fallback — a stretched sky gradient + three ridgelines + foreground band,
+   coloured from the per-time CSS vars. preserveAspectRatio=none fills the band. */
+.site-root .gl-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+/* Time-of-day fallback palettes (approximate the shader PAL). data-time drives the
+   day scenes; data-theme=dark (manual override) forces the night plate. */
+html[data-time="dawn"] .site-root .gl-stage {
+  --gl-sky-top: #43507e;
+  --gl-sky-horizon: #e7b58e;
+  --gl-m0: #97a0c0;
+  --gl-m1: #6e6e93;
+  --gl-m2: #534b5c;
+  --gl-fg: #46453f;
+}
+html[data-time="day"] .site-root .gl-stage {
+  --gl-sky-top: #2e6fae;
+  --gl-sky-horizon: #c3dbea;
+  --gl-m0: #9fb2c6;
+  --gl-m1: #6e8089;
+  --gl-m2: #56685a;
+  --gl-fg: #7c7b5b;
+}
+html[data-time="dusk"] .site-root .gl-stage {
+  --gl-sky-top: #282c54;
+  --gl-sky-horizon: #d2743e;
+  --gl-m0: #5a5a78;
+  --gl-m1: #43425e;
+  --gl-m2: #2e2c3e;
+  --gl-fg: #20202c;
+}
+html[data-time="night"] .site-root .gl-stage,
+html[data-theme="dark"] .site-root .gl-stage {
+  --gl-sky-top: #0b1330;
+  --gl-sky-horizon: #233056;
+  --gl-m0: #2c3556;
+  --gl-m1: #1f2742;
+  --gl-m2: #161b30;
+  --gl-fg: #0f1322;
+}
