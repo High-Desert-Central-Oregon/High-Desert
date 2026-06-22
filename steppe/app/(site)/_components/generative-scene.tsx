@@ -74,16 +74,15 @@ export function GenerativeScene({
           Vanta fog), locked to live Redmond conditions; full-bleed, no wind cutoff. */}
       <WeatherLayer weather={weather} />
       {readout && <GenerativeReadout weather={weather} />}
-      {/* Full-band, touch-first regenerate control (keyboard-accessible). */}
+      {/* New Plate — a discrete chip button (only this regenerates; tapping the
+          landscape itself does nothing). Touch-first and keyboard-accessible. */}
       <button
         type="button"
-        className="gl-tap"
+        className="gl-newplate"
         onClick={regenerate}
         aria-label={`Generate a new landscape plate (currently plate ${count})`}
       >
-        <span className="gl-tap-hint" aria-hidden="true">
-          ↻ New plate
-        </span>
+        ↻ New plate
       </button>
       {creditTagline && (
         <span className="gl-credit" aria-live="polite">

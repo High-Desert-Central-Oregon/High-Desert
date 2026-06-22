@@ -42,30 +42,32 @@ function buildOptions(mode: Mode, intensity: number, slant: number, reduce: bool
   };
 
   if (mode === "rain") {
-    const n = Math.round(60 + intensity * 90);
     return {
       ...common,
+      // Emitter-only (no initial in-frame batch): drops enter from a line just above the
+      // top spanning the full width and fall past the bottom — full-screen, no cut line.
       particles: {
-        number: { value: n },
+        number: { value: 0 },
         color: { value: "#b0c4d6" },
-        opacity: { value: { min: 0.18, max: 0.42 } },
-        size: { value: { min: 6, max: 12 } },
+        opacity: { value: { min: 0.14, max: 0.42 } },
+        size: { value: { min: 5, max: 13 } },
         shape: { type: "line" },
         stroke: { width: 1.2, color: "#b0c4d6" },
         move: {
           enable: !reduce,
           direction: "bottom",
           straight: true,
-          speed: { min: 16, max: 26 },
+          // per-drop speed variation reads as natural, uneven rain rather than a grid.
+          speed: { min: 13, max: 28 },
           angle: { offset: slant * 14, value: 0 },
           outModes: { default: "destroy", bottom: "destroy", top: "none" },
         },
       },
       emitters: [
         {
-          position: { x: 50, y: -4 },
-          size: { width: 120, height: 0 },
-          rate: { delay: 0.06, quantity: Math.round(2 + intensity * 3) },
+          position: { x: 50, y: -3 },
+          size: { width: 130, height: 0 },
+          rate: { delay: 0.05, quantity: Math.round(2 + intensity * 4) },
           particles: { move: { direction: "bottom" } },
         },
       ],
@@ -73,30 +75,30 @@ function buildOptions(mode: Mode, intensity: number, slant: number, reduce: bool
   }
 
   if (mode === "snow") {
-    const n = Math.round(40 + intensity * 70);
     return {
       ...common,
       particles: {
-        number: { value: n },
+        number: { value: 0 },
         color: { value: "#f6f7fa" },
         opacity: { value: { min: 0.5, max: 0.9 } },
-        size: { value: { min: 1.5, max: 3.5 } },
+        size: { value: { min: 1.5, max: 3.8 } },
         shape: { type: "circle" },
         move: {
           enable: !reduce,
           direction: "bottom",
           straight: false,
-          speed: { min: 1, max: 2.4 },
+          speed: { min: 0.8, max: 2.6 },
           drift: slant * 1.2,
           outModes: { default: "destroy", bottom: "destroy", top: "none" },
         },
-        wobble: { enable: !reduce, distance: 8, speed: { min: -4, max: 4 } },
+        // wobble + drift spread the flakes so they don't fall in lockstep.
+        wobble: { enable: !reduce, distance: 10, speed: { min: -5, max: 5 } },
       },
       emitters: [
         {
-          position: { x: 50, y: -4 },
-          size: { width: 120, height: 0 },
-          rate: { delay: 0.18, quantity: Math.round(2 + intensity * 2) },
+          position: { x: 50, y: -3 },
+          size: { width: 130, height: 0 },
+          rate: { delay: 0.16, quantity: Math.round(2 + intensity * 3) },
           particles: { move: { direction: "bottom" } },
         },
       ],
@@ -110,30 +112,32 @@ function buildOptions(mode: Mode, intensity: number, slant: number, reduce: bool
 
   // wind / haze (the default, clear-ish breeze): horizontal streaks entering off-left.
   const haze = mode === "wind" && intensity < 0.5;
-  const n = Math.round(haze ? 30 : 60 + intensity * 50);
   return {
     ...common,
     particles: {
-      number: { value: n },
+      number: { value: 0 },
       color: { value: "#fbf7ee" },
-      opacity: { value: { min: 0.06, max: haze ? 0.16 : 0.4 } },
-      size: { value: { min: 8, max: 16 } },
+      opacity: { value: { min: 0.05, max: haze ? 0.16 : 0.4 } },
+      size: { value: { min: 7, max: 18 } },
       shape: { type: "line" },
       stroke: { width: 1.1, color: "#fbf7ee" },
       move: {
         enable: !reduce,
         direction: "right",
-        straight: true,
-        speed: { min: haze ? 1.2 : 3, max: haze ? 3 : 8 },
+        straight: false,
+        // a speed spread (gusts vs lulls) keeps the wind from marching in a grid.
+        speed: { min: haze ? 1 : 2.5, max: haze ? 3.5 : 9 },
         outModes: { default: "destroy", right: "destroy", left: "none" },
       },
     },
     emitters: [
       {
-        // Off the left edge → particles enter from beyond the frame, exit beyond right.
-        position: { x: -4, y: 50 },
-        size: { width: 0, height: 120 },
-        rate: { delay: haze ? 0.3 : 0.12, quantity: haze ? 1 : 2 },
+        // A line just OFF the left edge spanning the full height → streaks enter from
+        // beyond the frame at varied heights and exit beyond the right (no in-frame
+        // spawn, no clipped streaks).
+        position: { x: -3, y: 50 },
+        size: { width: 0, height: 130 },
+        rate: { delay: haze ? 0.28 : 0.1, quantity: haze ? 1 : 2 },
         particles: { move: { direction: "right" } },
       },
     ],
@@ -195,9 +199,10 @@ export function WeatherLayer({ weather }: { weather: Weather | null }) {
     for (let i = 0; i < n; i++) {
       const c = document.createElement("div");
       c.className = "wx-cloud";
-      c.style.top = `${4 + Math.random() * 42}%`;
-      c.style.opacity = `${(0.3 + Math.random() * 0.28).toFixed(2)}`;
-      c.style.transform = `scale(${(0.55 + Math.random() * 0.8).toFixed(2)})`;
+      // Keep clouds in the upper sky (2–24% from top) — well above the ridgelines.
+      c.style.top = `${2 + Math.random() * 22}%`;
+      c.style.opacity = `${(0.28 + Math.random() * 0.3).toFixed(2)}`;
+      c.style.transform = `scale(${(0.5 + Math.random() * 0.7).toFixed(2)})`;
       c.innerHTML = CLOUD_SVG;
       layer.appendChild(c);
       if (reduce) {
