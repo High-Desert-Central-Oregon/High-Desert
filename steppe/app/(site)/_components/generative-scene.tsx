@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import "./generative-landscape.css";
 import { GenerativeLandscape } from "./generative-landscape";
 import { GenerativeReadout } from "./generative-readout";
@@ -24,6 +25,11 @@ import { weatherToMood } from "@/lib/weather";
  * the engine reads the same cached /api/weather (WeatherController). Both hit only the
  * internal cached proxy — the browser never calls open-meteo.com — and a proxy failure
  * eases each into the same calm default, so they stay in agreement.
+ *
+ * "A canvas for users": the scene is a full-band button — tap / click / Enter
+ * regenerates the generative seed (a fresh ridgeline "plate"), which the shader morphs
+ * to. Time, weather and the moon stay locked to live Redmond reality (only the plate is
+ * user-driven, per the product note). Touch-first, so it works on mobile.
  */
 export function GenerativeScene({
   seed = 427,
@@ -37,11 +43,20 @@ export function GenerativeScene({
   const mood = weather
     ? weatherToMood(weather)
     : { cloudCover: 0, overcast: 0, wet: 0, snow: 0 };
+  const [plate, setPlate] = useState(seed);
+
+  // Pick a fresh plate (a different seed → a new ridgeline composition).
+  const regenerate = () =>
+    setPlate((s) => {
+      let n = s;
+      while (n === s) n = Math.floor(Math.random() * 1000);
+      return n;
+    });
 
   return (
     <div className="gl-scene">
       <GenerativeLandscape
-        seed={seed}
+        seed={plate}
         cloudCover={mood.cloudCover}
         overcast={mood.overcast}
         wet={mood.wet}
@@ -57,6 +72,17 @@ export function GenerativeScene({
         <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
       </div>
       {readout && <GenerativeReadout weather={weather} />}
+      {/* Full-band, touch-first regenerate control (keyboard-accessible). */}
+      <button
+        type="button"
+        className="gl-tap"
+        onClick={regenerate}
+        aria-label={`Generate a new landscape plate (currently plate ${plate})`}
+      >
+        <span className="gl-tap-hint" aria-hidden="true">
+          ↻ New plate
+        </span>
+      </button>
     </div>
   );
 }

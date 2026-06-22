@@ -20,6 +20,48 @@
   pointer-events: none;
 }
 
+/* Touch-first "new plate" control — a transparent full-band button over the canvas
+   (above the weather layer, below the readout) so a tap / click / Enter anywhere on
+   the landscape regenerates the generative seed. Keyboard-accessible. */
+.site-root .gl-tap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.site-root .gl-tap:focus-visible {
+  outline: 2px solid #cfe0ff;
+  outline-offset: -3px;
+}
+.site-root .gl-tap-hint {
+  position: absolute;
+  right: clamp(12px, 3vw, 22px);
+  bottom: clamp(12px, 3vw, 20px);
+  font-family: var(--mono);
+  font-size: clamp(10px, 2.4vw, 11px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f2efe8;
+  background: rgba(11, 15, 26, 0.42);
+  border: 1px solid rgba(242, 239, 232, 0.18);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 8px;
+  padding: 6px 11px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+.site-root .gl-tap:hover .gl-tap-hint,
+.site-root .gl-tap:focus-visible .gl-tap-hint {
+  opacity: 1;
+}
+
 /* Time · weather · location readout chip — understated, above the weather layers,
    legible on the dark scene at every breakpoint. Fades in via anime.js. */
 .site-root .gl-readout {
