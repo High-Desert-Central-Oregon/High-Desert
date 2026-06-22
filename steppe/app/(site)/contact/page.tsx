@@ -1,13 +1,14 @@
 // Contact (/contact) — from the canonical design (steppe-contact.html) on the
-// shared chrome + tokens. Text hero + compact strata + a direct mailto: card.
+// shared chrome + tokens. Text hero + compact strata + the real ContactForm
+// (posts to /api/contact → Resend), in the same design language as /join.
 //
-// Until transactional email is wired, /contact is a plain mailto: rather than a
-// posting form — there is no dead submit path. The full ContactForm (which POSTs
-// to /api/contact → Resend) can return once RESEND_API_KEY / CONTACT_TO /
-// CONTACT_FROM are set; see lib/contact.ts and app/api/contact/route.ts.
+// The form shows when transactional email is configured (RESEND_API_KEY set in the
+// deploy env); if it's missing we fall back to a direct mailto: card so /contact is
+// never a dead form. See lib/contact.ts + app/api/contact/route.ts.
 import { getTranslations } from "next-intl/server";
 import "./contact.css";
 import { Hero } from "../_components/hero";
+import { ContactForm } from "./contact-form";
 
 export const metadata = {
   title: "Steppe — contact",
@@ -17,6 +18,9 @@ export const metadata = {
 
 export default async function ContactPage() {
   const t = await getTranslations("contact");
+  // Server-side: render the real form when Resend is configured; otherwise fall back
+  // to a direct mailto: card so /contact is never a dead form.
+  const emailEnabled = !!process.env.RESEND_API_KEY;
   return (
     <div className="contact">
       <Hero
@@ -25,25 +29,29 @@ export default async function ContactPage() {
         title={t.rich("heroTitle", { em: (c) => <em>{c}</em> })}
         subtitle={t("heroLead")}
         aside={
-          <div className="formcard" id="contact-card">
-            <div className="fk">{t("formKicker")}</div>
-            <h2>{t("formH")}</h2>
-            <p className="fsub">{t("mailtoSub")}</p>
-            <a
-              className="submitb"
-              href="mailto:hello@steppe.community?subject=Hello%20Steppe"
-            >
-              {t("mailtoCta")}
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
-            <p className="formnote">
-              {t.rich("formnote", {
-                link: (c) => <a href="/privacy">{c}</a>,
-              })}
-            </p>
-          </div>
+          emailEnabled ? (
+            <ContactForm />
+          ) : (
+            <div className="formcard" id="contact-card">
+              <div className="fk">{t("formKicker")}</div>
+              <h2>{t("formH")}</h2>
+              <p className="fsub">{t("mailtoSub")}</p>
+              <a
+                className="submitb"
+                href="mailto:hello@steppe.community?subject=Hello%20Steppe"
+              >
+                {t("mailtoCta")}
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <p className="formnote">
+                {t.rich("formnote", {
+                  link: (c) => <a href="/privacy">{c}</a>,
+                })}
+              </p>
+            </div>
+          )
         }
       >
         <div className="aside">

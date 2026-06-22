@@ -1,13 +1,18 @@
 // Provider-isolated transactional send for the /contact form.
 //
-// hello@steppe.community is a Protonmail inbox that can't easily send from a
-// serverless app, so the form delivers THROUGH a transactional provider (Resend)
-// that drops the message into that inbox. Keep the provider behind this single
-// function so it stays swappable (Postmark / SES / Plunk) without touching callers.
+// The form delivers THROUGH a transactional provider (Resend) that drops the
+// message into the hello@steppe.community inbox. Keep the provider behind this
+// single function so it stays swappable (Postmark / SES / Plunk) without touching
+// callers.
+//
+// Configuration: only RESEND_API_KEY is required (it's set in the deploy env). The
+// from/to addresses default to the verified steppe.community sender + inbox and are
+// overridable via CONTACT_FROM / CONTACT_TO. We do NOT enable Resend open/click
+// tracking — no tracking options are passed here (and it stays off at the domain).
 //
 // Privacy posture: email-only. The message is delivered to the inbox and is NOT
 // stored in the app DB ("collect the minimum, nothing just in case"). It transits
-// Resend and is encrypted at rest by Proton in the inbox.
+// Resend; nothing about it is persisted by Steppe.
 //
 // Fails gracefully — never throws — so the route + UI can fall back to mailto:.
 export type ContactInput = {
@@ -23,14 +28,16 @@ export type SendResult =
 
 export async function sendContactEmail(input: ContactInput): Promise<SendResult> {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO;
-  const from = process.env.CONTACT_FROM;
 
-  // Missing config (e.g. RESEND_API_KEY not set yet) is a clean, expected failure
-  // so the UI can point the user at the direct mailto: fallback.
-  if (!apiKey || !to || !from) {
+  // Missing RESEND_API_KEY is a clean, expected failure so the UI can point the
+  // user at the direct mailto: fallback.
+  if (!apiKey) {
     return { ok: false, code: "config", error: "Email delivery is not configured yet." };
   }
+
+  // A Resend-verified steppe.community sender, and the inbox to deliver to.
+  const from = process.env.CONTACT_FROM ?? "Steppe <hello@steppe.community>";
+  const to = process.env.CONTACT_TO ?? "hello@steppe.community";
 
   const subject = `[Contact · ${input.topic}] ${input.name}`;
   const text = [
@@ -45,9 +52,9 @@ export async function sendContactEmail(input: ContactInput): Promise<SendResult>
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
-      from, // a Resend-verified sending domain (SPF/DKIM aligned), e.g. notify@steppe.community
-      to, // hello@steppe.community (the Protonmail inbox)
-      replyTo: input.email, // "reply" in Proton reaches the submitter directly
+      from, // a Resend-verified steppe.community sender (SPF/DKIM aligned)
+      to, // hello@steppe.community
+      replyTo: input.email, // replying to the delivered mail reaches the submitter directly
       subject,
       text,
     });
