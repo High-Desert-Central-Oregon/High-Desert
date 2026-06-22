@@ -856,8 +856,11 @@ html[data-js] .site-root .rv.in {
   color: rgba(237, 230, 213, 0.6);
 }
 
-/* ---- Broadsheet masthead (Part 2) ---- */
+/* ---- Broadsheet masthead (sticky + condensing) ---- */
 .site-root .masthead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   background: var(--paper);
   border-bottom: 3px solid var(--ink);
 }
@@ -869,6 +872,25 @@ html[data-js] .site-root .rv.in {
 }
 .site-root .mast-top {
   border-bottom: 1px solid var(--rule);
+  overflow: hidden;
+  max-height: 120px;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.25s ease,
+    border-color 0.3s ease;
+}
+/* On scroll the dateline collapses and the wordmark shrinks → a slim sticky bar. */
+.site-root .masthead.condensed .mast-top {
+  max-height: 0;
+  opacity: 0;
+  border-color: transparent;
+}
+.site-root .masthead.condensed .mast .wrap {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.site-root .masthead.condensed .mast .wm {
+  font-size: 22px;
 }
 .site-root .mast-top .wrap {
   display: flex;
@@ -894,6 +916,7 @@ html[data-js] .site-root .rv.in {
   padding-top: 14px;
   padding-bottom: 14px;
   flex-wrap: wrap;
+  transition: padding 0.25s ease;
 }
 .site-root .mast .wm {
   font-family: var(--display);
@@ -904,6 +927,14 @@ html[data-js] .site-root .rv.in {
   align-items: center;
   gap: 12px;
   color: var(--ink);
+  transition: font-size 0.25s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-root .mast-top,
+  .site-root .mast .wrap,
+  .site-root .mast .wm {
+    transition: none;
+  }
 }
 .site-root .bnav {
   display: flex;
@@ -939,8 +970,19 @@ html[data-js] .site-root .rv.in {
   .site-root .mast .wrap {
     padding-bottom: 10px;
   }
+  /* Mobile: a slim horizontally-scrollable nav strip so every link stays reachable. */
   .site-root .bnav {
     width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .site-root .bnav::-webkit-scrollbar {
+    display: none;
+  }
+  .site-root .bnav a {
+    white-space: nowrap;
   }
 }
 
@@ -967,6 +1009,27 @@ html[data-js] .site-root .rv.in {
 .site-root .foot .att b {
   color: var(--ink);
   font-weight: 600;
+}
+.site-root .foot .foot-end {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.site-root .foot-links {
+  display: flex;
+  gap: 18px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.site-root .foot-links a {
+  color: var(--ink-soft);
+  transition: color 0.15s;
+}
+.site-root .foot-links a:hover {
+  color: var(--rust);
 }
 .site-root .foot .foot-credit {
   font-family: var(--mono);

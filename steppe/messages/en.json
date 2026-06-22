@@ -1,6 +1,6 @@
 {
   "locale": { "label": "Language", "en": "EN", "es": "ES" },
-  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join", "charter": "Charter", "membership": "Membership", "exchange": "Exchange", "menuOpen": "Open menu", "menuClose": "Close menu" },
+  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join", "charter": "Charter", "membership": "Membership", "exchange": "Exchange", "contact": "Contact", "menuOpen": "Open menu", "menuClose": "Close menu" },
   "footer": {
     "explore": "Explore",
     "preview": "Preview",

@@ -2,26 +2,37 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SealMark } from "./seal-mark";
 import { LocaleToggle } from "./locale-toggle";
 
 /**
- * Shared marketing masthead (Broadsheet × Plate). A newspaper-style head: a mono
- * dateline bar (Vol. / place · Est., stacks on mobile), the Besley "Steppe" wordmark
- * with the Strata Seal, and a ruled nav (Charter · Membership · Exchange · Preview)
- * closed by a 3px ink + 2px rust double rule. The EN/ES control rides in the dateline
- * bar (kept for the bilingual commitment); there is no theme toggle — the broadsheet
- * is a single paper palette. Charter/Exchange are home anchors; from another route they
- * navigate home then scroll. Client component for usePathname (active nav route).
+ * Shared marketing masthead (Broadsheet × Plate) — sticky + condensing. At the top of
+ * the page the full masthead shows (dateline bar + wordmark + ruled nav). On scroll it
+ * condenses into a slim sticky bar (wordmark + nav) so the links stay reachable at any
+ * scroll position. Reduced motion → condense instantly (CSS guards the transition).
+ *
+ * Nav: Charter · Membership · Exchange · Preview · Contact (Charter/Exchange are home
+ * anchors). On mobile the row becomes a horizontally-scrollable strip so every link is
+ * reachable on small screens. EN/ES rides in the dateline bar; no theme toggle (single
+ * paper palette; the day/night theme is automatic — Part 6).
  */
 export function SiteHeader() {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const active = (href: string) => (pathname === href ? "active" : undefined);
+  const [condensed, setCondensed] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setCondensed(window.scrollY > 64);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="masthead">
+    <header className={`masthead${condensed ? " condensed" : ""}`}>
       <div className="mast-top">
         <div className="wrap">
           <span>Vol. I · No. 1</span>
@@ -45,6 +56,9 @@ export function SiteHeader() {
             <Link href="/#exchange">{t("exchange")}</Link>
             <Link href="/preview" className={active("/preview")}>
               {t("preview")}
+            </Link>
+            <Link href="/contact" className={active("/contact")}>
+              {t("contact")}
             </Link>
           </nav>
         </div>
