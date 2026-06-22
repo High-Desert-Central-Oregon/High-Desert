@@ -242,34 +242,3 @@ html[data-theme="dark"] .site-root .contact .formerr a {
     gap: 34px;
   }
 }
-
-/* ---- Charter overrides: flat rectangular surfaces, ink/cascade controls ---- */
-.site-root .contact .formcard {
-  border-radius: 0;
-  border: 1px solid var(--line);
-  box-shadow: none;
-}
-.site-root .contact input,
-.site-root .contact select,
-.site-root .contact textarea {
-  border-radius: 0;
-  border: 1px solid var(--line);
-  background: #fff;
-}
-.site-root .contact input:focus,
-.site-root .contact select:focus,
-.site-root .contact textarea:focus {
-  border-color: var(--cascade);
-  outline: none;
-}
-.site-root .contact .submitb {
-  border-radius: 0;
-  background: var(--ink);
-  color: var(--wall);
-  box-shadow: none;
-}
-.site-root .contact .submitb:hover {
-  background: var(--cascade);
-  color: #fff;
-  transform: none;
-}
