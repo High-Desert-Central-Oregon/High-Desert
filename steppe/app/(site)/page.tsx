@@ -52,6 +52,50 @@ export default async function HomePage() {
           </span>
         </div>
       </section>
+
+      {/* The Charter — ruled articles, no cards (replaces the old promise grid). */}
+      <section className="band" id="charter" aria-labelledby="charter-h">
+        <div className="wrap">
+          <div className="sec-kicker">
+            <h2 id="charter-h">{t("bsCharterH")}</h2>
+            <span className="line"></span>
+          </div>
+          <div className="articles">
+            {(["1", "2", "3", "4"] as const).map((n) => (
+              <article className="art" key={n}>
+                <p className="kick blaze">{t(`bsArt${n}K`)}</p>
+                <h3>{t(`bsArt${n}H`)}</h3>
+                <p>{t(`bsArt${n}B`)}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works — the joining steps, re-treated as a broadsheet ruled list. */}
+      <section className="band" aria-labelledby="how-h">
+        <div className="wrap">
+          <div className="sec-kicker">
+            <h2 id="how-h">{t("bsHowH")}</h2>
+            <span className="line"></span>
+          </div>
+          <div className="steps">
+            {([1, 2, 3, 4] as const).map((n) => (
+              <div className="step" key={n}>
+                <div className="no">{`0${n}`}</div>
+                <div>
+                  <h3>
+                    {t.rich(`step${n}H`, {
+                      stamp: (c) => <span className="stamp">{c}</span>,
+                    })}
+                  </h3>
+                  <p>{t(`step${n}B`)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
