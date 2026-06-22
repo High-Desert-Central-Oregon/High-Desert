@@ -6,11 +6,10 @@
 import { getTranslations } from "next-intl/server";
 import "./preview.css";
 import { PreviewStage } from "./preview-stage";
-import { StrataHorizon } from "../_components/strata-horizon";
 import { Hero } from "../_components/hero";
 
 export const metadata = {
-  title: "Steppe — a first look",
+  title: "Steppe · a first look",
   description:
     "A first look at Steppe: one calm exchange, the groups you choose, a vote that's yours, and a profile that stays private until you say otherwise.",
 };
@@ -31,8 +30,6 @@ export default async function PreviewPage() {
       <div className="wrap">
         <PreviewStage />
       </div>
-
-      <StrataHorizon variant="compact" />
     </div>
   );
 }

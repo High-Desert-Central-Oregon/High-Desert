@@ -9,7 +9,7 @@ import "./partners.css";
 import { Hero } from "../_components/hero";
 
 export const metadata = {
-  title: "Steppe — for partners",
+  title: "Steppe · for partners",
   description:
     "Community-owned civic infrastructure for Redmond, Central Oregon — the model, the structural guarantees that protect it, how it's funded, and how to help build it.",
 };

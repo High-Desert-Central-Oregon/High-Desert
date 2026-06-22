@@ -19,7 +19,7 @@ import remarkGfm from "remark-gfm";
 import "./legal.css";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Steppe",
+  title: "Privacy Policy · Steppe",
   description:
     "The formal Steppe privacy policy. A plain-language summary lives at /privacy.",
   alternates: { canonical: "/legal/privacy" },

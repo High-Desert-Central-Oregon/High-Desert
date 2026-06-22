@@ -92,13 +92,13 @@ export function StrataHorizon({
         <circle cx="680" cy="30" r="1.5" fill="#EDE6D5" />
         <circle cx="1020" cy="46" r="1.3" fill="#EDE6D5" />
         <g transform="translate(1140,48)">
-          <circle r="26" fill="#E9E3D4" />
-          <circle r="26" cx="11" cy="-6" fill="#1E2430" />
+          <circle r="20" fill="#E9E3D4" />
+          <circle r="20" cx="9" cy="-5" fill="#1E2430" />
         </g>
       </g>
       <g className="sun-g">
-        <circle className="breathe" cx="1140" cy="50" r="58" fill="#D98C56" opacity=".34" />
-        <circle className="sun-d" cx="1140" cy="50" r="34" />
+        <circle className="breathe" cx="1140" cy="50" r="46" fill="#D98C56" opacity=".34" />
+        <circle className="sun-d" cx="1140" cy="50" r="26" />
       </g>
       <path d="M0 84 Q360 60 720 76 T1440 78 V150 H0Z" fill="#9CAD8B" />
       <path d="M0 110 Q420 92 840 104 T1440 104 V150 H0Z" fill="#36563D" />

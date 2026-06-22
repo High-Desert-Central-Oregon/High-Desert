@@ -9,7 +9,7 @@ import "./broadsheet.css";
 import { GenerativeScene } from "./_components/generative-scene";
 
 export const metadata = {
-  title: "Steppe — a place that belongs to the people in it",
+  title: "Steppe · a place that belongs to the people in it",
   description:
     "Steppe is civic infrastructure for Central Oregon, owned by the members who use it. Member dues pay for it, so it works for members instead of advertisers.",
 };

@@ -11,7 +11,7 @@ import { Hero } from "../_components/hero";
 import { ContactForm } from "./contact-form";
 
 export const metadata = {
-  title: "Steppe — contact",
+  title: "Steppe · contact",
   description:
     "A question, a partnership idea, or just want to know more about Steppe? Send a note and we'll get back to you.",
 };

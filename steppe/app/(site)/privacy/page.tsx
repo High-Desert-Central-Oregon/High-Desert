@@ -7,7 +7,7 @@ import "./privacy.css";
 import { Hero } from "../_components/hero";
 
 export const metadata = {
-  title: "Steppe — privacy",
+  title: "Steppe · privacy",
   description:
     "Privacy at Steppe is the structure, not a setting: a member-owned nonprofit with no ads, no trackers, and no data to sell. What we collect, why, and your rights — in plain language.",
 };

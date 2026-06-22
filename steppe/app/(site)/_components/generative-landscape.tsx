@@ -153,8 +153,8 @@ const FRAG = `
     col += u_sun * exp(-sunDist*7.0) * 0.85 * glowAmt;
     col += u_sun * exp(-sunDist*2.2) * 0.16 * glowAmt;
 
-    // sun / moon disc with phase
-    float R = 0.05;
+    // sun / moon disc with phase (slightly smaller for a more natural scale)
+    float R = 0.042;
     vec2 md = sunVec / R;
     float sd = length(md);
     float edge = smoothstep(1.0, 0.90, sd) * skyAtten;
