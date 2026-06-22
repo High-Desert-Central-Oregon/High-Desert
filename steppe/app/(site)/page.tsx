@@ -29,9 +29,11 @@ const ArrowRight = () => (
 
 export default async function LandingPage() {
   const t = await getTranslations("landing");
-  // Hero scenery is server-selected (default the approved classic scene); a non-prod
-  // ?scene=generative|classic dev hook can override it client-side (HeroBandScene).
-  const bandScene = process.env.HERO_SCENE === "generative" ? "generative" : "classic";
+  // Hero scenery is server-selected. The generative algorithmic landscape is the
+  // default; set HERO_SCENE=classic to fall back to the original weather scene. A
+  // non-prod ?scene=generative|classic dev hook can override it client-side
+  // (HeroBandScene).
+  const bandScene = process.env.HERO_SCENE === "classic" ? "classic" : "generative";
   return (
     <>
       <Reveal />
