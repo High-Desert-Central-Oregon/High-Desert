@@ -5,7 +5,7 @@ import "./generative-landscape.css";
 
 /**
  * GenerativeLandscape — a single self-contained WebGL/GLSL hero scene, ported from
- * _design-source/steppe-landscape-v5.html. It draws the BASE scene only: sky
+ * _design-source/steppe-generative-landscape-v5.html. It draws the BASE scene only: sky
  * gradient, sun glow (day) / phased moon (night), three Cascade ridgelines + a
  * high-desert foreground, paper grain, vignette, horizon haze, and the night static
  * star field. Time-of-day palette comes from the global data-time on <html> (honoring
@@ -61,7 +61,7 @@ const VERT = `
   attribute vec2 a_position;
   void main(){ gl_Position = vec4(a_position, 0.0, 1.0); }`;
 
-// Fragment shader ported verbatim from steppe-landscape-v5.html, with the in-shader
+// Fragment shader ported verbatim from steppe-generative-landscape-v5.html, with the in-shader
 // weather particles removed (clouds / rain streaks / snowfall / fog veil) and
 // u_rain renamed u_wet — the kept uniforms drive the mood response only.
 const FRAG = `

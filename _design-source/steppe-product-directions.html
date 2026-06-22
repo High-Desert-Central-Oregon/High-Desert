@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Steppe — Product directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Archivo:wght@400;500;600;700&family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700;800&family=Saira+Condensed:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:#16181c; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .meta{ position:sticky; top:0; z-index:200; background:#0d0e11; border-bottom:1px solid #2a2d33;
+    display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; padding:10px 18px; }
+  .meta .brandbit{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:#7b8089; font-weight:600; }
+  .meta .tabs{ display:flex; gap:6px; }
+  .meta button{ font:inherit; font-size:12px; font-weight:600; color:#aeb3bb; background:#1b1e23;
+    border:1px solid #2f333a; border-radius:7px; padding:7px 13px; cursor:pointer; transition:.15s; }
+  .meta button:hover{ color:#fff; border-color:#454b54; }
+  .meta button[aria-selected="true"]{ background:#e9eaec; color:#16181c; border-color:#e9eaec; }
+  .meta .caption{ flex:1 1 260px; min-width:0; font-size:12px; color:#80858e; line-height:1.45; }
+  .meta .caption b{ color:#c9ccd1; font-weight:600; }
+  .meta .note{ width:100%; font-size:10.5px; color:#5a5f68; }
+  .screen[hidden]{ display:none; }
+  :focus-visible{ outline:2px solid #6ea8ff; outline-offset:2px; }
+
+  /* shared hero shell (live landscape canvas behind mission content) */
+  .hero{ position:relative; min-height:clamp(520px,84vh,780px); display:flex; align-items:flex-end; overflow:hidden; }
+  .hero canvas.bg{ position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0; }
+  .hero .scrim{ position:absolute; inset:0; z-index:1; }
+  .hero .hwrap{ position:relative; z-index:2; width:100%; }
+
+  /* ===================================================================================== */
+  /* A — CHARTER  (warm white, manifesto-led, B aesthetic)                                  */
+  /* ===================================================================================== */
+  .charter{ --wall:#efece4; --wall-2:#e6e2d8; --ink:#1c1b18; --soft:#6b675e; --line:#d6d1c5; --cascade:#27463a;
+    background:var(--wall); color:var(--ink); font-family:"Archivo",system-ui,sans-serif; }
+  .charter .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(22px,5.5vw,68px); }
+  .charter .serif{ font-family:"Spectral",Georgia,serif; }
+  .charter .ml{ font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--soft); font-weight:600; }
+
+  .charter .hero .scrim{ background:linear-gradient(180deg, rgba(20,18,14,.12) 0%, rgba(20,18,14,0) 30%, rgba(20,18,14,.55) 100%); }
+  .charter .hero .hwrap{ padding:0 0 clamp(34px,6vh,64px); color:#f3efe6; }
+  .charter .hero .wrap{ }
+  .charter .hero .wm{ font-family:"Spectral",serif; font-weight:500; font-size:clamp(30px,5vw,52px); letter-spacing:.04em; text-shadow:0 2px 20px rgba(0,0,0,.4); }
+  .charter .hero h1{ font-family:"Spectral",serif; font-weight:400; font-size:clamp(30px,5.2vw,58px); line-height:1.04; letter-spacing:-.01em; margin:.3em 0 .35em; max-width:18ch; text-shadow:0 2px 24px rgba(0,0,0,.45); }
+  .charter .hero p{ font-size:15.5px; line-height:1.6; max-width:44ch; color:rgba(243,239,230,.92); text-shadow:0 1px 14px rgba(0,0,0,.5); }
+  .charter .hero .btnrow{ display:flex; gap:13px; flex-wrap:wrap; margin-top:26px; }
+
+  .charter .btn{ font-family:"Archivo",sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; padding:13px 24px; border:1px solid currentColor; background:none; color:inherit; cursor:pointer; transition:.14s; }
+  .charter .hero .btn.solid{ background:#f3efe6; color:#1c1b18; border-color:#f3efe6; }
+  .charter .hero .btn.solid:hover{ background:var(--cascade); border-color:var(--cascade); color:#fff; }
+  .charter .hero .btn.ghost{ color:#f3efe6; } .charter .hero .btn.ghost:hover{ background:rgba(243,239,230,.14); }
+
+  .charter .section{ padding:62px 0; border-top:1px solid var(--line); }
+  .charter .section.lead{ border-top:0; padding-top:70px; }
+  .charter .sectag{ margin-bottom:30px; }
+
+  /* what Steppe stands for — front and center */
+  .charter .stand h2{ font-family:"Spectral",serif; font-weight:400; font-size:clamp(26px,3.6vw,40px); line-height:1.1; margin:0 0 36px; max-width:20ch; }
+  .charter .creed{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); }
+  .charter .creed .c{ background:var(--wall); padding:26px 26px; }
+  .charter .creed .c .ct{ font-family:"Spectral",serif; font-weight:500; font-size:21px; }
+  .charter .creed .c .cd{ font-size:13.5px; color:var(--soft); line-height:1.6; margin-top:8px; }
+  .charter .creed .c .cn{ font-family:"Space Mono",monospace; font-size:11px; color:var(--cascade); letter-spacing:.05em; }
+
+  .charter .guarantee{ background:var(--cascade); color:#eef0e6; }
+  .charter .guarantee .wrap{ padding:54px clamp(22px,5.5vw,68px); display:grid; grid-template-columns:.8fr 1.2fr; gap:40px; align-items:center; }
+  .charter .guarantee h3{ font-family:"Spectral",serif; font-weight:400; font-size:clamp(24px,3.2vw,34px); line-height:1.12; margin:0; }
+  .charter .guarantee p{ font-size:15px; line-height:1.75; color:rgba(238,240,230,.86); margin:0; }
+  .charter .guarantee p b{ color:#fff; font-weight:600; }
+
+  /* the app — clean white surfaces */
+  .charter .appgrid{ display:grid; grid-template-columns:1.1fr 1fr; gap:26px; }
+  .charter .card{ background:#fff; border:1px solid var(--line); padding:22px; }
+  .charter .card .ch{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .charter .card .ch .ml{ color:var(--cascade); }
+  .charter .post .pmeta{ font-family:"Space Mono",monospace; font-size:11px; color:var(--soft); }
+  .charter .post .ptxt{ font-family:"Spectral",serif; font-size:18px; line-height:1.4; margin:10px 0 14px; }
+  .charter .post .pfoot{ font-size:12px; color:var(--soft); display:flex; gap:16px; }
+  .charter .vote h4{ font-size:15px; font-weight:700; margin:0 0 12px; }
+  .charter .vrow{ display:grid; grid-template-columns:1fr auto; gap:5px 12px; align-items:center; padding:9px 0; }
+  .charter .vrow .vn{ font-size:13px; } .charter .vrow .vp{ font-family:"Space Mono",monospace; font-size:13px; font-weight:700; }
+  .charter .vrow .vbar{ grid-column:1/-1; height:5px; background:var(--wall-2); position:relative; }
+  .charter .vrow .vbar i{ position:absolute; inset:0 auto 0 0; background:var(--cascade); }
+  .charter .vfoot{ border-top:1px solid var(--line); margin-top:8px; padding-top:11px; font-family:"Space Mono",monospace; font-size:11px; color:var(--soft); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .charter .ledger{ margin-top:26px; }
+  .charter .ledger table{ width:100%; border-collapse:collapse; font-family:"Space Mono",monospace; font-size:12px; }
+  .charter .ledger td,.charter .ledger th{ text-align:left; padding:9px 10px; border-top:1px solid var(--line); }
+  .charter .ledger th{ border-top:0; color:var(--soft); font-weight:400; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; }
+  .charter .ledger .num{ text-align:right; } .charter .ledger .in{ color:var(--cascade); } .charter .ledger .out{ color:#a8492f; }
+
+  .charter .join{ display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; }
+  .charter .join h3{ font-family:"Spectral",serif; font-weight:400; font-size:clamp(26px,3.4vw,38px); margin:0 0 10px; line-height:1.1; }
+  .charter .join p{ font-size:14px; color:var(--soft); line-height:1.7; margin:0; }
+  .charter .join .form label{ display:block; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--soft); font-weight:600; margin-bottom:9px; }
+  .charter .join .form input{ width:100%; padding:13px 4px; border:0; border-bottom:1.5px solid var(--ink); background:none; font-family:"Archivo",sans-serif; font-size:16px; color:var(--ink); }
+  .charter .join .form .jr{ margin-top:20px; }
+  .charter .join .btn.solid{ background:var(--ink); color:var(--wall); border-color:var(--ink); }
+  .charter .join .btn.solid:hover{ background:var(--cascade); border-color:var(--cascade); }
+
+  .charter .foot{ border-top:1px solid var(--cascade); }
+  .charter .foot .wrap{ padding:30px clamp(22px,5.5vw,68px) 48px; }
+  .charter .foot p{ font-size:12px; color:var(--soft); line-height:1.7; margin:0; max-width:52ch; }
+
+  /* ===================================================================================== */
+  /* B — CONSOLE  (warm charcoal, app-forward, C aesthetic)                                 */
+  /* ===================================================================================== */
+  .console{ --bg:#191512; --bg-2:#211c18; --paper:#ece6da; --soft:#9a8f80; --line:#3a322b; --ember:#c6794a;
+    background:var(--bg); color:var(--paper); font-family:"Archivo",system-ui,sans-serif; }
+  .console .wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(22px,5vw,64px); }
+  .console .disp{ font-family:"Cormorant",Georgia,serif; }
+  .console .mono{ font-family:"Space Mono",monospace; }
+  .console .ml{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--soft); }
+
+  .console .hero .scrim{ background:linear-gradient(180deg, rgba(15,12,10,.25) 0%, rgba(15,12,10,.1) 35%, rgba(15,12,10,.72) 100%); }
+  .console .hero .hwrap{ padding:0 0 clamp(36px,7vh,70px); }
+  .console .hero .wm{ font-family:"Cormorant",serif; font-weight:500; font-size:clamp(32px,5.4vw,58px); letter-spacing:.06em; }
+  .console .hero h1{ font-family:"Cormorant",serif; font-weight:400; font-size:clamp(34px,6vw,72px); line-height:1.0; margin:.18em 0 .3em; max-width:16ch; }
+  .console .hero p{ font-size:15px; line-height:1.7; max-width:46ch; color:rgba(236,230,218,.86); }
+  .console .hero .btnrow{ display:flex; gap:13px; flex-wrap:wrap; margin-top:26px; }
+  .console .btn{ font-family:"Archivo",sans-serif; font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:13px 22px; border:1px solid var(--line); background:none; color:var(--paper); cursor:pointer; transition:.14s; }
+  .console .btn.solid{ background:var(--paper); color:var(--bg); border-color:var(--paper); }
+  .console .btn.solid:hover{ background:var(--ember); border-color:var(--ember); color:#fff; }
+  .console .btn.ghost:hover{ border-color:var(--paper); }
+
+  /* principles strip right under the hero — mission stays up front */
+  .console .principles{ border-top:1px solid var(--line); }
+  .console .principles .wrap{ padding:34px clamp(22px,5vw,64px); display:flex; flex-wrap:wrap; gap:14px 34px; align-items:baseline; }
+  .console .principles .lead{ font-family:"Cormorant",serif; font-size:24px; color:var(--paper); flex:1 1 220px; }
+  .console .principles .p{ font-size:13px; color:var(--soft); }
+  .console .principles .p b{ color:var(--paper); font-weight:600; }
+
+  .console .section{ padding:54px 0; border-top:1px solid var(--line); }
+  .console .sechead{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:28px; }
+  .console .sechead h2{ font-family:"Cormorant",serif; font-weight:500; font-size:clamp(26px,3.4vw,36px); margin:0; }
+
+  /* the app glows against the dark */
+  .console .appgrid{ display:grid; grid-template-columns:1.1fr 1fr; gap:24px; }
+  .console .card{ background:var(--bg-2); border:1px solid var(--line); padding:22px; box-shadow:0 24px 60px rgba(0,0,0,.45); }
+  .console .card .ch{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .console .card .ch .ml{ color:var(--ember); }
+  .console .post .pmeta{ font-family:"Space Mono",monospace; font-size:11px; color:var(--soft); }
+  .console .post .ptxt{ font-family:"Cormorant",serif; font-size:21px; line-height:1.35; margin:10px 0 14px; color:var(--paper); }
+  .console .post .pfoot{ font-size:12px; color:var(--soft); display:flex; gap:16px; }
+  .console .vote h4{ font-size:14px; font-weight:600; margin:0 0 12px; }
+  .console .vrow{ display:grid; grid-template-columns:1fr auto; gap:5px 12px; align-items:center; padding:9px 0; }
+  .console .vrow .vn{ font-size:13px; } .console .vrow .vp{ font-family:"Space Mono",monospace; font-size:13px; font-weight:700; color:var(--ember); }
+  .console .vrow .vbar{ grid-column:1/-1; height:4px; background:var(--line); position:relative; }
+  .console .vrow .vbar i{ position:absolute; inset:0 auto 0 0; background:var(--ember); }
+  .console .vfoot{ border-top:1px solid var(--line); margin-top:8px; padding-top:11px; font-family:"Space Mono",monospace; font-size:11px; color:var(--soft); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .console .hoods{ margin-top:24px; display:flex; flex-wrap:wrap; gap:10px; }
+  .console .hoods .hd{ font-family:"Space Mono",monospace; font-size:12px; border:1px solid var(--line); padding:7px 12px; color:var(--soft); }
+  .console .hoods .hd b{ color:var(--paper); }
+
+  .console .join{ display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; }
+  .console .join h3{ font-family:"Cormorant",serif; font-weight:500; font-size:clamp(28px,3.6vw,40px); margin:0 0 10px; }
+  .console .join p{ font-size:14px; color:var(--soft); line-height:1.7; margin:0; max-width:40ch; }
+  .console .join label{ display:block; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--soft); margin-bottom:10px; }
+  .console .join input{ width:100%; padding:13px 2px; border:0; border-bottom:1px solid var(--line); background:none; font-family:"Archivo",sans-serif; font-size:16px; color:var(--paper); }
+  .console .join input::placeholder{ color:#6a6256; }
+  .console .join .jr{ margin-top:22px; }
+
+  .console .foot{ border-top:1px solid var(--line); }
+  .console .foot .wrap{ padding:30px clamp(22px,5vw,64px) 46px; }
+  .console .foot p{ font-size:12px; letter-spacing:.04em; color:var(--soft); margin:0; line-height:1.7; }
+
+  /* ===================================================================================== */
+  /* C — COMMONS  (warm sand, place/people-led, A DNA elevated)                             */
+  /* ===================================================================================== */
+  .commons{ --sand:#e8e2d4; --sand-2:#ddd5c3; --ink:#22201a; --soft:#5f5848; --line:#cbc2ad; --pine:#2f4a3c; --clay:#b9603a;
+    background:var(--sand); color:var(--ink); font-family:"Hanken Grotesk",system-ui,sans-serif; }
+  .commons .wrap{ max-width:1200px; margin:0 auto; padding:0 clamp(22px,5.5vw,64px); }
+  .commons .cond{ font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.08em; font-weight:700; }
+  .commons .mono{ font-family:"Space Mono",monospace; }
+
+  .commons .hero .scrim{ background:linear-gradient(180deg, rgba(25,20,12,.12) 0%, rgba(25,20,12,0) 32%, rgba(25,20,12,.6) 100%); }
+  .commons .hero .hwrap{ padding:0 0 clamp(34px,6vh,64px); color:#f5efe2; }
+  .commons .hero .wm{ font-family:"Saira Condensed",sans-serif; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:clamp(30px,5.4vw,54px); text-shadow:0 2px 18px rgba(0,0,0,.4); }
+  .commons .hero h1{ font-weight:800; font-size:clamp(30px,5.4vw,58px); line-height:1.02; letter-spacing:-.02em; margin:.22em 0 .35em; max-width:17ch; text-shadow:0 2px 22px rgba(0,0,0,.45); }
+  .commons .hero p{ font-size:15.5px; line-height:1.55; max-width:44ch; color:rgba(245,239,226,.92); text-shadow:0 1px 14px rgba(0,0,0,.5); }
+  .commons .hero .btnrow{ display:flex; gap:13px; flex-wrap:wrap; margin-top:24px; }
+  .commons .btn{ font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.06em; font-weight:700; font-size:15px; padding:12px 24px; border:2px solid currentColor; background:none; color:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:.13s; }
+  .commons .btn::after{ content:"▸"; font-size:11px; }
+  .commons .hero .btn.solid{ background:#f5efe2; color:#22201a; border-color:#f5efe2; }
+  .commons .hero .btn.solid:hover{ background:var(--clay); border-color:var(--clay); color:#fff; }
+  .commons .hero .btn.ghost{ color:#f5efe2; } .commons .hero .btn.ghost:hover{ background:rgba(245,239,226,.14); }
+
+  /* owned by everyone who joins — people + mission */
+  .commons .own{ background:var(--pine); color:#eef1e9; }
+  .commons .own .wrap{ padding:48px clamp(22px,5.5vw,64px); display:grid; grid-template-columns:1fr auto; gap:36px; align-items:center; }
+  .commons .own h2{ font-weight:800; font-size:clamp(24px,3.4vw,38px); line-height:1.08; margin:0; max-width:18ch; }
+  .commons .own .count{ text-align:right; }
+  .commons .own .count .n{ font-weight:800; font-size:clamp(34px,5vw,56px); line-height:1; }
+  .commons .own .count .l{ font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.1em; font-size:12px; opacity:.85; margin-top:6px; }
+
+  .commons .section{ padding:54px 0; border-top:2px solid var(--ink); }
+  .commons .seclab{ display:flex; align-items:center; gap:11px; margin-bottom:26px; }
+  .commons .seclab::before{ content:""; width:26px; height:12px; background:var(--clay); }
+  .commons .seclab span{ font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.12em; font-weight:700; font-size:13px; color:#7a4a2e; }
+
+  .commons .creed{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .commons .creed .c{ }
+  .commons .creed .c .cn{ font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.08em; font-weight:700; color:var(--clay); font-size:12px; }
+  .commons .creed .c .ct{ font-weight:800; font-size:18px; margin-top:6px; }
+  .commons .creed .c .cd{ font-size:13.5px; color:var(--soft); line-height:1.6; margin-top:6px; }
+
+  .commons .appgrid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .commons .card{ background:#fff; border:2px solid var(--ink); }
+  .commons .card .ch{ background:var(--pine); color:#eef1e9; padding:10px 16px; display:flex; justify-content:space-between; font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.08em; font-weight:600; font-size:12px; }
+  .commons .card .cb{ padding:18px 16px; }
+  .commons .post .pmeta{ font-family:"Space Mono",monospace; font-size:11px; color:var(--soft); }
+  .commons .post .ptxt{ font-size:17px; font-weight:600; line-height:1.4; margin:8px 0 12px; }
+  .commons .post .pfoot{ font-size:12px; color:var(--soft); display:flex; gap:16px; }
+  .commons .vote h4{ font-size:15px; font-weight:800; margin:0 0 12px; }
+  .commons .vrow{ display:grid; grid-template-columns:1fr auto; gap:5px 12px; align-items:center; padding:9px 0; }
+  .commons .vrow .vn{ font-size:13px; } .commons .vrow .vp{ font-family:"Space Mono",monospace; font-size:13px; font-weight:700; }
+  .commons .vrow .vbar{ grid-column:1/-1; height:5px; background:var(--sand-2); position:relative; }
+  .commons .vrow .vbar i{ position:absolute; inset:0 auto 0 0; background:var(--pine); }
+  .commons .vfoot{ border-top:2px solid var(--ink); margin-top:8px; padding-top:11px; font-family:"Space Mono",monospace; font-size:11px; color:var(--soft); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+
+  .commons .join{ display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; }
+  .commons .join h3{ font-weight:800; font-size:clamp(26px,3.6vw,40px); margin:0 0 10px; line-height:1.06; }
+  .commons .join p{ font-size:14px; color:var(--soft); line-height:1.7; margin:0; }
+  .commons .join label{ font-family:"Saira Condensed",sans-serif; text-transform:uppercase; letter-spacing:.1em; font-weight:600; font-size:12px; color:#7a4a2e; display:block; margin-bottom:8px; }
+  .commons .join input{ width:100%; padding:12px 14px; border:2px solid var(--pine); background:var(--sand); font-family:"Space Mono",monospace; font-size:15px; color:var(--ink); }
+  .commons .join .jr{ margin-top:18px; }
+  .commons .join .btn.solid{ background:var(--pine); color:#eef1e9; border-color:var(--pine); }
+  .commons .join .btn.solid:hover{ background:var(--clay); border-color:var(--clay); }
+
+  .commons .foot{ background:var(--pine); color:#eef1e9; }
+  .commons .foot .wrap{ padding:28px clamp(22px,5.5vw,64px) 44px; font-family:"Space Mono",monospace; font-size:11px; line-height:1.7; opacity:.9; }
+
+  /* responsive */
+  @media (max-width:820px){
+    .charter .creed, .charter .guarantee .wrap, .charter .appgrid, .charter .join,
+    .console .appgrid, .console .join, .commons .own .wrap, .commons .creed, .commons .appgrid, .commons .join{ grid-template-columns:1fr; }
+    .commons .own .count{ text-align:left; }
+  }
+</style>
+</head>
+<body>
+
+<div class="meta">
+  <span class="brandbit">Steppe · product directions</span>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true"  data-opt="charter">A · Charter</button>
+    <button role="tab" aria-selected="false" data-opt="console">B · Console</button>
+    <button role="tab" aria-selected="false" data-opt="commons">C · Commons</button>
+  </div>
+  <p class="caption" id="caption"><b>Charter — warm light, mission-led.</b> What Steppe stands for is the spine: the commitments come first, the structural guarantee anchors it, the app proves it. Spectral serif, a single Cascade-green accent. Landscape runs live behind the hero as atmosphere.</p>
+  <p class="note">Hero landscape is the live creative-coding canvas (placeholder atmosphere). App surfaces are real Steppe content.</p>
+</div>
+
+<!-- ============================ A — CHARTER ============================ -->
+<section class="screen charter" id="opt-charter" aria-label="Charter direction">
+  <header class="hero">
+    <canvas class="bg" id="scene-charter" aria-hidden="true"></canvas>
+    <div class="scrim"></div>
+    <div class="hwrap"><div class="wrap">
+      <div class="wm">Steppe</div>
+      <h1>A town that owns its own commons.</h1>
+      <p>Redmond's member-owned civic platform. No ads, no owner, never for sale — and governed by the people who use it.</p>
+      <div class="btnrow">
+        <button class="btn solid">Become a member</button>
+        <button class="btn ghost">Read the charter</button>
+      </div>
+    </div></div>
+  </header>
+
+  <section class="section lead stand"><div class="wrap">
+    <div class="sectag ml">What Steppe stands for</div>
+    <h2>Six commitments, written into the articles — not the marketing.</h2>
+    <div class="creed">
+      <div class="c"><div class="cn">01</div><div class="ct">No ads. Ever.</div><div class="cd">No feeds tuned to sell your attention. The only customer is the membership.</div></div>
+      <div class="c"><div class="cn">02</div><div class="ct">No owner.</div><div class="cd">A public benefit nonprofit with no shares to buy. Steppe cannot be sold.</div></div>
+      <div class="c"><div class="cn">03</div><div class="ct">You govern it.</div><div class="cd">Members vote. Time spent earns weight, so newcomers can't be steamrolled and incumbents can't entrench.</div></div>
+      <div class="c"><div class="cn">04</div><div class="ct">Your data is yours.</div><div class="cd">Export everything, or take it and leave. Verification is required once, then never sold.</div></div>
+      <div class="c"><div class="cn">05</div><div class="ct">$4 a month.</div><div class="cd">Flat. Hardship waiver, always. Surplus goes to a Community Fund the members allocate.</div></div>
+      <div class="c"><div class="cn">06</div><div class="ct">Local.</div><div class="cd">Built for Redmond and Central Oregon. Hard cap of twelve communities, so it stays answerable.</div></div>
+    </div>
+  </div></section>
+
+  <section class="guarantee"><div class="wrap">
+    <h3>Built so it can't be taken from you.</h3>
+    <p>Steppe is a <b>member-owned public benefit nonprofit</b>. Its mission is entrenched in the founding articles and can't be amended away by a future board. Surplus flows to a <b>Community Fund</b> the members allocate by ranked-choice vote. No single funder exceeds 30%. The structure is the promise — not a terms-of-service page that changes the day incentives do.</p>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="sectag ml">The app</div>
+    <div class="appgrid">
+      <div class="card post">
+        <div class="ch"><span class="ml">Dry Canyon · feed</span><span class="ml">2h</span></div>
+        <div class="pmeta">Marisol R. · verified neighbor</div>
+        <div class="ptxt">"Who do I actually call about the burned-out lights on the canal path? Asking for the whole street."</div>
+        <div class="pfoot"><span>6 replies</span><span>Highland, Canal +2 following</span></div>
+      </div>
+      <div class="card vote">
+        <div class="ch"><span class="ml">Open ballot</span><span class="ml">Proposal 014</span></div>
+        <h4>Adopt the 2026 Community Fund allocation.</h4>
+        <div class="vrow"><span class="vn">Adopt as written</span><span class="vp">63%</span><span class="vbar"><i style="width:63%"></i></span></div>
+        <div class="vrow"><span class="vn">Send back to committee</span><span class="vp">37%</span><span class="vbar"><i style="width:37%"></i></span></div>
+        <div class="vfoot"><span>Quorum 15% — met (18.2%)</span><span>Your weight ×2</span></div>
+      </div>
+    </div>
+    <div class="card ledger">
+      <div class="ch"><span class="ml">Community Fund · posted in full</span><span class="ml">June</span></div>
+      <table>
+        <tr><th>Date</th><th>Entry</th><th class="num">In</th><th class="num">Out</th><th class="num">Balance</th></tr>
+        <tr><td>06-01</td><td>Membership dues, May</td><td class="num in">+9,184</td><td class="num">—</td><td class="num">9,184</td></tr>
+        <tr><td>06-09</td><td>Grant — Dry Canyon path lighting</td><td class="num">—</td><td class="num out">−2,500</td><td class="num">6,684</td></tr>
+        <tr><td>06-15</td><td>Surplus → Community Fund</td><td class="num in">+1,420</td><td class="num">—</td><td class="num">8,104</td></tr>
+      </table>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="join">
+      <div>
+        <h3>One membership. One standing in every decision.</h3>
+        <p>$4 a month, billed annually or by ACH. Hardship waiver on request. Verification of Central Oregon residency before your first vote.</p>
+      </div>
+      <div class="form">
+        <label for="ch-email">Email address</label>
+        <input id="ch-email" type="email" placeholder="you@redmond.or">
+        <div class="jr"><button class="btn solid">Request membership</button></div>
+      </div>
+    </div>
+  </div></section>
+
+  <footer class="foot"><div class="wrap">
+    <p>Steppe · a member-owned public benefit nonprofit · Redmond, Oregon · steppe.community — owned by no one and everyone, governed by its members, never for sale. Est. 2026.</p>
+  </div></footer>
+</section>
+
+<!-- ============================ B — CONSOLE ============================ -->
+<section class="screen console" id="opt-console" hidden aria-label="Console direction">
+  <header class="hero">
+    <canvas class="bg" id="scene-console" aria-hidden="true"></canvas>
+    <div class="scrim"></div>
+    <div class="hwrap"><div class="wrap">
+      <div class="wm">Steppe</div>
+      <h1>Your town's commons, always on.</h1>
+      <p>A member-owned civic platform for Redmond — the feed, the vote, and the ledger your neighborhood actually shares. No ads. No owner.</p>
+      <div class="btnrow">
+        <button class="btn solid">Join the commons</button>
+        <button class="btn ghost">See inside</button>
+      </div>
+    </div></div>
+  </header>
+
+  <section class="principles"><div class="wrap">
+    <div class="lead">What it stands for, in one breath —</div>
+    <div class="p"><b>No ads</b>, ever.</div>
+    <div class="p"><b>No owner</b>; can't be sold.</div>
+    <div class="p"><b>You govern it</b>, tenure-weighted.</div>
+    <div class="p"><b>Your data</b> leaves with you.</div>
+    <div class="p"><b>$4/mo</b>, hardship waiver.</div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="sechead"><h2>Inside Steppe</h2><span class="ml">35 neighborhoods · 1,284 members</span></div>
+    <div class="appgrid">
+      <div class="card post">
+        <div class="ch"><span class="ml">Dry Canyon · feed</span><span class="ml">2h</span></div>
+        <div class="pmeta">Marisol R. · verified neighbor</div>
+        <div class="ptxt">"Who do I actually call about the burned-out lights on the canal path?"</div>
+        <div class="pfoot"><span>6 replies</span><span>following 3 neighborhoods</span></div>
+      </div>
+      <div class="card vote">
+        <div class="ch"><span class="ml">Open ballot</span><span class="ml">Proposal 014</span></div>
+        <h4>Adopt the 2026 Community Fund allocation.</h4>
+        <div class="vrow"><span class="vn">Adopt as written</span><span class="vp">63%</span><span class="vbar"><i style="width:63%"></i></span></div>
+        <div class="vrow"><span class="vn">Send back to committee</span><span class="vp">37%</span><span class="vbar"><i style="width:37%"></i></span></div>
+        <div class="vfoot"><span>Quorum met · 18.2%</span><span>Your weight ×2</span></div>
+      </div>
+    </div>
+    <div class="hoods">
+      <span class="hd"><b>Dry Canyon</b> · 412</span>
+      <span class="hd"><b>Highland</b> · 288</span>
+      <span class="hd"><b>Canal</b> · 196</span>
+      <span class="hd"><b>Forked Horn</b> · 151</span>
+      <span class="hd">+ 31 more</span>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="sechead"><h2>Why it's built like this</h2></div>
+    <div class="appgrid" style="grid-template-columns:1fr 1fr;">
+      <div>
+        <p style="font-family:'Cormorant',serif; font-size:22px; line-height:1.4; color:var(--paper); margin:0 0 14px;">A platform owned by its users can't be turned against them.</p>
+        <p style="font-size:14px; color:var(--soft); line-height:1.75; margin:0;">Steppe is a member-owned public benefit nonprofit. The mission is entrenched in the articles, surplus flows to a member-allocated Community Fund, and no single funder exceeds 30%. There's no exit to enshittify toward — no shares to sell, no growth target that outranks the members.</p>
+      </div>
+      <div class="card vote">
+        <div class="ch"><span class="ml">Community Fund</span><span class="ml">balance</span></div>
+        <div class="vrow"><span class="vn">Dues, May</span><span class="vp" style="color:var(--ember)">+9,184</span></div>
+        <div class="vrow"><span class="vn">Grant — path lighting</span><span class="vp" style="color:#cf6b4a">−2,500</span></div>
+        <div class="vrow"><span class="vn">Surplus → fund</span><span class="vp" style="color:var(--ember)">+1,420</span></div>
+        <div class="vfoot"><span>Posted in full, monthly</span><span>$8,104</span></div>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="join">
+      <div>
+        <h3>Take a standing in the commons.</h3>
+        <p>$4 a month. Verify once; vote forever. Cancel anytime — your data goes with you.</p>
+      </div>
+      <div>
+        <label for="co-email">Email address</label>
+        <input id="co-email" type="email" placeholder="you@redmond.or">
+        <div class="jr"><button class="btn solid">Request membership</button></div>
+      </div>
+    </div>
+  </div></section>
+
+  <footer class="foot"><div class="wrap">
+    <p>Steppe · community-owned · member-governed · Redmond, Oregon · steppe.community · no ads · no owner · never for sale · est. 2026</p>
+  </div></footer>
+</section>
+
+<!-- ============================ C — COMMONS ============================ -->
+<section class="screen commons" id="opt-commons" hidden aria-label="Commons direction">
+  <header class="hero">
+    <canvas class="bg" id="scene-commons" aria-hidden="true"></canvas>
+    <div class="scrim"></div>
+    <div class="hwrap"><div class="wrap">
+      <div class="wm">Steppe</div>
+      <h1>Redmond's commons, owned by its neighbors.</h1>
+      <p>A member-owned civic platform for Central Oregon — no ads, no owner, governed by the people who live here.</p>
+      <div class="btnrow">
+        <button class="btn solid">Become a member</button>
+        <button class="btn ghost">How it works</button>
+      </div>
+    </div></div>
+  </header>
+
+  <section class="own"><div class="wrap">
+    <h2>Not a company serving a town. A town that owns the thing.</h2>
+    <div class="count"><div class="n">1,284</div><div class="l">members · 35 neighborhoods</div></div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="seclab"><span>What you're joining</span></div>
+    <div class="creed">
+      <div class="c"><div class="cn">Owned</div><div class="ct">No owner, no ads</div><div class="cd">A public benefit nonprofit with no shares to sell. The membership is the only stakeholder.</div></div>
+      <div class="c"><div class="cn">Governed</div><div class="ct">Your vote, weighted by time</div><div class="cd">Members decide. Tenure earns weight, so it can't be captured by newcomers or incumbents.</div></div>
+      <div class="c"><div class="cn">Open</div><div class="ct">Every dollar in the open</div><div class="cd">Surplus goes to a Community Fund the members allocate. The ledger is posted in full.</div></div>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="seclab"><span>Your neighborhood, in the open</span></div>
+    <div class="appgrid">
+      <div class="card post">
+        <div class="ch"><span>Dry Canyon · feed</span><span>2h</span></div>
+        <div class="cb">
+          <div class="pmeta">Marisol R. · verified neighbor</div>
+          <div class="ptxt">"Who do I actually call about the lights on the canal path? Asking for the whole street."</div>
+          <div class="pfoot"><span>6 replies</span><span>412 neighbors here</span></div>
+        </div>
+      </div>
+      <div class="card vote">
+        <div class="ch"><span>Open ballot · 014</span><span>closes 07-14</span></div>
+        <div class="cb">
+          <h4>Commission a mural for the Dry Canyon underpass.</h4>
+          <div class="vrow"><span class="vn">Adopt the shortlist</span><span class="vp">63%</span><span class="vbar"><i style="width:63%"></i></span></div>
+          <div class="vrow"><span class="vn">Send back to committee</span><span class="vp">37%</span><span class="vbar"><i style="width:37%"></i></span></div>
+          <div class="vfoot"><span>Quorum 15% — met (18.2%)</span><span>Your weight ×2</span></div>
+        </div>
+      </div>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="join">
+      <div>
+        <h3>Join your neighbors. Four dollars a month.</h3>
+        <p>Hardship waiver, always. Verify your Central Oregon residency once, then take a standing in every decision.</p>
+      </div>
+      <div>
+        <label for="cm-email">Email address</label>
+        <input id="cm-email" type="email" placeholder="you@redmond.or">
+        <div class="jr"><button class="btn solid">Become a member</button></div>
+      </div>
+    </div>
+  </div></section>
+
+  <footer class="foot"><div class="wrap">
+    Steppe · public benefit nonprofit · Redmond, Oregon · steppe.community<br>
+    Owned by its neighbors. Governed in the open. Never for sale. Est. 2026.
+  </div></footer>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- compact landscape scene (atmosphere only) ---------- */
+  var VERT = "attribute vec2 p; void main(){ gl_Position=vec4(p,0.0,1.0); }";
+  var FRAG = [
+   "precision highp float;",
+   "uniform vec2 u_res; uniform float u_t,u_seed,u_grain,u_stars,u_motion;",
+   "uniform vec3 u_skyTop,u_skyHor,u_sun,u_haze,u_m0,u_m1,u_m2,u_fg; uniform vec2 u_sunPos;",
+   "float h11(float n){return fract(sin(n)*43758.5453123);}",
+   "float h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}",
+   "float hf(vec2 p){ p=mod(p,2048.0); vec3 q=fract(vec3(p.xyx)*0.1031); q+=dot(q,q.yzx+33.33); return fract((q.x+q.y)*q.z);} ",
+   "float vn(float x){float i=floor(x),f=fract(x);float u=f*f*(3.0-2.0*f);return mix(h11(i),h11(i+1.0),u);} ",
+   "float fbm(float x){float v=0.0,a=0.5;for(int i=0;i<6;i++){v+=a*vn(x);x*=2.0;a*=0.5;}return v;} ",
+   "float rdg(float x,float fr,float sd,float b,float am){float d=u_motion*u_t*0.004; float h=fbm((x+d)*fr+sd); return b+(h-0.5)*am;} ",
+   "void main(){",
+   " vec2 fc=gl_FragCoord.xy; vec2 uv=fc/u_res.xy; float asp=u_res.x/max(u_res.y,1.0);",
+   " float ty=smoothstep(0.0,1.0,uv.y); vec3 col=mix(u_skyHor,u_skyTop,ty);",
+   " if(u_stars>0.5){ vec2 g=floor(fc/2.5); col+=vec3(step(0.9975,h21(g))*smoothstep(0.4,1.0,uv.y)); }",
+   " vec2 sv=(uv-u_sunPos)*vec2(asp,1.0); float sd=length(sv);",
+   " col+=u_sun*exp(-sd*7.0)*0.85; col+=u_sun*exp(-sd*2.2)*0.16;",
+   " float R=0.05; float ed=smoothstep(1.0,0.9,length(sv/R)); col=mix(col,u_sun*1.04,ed);",
+   " float aa=1.6/u_res.y;",
+   " float r0=rdg(uv.x,1.4,u_seed+11.0,0.62,0.16); float in0=1.0-smoothstep(r0-aa,r0+aa,uv.y);",
+   " vec3 c0=u_m0; float sn=smoothstep(r0-0.10,r0-0.004,uv.y)*smoothstep(0.6,0.78,r0); c0=mix(c0,vec3(0.93,0.94,0.97),sn*0.6); col=mix(col,c0,in0);",
+   " float r1=rdg(uv.x,2.3,u_seed+27.0,0.46,0.18); col=mix(col,u_m1,1.0-smoothstep(r1-aa,r1+aa,uv.y));",
+   " float r2=rdg(uv.x,3.6,u_seed+43.0,0.32,0.16); col=mix(col,u_m2,1.0-smoothstep(r2-aa,r2+aa,uv.y));",
+   " float fl=0.20+fbm(uv.x*5.0+u_seed+60.0)*0.03; float inf=1.0-smoothstep(fl-aa,fl+aa,uv.y);",
+   " vec3 fg=u_fg; fg*=mix(0.86,1.06,smoothstep(0.0,fl,uv.y));",
+   " float st=hf(floor(fc/3.0)+u_seed); fg=mix(fg,fg*0.82,step(0.94,st)*inf*smoothstep(fl,0.0,uv.y)); col=mix(col,fg,inf);",
+   " float hz=smoothstep(0.2,0.5,uv.y)*(1.0-smoothstep(0.5,0.82,uv.y)); col=mix(col,u_haze,hz*0.45);",
+   " col+=(hf(fc)-0.5)*u_grain;",
+   " vec2 q=uv-0.5; col*=mix(0.93,1.0,smoothstep(1.15,0.35,length(q*vec2(asp,1.0))));",
+   " gl_FragColor=vec4(clamp(col,0.0,1.0),1.0);",
+   "}"].join("\n");
+
+  function hx(h){ h=h.replace("#",""); return [parseInt(h.slice(0,2),16)/255,parseInt(h.slice(2,4),16)/255,parseInt(h.slice(4,6),16)/255]; }
+  var PAL = {
+    golden:{ seed:427, stars:0, skyTop:hx("6E84A6"),skyHor:hx("F6D49A"),sun:hx("FFE2A4"),sunPos:[0.30,0.32],haze:hx("E7C79E"),m0:hx("B6A6A0"),m1:hx("8B7D83"),m2:hx("6C5F46"),fg:hx("897A4D"),grain:0.05 },
+    dusk:{   seed:88,  stars:0, skyTop:hx("282C54"),skyHor:hx("D2743E"),sun:hx("FF9A52"),sunPos:[0.70,0.20],haze:hx("7C5057"),m0:hx("5A5A78"),m1:hx("43425E"),m2:hx("2E2C3E"),fg:hx("20202C"),grain:0.05 },
+    dawn:{   seed:153, stars:0, skyTop:hx("43507E"),skyHor:hx("E7B58E"),sun:hx("FFE7C9"),sunPos:[0.74,0.30],haze:hx("D8C2B2"),m0:hx("97A0C0"),m1:hx("6E6E93"),m2:hx("534B5C"),fg:hx("46453F"),grain:0.05 }
+  };
+
+  function mount(canvas, palName){
+    if(canvas._s) return canvas._s;
+    var gl=canvas.getContext("webgl",{antialias:true,alpha:false,preserveDrawingBuffer:false});
+    if(!gl){ canvas.style.background="#2a2c3a"; return null; }
+    function sh(t,src){ var s=gl.createShader(t); gl.shaderSource(s,src); gl.compileShader(s); return s; }
+    var prog=gl.createProgram(); gl.attachShader(prog,sh(gl.VERTEX_SHADER,VERT)); gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FRAG)); gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(prog)); return null; }
+    gl.useProgram(prog);
+    var buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    var loc=gl.getAttribLocation(prog,"p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+    var U={}; ["u_res","u_t","u_seed","u_grain","u_stars","u_motion","u_skyTop","u_skyHor","u_sun","u_haze","u_m0","u_m1","u_m2","u_fg","u_sunPos"].forEach(function(n){U[n]=gl.getUniformLocation(prog,n);});
+    var s={gl:gl,prog:prog,U:U,pal:PAL[palName],raf:0,t0:performance.now(),running:false};
+    canvas._s=s; resize(canvas); return s;
+  }
+  function resize(canvas){ var s=canvas._s; if(!s) return; var dpr=Math.min(window.devicePixelRatio||1,2);
+    var w=Math.round(canvas.clientWidth*dpr), h=Math.round(canvas.clientHeight*dpr);
+    if(w&&h&&(canvas.width!==w||canvas.height!==h)){ canvas.width=w; canvas.height=h; s.gl.viewport(0,0,w,h); } }
+  function draw(canvas){ var s=canvas._s; if(!s) return; var gl=s.gl,U=s.U,p=s.pal; var t=(performance.now()-s.t0)/1000;
+    gl.useProgram(s.prog);
+    gl.uniform2f(U.u_res,canvas.width,canvas.height); gl.uniform1f(U.u_t,t); gl.uniform1f(U.u_seed,p.seed);
+    gl.uniform1f(U.u_grain,p.grain); gl.uniform1f(U.u_stars,p.stars); gl.uniform1f(U.u_motion,reduce?0.0:1.0);
+    gl.uniform3fv(U.u_skyTop,p.skyTop); gl.uniform3fv(U.u_skyHor,p.skyHor); gl.uniform3fv(U.u_sun,p.sun);
+    gl.uniform3fv(U.u_haze,p.haze); gl.uniform3fv(U.u_m0,p.m0); gl.uniform3fv(U.u_m1,p.m1); gl.uniform3fv(U.u_m2,p.m2);
+    gl.uniform3fv(U.u_fg,p.fg); gl.uniform2fv(U.u_sunPos,p.sunPos);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4); }
+  function loop(canvas){ var s=canvas._s; if(!s||!s.running) return; draw(canvas); s.raf=requestAnimationFrame(function(){loop(canvas);}); }
+  function start(canvas){ var s=canvas._s; if(!s) return; resize(canvas); if(reduce){ draw(canvas); return; } if(!s.running){ s.running=true; loop(canvas);} }
+  function stop(canvas){ var s=canvas._s; if(!s) return; s.running=false; if(s.raf) cancelAnimationFrame(s.raf); }
+
+  var canvases = { charter:["scene-charter","golden"], console:["scene-console","dusk"], commons:["scene-commons","dawn"] };
+  var active = "charter";
+  function activate(opt){
+    Object.keys(canvases).forEach(function(k){ var el=document.getElementById(canvases[k][0]); if(el&&el._s) stop(el); });
+    var def=canvases[opt]; var el=document.getElementById(def[0]); if(el){ if(!el._s) mount(el,def[1]); start(el); }
+    active=opt;
+  }
+
+  /* ---------- switcher ---------- */
+  var tabs=document.querySelectorAll(".meta [role=tab]");
+  var caption=document.getElementById("caption");
+  var captions={
+    charter:"<b>Charter — warm light, mission-led.</b> What Steppe stands for is the spine: the commitments come first, the structural guarantee anchors it, the app proves it. Spectral serif, a single Cascade-green accent. Landscape runs live behind the hero as atmosphere.",
+    console:"<b>Console — warm charcoal, app-forward.</b> The product glows against the dark; the mission rides up top as a one-breath principle strip and again as the reason it's built this way. Cormorant set light, an ember accent. The dusk landscape carries the mood.",
+    commons:"<b>Commons — warm sand, place + people.</b> Your favorite direction's bones (place, neighborhoods) elevated: ownership and the neighbor-count lead, the app is your neighborhood in the open. Confident grotesque, pine + clay. Dawn landscape behind the hero."
+  };
+  function show(opt){
+    document.querySelectorAll(".screen").forEach(function(s){ s.hidden=(s.id!=="opt-"+opt); });
+    tabs.forEach(function(t){ t.setAttribute("aria-selected", t.dataset.opt===opt?"true":"false"); });
+    caption.innerHTML=captions[opt]; window.scrollTo({top:0});
+    activate(opt);
+  }
+  tabs.forEach(function(t){ t.addEventListener("click", function(){ show(t.dataset.opt); }); });
+  window.addEventListener("resize", function(){ var el=document.getElementById(canvases[active][0]); if(el&&el._s){ resize(el); if(reduce) draw(el); } });
+
+  activate("charter");
+})();
+</script>
+</body>
+</html>
