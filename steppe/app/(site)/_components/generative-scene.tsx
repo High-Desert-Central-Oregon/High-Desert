@@ -84,6 +84,18 @@ export function GenerativeScene({
       >
         ↻ New plate
       </button>
+      {/* Strata labels — revealed on hover (desktop pointers only); decorative. */}
+      <div className="gl-strata" aria-hidden="true">
+        <span className="gl-strata-label" style={{ top: "38%" }}>
+          Rimrock
+        </span>
+        <span className="gl-strata-label" style={{ top: "54%" }}>
+          Juniper bench
+        </span>
+        <span className="gl-strata-label" style={{ top: "70%" }}>
+          Canyon floor
+        </span>
+      </div>
       {creditTagline && (
         <span className="gl-credit" aria-live="polite">
           Masthead {String(count).padStart(3, "0")} · {creditTagline}

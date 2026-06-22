@@ -74,6 +74,7 @@ const FRAG = `
   uniform float u_grain, u_stars, u_ridge, u_hazeAmt, u_motion;
   uniform float u_isMoon, u_moonPhase;
   uniform float u_cloud, u_overcast, u_wet, u_snow;
+  uniform vec2  u_parallax; // pointer/touch offset (-1..1); depth shifts sun + ridges
 
   const float TAU = 6.2831853;
 
@@ -131,7 +132,9 @@ const FRAG = `
     vec3 ocHor = mix(u_skyHorizon, vec3(dot(u_skyHorizon, vec3(0.299,0.587,0.114))), 0.7) * 0.95;
     col = mix(col, mix(ocHor, ocTop, ty), u_overcast);
 
-    vec2 sunVec = (uv - u_sunPos) * vec2(aspect, 1.0);
+    // Sun/moon sits on the far plane — it shifts least with parallax.
+    vec2 sunPos = u_sunPos + vec2(u_parallax.x * 0.03, -u_parallax.y * 0.02);
+    vec2 sunVec = (uv - sunPos) * vec2(aspect, 1.0);
     float sunDist = length(sunVec);
     // cloud cover + overcast soften the sky/sun glow (the libraries draw the cloud
     // forms on top, so an overcast day still darkens here)
@@ -176,26 +179,27 @@ const FRAG = `
     vec3 discCol = mix(discDark, u_sun*1.04*surf, litMask);
     col = mix(col, discCol, edge);
 
-    // mountains
+    // mountains — each ridge shifts more than the one behind it (depth parallax).
     float aa = 1.6 / u_resolution.y;
-    float r0 = ridge(uv.x, 1.4*u_ridge, u_seed + 11.0, 0.62, 0.16);
+    float r0 = ridge(uv.x + u_parallax.x * 0.004, 1.4*u_ridge, u_seed + 11.0, 0.62, 0.16);
     float in0 = 1.0 - smoothstep(r0 - aa, r0 + aa, uv.y);
     vec3 c0 = u_m0;
     float snowcap = smoothstep(r0 - 0.10, r0 - 0.004, uv.y) * smoothstep(0.60, 0.78, r0);
     c0 = mix(c0, vec3(0.93,0.94,0.97), snowcap*0.6);
     col = mix(col, c0, in0);
 
-    float r1 = ridge(uv.x, 2.3*u_ridge, u_seed + 27.0, 0.46, 0.18);
+    float r1 = ridge(uv.x + u_parallax.x * 0.009, 2.3*u_ridge, u_seed + 27.0, 0.46, 0.18);
     float in1 = 1.0 - smoothstep(r1 - aa, r1 + aa, uv.y);
     col = mix(col, u_m1, in1);
 
-    float r2 = ridge(uv.x, 3.6*u_ridge, u_seed + 43.0, 0.32, 0.16);
+    float r2 = ridge(uv.x + u_parallax.x * 0.015, 3.6*u_ridge, u_seed + 43.0, 0.32, 0.16);
     float in2 = 1.0 - smoothstep(r2 - aa, r2 + aa, uv.y);
     col = mix(col, u_m2, in2);
 
     // foreground (wet darkens, snow whitens — the mood response; the moving
-    // rain/snow particles are drawn by the library layer, not here)
-    float fgLine = 0.20 + fbm(uv.x*5.0 + u_seed + 60.0)*0.03;
+    // rain/snow particles are drawn by the library layer, not here) — nearest plane,
+    // shifts most with parallax.
+    float fgLine = 0.20 + fbm((uv.x + u_parallax.x * 0.022)*5.0 + u_seed + 60.0)*0.03;
     float inFg = 1.0 - smoothstep(fgLine - aa, fgLine + aa, uv.y);
     vec3 fg = u_fg;
     fg *= mix(0.86, 1.06, smoothstep(0.0, fgLine, uv.y));
@@ -332,7 +336,7 @@ export function GenerativeLandscape({
       "u_resolution", "u_time", "u_seed", "u_skyTop", "u_skyHorizon", "u_sun", "u_haze",
       "u_m0", "u_m1", "u_m2", "u_fg", "u_sunPos", "u_grain", "u_stars", "u_ridge",
       "u_hazeAmt", "u_motion", "u_isMoon", "u_moonPhase", "u_cloud", "u_overcast",
-      "u_wet", "u_snow",
+      "u_wet", "u_snow", "u_parallax",
     ].forEach((n) => (U[n] = gl.getUniformLocation(prog, n)));
 
     const root = document.documentElement;
@@ -349,6 +353,9 @@ export function GenerativeLandscape({
     let running = false;
     let live = false;
     let onScreen = true;
+    // Parallax: eased pointer/touch offset (-1..1). Disabled under reduced motion.
+    const par = { x: 0, y: 0 };
+    const parTgt = { x: 0, y: 0 };
 
     function lerpArr(a: number[], b: number[], f: number) {
       let m = 0;
@@ -387,6 +394,7 @@ export function GenerativeLandscape({
       gl.uniform1f(U.u_overcast, curW.overcast);
       gl.uniform1f(U.u_wet, curW.wet);
       gl.uniform1f(U.u_snow, curW.snow);
+      gl.uniform2f(U.u_parallax, par.x, par.y);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       if (!live) {
         live = true;
@@ -421,10 +429,14 @@ export function GenerativeLandscape({
       const seedD = Math.abs(m.seed - curSeed);
       curSeed = lerpNum(curSeed, m.seed, MORPH);
 
+      par.x = lerpNum(par.x, parTgt.x, 0.09);
+      par.y = lerpNum(par.y, parTgt.y, 0.09);
+      const parD = Math.max(Math.abs(parTgt.x - par.x), Math.abs(parTgt.y - par.y));
+
       draw();
 
-      // Pause when settled (battery). Re-kicked on resize / mood change / theme change.
-      if (d > 0.0015 || dW > 0.0015 || isMoonD > 0.001 || seedD > 0.05) {
+      // Pause when settled (battery). Re-kicked on resize / mood / theme / parallax.
+      if (d > 0.0015 || dW > 0.0015 || isMoonD > 0.001 || seedD > 0.05 || parD > 0.001) {
         raf = requestAnimationFrame(step);
       } else {
         running = false;
@@ -481,6 +493,46 @@ export function GenerativeLandscape({
     };
     document.addEventListener("visibilitychange", onVis);
 
+    // Parallax input: pointer (desktop) + touch-drag horizon (mobile). Eased in step();
+    // disabled entirely under reduced motion (the loop keeps par at 0).
+    const scene =
+      (canvas.closest(".gl-scene") as HTMLElement | null) ?? canvas.parentElement ?? canvas;
+    let parCleanup: (() => void) | null = null;
+    if (!reduceMotion) {
+      const fine = window.matchMedia("(pointer: fine)").matches;
+      const setFrom = (cx: number, cy: number) => {
+        const r = canvas!.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        parTgt.x = Math.max(-1, Math.min(1, ((cx - r.left) / r.width) * 2 - 1));
+        parTgt.y = Math.max(-1, Math.min(1, ((cy - r.top) / r.height) * 2 - 1));
+        kick();
+      };
+      const reset = () => {
+        parTgt.x = 0;
+        parTgt.y = 0;
+        kick();
+      };
+      const onPointerMove = (e: PointerEvent) => {
+        if (e.pointerType === "mouse") setFrom(e.clientX, e.clientY);
+      };
+      const onTouchMove = (e: TouchEvent) => {
+        const t = e.touches[0];
+        if (t) setFrom(t.clientX, t.clientY);
+      };
+      if (fine) {
+        scene.addEventListener("pointermove", onPointerMove);
+        scene.addEventListener("pointerleave", reset);
+      }
+      scene.addEventListener("touchmove", onTouchMove, { passive: true });
+      scene.addEventListener("touchend", reset);
+      parCleanup = () => {
+        scene.removeEventListener("pointermove", onPointerMove);
+        scene.removeEventListener("pointerleave", reset);
+        scene.removeEventListener("touchmove", onTouchMove);
+        scene.removeEventListener("touchend", reset);
+      };
+    }
+
     // expose a poke for prop-driven mood updates
     const poke = () => kick();
     pokeRef.current = poke;
@@ -491,6 +543,7 @@ export function GenerativeLandscape({
       mo.disconnect();
       io.disconnect();
       document.removeEventListener("visibilitychange", onVis);
+      parCleanup?.();
       pokeRef.current = null;
       const lose = gl.getExtension("WEBGL_lose_context");
       lose?.loseContext();
