@@ -23,7 +23,6 @@
 //              form cards). Its presence switches a band hero to the two-column grid.
 //   children — extra below-copy content (factline, price, "updated", note, the
 //              landing trustline) that lives inside the copy column.
-import { StrataHorizon } from "./strata-horizon";
 import { WeatherCanvas, StarLayer } from "./hero-sky";
 import { HeroBandScene, type Scene } from "./hero-band-scene";
 
@@ -136,7 +135,8 @@ export function Hero({
     );
   }
 
-  // ---- band: the compact inner-page hero ----
+  // ---- band: the compact inner-page hero (Charter: a text header on the wall;
+  // the section below carries the hairline rule — no strata band) ----
   return (
     <header className="hero">
       {aside != null ? (
@@ -147,7 +147,6 @@ export function Hero({
       ) : (
         <div className="hero-in">{copy}</div>
       )}
-      <StrataHorizon variant="compact" />
     </header>
   );
 }

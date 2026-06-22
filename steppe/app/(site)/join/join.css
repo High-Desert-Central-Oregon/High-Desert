@@ -358,3 +358,37 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
     gap: 6px;
   }
 }
+
+/* ---- Charter overrides: flat rectangular surfaces, ink/cascade controls ---- */
+.site-root .join .formcard {
+  border-radius: 0;
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+.site-root .join input,
+.site-root .join select,
+.site-root .join textarea {
+  border-radius: 0;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+.site-root .join input:focus,
+.site-root .join select:focus,
+.site-root .join textarea:focus {
+  border-color: var(--cascade);
+  outline: none;
+}
+.site-root .join .submitb {
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--wall);
+  box-shadow: none;
+}
+.site-root .join .submitb:hover {
+  background: var(--cascade);
+  color: #fff;
+  transform: none;
+}
+.site-root .join .price b {
+  color: var(--ink);
+}
