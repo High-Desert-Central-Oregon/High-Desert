@@ -855,3 +855,136 @@ html[data-js] .site-root .rv.in {
 .site-root .signpanel .kick {
   color: rgba(237, 230, 213, 0.6);
 }
+
+/* ---- Broadsheet masthead (Part 2) ---- */
+.site-root .masthead {
+  background: var(--paper);
+  border-bottom: 3px solid var(--ink);
+}
+.site-root .masthead::after {
+  content: "";
+  display: block;
+  height: 2px;
+  background: var(--rust);
+}
+.site-root .mast-top {
+  border-bottom: 1px solid var(--rule);
+}
+.site-root .mast-top .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 30px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.site-root .mast-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.site-root .mast .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+}
+.site-root .mast .wm {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink);
+}
+.site-root .bnav {
+  display: flex;
+  flex-wrap: wrap;
+}
+.site-root .bnav a {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 4px 16px;
+  border-left: 1px solid var(--rule);
+  transition: color 0.15s;
+}
+.site-root .bnav a:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.site-root .bnav a:hover,
+.site-root .bnav a.active {
+  color: var(--rust);
+}
+@media (max-width: 720px) {
+  .site-root .mast-top .wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    gap: 3px;
+    padding-top: 7px;
+    padding-bottom: 8px;
+  }
+  .site-root .mast .wrap {
+    padding-bottom: 10px;
+  }
+  .site-root .bnav {
+    width: 100%;
+  }
+}
+
+/* ---- Broadsheet footer (Part 2) ---- */
+.site-root .foot {
+  background: var(--paper);
+  border-top: 3px solid var(--ink);
+  padding: 34px 0;
+}
+.site-root .foot .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.site-root .foot .att {
+  max-width: 50ch;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin: 0;
+}
+.site-root .foot .att b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.site-root .foot .foot-credit {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.site-root .foot .foot-credit a {
+  color: var(--rust);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.site-root .foot .small {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #a59f90;
+  margin-top: 14px;
+}

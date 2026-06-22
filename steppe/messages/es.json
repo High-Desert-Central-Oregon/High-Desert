@@ -2,7 +2,7 @@
   "_status": "draft-needs-fluent-review",
   "_note": "Brand-voice first-pass Spanish (Latin-American, informal tú), anchored to the locked English in en.json. Authentic Spanish is trust-critical for the community Steppe serves; a fluent local reviewer must validate before this ships as final. See the QA flags from the copy hand-off (tú vs usted, inclusive language, 'feed'→muro, enshittification, civic commons).",
   "locale": { "label": "Idioma", "en": "EN", "es": "ES" },
-  "nav": { "preview": "Vista previa", "partners": "Para aliados", "join": "Únete", "menuOpen": "Abrir menú", "menuClose": "Cerrar menú" },
+  "nav": { "preview": "Vista previa", "partners": "Para aliados", "join": "Únete", "charter": "Carta", "membership": "Membresía", "exchange": "Intercambio", "menuOpen": "Abrir menú", "menuClose": "Cerrar menú" },
   "footer": {
     "explore": "Explora",
     "preview": "Vista previa",
@@ -11,7 +11,8 @@
     "contact": "Contacto",
     "org1": "Una organización sin fines de lucro de beneficio público de Oregón",
     "org2": "Redmond, Oregón · EST. 2026",
-    "ledBy": "Dirigida por"
+    "ledBy": "Dirigida por",
+    "attribution": "<b>Steppe</b> es una organización sin fines de lucro de beneficio público de Oregón, gobernada por sus miembros. Sin dueño. No se puede vender, y la misión está escrita en los estatutos. <b>hello@steppe.community</b>"
   },
   "landing": {
     "heroLocation": "44.27°N  121.17°W — Redmond, Oregón",

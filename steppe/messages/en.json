@@ -1,6 +1,6 @@
 {
   "locale": { "label": "Language", "en": "EN", "es": "ES" },
-  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join", "menuOpen": "Open menu", "menuClose": "Close menu" },
+  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join", "charter": "Charter", "membership": "Membership", "exchange": "Exchange", "menuOpen": "Open menu", "menuClose": "Close menu" },
   "footer": {
     "explore": "Explore",
     "preview": "Preview",
@@ -9,7 +9,8 @@
     "contact": "Contact",
     "org1": "An Oregon public benefit nonprofit",
     "org2": "Redmond, Oregon · EST. 2026",
-    "ledBy": "Led by"
+    "ledBy": "Led by",
+    "attribution": "<b>Steppe</b> is a member-governed Oregon public benefit nonprofit. No owner. It can't be sold, and the mission is written into the articles. <b>hello@steppe.community</b>"
   },
   "landing": {
     "heroLocation": "44.27°N  121.17°W — Redmond, Oregon",
