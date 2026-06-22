@@ -1,39 +1,40 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
-import { Newsreader, Libre_Franklin, DM_Mono } from "next/font/google";
-// Self-hosted brand fonts (no external CDN). Variable files cover all weights;
-// DM Mono ships fixed weights, so pull the two we use.
+import { Besley, Schibsted_Grotesk, Martian_Mono } from "next/font/google";
+// Member-app brand fonts (no external CDN) — these feed app/globals.css, not the
+// marketing layer, so they stay as they are.
 import "@fontsource-variable/dm-sans";
 import "@fontsource-variable/playfair-display";
 import "@fontsource/dm-mono/400.css";
 import "@fontsource/dm-mono/500.css";
 import "./globals.css";
 
-// Marketing typefaces for the public (site) route group — self-hosted and
-// optimized by next/font (no Google Fonts <link>). Exposed as CSS variables under
-// names that DO NOT collide with the member app's --font-sans/--font-serif/
-// --font-mono (defined in globals.css); the (site) tokens map --display/--sans/
-// --mono onto these. Newsreader carries italic + the optical-size axis.
-const newsreader = Newsreader({
+// Marketing typefaces for the public (site) route group — self-hosted and optimized
+// by next/font (no Google Fonts <link>; nothing hits fonts.gstatic.com at runtime).
+// Exposed as CSS variables under names that DO NOT collide with the member app's
+// --font-sans/--font-serif/--font-mono (defined in globals.css); the (site) tokens
+// map --display/--sans/--mono onto these. All three are variable fonts (full weight
+// range — no `weight`); Besley carries the italic used for emphasis.
+//   Besley            — display slab serif (headings, hero, large numerals).
+//   Schibsted Grotesk — body / UI / nav / buttons.
+//   Martian Mono      — eyebrows, datelines, tags, the $4 stamp, ledger, footer micro.
+const besley = Besley({
   subsets: ["latin"],
-  display: "swap",
   style: ["normal", "italic"],
-  axes: ["opsz"],
+  display: "swap",
   variable: "--font-display",
 });
-const libreFranklin = Libre_Franklin({
+const schibsted = Schibsted_Grotesk({
   subsets: ["latin"],
   display: "swap",
-  style: ["normal", "italic"],
   variable: "--font-sans-mkt",
 });
-const dmMono = DM_Mono({
+const martianMono = Martian_Mono({
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500"],
   variable: "--font-mono-mkt",
 });
-const marketingFontVars = `${newsreader.variable} ${libreFranklin.variable} ${dmMono.variable}`;
+const marketingFontVars = `${besley.variable} ${schibsted.variable} ${martianMono.variable}`;
 
 // No-flash ambient init for the marketing layer. Runs synchronously before first
 // paint so the (site) pages never flash the wrong theme or sky. Sets, on <html>:

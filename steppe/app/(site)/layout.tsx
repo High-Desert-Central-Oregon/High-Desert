@@ -3,7 +3,7 @@
 // (<html>/<body>/ThemeProvider) and adds the marketing design tokens, scoped to a
 // .site-root wrapper so nothing bleeds into the member app.
 //
-// Marketing typefaces (Newsreader / Libre Franklin / DM Mono) are loaded by
+// Marketing typefaces (Besley / Schibsted Grotesk / Martian Mono) are loaded by
 // next/font in app/layout.tsx and consumed through the --display/--sans/--mono
 // tokens defined in tokens.css.
 import "./tokens.css";
