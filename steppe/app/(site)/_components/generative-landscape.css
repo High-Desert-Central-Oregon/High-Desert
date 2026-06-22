@@ -149,3 +149,14 @@ html[data-theme="dark"] .site-root .gl-stage {
   --gl-m2: #161b30;
   --gl-fg: #0f1322;
 }
+
+/* Pinned golden plate (the Charter hero) — matches the shader's golden palette,
+   independent of data-time. */
+.site-root .gl-stage.gl-golden {
+  --gl-sky-top: #6e84a6;
+  --gl-sky-horizon: #f6d49a;
+  --gl-m0: #b6a6a0;
+  --gl-m1: #8b7d83;
+  --gl-m2: #6c5f46;
+  --gl-fg: #897a4d;
+}

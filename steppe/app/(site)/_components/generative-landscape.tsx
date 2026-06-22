@@ -33,6 +33,9 @@ import "./generative-landscape.css";
 export type GenerativeLandscapeProps = {
   /** Fixed curated "plate" seed per deployment (see the product note). */
   seed?: number;
+  /** Palette override. "auto" follows the global data-time; a specific time pins it
+   *  (the Charter hero pins "golden"). */
+  time?: "auto" | Time;
   /** Mood uniforms (0..1), normally driven by live weather. Default calm/clear. */
   cloudCover?: number;
   overcast?: number;
@@ -268,6 +271,7 @@ function pickKey(root: HTMLElement): Time {
 
 export function GenerativeLandscape({
   seed = 427,
+  time = "auto",
   cloudCover = 0,
   overcast = 0,
   wet = 0,
@@ -336,7 +340,7 @@ export function GenerativeLandscape({
     ].forEach((n) => (U[n] = gl.getUniformLocation(prog, n)));
 
     const root = document.documentElement;
-    let key = pickKey(root);
+    let key = (time === "auto" ? pickKey(root) : time);
     const cur = clonePal(PAL[key]);
     let tgt = PAL[key];
     const curW = { cloud: moodRef.current.cloud, overcast: moodRef.current.overcast, wet: moodRef.current.wet, snow: moodRef.current.snow };
@@ -452,7 +456,7 @@ export function GenerativeLandscape({
 
     // React to live weather/seed (props → moodRef) and theme/time changes.
     function syncTargets() {
-      key = pickKey(root);
+      key = (time === "auto" ? pickKey(root) : time);
       tgt = PAL[key];
       isMoonTgt = key === "night" ? 1 : 0;
       kick();
