@@ -1,13 +1,12 @@
-// The layered-ground horizon with a time-of-day sky + sun/moon, lifted from the
-// canonical design (_design-source/steppe-landing-v5.html for the hero;
-// steppe-partners-v2.html for the compact interior band). Pure SVG — every
-// transition is driven by the data-theme / data-time attributes on <html> and the
-// strata CSS in site-base.css; no client JS. The hero variant carries the desktop
-// night shooting-stars; interior pages use the compact band. Day wind is the
-// Canvas particle field (hero-sky.tsx), and on the short MOBILE hero band the
-// sun/moon and stars are non-distorted overlays (see page.tsx / landing.css) — the
-// in-SVG sun-group/night-group are hidden there so the stretch-to-fill SVG can't
-// squash the celestial bodies.
+// The layered-ground horizon with a time-of-day sky, from the canonical design
+// (_design-source for the hero; steppe-partners-v2.html for the compact interior
+// band). The sky gradient is driven by data-theme / data-time on <html> via the
+// strata CSS in site-base.css. The HERO variant is now sky + hills only: the
+// sun/moon, stars + shooting stars, and the live weather (wind/rain/snow/fog) are
+// non-distorted overlays layered above it (SunOrb / StarLayer / WeatherCanvas /
+// WeatherController in hero-sky.tsx + page.tsx), so the stretch-to-fill SVG never
+// squashes the celestial bodies and weather can pass behind the sun. Interior
+// pages still use the compact band (with its own in-SVG sun/moon).
 export function StrataHorizon({
   variant = "compact",
 }: {
@@ -42,68 +41,15 @@ export function StrataHorizon({
             <stop offset=".6" stopColor="#1E2430" />
             <stop offset="1" stopColor="#22262B" />
           </linearGradient>
-          <linearGradient id="trail" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#EDE6D5" stopOpacity="0" />
-            <stop offset=".7" stopColor="#EDE6D5" stopOpacity=".5" />
-            <stop offset="1" stopColor="#FFFDF7" stopOpacity="1" />
-          </linearGradient>
         </defs>
         <rect className="sky-layer sky-dawn" x="0" y="0" width="1440" height="300" fill="url(#skyDawn)" />
         <rect className="sky-layer sky-day" x="0" y="0" width="1440" height="300" fill="url(#skyDay)" />
         <rect className="sky-layer sky-dusk" x="0" y="0" width="1440" height="300" fill="url(#skyDusk)" />
         <rect className="sky-layer sky-night" x="0" y="0" width="1440" height="300" fill="url(#skyNight)" />
 
-        {/* Day wind is the Canvas particle field (WindCanvas), not drawn marks. */}
-
-        <g className="night-group">
-          <circle className="twinkle" cx="220" cy="70" r="1.6" fill="#EDE6D5" />
-          <circle className="twinkle b" cx="430" cy="50" r="1.3" fill="#EDE6D5" />
-          <circle className="twinkle c" cx="640" cy="92" r="1.7" fill="#EDE6D5" />
-          <circle className="twinkle b" cx="880" cy="58" r="1.3" fill="#EDE6D5" />
-          <circle className="twinkle" cx="300" cy="120" r="1.2" fill="#EDE6D5" />
-          <circle className="twinkle c" cx="540" cy="140" r="1.4" fill="#EDE6D5" />
-          <circle className="twinkle" cx="1000" cy="110" r="1.5" fill="#EDE6D5" />
-          <circle className="twinkle b" cx="1260" cy="74" r="1.4" fill="#EDE6D5" />
-          <g transform="translate(1130,80)">
-            <circle r="38" fill="#E9E3D4" />
-            <circle r="38" cx="15" cy="-9" fill="#1E2430" />
-          </g>
-          <g transform="translate(250,40)">
-            <g className="shoot s1">
-              <line x1="-40" y1="-15" x2="0" y2="0" stroke="url(#trail)" strokeWidth="2.2" strokeLinecap="round" />
-              <circle r="1.9" fill="#FFFDF7" />
-            </g>
-          </g>
-          <g transform="translate(820,28)">
-            <g className="shoot s2">
-              <line x1="-26" y1="-12" x2="0" y2="0" stroke="url(#trail)" strokeWidth="2" strokeLinecap="round" />
-              <circle r="1.7" fill="#FFFDF7" />
-            </g>
-          </g>
-          <g transform="translate(520,84)">
-            <g className="shoot s3">
-              <line x1="-34" y1="-10" x2="0" y2="0" stroke="url(#trail)" strokeWidth="1.8" strokeLinecap="round" />
-              <circle r="1.6" fill="#FFFDF7" />
-            </g>
-          </g>
-          <g transform="translate(1080,52)">
-            <g className="shoot s4">
-              <line x1="-44" y1="-18" x2="0" y2="0" stroke="url(#trail)" strokeWidth="2.2" strokeLinecap="round" />
-              <circle r="1.9" fill="#FFFDF7" />
-            </g>
-          </g>
-          <g transform="translate(160,96)">
-            <g className="shoot s5">
-              <line x1="-22" y1="-9" x2="0" y2="0" stroke="url(#trail)" strokeWidth="1.6" strokeLinecap="round" />
-              <circle r="1.4" fill="#FFFDF7" />
-            </g>
-          </g>
-        </g>
-
-        <g className="sun-group">
-          <circle className="sun-halo sun-breathe" cx="1130" cy="82" r="88" opacity=".34" />
-          <circle className="sun" cx="1130" cy="82" r="52" />
-        </g>
+        {/* Sun/moon, stars + shooting stars, and the day wind are all non-distorted
+            overlays (SunOrb / StarLayer / WeatherCanvas in page.tsx), layered above
+            this stretch-to-fill SVG. Here: only the sky gradient + the hills. */}
 
         <path d="M0 168 Q240 132 480 156 T960 150 T1440 160 V300 H0Z" fill="#9CAD8B" />
         <path d="M0 206 Q300 182 600 198 T1200 192 T1440 200 V300 H0Z" fill="#36563D" />

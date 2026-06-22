@@ -80,12 +80,11 @@ html[data-theme="light"] .site-root .hero h1 .em {
   color: var(--contour);
 }
 /* The hero splits into a copy area (.hero-top) and the landscape band
-   (.hero-band). On desktop the band is tall (strata height is width-driven, so the
-   sun stays round) and a single whole-hero wind sits behind everything. On mobile
-   the band is short and forced to a fixed height, which would squash the in-SVG
-   sun — so there the celestial bodies + wind are non-distorted overlays instead
-   (revealed in the responsive block below). All of it follows data-theme /
-   data-time and is disabled under prefers-reduced-motion. */
+   (.hero-band), both at all breakpoints. The live weather scene is layered above
+   the strata SVG (sky + hills): clouds < weather canvas < sun orb, so wind / rain /
+   snow pass BEHIND the sun. The copy area carries a subtle ambient drift. All of it
+   follows data-theme / data-time and is day-only; night shows the moon + stars.
+   Reduced motion draws a single still frame (handled in hero-sky.tsx). */
 .site-root .hero-top {
   position: relative;
   z-index: 1;
@@ -100,26 +99,24 @@ html[data-theme="light"] .site-root .hero h1 .em {
   display: block;
   width: 100%;
 }
-
-/* Desktop wind — fills the hero, sits behind the copy/phone and the strata;
-   particles are confined to the sky region in JS. (hero-sky.tsx) */
-.site-root .hero .windcanvas {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+/* Cloud cover gently mutes the daytime sky. */
+html[data-time="day"] .site-root .hero .strata {
+  filter: saturate(var(--wx-sky-sat, 1)) brightness(var(--wx-sky-bright, 1));
+  transition: filter 1.2s ease;
+}
+/* Day parity: a barely-there daylight warmth behind the copy across the whole hero
+   (day's quiet ambient, alongside the subtle wind drift), so daytime spans the full
+   hero, not just the band. Night leaves the copy area to the dark theme + stars. */
+html[data-theme="light"][data-time="day"] .site-root .hero-top {
+  background: linear-gradient(
+    180deg,
+    rgba(241, 236, 220, 0.55) 0%,
+    rgba(237, 230, 213, 0) 58%
+  );
+  transition: background 1.2s ease;
 }
 
-/* Mobile atmosphere overlays — hidden by default (desktop), revealed at the
-   mobile breakpoint. The JS for each also gates on its own media query, so these
-   never animate while hidden. */
-.site-root .hero-wind,
-.site-root .hero-stars,
-.site-root .band-wind,
-.site-root .band-stars,
-.site-root .sun-orb {
-  display: none;
-}
+/* Copy-area ambient drift + night stars (behind the copy). */
 .site-root .hero-wind,
 .site-root .hero-stars {
   position: absolute;
@@ -127,12 +124,30 @@ html[data-theme="light"] .site-root .hero h1 .em {
   z-index: 0;
   pointer-events: none;
 }
+/* Band weather canvas + night stars — above the clouds, below the sun. */
 .site-root .band-wind,
 .site-root .band-stars {
   position: absolute;
   inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+/* Drifting clouds (anime.js) — above the sky, below the weather + sun. Day only. */
+.site-root .wx-clouds {
+  position: absolute;
+  inset: 0;
   z-index: 2;
   pointer-events: none;
+  overflow: hidden;
+  display: none;
+}
+html[data-theme="light"][data-time="day"] .site-root .wx-clouds {
+  display: block;
+}
+.site-root .wx-clouds .cloud {
+  position: absolute;
+  left: 0;
+  will-change: transform, opacity;
 }
 /* Night star dots + meteors (opacity gated to dark). */
 .site-root .hero-stars,
@@ -162,16 +177,26 @@ html[data-theme="dark"] .site-root .band-stars {
   background: linear-gradient(90deg, rgba(237, 230, 213, 0), rgba(237, 230, 213, 1));
 }
 
-/* Round sun (day) / moon (night) — its own fixed-aspect overlay, never squashed. */
+/* Round sun (day) / moon (night) — its own fixed-aspect overlay, never squashed,
+   and above the weather canvas (z-3) so particles pass behind it. */
 .site-root .sun-orb {
   position: absolute;
-  z-index: 3;
+  z-index: 4;
   width: clamp(56px, 8.5vw, 104px);
   aspect-ratio: 1;
   top: clamp(24px, 3vw, 44px);
   right: clamp(42px, 17vw, 290px);
   border-radius: 50%;
   pointer-events: none;
+}
+/* Cloud cover softens the daytime sun (opacity + slight blur); the moon is
+   unaffected (this only applies in day). */
+html[data-time="day"] .site-root .sun-orb {
+  opacity: var(--wx-sun-opacity, 1);
+  filter: blur(var(--wx-sun-blur, 0px));
+  transition:
+    opacity 1.2s ease,
+    filter 1.2s ease;
 }
 .site-root .sun-orb .orb-halo {
   position: absolute;
@@ -203,11 +228,45 @@ html[data-theme="dark"] .site-root .sun-orb .orb-disc {
   background: radial-gradient(circle at 64% 40%, #ece6da 60%, #ccc6b6 100%);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .site-root .hero .windcanvas,
-  .site-root .hero-wind,
-  .site-root .band-wind {
-    display: none;
+/* Live weather readout chip (day only); revealed with anime.js. */
+.site-root .wx-readout {
+  position: absolute;
+  z-index: 6;
+  left: 16px;
+  bottom: 14px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  color: #43483f;
+  background: rgba(251, 247, 238, 0.42);
+  backdrop-filter: blur(3px);
+  border: 1px solid rgba(54, 86, 61, 0.16);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+html[data-theme="light"][data-time="day"] .site-root .wx-readout {
+  display: flex;
+}
+.site-root .wx-readout .live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sage);
+  animation: wxpulse 2.4s infinite;
+}
+@keyframes wxpulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(156, 173, 139, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(156, 173, 139, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(156, 173, 139, 0);
   }
 }
 
@@ -683,38 +742,14 @@ html[data-theme="dark"] .site-root .sun-orb .orb-disc {
     gap: 8px;
   }
   /* The landscape reflows to a short divider band below the copy. Give it a fixed
-     height and let the SVG (sky + hills) stretch to fill it — the sun/moon + stars
-     ride on top as non-distorted overlays, so the squash doesn't matter. */
+     height and let the SVG (sky + hills) stretch to fill it — the sun/moon, stars,
+     clouds and weather ride on top as non-distorted overlays, so the squash
+     doesn't matter. */
   .site-root .hero-band {
     height: clamp(180px, 44vw, 240px);
   }
   .site-root .hero-band .strata {
     height: 100%;
-  }
-  /* Hide the in-SVG sun + night groups (they'd be squashed here); the round orb,
-     star layers, and wind overlays take over. Sky + hills keep stretching. */
-  .site-root .hero .sun-group,
-  .site-root .hero .night-group {
-    display: none;
-  }
-  .site-root .hero .windcanvas {
-    display: none;
-  }
-  .site-root .hero-wind,
-  .site-root .band-wind,
-  .site-root .hero-stars,
-  .site-root .band-stars,
-  .site-root .sun-orb {
-    display: block;
-  }
-  /* Day parity: a barely-there daylight warmth behind the copy (day's quiet
-     ambient, matching how the night starfield rises into the copy area). */
-  html[data-theme="light"] .site-root .hero-top {
-    background: linear-gradient(
-      180deg,
-      rgba(241, 236, 220, 0.6) 0%,
-      rgba(237, 230, 213, 0) 60%
-    );
   }
   .site-root .phone-stage {
     order: -1;

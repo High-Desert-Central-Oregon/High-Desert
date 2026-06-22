@@ -8,7 +8,12 @@ import "./landing.css";
 import { StrataHorizon } from "./_components/strata-horizon";
 import { SealMark } from "./_components/seal-mark";
 import { Reveal } from "./_components/reveal";
-import { WindCanvas, StarLayer, SunOrb } from "./_components/hero-sky";
+import {
+  WeatherCanvas,
+  WeatherController,
+  StarLayer,
+  SunOrb,
+} from "./_components/hero-sky";
 
 export const metadata = {
   title: "Steppe — a high desert civic commons",
@@ -35,8 +40,6 @@ export default async function LandingPage() {
       <Reveal />
 
       <header className="hero">
-        {/* Desktop: one natural wind across the whole hero (hidden on mobile). */}
-        <WindCanvas className="windcanvas" variant="desktop" />
         <svg
           className="hero-contour"
           viewBox="0 0 600 500"
@@ -54,9 +57,9 @@ export default async function LandingPage() {
         </svg>
 
         <div className="hero-top">
-          {/* Mobile copy-area atmosphere: subtle day wind + night stars/meteors,
-              behind the copy. (Desktop uses the whole-hero wind above.) */}
-          <WindCanvas className="hero-wind" variant="hero" />
+          {/* Copy-area atmosphere: a subtle weather-driven day wind drift across the
+              whole copy area + night stars/meteors, behind the copy. */}
+          <WeatherCanvas className="hero-wind" subtle />
           <StarLayer
             className="hero-stars"
             count={26}
@@ -64,7 +67,6 @@ export default async function LandingPage() {
             doubleChance={0.18}
             meteorMin={650}
             meteorMax={2600}
-            activeQuery="(max-width: 860px)"
           />
 
           <div className="hero-grid">
@@ -185,18 +187,13 @@ export default async function LandingPage() {
         </div>
 
         <div className="hero-band">
-          {/* Mobile band atmosphere: fuller day wind + night stars/meteors, and a
-              true-circle sun/moon overlay (the in-SVG sun is hidden on mobile, where
-              the stretch-to-fill SVG would squash it). */}
-          <WindCanvas className="band-wind" variant="band" />
-          <StarLayer
-            className="band-stars"
-            count={16}
-            meteor
-            meteorMin={1800}
-            meteorMax={5200}
-            activeQuery="(max-width: 860px)"
-          />
+          {/* Live weather band: clouds + readout + sun/sky softening (controller),
+              the 4-mode weather canvas (wind/rain/snow/fog), night stars/meteors,
+              and a round sun/moon overlay above the weather so particles pass behind
+              it. The strata SVG provides only the sky gradient + hills. */}
+          <WeatherController />
+          <WeatherCanvas className="band-wind" />
+          <StarLayer className="band-stars" count={16} meteor meteorMin={1800} meteorMax={5200} />
           <SunOrb />
           <StrataHorizon variant="hero" />
         </div>
