@@ -21,9 +21,11 @@ import { useTranslations } from "next-intl";
  *    the page gain a horizontal scrollbar. The iframe's own overflow is clipped by
  *    the frame; the page never scrolls sideways.
  *  - Full screen: a fixed overlay (role="dialog", aria-modal) filling the viewport
- *    in dvw/dvh units, with an Esc/X exit, body-scroll lock, focus trap, and focus
- *    restore. The native Fullscreen API is requested as a best-effort enhancement;
- *    the overlay works regardless of whether it succeeds.
+ *    in dvw/dvh units. The phone is scaled to fill the viewport as large as it can
+ *    while staying fully visible, with the export's paper padding CROPPED off the
+ *    edges — so on a phone-shaped screen the app runs edge-to-edge (a real
+ *    facsimile, not a small mock on paper). Esc/X exit, body-scroll lock, focus
+ *    trap + restore, and a best-effort native Fullscreen request layered on top.
  *
  * First-party, same-origin asset, so the iframe is NOT sandboxed — the event
  * "Add to calendar" .ics download depends on an un-sandboxed download.
@@ -32,9 +34,15 @@ import { useTranslations } from "next-intl";
 // Versioned src: bump the ?v= date after re-exporting if a CDN serves a stale copy.
 const APP_SRC = "/preview-app/steppe-exchange.html?v=2026-06-22";
 
-// The export's natural content width: a 402px phone inside 40px paper padding on
-// each side. Below this, we scale the iframe down to fit instead of clipping.
-const BASE_W = 482;
+// Geometry of the export: a fixed PHONE_W×PHONE_H device centered inside PAD px of
+// paper on every side (so the natural content box is BASE_W×BASE_H). Inline we fit
+// the whole content box to the frame; full screen we fit just the PHONE, cropping
+// the paper, so the app fills the screen.
+const PAD = 40;
+const PHONE_W = 402;
+const PHONE_H = 872;
+const BASE_W = PHONE_W + PAD * 2; // 482
+const BASE_H = PHONE_H + PAD * 2; // 952
 
 export function PreviewEmbed() {
   const t = useTranslations("preview");
@@ -42,6 +50,9 @@ export function PreviewEmbed() {
   const [loaded, setLoaded] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [scale, setScale] = useState(1);
+  const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties | null>(
+    null,
+  );
 
   const viewRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -129,6 +140,39 @@ export function PreviewEmbed() {
     };
   }, [fullscreen, closeFullscreen]);
 
+  // Full-screen sizing: scale the PHONE (not the padded content box) to fill the
+  // overlay as large as it can while staying fully visible, centered, with the
+  // export's paper padding cropped off the edges by the overlay's overflow. On a
+  // phone-shaped viewport s≈viewportWidth/PHONE_W, so the app fills the width.
+  // Recomputed on resize / rotate / entering native fullscreen via ResizeObserver.
+  useEffect(() => {
+    if (!fullscreen) return;
+    const node = overlayRef.current;
+    if (!node || typeof ResizeObserver === "undefined") return;
+    const compute = () => {
+      const W = node.clientWidth;
+      const H = node.clientHeight;
+      if (!W || !H) return;
+      const s = Math.min(W / PHONE_W, H / PHONE_H);
+      // Center the phone, then back out the PAD so the paper sits off-screen.
+      const tx = (W - PHONE_W * s) / 2 - PAD * s;
+      const ty = (H - PHONE_H * s) / 2 - PAD * s;
+      setOverlayStyle({
+        width: `${BASE_W}px`,
+        height: `${BASE_H}px`,
+        transform: `translate(${tx}px, ${ty}px) scale(${s})`,
+        transformOrigin: "0 0",
+      });
+    };
+    compute();
+    const ro = new ResizeObserver(compute);
+    ro.observe(node);
+    return () => {
+      ro.disconnect();
+      setOverlayStyle(null); // fresh fade-in on the next open
+    };
+  }, [fullscreen]);
+
   const ExpandIcon = (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
@@ -191,25 +235,28 @@ export function PreviewEmbed() {
           aria-modal="true"
           aria-label={t("embedTitle")}
         >
-          <div className="pe-overlay-bar">
-            <button
-              ref={closeRef}
-              type="button"
-              className="pe-x"
-              onClick={closeFullscreen}
-              aria-label={t("embedExit")}
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M6 6l12 12M18 6L6 18"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-          </div>
-          <iframe className="pe-overlay-iframe" src={APP_SRC} title={t("embedTitle")} />
+          <iframe
+            className="pe-overlay-iframe"
+            src={APP_SRC}
+            title={t("embedTitle")}
+            style={{ ...(overlayStyle ?? {}), opacity: overlayStyle ? 1 : 0 }}
+          />
+          <button
+            ref={closeRef}
+            type="button"
+            className="pe-x"
+            onClick={closeFullscreen}
+            aria-label={t("embedExit")}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M6 6l12 12M18 6L6 18"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
         </div>
       )}
     </div>

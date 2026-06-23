@@ -1298,46 +1298,50 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   text-decoration: underline;
 }
 
-/* Full-screen overlay. dvw/dvh so mobile browser chrome doesn't clip it. */
+/* Full-screen overlay. dvw/dvh so mobile browser chrome doesn't clip it. The phone
+ * is scaled to fill the viewport (sized + transformed inline by preview-embed.tsx);
+ * `overflow: hidden` crops the export's paper padding so the app is edge-to-edge. */
 .site-root .preview .pe-overlay {
   position: fixed;
   inset: 0;
   z-index: 2000;
   width: 100dvw;
   height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
   background: #fbf7ee;
 }
-.site-root .preview .pe-overlay-bar {
-  flex: none;
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 12px;
+.site-root .preview .pe-overlay-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  background: #fbf7ee;
+  transition: opacity 0.2s ease;
 }
+/* Exit control floats over the app (top-right) so it costs no app height; a paper
+ * pill with a shadow keeps it legible against whatever's behind it. */
 .site-root .preview .pe-x {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  right: calc(env(safe-area-inset-right, 0px) + 12px);
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 11px;
+  border-radius: 50%;
   border: 1px solid var(--border);
-  background: rgba(237, 230, 213, 0.6);
+  background: rgba(251, 247, 238, 0.92);
   color: var(--text);
   cursor: pointer;
+  box-shadow: 0 2px 12px -2px rgba(42, 46, 44, 0.45);
   transition:
     background 0.18s ease,
     border-color 0.18s ease;
 }
 .site-root .preview .pe-x:hover {
   border-color: var(--rust);
-  background: rgba(168, 84, 44, 0.08);
-}
-.site-root .preview .pe-overlay-iframe {
-  flex: 1;
-  width: 100%;
-  border: 0;
   background: #fbf7ee;
 }
 
@@ -1360,5 +1364,8 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
 @media (prefers-reduced-motion: reduce) {
   .site-root .preview .pe-spinner {
     animation: none;
+  }
+  .site-root .preview .pe-overlay-iframe {
+    transition: none;
   }
 }
