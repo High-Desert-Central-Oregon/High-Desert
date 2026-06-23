@@ -25,6 +25,11 @@ export async function updateSession(request: NextRequest) {
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
+    // The /preview embed (a self-contained app bundle under public/preview-app)
+    // is part of the public marketing surface, so it must load even in the
+    // prelaunch phase — otherwise the launch gate below redirects the iframe's
+    // .html request to "/" and the preview shows the landing page instead.
+    pathname.startsWith("/preview-app/") ||
     /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname);
 
   if (isPublicMarketing || isPublicApi || isStaticAsset) {

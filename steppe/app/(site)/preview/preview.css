@@ -1197,3 +1197,168 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   font-weight: 500;
   color: var(--juniper);
 }
+
+/* ============================================================================
+ * Preview embed — the live, interactive Steppe app (a self-contained Claude
+ * Design export) shown in place of the old facsimile. See
+ * components/preview-embed.tsx and public/preview-app/README.md.
+ * ========================================================================== */
+
+/* Layout: the embed (left) beside the static "One honest feed" explainer (right).
+ * Mirrors the old phone + caption composition; collapses to one column on narrow
+ * screens, where the existing `.caption { order: 2 }` rule drops it below. */
+.site-root .preview .pe-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: start;
+  padding: 8px 0 clamp(48px, 7vw, 86px);
+}
+
+.site-root .preview .pe {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Caption bar above the embed; the full-screen control sits at its right. */
+.site-root .preview .pe-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.site-root .preview .pe-expand {
+  padding: 10px 18px;
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+/* Paper viewport that holds the phone. `overflow: hidden` clips the iframe's own
+ * scroll so the page never gains a horizontal scrollbar; the scaled phone (set in
+ * preview-embed.tsx) fills it exactly, and is centered by the 482px max-width. */
+.site-root .preview .pe-view {
+  position: relative;
+  width: 100%;
+  max-width: 482px;
+  height: min(760px, 80vh);
+  margin: 0 auto;
+  overflow: hidden;
+  background: #fbf7ee;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 30px 70px -40px rgba(42, 46, 44, 0.5);
+}
+.site-root .preview .pe-iframe {
+  display: block;
+  border: 0;
+  background: #fbf7ee;
+}
+
+/* Loading skeleton until the iframe's onLoad fires. */
+.site-root .preview .pe-skeleton {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #fbf7ee;
+}
+.site-root .preview .pe-spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--juniper);
+  animation: pe-spin 0.8s linear infinite;
+}
+@keyframes pe-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.site-root .preview .pe-skeleton-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.site-root .preview .pe-noscript {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  color: var(--juniper);
+  text-decoration: underline;
+}
+
+/* Full-screen overlay. dvw/dvh so mobile browser chrome doesn't clip it. */
+.site-root .preview .pe-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  width: 100dvw;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #fbf7ee;
+}
+.site-root .preview .pe-overlay-bar {
+  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 12px;
+}
+.site-root .preview .pe-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: rgba(237, 230, 213, 0.6);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+.site-root .preview .pe-x:hover {
+  border-color: var(--rust);
+  background: rgba(168, 84, 44, 0.08);
+}
+.site-root .preview .pe-overlay-iframe {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #fbf7ee;
+}
+
+/* Mobile: stack, and make the full-screen control prominent (full width). */
+@media (max-width: 900px) {
+  .site-root .preview .pe-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .site-root .preview .pe-bar {
+    justify-content: stretch;
+  }
+  .site-root .preview .pe-expand {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-root .preview .pe-spinner {
+    animation: none;
+  }
+}

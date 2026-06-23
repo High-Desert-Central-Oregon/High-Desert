@@ -1,11 +1,12 @@
 // Preview (/preview) — rebuilt from the canonical design
-// (_design-source/steppe-preview-v3.html) on the shared chrome + tokens. The
-// interactive app facsimile is a state-driven client island (PreviewStage); the
-// hero + compact strata are static. The phone screen stays light in both themes.
-// Copy is localized from the "preview" catalog.
+// (_design-source/steppe-preview-v3.html) on the shared chrome + tokens. The live
+// interactive app is the finished Steppe export, embedded as an iframe by the
+// PreviewEmbed client island (see components/preview-embed.tsx); the hero + the
+// "One honest feed" explainer are static. The phone screen stays light in both
+// themes. Copy is localized from the "preview" catalog.
 import { getTranslations } from "next-intl/server";
 import "./preview.css";
-import { PreviewStage } from "./preview-stage";
+import { PreviewEmbed } from "@/components/preview-embed";
 import { Hero } from "../_components/hero";
 
 export const metadata = {
@@ -28,7 +29,18 @@ export default async function PreviewPage() {
       </Hero>
 
       <div className="wrap">
-        <PreviewStage />
+        <div className="pe-layout">
+          <PreviewEmbed />
+          <aside className="caption">
+            <div className="ck">
+              <span className="dot"></span>
+              <span>{t("capExchangeK")}</span>
+            </div>
+            <h2>{t("capExchangeH")}</h2>
+            <p>{t("capExchangeP")}</p>
+            <div className="meta">{t("capExchangeM")}</div>
+          </aside>
+        </div>
       </div>
     </div>
   );
