@@ -20,8 +20,10 @@ import { useTranslations } from "next-intl";
  *    so on viewports narrower than that we scale-to-fit (transform) rather than let
  *    the page gain a horizontal scrollbar. The iframe's own overflow is clipped by
  *    the frame; the page never scrolls sideways.
- *  - Full screen: a fixed overlay (role="dialog", aria-modal) filling the viewport
- *    in dvw/dvh units. The phone is scaled to fill the viewport as large as it can
+ *  - Full screen: a mobile affordance (the trigger is hidden on desktop in
+ *    preview.css, where the inline embed is the experience). A fixed overlay
+ *    (role="dialog", aria-modal) filling the viewport in dvw/dvh units. The phone
+ *    is scaled to fill the viewport as large as it can
  *    while staying fully visible, with the export's paper padding CROPPED off the
  *    edges — so on a phone-shaped screen the app runs edge-to-edge (a real
  *    facsimile, not a small mock on paper). Esc/X exit, body-scroll lock, focus
