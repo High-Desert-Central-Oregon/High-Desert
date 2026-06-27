@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — Canva Brand Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400..600&display=swap" rel="stylesheet">
+<style>
+:root{--bone:#EDE6D5;--paper:#FBF7EE;--sky:#CFE0DD;--sage:#9CAD8B;--sage-deep:#6E8A5B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--basalt-deep:#26292D;--rust:#A8542C;--ochre:#A8842F;--range:#4F6B7A;--ink:#2A2E2C;--ink-soft:#5F5A4E;--line:rgba(42,46,44,.2);
+--disp:'Besley',Georgia,serif;--body:'Schibsted Grotesk',system-ui,sans-serif;--mono:'Martian Mono','Courier New',monospace;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 30px}
+h1,h2,h3{font-family:var(--disp);line-height:1.07;letter-spacing:-.012em}
+.lab{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#8a8576}
+.band{padding:46px 0;border-top:1px solid var(--line)}
+.sk{display:flex;align-items:baseline;gap:13px;margin-bottom:18px}
+.sk h2{font-size:clamp(21px,3vw,28px);font-weight:700}.sk .line{flex:1;border-top:1px solid var(--line)}.sk .n{font-family:var(--mono);font-size:11px;color:#9a9486}
+.do{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--rust);padding:3px 9px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.masthead{border-bottom:3px solid var(--ink)}.masthead::after{content:"";display:block;height:2px;background:var(--rust)}
+.masthead .wrap{padding:28px 30px 22px}.masthead h1{font-size:clamp(30px,5vw,50px);font-weight:700}
+.masthead p{color:var(--ink-soft);margin-top:9px;font-size:14.5px;max-width:72ch}
+.note{background:var(--bone);border-radius:10px;padding:15px 18px;font-size:13.5px;color:var(--ink-soft)}.note b{color:var(--ink)}
+/* logos */
+.logogrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.logocell{border:1px solid var(--line);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:14px;align-items:flex-start;justify-content:center;min-height:130px}
+.logocell.dark{background:var(--juniper-deep);border-color:transparent}
+.logocell.wide{grid-column:1 / -1}
+.logocell svg{height:58px;width:auto;max-width:100%}
+.logocell.icon svg{height:74px}
+.fn{font-family:var(--mono);font-size:10px;color:var(--juniper);background:var(--bone);padding:3px 8px;border-radius:5px}
+.logocell.dark .fn{color:#cfe0dd;background:rgba(255,255,255,.08)}
+.cap{font-size:12.5px;color:var(--ink-soft)}.logocell.dark .cap{color:#cfd8c8}
+/* swatches */
+.swgrp{margin-bottom:18px}.swgrp .lab{margin-bottom:9px}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.swatch{border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.swatch .blk{height:54px}.swatch .m{padding:8px 10px}
+.swatch .nm{font-weight:600;font-size:12.5px}.swatch .hx{font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+.prim{box-shadow:0 0 0 2px var(--rust)}
+.copyrow{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);background:var(--bone);border-radius:8px;padding:11px 14px;margin-top:6px;line-height:1.8;word-spacing:2px}
+/* fonts */
+.frow{display:grid;grid-template-columns:210px 1fr;gap:22px;padding:20px 0;border-top:1px solid var(--line);align-items:baseline}
+.frow .role{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--rust);margin-bottom:5px}
+.frow .fam{font-family:var(--disp);font-size:19px;font-weight:700}
+.frow .canva{font-size:12px;color:var(--ink-soft);margin-top:6px}.frow .canva b{color:var(--ink)}
+.spec-b{font-family:var(--disp);font-size:34px;font-weight:700;line-height:1.1}.spec-b em{font-style:italic;font-weight:500;color:var(--juniper)}
+.spec-s{font-family:var(--body);font-size:20px;font-weight:500}
+.spec-m{font-family:var(--mono);font-size:16px;font-weight:500;letter-spacing:.03em}
+/* elements */
+.elems{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.elcell{border:1px solid var(--line);border-radius:11px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.elcell svg{height:34px;width:auto}.elcell .fn{font-size:9px}
+.stamp{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px dashed var(--rust);border-radius:8px;width:70px;height:46px;color:var(--rust);font-family:var(--mono)}
+.stamp .a{font-size:17px;font-weight:600}.stamp .bb{font-size:7.5px;letter-spacing:.1em}
+.chips{display:flex;gap:6px}.chips i{width:20px;height:20px;border-radius:4px;display:block}
+/* voice + usage */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cap2{border:1px solid var(--line);border-radius:11px;padding:16px 18px}
+.cap2 h3{font-size:15px;font-weight:600;margin-bottom:8px}
+.cap2 ul{margin-left:17px;font-size:13.5px}.cap2 li{margin-bottom:5px}
+.cap2.bad h3{color:var(--rust)}
+.foot{border-top:3px solid var(--ink);padding:22px 0;margin-top:6px}.foot .lab{color:#a59f90}
+.chg{font-family:var(--mono);font-size:11.5px;color:var(--ink-soft);line-height:1.7}
+@media(max-width:680px){.logogrid,.swatches,.elems,.frow,.cols{grid-template-columns:1fr}.swatches{grid-template-columns:1fr 1fr}}
+</style></head>
+<body>
+
+<div class="masthead"><div class="wrap">
+  <p class="lab">Canva Brand Kit · v1</p>
+  <h1>Steppe Brand Kit</h1>
+  <p>Everything organized to Canva's Brand Hub. Upload the logo and element files, type the colors and fonts into the matching fields, and paste the voice notes. Section headings below match Canva's own.</p>
+  <div class="note" style="margin-top:18px"><b>Setup:</b> open Canva &#8594; Brand &#8594; Brand Kit (Brand Hub). Logos and Graphics are file uploads (the SVGs that ship with this kit). Colors and Fonts are entered by hand. Brand Voice is a text field. All three fonts are already in Canva's library.</div>
+</div></div>
+
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">01</span><h2>Logos</h2><span class="line"></span></div>
+  <p class="lab" style="color:var(--ink-soft);margin-bottom:14px">Upload to Brand Hub &#8594; Logos. All are true vectors (the wordmark is outlined, so it never depends on a font).</p>
+  <div class="logogrid">
+    <div class="logocell wide"><svg xmlns="http://www.w3.org/2000/svg" width="267" height="120" viewBox="0 0 267.11 120"><defs><clipPath id="L_p"><circle cx="60" cy="60" r="53"/></clipPath></defs><g clip-path="url(#L_p)"><rect x="5" y="5" width="110" height="47" fill="#cfe0dd"/><rect x="5" y="52" width="110" height="16" fill="#9CAD8B"/><rect x="5" y="68" width="110" height="20" fill="#36563D"/><rect x="5" y="88" width="110" height="27" fill="#34383D"/><circle cx="82" cy="34" r="11" fill="#A8542C"/></g><circle cx="60" cy="60" r="57" fill="none" stroke="#36563D" stroke-width="3"/><g transform="translate(146.00,32.40) scale(0.32955)"><g transform="translate(0,125.00) scale(0.05000,-0.05000)" fill="#2A2E2C"><path transform="translate(0,0)" d="M1111.5 1032Q1116.5 1000 1120.75 990.0Q1125 980 1163 980H1239.5Q1268 980 1276.5 986.5Q1285 993 1285 1020.5V1460.5Q1285 1484.5 1277.25 1492.25Q1269.5 1500 1247 1500H1138Q1119.5 1500 1115.0 1495.75Q1110.5 1491.5 1104 1480.5L1076 1423.5Q1059.5 1392.5 1045.75 1392.5Q1032 1392.5 1009 1411Q945.5 1462.5 857.5 1493.75Q769.5 1525 665 1525Q567 1525 474.75 1499.75Q382.5 1474.5 309.25 1420.75Q236 1367 193.0 1283.75Q150 1200.5 150 1084Q150 962 197.25 883.75Q244.5 805.5 322.5 757.5Q400.5 709.5 494.0 680.0Q587.5 650.5 681.0 627.25Q774.5 604 852.5 574.25Q930.5 544.5 977.75 497.0Q1025 449.5 1025 370Q1025 311 991.25 260.0Q957.5 209 886.75 178.0Q816 147 705 147Q580.5 147 488.25 199.25Q396 251.5 342.0 334.25Q288 417 277.5 508.5Q275 532.5 271.25 541.25Q267.5 550 240 550H146Q120 550 112.5 543.0Q105 536 105 509.5V29.5Q105 4.5 115.0 -2.75Q125 -10 151 -10H229Q257.5 -10 268.5 -5.5Q279.5 -1 288.5 17.5L313 73Q330.5 107.5 340.75 115.25Q351 123 378 98Q441.5 40.5 536.25 2.75Q631 -35 755 -35Q931 -35 1062.75 15.0Q1194.5 65 1267.25 170.0Q1340 275 1340 440Q1340 566.5 1292.5 649.25Q1245 732 1166.5 784.0Q1088 836 994.25 868.5Q900.5 901 806.75 925.5Q713 950 634.5 978.0Q556 1006 508.5 1049.25Q461 1092.5 461 1163Q461 1240.5 524.75 1291.75Q588.5 1343 725 1343Q817 1343 900.25 1307.25Q983.5 1271.5 1040.75 1202.25Q1098 1133 1111.5 1032Z"/><path transform="translate(1413,0)" d="M812.5 190Q821 205 815.5 212.5Q810 220 793.5 228.5L737 260.5Q719.5 269 712.75 265.25Q706 261.5 697 246Q670 198 640.25 175.0Q610.5 152 576 152Q538 152 517.0 178.5Q496 205 496 261V847Q496 866.5 505.25 873.25Q514.5 880 532.5 880H739.5Q755.5 880 762.75 884.5Q770 889 770 904.5V1009.5Q770 1028.5 764.25 1034.25Q758.5 1040 741 1040H531.5Q510.5 1040 503.25 1046.75Q496 1053.5 496 1075.5V1329Q496 1360 466 1360H387.5Q362.5 1360 358.25 1353.5Q354 1347 349.5 1327Q327.5 1228 298.0 1170.25Q268.5 1112.5 230.75 1084.75Q193 1057 146.25 1048.5Q99.5 1040 43 1040Q22 1040 16.0 1034.75Q10 1029.5 10 1008V911Q10 891.5 16.25 885.75Q22.5 880 42 880H165.5Q185.5 880 190.75 871.75Q196 863.5 196 843.5V222Q196 99.5 260.75 35.25Q325.5 -29 467 -29Q567.5 -29 633.5 2.25Q699.5 33.5 741.75 83.75Q784 134 812.5 190Z"/><path transform="translate(2252,0)" d="M70 500Q70 360 129.25 239.0Q188.5 118 306.75 44.0Q425 -30 601 -30Q728 -30 826.5 10.5Q925 51 990.75 129.5Q1056.5 208 1085.5 322.5Q1089 336.5 1084.25 341.25Q1079.5 346 1061.5 346H926.5Q910 346 904.75 339.5Q899.5 333 895 322Q857 228 794.25 175.0Q731.5 122 635 122Q548 122 496.0 168.0Q444 214 420.25 290.5Q396.5 367 393.5 457.5Q393 475.5 398.0 481.25Q403 487 421.5 487H1066Q1088 487 1094.5 493.0Q1101 499 1101 520.5Q1101 588.5 1088.75 664.0Q1076.5 739.5 1045.75 811.5Q1015 883.5 960.25 942.0Q905.5 1000.5 820.75 1035.25Q736 1070 615 1070Q434 1070 312.75 994.0Q191.5 918 130.75 789.0Q70 660 70 500ZM425 633Q403 633 399.75 639.25Q396.5 645.5 398 664Q401.5 731.5 424.75 791.5Q448 851.5 493.5 889.25Q539 927 609 927Q656 927 689.75 902.0Q723.5 877 745.75 836.25Q768 795.5 779.25 747.75Q790.5 700 791.5 654.5Q792.5 639.5 788.5 636.25Q784.5 633 764 633Z"/><path transform="translate(3427,0)" d="M527.5 521Q527.5 625 557.0 710.25Q586.5 795.5 639.5 846.25Q692.5 897 763.5 897Q827.5 897 877.25 846.25Q927 795.5 955.25 710.25Q983.5 625 983.5 521Q983.5 417 955.25 331.75Q927 246.5 877.25 195.75Q827.5 145 763.5 145Q692.5 145 639.5 195.75Q586.5 246.5 557.0 331.75Q527.5 417 527.5 521ZM47.5 926Q47.5 897.5 54.75 888.75Q62 880 92.5 880H177.5Q207 880 217.25 872.75Q227.5 865.5 227.5 835V-300.5Q227.5 -331.5 220.75 -340.75Q214 -350 183.5 -350H79.5Q58 -350 52.75 -357.25Q47.5 -364.5 47.5 -386V-470Q47.5 -493.5 54.0 -501.75Q60.5 -510 85.5 -510H667.5Q693.5 -510 700.5 -504.75Q707.5 -499.5 707.5 -473.5V-385Q707.5 -362.5 700.75 -356.25Q694 -350 672.5 -350H575.5Q543.5 -350 535.5 -341.25Q527.5 -332.5 527.5 -301V52Q527.5 129 536.75 132.5Q546 136 568 106Q614 43 684.25 7.5Q754.5 -28 849.5 -28Q973.5 -28 1076.5 36.25Q1179.5 100.5 1241.5 223.25Q1303.5 346 1303.5 521Q1303.5 696 1244.25 818.75Q1185 941.5 1084.25 1005.75Q983.5 1070 859.5 1070Q753.5 1070 676.5 1027.0Q599.5 984 553 910Q540.5 890.5 534.0 891.0Q527.5 891.5 527.5 921V1005Q527.5 1028 518.0 1034.0Q508.5 1040 486.5 1040H90.5Q66.5 1040 57.0 1034.0Q47.5 1028 47.5 1001.5Z"/><path transform="translate(4801,0)" d="M527.5 521Q527.5 625 557.0 710.25Q586.5 795.5 639.5 846.25Q692.5 897 763.5 897Q827.5 897 877.25 846.25Q927 795.5 955.25 710.25Q983.5 625 983.5 521Q983.5 417 955.25 331.75Q927 246.5 877.25 195.75Q827.5 145 763.5 145Q692.5 145 639.5 195.75Q586.5 246.5 557.0 331.75Q527.5 417 527.5 521ZM47.5 926Q47.5 897.5 54.75 888.75Q62 880 92.5 880H177.5Q207 880 217.25 872.75Q227.5 865.5 227.5 835V-300.5Q227.5 -331.5 220.75 -340.75Q214 -350 183.5 -350H79.5Q58 -350 52.75 -357.25Q47.5 -364.5 47.5 -386V-470Q47.5 -493.5 54.0 -501.75Q60.5 -510 85.5 -510H667.5Q693.5 -510 700.5 -504.75Q707.5 -499.5 707.5 -473.5V-385Q707.5 -362.5 700.75 -356.25Q694 -350 672.5 -350H575.5Q543.5 -350 535.5 -341.25Q527.5 -332.5 527.5 -301V52Q527.5 129 536.75 132.5Q546 136 568 106Q614 43 684.25 7.5Q754.5 -28 849.5 -28Q973.5 -28 1076.5 36.25Q1179.5 100.5 1241.5 223.25Q1303.5 346 1303.5 521Q1303.5 696 1244.25 818.75Q1185 941.5 1084.25 1005.75Q983.5 1070 859.5 1070Q753.5 1070 676.5 1027.0Q599.5 984 553 910Q540.5 890.5 534.0 891.0Q527.5 891.5 527.5 921V1005Q527.5 1028 518.0 1034.0Q508.5 1040 486.5 1040H90.5Q66.5 1040 57.0 1034.0Q47.5 1028 47.5 1001.5Z"/><path transform="translate(6175,0)" d="M70 500Q70 360 129.25 239.0Q188.5 118 306.75 44.0Q425 -30 601 -30Q728 -30 826.5 10.5Q925 51 990.75 129.5Q1056.5 208 1085.5 322.5Q1089 336.5 1084.25 341.25Q1079.5 346 1061.5 346H926.5Q910 346 904.75 339.5Q899.5 333 895 322Q857 228 794.25 175.0Q731.5 122 635 122Q548 122 496.0 168.0Q444 214 420.25 290.5Q396.5 367 393.5 457.5Q393 475.5 398.0 481.25Q403 487 421.5 487H1066Q1088 487 1094.5 493.0Q1101 499 1101 520.5Q1101 588.5 1088.75 664.0Q1076.5 739.5 1045.75 811.5Q1015 883.5 960.25 942.0Q905.5 1000.5 820.75 1035.25Q736 1070 615 1070Q434 1070 312.75 994.0Q191.5 918 130.75 789.0Q70 660 70 500ZM425 633Q403 633 399.75 639.25Q396.5 645.5 398 664Q401.5 731.5 424.75 791.5Q448 851.5 493.5 889.25Q539 927 609 927Q656 927 689.75 902.0Q723.5 877 745.75 836.25Q768 795.5 779.25 747.75Q790.5 700 791.5 654.5Q792.5 639.5 788.5 636.25Q784.5 633 764 633Z"/></g></g></svg><span class="fn">steppe-logo-primary.svg</span><span class="cap">Primary lockup — light backgrounds. The default logo.</span></div>
+    <div class="logocell wide dark"><svg xmlns="http://www.w3.org/2000/svg" width="267" height="120" viewBox="0 0 267.11 120"><defs><clipPath id="L_d"><circle cx="60" cy="60" r="53"/></clipPath></defs><g clip-path="url(#L_d)"><rect x="5" y="5" width="110" height="47" fill="#cfe0dd"/><rect x="5" y="52" width="110" height="16" fill="#9CAD8B"/><rect x="5" y="68" width="110" height="20" fill="#36563D"/><rect x="5" y="88" width="110" height="27" fill="#34383D"/><circle cx="82" cy="34" r="11" fill="#A8542C"/></g><circle cx="60" cy="60" r="57" fill="none" stroke="#EDE6D5" stroke-width="3"/><g transform="translate(146.00,32.40) scale(0.32955)"><g transform="translate(0,125.00) scale(0.05000,-0.05000)" fill="#EDE6D5"><path transform="translate(0,0)" d="M1111.5 1032Q1116.5 1000 1120.75 990.0Q1125 980 1163 980H1239.5Q1268 980 1276.5 986.5Q1285 993 1285 1020.5V1460.5Q1285 1484.5 1277.25 1492.25Q1269.5 1500 1247 1500H1138Q1119.5 1500 1115.0 1495.75Q1110.5 1491.5 1104 1480.5L1076 1423.5Q1059.5 1392.5 1045.75 1392.5Q1032 1392.5 1009 1411Q945.5 1462.5 857.5 1493.75Q769.5 1525 665 1525Q567 1525 474.75 1499.75Q382.5 1474.5 309.25 1420.75Q236 1367 193.0 1283.75Q150 1200.5 150 1084Q150 962 197.25 883.75Q244.5 805.5 322.5 757.5Q400.5 709.5 494.0 680.0Q587.5 650.5 681.0 627.25Q774.5 604 852.5 574.25Q930.5 544.5 977.75 497.0Q1025 449.5 1025 370Q1025 311 991.25 260.0Q957.5 209 886.75 178.0Q816 147 705 147Q580.5 147 488.25 199.25Q396 251.5 342.0 334.25Q288 417 277.5 508.5Q275 532.5 271.25 541.25Q267.5 550 240 550H146Q120 550 112.5 543.0Q105 536 105 509.5V29.5Q105 4.5 115.0 -2.75Q125 -10 151 -10H229Q257.5 -10 268.5 -5.5Q279.5 -1 288.5 17.5L313 73Q330.5 107.5 340.75 115.25Q351 123 378 98Q441.5 40.5 536.25 2.75Q631 -35 755 -35Q931 -35 1062.75 15.0Q1194.5 65 1267.25 170.0Q1340 275 1340 440Q1340 566.5 1292.5 649.25Q1245 732 1166.5 784.0Q1088 836 994.25 868.5Q900.5 901 806.75 925.5Q713 950 634.5 978.0Q556 1006 508.5 1049.25Q461 1092.5 461 1163Q461 1240.5 524.75 1291.75Q588.5 1343 725 1343Q817 1343 900.25 1307.25Q983.5 1271.5 1040.75 1202.25Q1098 1133 1111.5 1032Z"/><path transform="translate(1413,0)" d="M812.5 190Q821 205 815.5 212.5Q810 220 793.5 228.5L737 260.5Q719.5 269 712.75 265.25Q706 261.5 697 246Q670 198 640.25 175.0Q610.5 152 576 152Q538 152 517.0 178.5Q496 205 496 261V847Q496 866.5 505.25 873.25Q514.5 880 532.5 880H739.5Q755.5 880 762.75 884.5Q770 889 770 904.5V1009.5Q770 1028.5 764.25 1034.25Q758.5 1040 741 1040H531.5Q510.5 1040 503.25 1046.75Q496 1053.5 496 1075.5V1329Q496 1360 466 1360H387.5Q362.5 1360 358.25 1353.5Q354 1347 349.5 1327Q327.5 1228 298.0 1170.25Q268.5 1112.5 230.75 1084.75Q193 1057 146.25 1048.5Q99.5 1040 43 1040Q22 1040 16.0 1034.75Q10 1029.5 10 1008V911Q10 891.5 16.25 885.75Q22.5 880 42 880H165.5Q185.5 880 190.75 871.75Q196 863.5 196 843.5V222Q196 99.5 260.75 35.25Q325.5 -29 467 -29Q567.5 -29 633.5 2.25Q699.5 33.5 741.75 83.75Q784 134 812.5 190Z"/><path transform="translate(2252,0)" d="M70 500Q70 360 129.25 239.0Q188.5 118 306.75 44.0Q425 -30 601 -30Q728 -30 826.5 10.5Q925 51 990.75 129.5Q1056.5 208 1085.5 322.5Q1089 336.5 1084.25 341.25Q1079.5 346 1061.5 346H926.5Q910 346 904.75 339.5Q899.5 333 895 322Q857 228 794.25 175.0Q731.5 122 635 122Q548 122 496.0 168.0Q444 214 420.25 290.5Q396.5 367 393.5 457.5Q393 475.5 398.0 481.25Q403 487 421.5 487H1066Q1088 487 1094.5 493.0Q1101 499 1101 520.5Q1101 588.5 1088.75 664.0Q1076.5 739.5 1045.75 811.5Q1015 883.5 960.25 942.0Q905.5 1000.5 820.75 1035.25Q736 1070 615 1070Q434 1070 312.75 994.0Q191.5 918 130.75 789.0Q70 660 70 500ZM425 633Q403 633 399.75 639.25Q396.5 645.5 398 664Q401.5 731.5 424.75 791.5Q448 851.5 493.5 889.25Q539 927 609 927Q656 927 689.75 902.0Q723.5 877 745.75 836.25Q768 795.5 779.25 747.75Q790.5 700 791.5 654.5Q792.5 639.5 788.5 636.25Q784.5 633 764 633Z"/><path transform="translate(3427,0)" d="M527.5 521Q527.5 625 557.0 710.25Q586.5 795.5 639.5 846.25Q692.5 897 763.5 897Q827.5 897 877.25 846.25Q927 795.5 955.25 710.25Q983.5 625 983.5 521Q983.5 417 955.25 331.75Q927 246.5 877.25 195.75Q827.5 145 763.5 145Q692.5 145 639.5 195.75Q586.5 246.5 557.0 331.75Q527.5 417 527.5 521ZM47.5 926Q47.5 897.5 54.75 888.75Q62 880 92.5 880H177.5Q207 880 217.25 872.75Q227.5 865.5 227.5 835V-300.5Q227.5 -331.5 220.75 -340.75Q214 -350 183.5 -350H79.5Q58 -350 52.75 -357.25Q47.5 -364.5 47.5 -386V-470Q47.5 -493.5 54.0 -501.75Q60.5 -510 85.5 -510H667.5Q693.5 -510 700.5 -504.75Q707.5 -499.5 707.5 -473.5V-385Q707.5 -362.5 700.75 -356.25Q694 -350 672.5 -350H575.5Q543.5 -350 535.5 -341.25Q527.5 -332.5 527.5 -301V52Q527.5 129 536.75 132.5Q546 136 568 106Q614 43 684.25 7.5Q754.5 -28 849.5 -28Q973.5 -28 1076.5 36.25Q1179.5 100.5 1241.5 223.25Q1303.5 346 1303.5 521Q1303.5 696 1244.25 818.75Q1185 941.5 1084.25 1005.75Q983.5 1070 859.5 1070Q753.5 1070 676.5 1027.0Q599.5 984 553 910Q540.5 890.5 534.0 891.0Q527.5 891.5 527.5 921V1005Q527.5 1028 518.0 1034.0Q508.5 1040 486.5 1040H90.5Q66.5 1040 57.0 1034.0Q47.5 1028 47.5 1001.5Z"/><path transform="translate(4801,0)" d="M527.5 521Q527.5 625 557.0 710.25Q586.5 795.5 639.5 846.25Q692.5 897 763.5 897Q827.5 897 877.25 846.25Q927 795.5 955.25 710.25Q983.5 625 983.5 521Q983.5 417 955.25 331.75Q927 246.5 877.25 195.75Q827.5 145 763.5 145Q692.5 145 639.5 195.75Q586.5 246.5 557.0 331.75Q527.5 417 527.5 521ZM47.5 926Q47.5 897.5 54.75 888.75Q62 880 92.5 880H177.5Q207 880 217.25 872.75Q227.5 865.5 227.5 835V-300.5Q227.5 -331.5 220.75 -340.75Q214 -350 183.5 -350H79.5Q58 -350 52.75 -357.25Q47.5 -364.5 47.5 -386V-470Q47.5 -493.5 54.0 -501.75Q60.5 -510 85.5 -510H667.5Q693.5 -510 700.5 -504.75Q707.5 -499.5 707.5 -473.5V-385Q707.5 -362.5 700.75 -356.25Q694 -350 672.5 -350H575.5Q543.5 -350 535.5 -341.25Q527.5 -332.5 527.5 -301V52Q527.5 129 536.75 132.5Q546 136 568 106Q614 43 684.25 7.5Q754.5 -28 849.5 -28Q973.5 -28 1076.5 36.25Q1179.5 100.5 1241.5 223.25Q1303.5 346 1303.5 521Q1303.5 696 1244.25 818.75Q1185 941.5 1084.25 1005.75Q983.5 1070 859.5 1070Q753.5 1070 676.5 1027.0Q599.5 984 553 910Q540.5 890.5 534.0 891.0Q527.5 891.5 527.5 921V1005Q527.5 1028 518.0 1034.0Q508.5 1040 486.5 1040H90.5Q66.5 1040 57.0 1034.0Q47.5 1028 47.5 1001.5Z"/><path transform="translate(6175,0)" d="M70 500Q70 360 129.25 239.0Q188.5 118 306.75 44.0Q425 -30 601 -30Q728 -30 826.5 10.5Q925 51 990.75 129.5Q1056.5 208 1085.5 322.5Q1089 336.5 1084.25 341.25Q1079.5 346 1061.5 346H926.5Q910 346 904.75 339.5Q899.5 333 895 322Q857 228 794.25 175.0Q731.5 122 635 122Q548 122 496.0 168.0Q444 214 420.25 290.5Q396.5 367 393.5 457.5Q393 475.5 398.0 481.25Q403 487 421.5 487H1066Q1088 487 1094.5 493.0Q1101 499 1101 520.5Q1101 588.5 1088.75 664.0Q1076.5 739.5 1045.75 811.5Q1015 883.5 960.25 942.0Q905.5 1000.5 820.75 1035.25Q736 1070 615 1070Q434 1070 312.75 994.0Q191.5 918 130.75 789.0Q70 660 70 500ZM425 633Q403 633 399.75 639.25Q396.5 645.5 398 664Q401.5 731.5 424.75 791.5Q448 851.5 493.5 889.25Q539 927 609 927Q656 927 689.75 902.0Q723.5 877 745.75 836.25Q768 795.5 779.25 747.75Q790.5 700 791.5 654.5Q792.5 639.5 788.5 636.25Q784.5 633 764 633Z"/></g></g></svg><span class="fn">steppe-logo-ondark.svg</span><span class="cap">Lockup for juniper, basalt, or night backgrounds.</span></div>
+    <div class="logocell icon"><svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 120 120">
+  <defs><clipPath id="s_s"><circle cx="60" cy="60" r="53"/></clipPath></defs>
+  <g clip-path="url(#s_s)">
+    <rect x="5" y="5" width="110" height="47" fill="#cfe0dd"/>
+    <rect x="5" y="52" width="110" height="16" fill="#9CAD8B"/>
+    <rect x="5" y="68" width="110" height="20" fill="#36563D"/>
+    <rect x="5" y="88" width="110" height="27" fill="#34383D"/>
+    <circle cx="82" cy="34" r="11" fill="#A8542C"/>
+  </g>
+  <circle cx="60" cy="60" r="57" fill="none" stroke="#36563D" stroke-width="3"/>
+</svg>
+<span class="fn">steppe-seal.svg</span><span class="cap">Seal mark alone — when the name is already present.</span></div>
+    <div class="logocell icon"><svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 120 120">
+  <defs><clipPath id="m_m"><circle cx="60" cy="60" r="53"/></clipPath></defs>
+  <g clip-path="url(#m_m)" fill="#2A2E2C">
+    <rect x="5" y="5" width="110" height="47" opacity=".12"/>
+    <rect x="5" y="52" width="110" height="16" opacity=".35"/>
+    <rect x="5" y="68" width="110" height="20" opacity=".6"/>
+    <rect x="5" y="88" width="110" height="27" opacity=".85"/>
+    <circle cx="82" cy="34" r="11"/>
+  </g>
+  <circle cx="60" cy="60" r="57" fill="none" stroke="#2A2E2C" stroke-width="3"/>
+</svg>
+<span class="fn">steppe-seal-mono.svg</span><span class="cap">Single-color seal — stamps, watermarks, one-ink print.</span></div>
+    <div class="logocell icon dark"><svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 132 132">
+  <defs><clipPath id="a_a"><rect x="6" y="6" width="120" height="120" rx="30"/></clipPath></defs>
+  <rect x="6" y="6" width="120" height="120" rx="30" fill="#2B4733"/>
+  <g clip-path="url(#a_a)">
+    <rect x="6" y="58" width="120" height="16" fill="#9CAD8B"/>
+    <rect x="6" y="74" width="120" height="20" fill="#36563D"/>
+    <rect x="6" y="94" width="120" height="32" fill="#26292d"/>
+    <circle cx="92" cy="44" r="13" fill="#A8542C"/>
+  </g>
+</svg>
+<span class="fn">steppe-appicon.svg</span><span class="cap">App icon, social avatar, favicon.</span></div>
+    <div class="logocell">
+      <svg style="height:30px;width:auto" xmlns="http://www.w3.org/2000/svg" width="368" height="168" viewBox="0 0 367.50 167.50"><g transform="translate(0,125.00) scale(0.05000,-0.05000)" fill="#2A2E2C"><path transform="translate(0,0)" d="M1111.5 1032Q1116.5 1000 1120.75 990.0Q1125 980 1163 980H1239.5Q1268 980 1276.5 986.5Q1285 993 1285 1020.5V1460.5Q1285 1484.5 1277.25 1492.25Q1269.5 1500 1247 1500H1138Q1119.5 1500 1115.0 1495.75Q1110.5 1491.5 1104 1480.5L1076 1423.5Q1059.5 1392.5 1045.75 1392.5Q1032 1392.5 1009 1411Q945.5 1462.5 857.5 1493.75Q769.5 1525 665 1525Q567 1525 474.75 1499.75Q382.5 1474.5 309.25 1420.75Q236 1367 193.0 1283.75Q150 1200.5 150 1084Q150 962 197.25 883.75Q244.5 805.5 322.5 757.5Q400.5 709.5 494.0 680.0Q587.5 650.5 681.0 627.25Q774.5 604 852.5 574.25Q930.5 544.5 977.75 497.0Q1025 449.5 1025 370Q1025 311 991.25 260.0Q957.5 209 886.75 178.0Q816 147 705 147Q580.5 147 488.25 199.25Q396 251.5 342.0 334.25Q288 417 277.5 508.5Q275 532.5 271.25 541.25Q267.5 550 240 550H146Q120 550 112.5 543.0Q105 536 105 509.5V29.5Q105 4.5 115.0 -2.75Q125 -10 151 -10H229Q257.5 -10 268.5 -5.5Q279.5 -1 288.5 17.5L313 73Q330.5 107.5 340.75 115.25Q351 123 378 98Q441.5 40.5 536.25 2.75Q631 -35 755 -35Q931 -35 1062.75 15.0Q1194.5 65 1267.25 170.0Q1340 275 1340 440Q1340 566.5 1292.5 649.25Q1245 732 1166.5 784.0Q1088 836 994.25 868.5Q900.5 901 806.75 925.5Q713 950 634.5 978.0Q556 1006 508.5 1049.25Q461 1092.5 461 1163Q461 1240.5 524.75 1291.75Q588.5 1343 725 1343Q817 1343 900.25 1307.25Q983.5 1271.5 1040.75 1202.25Q1098 1133 1111.5 1032Z"/><path transform="translate(1413,0)" d="M812.5 190Q821 205 815.5 212.5Q810 220 793.5 228.5L737 260.5Q719.5 269 712.75 265.25Q706 261.5 697 246Q670 198 640.25 175.0Q610.5 152 576 152Q538 152 517.0 178.5Q496 205 496 261V847Q496 866.5 505.25 873.25Q514.5 880 532.5 880H739.5Q755.5 880 762.75 884.5Q770 889 770 904.5V1009.5Q770 1028.5 764.25 1034.25Q758.5 1040 741 1040H531.5Q510.5 1040 503.25 1046.75Q496 1053.5 496 1075.5V1329Q496 1360 466 1360H387.5Q362.5 1360 358.25 1353.5Q354 1347 349.5 1327Q327.5 1228 298.0 1170.25Q268.5 1112.5 230.75 1084.75Q193 1057 146.25 1048.5Q99.5 1040 43 1040Q22 1040 16.0 1034.75Q10 1029.5 10 1008V911Q10 891.5 16.25 885.75Q22.5 880 42 880H165.5Q185.5 880 190.75 871.75Q196 863.5 196 843.5V222Q196 99.5 260.75 35.25Q325.5 -29 467 -29Q567.5 -29 633.5 2.25Q699.5 33.5 741.75 83.75Q784 134 812.5 190Z"/><path transform="translate(2252,0)" d="M70 500Q70 360 129.25 239.0Q188.5 118 306.75 44.0Q425 -30 601 -30Q728 -30 826.5 10.5Q925 51 990.75 129.5Q1056.5 208 1085.5 322.5Q1089 336.5 1084.25 341.25Q1079.5 346 1061.5 346H926.5Q910 346 904.75 339.5Q899.5 333 895 322Q857 228 794.25 175.0Q731.5 122 635 122Q548 122 496.0 168.0Q444 214 420.25 290.5Q396.5 367 393.5 457.5Q393 475.5 398.0 481.25Q403 487 421.5 487H1066Q1088 487 1094.5 493.0Q1101 499 1101 520.5Q1101 588.5 1088.75 664.0Q1076.5 739.5 1045.75 811.5Q1015 883.5 960.25 942.0Q905.5 1000.5 820.75 1035.25Q736 1070 615 1070Q434 1070 312.75 994.0Q191.5 918 130.75 789.0Q70 660 70 500ZM425 633Q403 633 399.75 639.25Q396.5 645.5 398 664Q401.5 731.5 424.75 791.5Q448 851.5 493.5 889.25Q539 927 609 927Q656 927 689.75 902.0Q723.5 877 745.75 836.25Q768 795.5 779.25 747.75Q790.5 700 791.5 654.5Q792.5 639.5 788.5 636.25Q784.5 633 764 633Z"/><path transform="translate(3427,0)" d="M527.5 521Q527.5 625 557.0 710.25Q586.5 795.5 639.5 846.25Q692.5 897 763.5 897Q827.5 897 877.25 846.25Q927 795.5 955.25 710.25Q983.5 625 983.5 521Q983.5 417 955.25 331.75Q927 246.5 877.25 195.75Q827.5 145 763.5 145Q692.5 145 639.5 195.75Q586.5 246.5 557.0 331.75Q527.5 417 527.5 521ZM47.5 926Q47.5 897.5 54.75 888.75Q62 880 92.5 880H177.5Q207 880 217.25 872.75Q227.5 865.5 227.5 835V-300.5Q227.5 -331.5 220.75 -340.75Q214 -350 183.5 -350H79.5Q58 -350 52.75 -357.25Q47.5 -364.5 47.5 -386V-470Q47.5 -493.5 54.0 -501.75Q60.5 -510 85.5 -510H667.5Q693.5 -510 700.5 -504.75Q707.5 -499.5 707.5 -473.5V-385Q707.5 -362.5 700.75 -356.25Q694 -350 672.5 -350H575.5Q543.5 -350 535.5 -341.25Q527.5 -332.5 527.5 -301V52Q527.5 129 536.75 132.5Q546 136 568 106Q614 43 684.25 7.5Q754.5 -28 849.5 -28Q973.5 -28 1076.5 36.25Q1179.5 100.5 1241.5 223.25Q1303.5 346 1303.5 521Q1303.5 696 1244.25 818.75Q1185 941.5 1084.25 1005.75Q983.5 1070 859.5 1070Q753.5 1070 676.5 1027.0Q599.5 984 553 910Q540.5 890.5 534.0 891.0Q527.5 891.5 527.5 921V1005Q527.5 1028 518.0 1034.0Q508.5 1040 486.5 1040H90.5Q66.5 1040 57.0 1034.0Q47.5 1028 47.5 1001.5Z"/><path transform="translate(4801,0)" d="M527.5 521Q527.5 625 557.0 710.25Q586.5 795.5 639.5 846.25Q692.5 897 763.5 897Q827.5 897 877.25 846.25Q927 795.5 955.25 710.25Q983.5 625 983.5 521Q983.5 417 955.25 331.75Q927 246.5 877.25 195.75Q827.5 145 763.5 145Q692.5 145 639.5 195.75Q586.5 246.5 557.0 331.75Q527.5 417 527.5 521ZM47.5 926Q47.5 897.5 54.75 888.75Q62 880 92.5 880H177.5Q207 880 217.25 872.75Q227.5 865.5 227.5 835V-300.5Q227.5 -331.5 220.75 -340.75Q214 -350 183.5 -350H79.5Q58 -350 52.75 -357.25Q47.5 -364.5 47.5 -386V-470Q47.5 -493.5 54.0 -501.75Q60.5 -510 85.5 -510H667.5Q693.5 -510 700.5 -504.75Q707.5 -499.5 707.5 -473.5V-385Q707.5 -362.5 700.75 -356.25Q694 -350 672.5 -350H575.5Q543.5 -350 535.5 -341.25Q527.5 -332.5 527.5 -301V52Q527.5 129 536.75 132.5Q546 136 568 106Q614 43 684.25 7.5Q754.5 -28 849.5 -28Q973.5 -28 1076.5 36.25Q1179.5 100.5 1241.5 223.25Q1303.5 346 1303.5 521Q1303.5 696 1244.25 818.75Q1185 941.5 1084.25 1005.75Q983.5 1070 859.5 1070Q753.5 1070 676.5 1027.0Q599.5 984 553 910Q540.5 890.5 534.0 891.0Q527.5 891.5 527.5 921V1005Q527.5 1028 518.0 1034.0Q508.5 1040 486.5 1040H90.5Q66.5 1040 57.0 1034.0Q47.5 1028 47.5 1001.5Z"/><path transform="translate(6175,0)" d="M70 500Q70 360 129.25 239.0Q188.5 118 306.75 44.0Q425 -30 601 -30Q728 -30 826.5 10.5Q925 51 990.75 129.5Q1056.5 208 1085.5 322.5Q1089 336.5 1084.25 341.25Q1079.5 346 1061.5 346H926.5Q910 346 904.75 339.5Q899.5 333 895 322Q857 228 794.25 175.0Q731.5 122 635 122Q548 122 496.0 168.0Q444 214 420.25 290.5Q396.5 367 393.5 457.5Q393 475.5 398.0 481.25Q403 487 421.5 487H1066Q1088 487 1094.5 493.0Q1101 499 1101 520.5Q1101 588.5 1088.75 664.0Q1076.5 739.5 1045.75 811.5Q1015 883.5 960.25 942.0Q905.5 1000.5 820.75 1035.25Q736 1070 615 1070Q434 1070 312.75 994.0Q191.5 918 130.75 789.0Q70 660 70 500ZM425 633Q403 633 399.75 639.25Q396.5 645.5 398 664Q401.5 731.5 424.75 791.5Q448 851.5 493.5 889.25Q539 927 609 927Q656 927 689.75 902.0Q723.5 877 745.75 836.25Q768 795.5 779.25 747.75Q790.5 700 791.5 654.5Q792.5 639.5 788.5 636.25Q784.5 633 764 633Z"/></g></svg>
+      <span class="fn">steppe-wordmark.svg · -bone.svg</span><span class="cap">Wordmark only (ink, and a bone version for dark grounds).</span></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">02</span><h2>Colors</h2><span class="line"></span></div>
+  <p class="lab" style="color:var(--ink-soft);margin-bottom:14px">Brand Hub &#8594; Colors. Set the four marked with a rust outline as the main brand colors; add the rest as the full palette.</p>
+  <div class="swgrp"><p class="lab">Core</p><div class="swatches">
+    <div class="swatch prim"><div class="blk" style="background:#36563D"></div><div class="m"><div class="nm">Juniper</div><div class="hx">#36563D</div></div></div>
+    <div class="swatch prim"><div class="blk" style="background:#A8542C"></div><div class="m"><div class="nm">Rust</div><div class="hx">#A8542C</div></div></div>
+    <div class="swatch prim"><div class="blk" style="background:#FBF7EE;border-bottom:1px solid var(--line)"></div><div class="m"><div class="nm">Paper</div><div class="hx">#FBF7EE</div></div></div>
+    <div class="swatch prim"><div class="blk" style="background:#2A2E2C"></div><div class="m"><div class="nm">Ink</div><div class="hx">#2A2E2C</div></div></div>
+  </div></div>
+  <div class="swgrp"><p class="lab">Full palette</p><div class="swatches">
+    <div class="swatch"><div class="blk" style="background:#EDE6D5"></div><div class="m"><div class="nm">Bone</div><div class="hx">#EDE6D5</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#CFE0DD"></div><div class="m"><div class="nm">Sky</div><div class="hx">#CFE0DD</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#9CAD8B"></div><div class="m"><div class="nm">Sage</div><div class="hx">#9CAD8B</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#6E8A5B"></div><div class="m"><div class="nm">Sage deep</div><div class="hx">#6E8A5B</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#2B4733"></div><div class="m"><div class="nm">Juniper deep</div><div class="hx">#2B4733</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#34383D"></div><div class="m"><div class="nm">Basalt</div><div class="hx">#34383D</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#26292D"></div><div class="m"><div class="nm">Basalt deep</div><div class="hx">#26292D</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#5F5A4E"></div><div class="m"><div class="nm">Ink soft</div><div class="hx">#5F5A4E</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#A8842F"></div><div class="m"><div class="nm">Ochre</div><div class="hx">#A8842F</div></div></div>
+    <div class="swatch"><div class="blk" style="background:#4F6B7A"></div><div class="m"><div class="nm">Range blue</div><div class="hx">#4F6B7A</div></div></div>
+  </div></div>
+  <p class="lab" style="color:var(--ink-soft);margin-top:6px">Category colors (exchange): Offer = Sage deep · Need = Rust · Gathering = Ochre · Mutual aid = Range blue</p>
+  <div class="copyrow">#36563D&nbsp; #A8542C&nbsp; #FBF7EE&nbsp; #2A2E2C&nbsp; #EDE6D5&nbsp; #CFE0DD&nbsp; #9CAD8B&nbsp; #6E8A5B&nbsp; #2B4733&nbsp; #34383D&nbsp; #26292D&nbsp; #5F5A4E&nbsp; #A8842F&nbsp; #4F6B7A</div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">03</span><h2>Fonts</h2><span class="line"></span></div>
+  <p class="lab" style="color:var(--ink-soft);margin-bottom:6px">Brand Hub &#8594; Fonts. All three are in Canva's library — search and set.</p>
+  <div class="frow"><div><div class="role">Heading font</div><div class="fam">Besley</div><div class="canva">In Canva: set as <b>Brand heading font</b>. Use <b>Bold</b> for headlines and the wordmark; italic for emphasis.</div></div><div class="spec-b">A place that <em>belongs</em></div></div>
+  <div class="frow"><div><div class="role">Body font</div><div class="fam">Schibsted Grotesk</div><div class="canva">In Canva: set as <b>Brand body font</b>. Regular and Medium for text; Bold for buttons.</div></div><div class="spec-s">Civic infrastructure, owned by its members.</div></div>
+  <div class="frow"><div><div class="role">Label font</div><div class="fam">Martian Mono</div><div class="canva">In Canva: add as the <b>third brand font</b> for eyebrows, tags, datelines, the $4 stamp. Keep letter-spacing tight (near 0) and don't size below ~11px.</div></div><div class="spec-m">REDMOND · $4/MO</div></div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">04</span><h2>Graphics & elements</h2><span class="line"></span></div>
+  <p class="lab" style="color:var(--ink-soft);margin-bottom:14px">Brand Hub &#8594; Graphics. Upload the two glyphs; the chips and stamp are built in Canva with the brand colors and Martian Mono.</p>
+  <div class="elems">
+    <div class="elcell"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24">
+  <polygon points="5,3 5,21 20,12" fill="#A8542C"/>
+</svg>
+<span class="fn">steppe-blaze.svg</span><span class="cap">Kicker / bullet marker</span></div>
+    <div class="elcell"><svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">
+  <defs><clipPath id="g_g"><rect x="2" y="2" width="20" height="20" rx="5"/></clipPath></defs>
+  <g clip-path="url(#g_g)">
+    <rect x="2" y="2" width="20" height="9" fill="#cfe0dd"/>
+    <rect x="2" y="11" width="20" height="4" fill="#9CAD8B"/>
+    <rect x="2" y="15" width="20" height="3" fill="#36563D"/>
+    <rect x="2" y="18" width="20" height="4" fill="#34383D"/>
+    <circle cx="16.5" cy="7" r="2.4" fill="#A8542C"/>
+  </g>
+</svg>
+<span class="fn">steppe-strata-glyph.svg</span><span class="cap">Mini landscape glyph</span></div>
+    <div class="elcell"><span class="stamp"><span class="a">$4</span><span class="bb">PER MONTH</span></span><span class="cap">Dues stamp — build in Canva (Martian Mono)</span></div>
+    <div class="elcell"><span class="chips"><i style="background:#6E8A5B"></i><i style="background:#A8542C"></i><i style="background:#A8842F"></i><i style="background:#4F6B7A"></i></span><span class="cap">Category chips (color is the icon)</span></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">05</span><h2>Brand voice</h2><span class="line"></span></div>
+  <p class="lab" style="color:var(--ink-soft);margin-bottom:14px">Brand Hub &#8594; Brand Voice. Paste these as the guidance.</p>
+  <div class="cols">
+    <div class="cap2"><h3>Sound like</h3><ul><li>Plain, declarative, grounded in Central Oregon.</li><li>Warm, sturdy, civic — a neighbor, not a startup.</li><li>Specific and concrete over abstract.</li><li>Always credit local artists; never overclaim.</li></ul></div>
+    <div class="cap2 bad"><h3>Avoid</h3><ul><li>Contrastive "not X — Y" reframes.</li><li>Negative triads ("no ads, no tracking, no…").</li><li>"By design," and hype words.</li><li>Heavy em-dashes and breathless tone.</li></ul></div>
+  </div>
+</div></section>
+
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">06</span><h2>Usage</h2><span class="line"></span></div>
+  <div class="cols">
+    <div class="cap2"><h3>Clear space &amp; size</h3><ul><li>Keep at least half the seal's diameter clear around the lockup.</li><li>Seal no smaller than 20px; lockup wordmark no smaller than 16px.</li></ul></div>
+    <div class="cap2"><h3>The ring</h3><ul><li>Juniper ring on light grounds.</li><li>Bone ring on juniper, basalt, or night grounds (use the on-dark files).</li></ul></div>
+    <div class="cap2 bad"><h3>Don't</h3><ul><li>Recolor the strata bands or the sun.</li><li>Rotate the seal or add shadows/effects.</li><li>Set the wordmark in any face but Besley.</li></ul></div>
+    <div class="cap2"><h3>Backgrounds</h3><ul><li>Paper or bone for light layouts; juniper or basalt-deep for dark.</li><li>Rust is an accent — small doses, not fields.</li></ul></div>
+  </div>
+</div></section>
+
+<footer class="foot"><div class="wrap"><p class="lab" style="margin-bottom:8px">Steppe · Canva Brand Kit</p>
+<p class="chg">v1 — 2026-06 — logos (outlined lockups + seal variants + wordmark), full color palette with hex, font assignments, graphics, brand voice, usage — organized to Canva Brand Hub.</p></div></footer>
+</body></html>
