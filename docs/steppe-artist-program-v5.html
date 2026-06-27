@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steppe — Artist Program & Launch Plan v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400..600&display=swap" rel="stylesheet">
+<style>
+:root{--bone:#EDE6D5;--paper:#FBF7EE;--sage:#9CAD8B;--sage-deep:#6E8A5B;--juniper:#36563D;--juniper-deep:#2B4733;--basalt:#34383D;--rust:#A8542C;--ochre:#A8842F;--range:#4F6B7A;--ink:#2A2E2C;--ink-soft:#5f5a4e;--line:rgba(42,46,44,.2);
+--disp:'Besley',Georgia,serif;--body:'Schibsted Grotesk',system-ui,sans-serif;--mono:'Martian Mono','Courier New',monospace;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1020px;margin:0 auto;padding:0 30px}
+h1,h2,h3{font-family:var(--disp);line-height:1.08;letter-spacing:-.012em}
+.lab{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:#8a8576}
+.band{padding:42px 0;border-top:1px solid var(--line)}
+.sk{display:flex;align-items:baseline;gap:13px;margin-bottom:16px}
+.sk h2{font-size:clamp(21px,3vw,28px);font-weight:700}.sk .line{flex:1;border-top:1px solid var(--line)}.sk .n{font-family:var(--mono);font-size:10px;color:#9a9486}
+.blaze{display:inline-block;width:0;height:0;border-left:7px solid var(--rust);border-top:5px solid transparent;border-bottom:5px solid transparent;margin-right:8px;vertical-align:middle}
+p.body{font-size:14px;max-width:78ch}p.body+p.body{margin-top:9px}
+.masthead{border-bottom:3px solid var(--ink)}.masthead::after{content:"";display:block;height:2px;background:var(--rust)}
+.masthead .wrap{padding:26px 30px 20px}.masthead h1{font-size:clamp(28px,5vw,46px);font-weight:700}
+.masthead p{color:var(--ink-soft);margin-top:8px;font-size:14px;max-width:72ch}
+/* town group */
+.town-h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--juniper);margin:18px 0 8px;display:flex;align-items:center;gap:10px}
+.town-h .ct{color:#9a9486;font-size:9.5px}
+.town-h::after{content:"";flex:1;border-top:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#9a9486;font-weight:500;padding:6px 10px 6px 0;border-bottom:1px solid var(--ink)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td.nm{font-weight:600;font-family:var(--disp);font-size:15px;white-space:nowrap}
+td a{color:var(--juniper);text-decoration:none;border-bottom:1px solid rgba(54,86,61,.3)}
+.pill{font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:20px;white-space:nowrap;display:inline-block}
+.pill.anchor{background:var(--juniper);color:#fff}
+.pill.cand{background:var(--bone);color:var(--ink-soft);border:1px solid var(--line)}
+.pill.src{background:transparent;color:var(--ochre);border:1px solid var(--ochre)}
+.pill.special{background:var(--range);color:#fff}
+/* programs */
+.prog{border-top:1px solid var(--line);padding:16px 0}
+.prog h3{font-size:17px;font-weight:600;margin-bottom:5px;display:flex;align-items:baseline;gap:8px}
+.prog .tag{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);padding:2px 7px;border-radius:4px}
+.prog p{font-size:13.5px;color:var(--ink);max-width:80ch}.prog p+p{margin-top:7px}
+.callout{background:var(--juniper);color:#ECE6DA;border-radius:12px;padding:18px 20px;margin-top:6px}
+.callout h3{color:#fff;font-family:var(--disp);font-size:17px;font-weight:700;margin-bottom:6px}
+.callout p{font-size:13px;color:#dfe6d8;max-width:80ch}.callout p+p{margin-top:6px}.callout b{color:#fff}
+/* events */
+.ev{border-top:1px solid var(--line);padding:14px 0;display:grid;grid-template-columns:160px 1fr;gap:6px 20px}
+.ev .et{font-family:var(--disp);font-weight:600;font-size:15px}
+.ev .ed{font-size:13.5px;color:var(--ink-soft)}
+.ev .ek{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--rust);margin-top:3px}
+.soft{background:var(--bone);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.soft h3{font-size:17px;font-weight:700;display:flex;align-items:baseline;gap:8px}
+.soft p{font-size:13.5px;color:var(--ink);margin-top:6px;max-width:80ch}
+/* timeline */
+.tl{border-left:2px solid var(--juniper);margin-left:6px;padding-left:20px;display:flex;flex-direction:column;gap:14px}
+.tl .when{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--rust);margin-bottom:3px}
+.tl h3{font-size:16px;font-weight:600;margin-bottom:4px}.tl p{font-size:13px;color:var(--ink-soft);max-width:78ch}
+/* principles */
+.princ{display:grid;grid-template-columns:1fr 1fr;gap:8px 26px}
+.princ .p{display:flex;gap:10px;font-size:13px;padding:7px 0;border-top:1px solid var(--line)}.princ .p .blaze{margin-top:6px}
+.open{background:var(--bone);border-radius:12px;padding:16px 20px}.open ul{margin:6px 0 0 18px;font-size:13.5px}.open li{margin-bottom:5px}
+.foot{border-top:3px solid var(--ink);padding:20px 0;margin-top:6px}.foot .lab{color:#a59f90}
+.chg{font-size:11.5px;color:var(--ink-soft);font-family:var(--mono);line-height:1.7}
+@media(max-width:720px){.princ{grid-template-columns:1fr}.ev{grid-template-columns:1fr;gap:2px}.ev .ek{margin-top:0}
+table,thead,tbody,th,td,tr{display:block}thead{display:none}td{border:none;padding:2px 0}tr{border-bottom:1px solid var(--line);padding:10px 0;display:block}td.nm{font-size:16px;white-space:normal}td::before{content:attr(data-l)" ";font-family:var(--mono);font-size:8.5px;letter-spacing:.05em;text-transform:uppercase;color:#9a9486}td.nm::before,td.pillcell::before{content:""}}
+</style>
+</head>
+<body>
+
+<div class="masthead"><div class="wrap">
+  <p class="lab">Program reference · v5</p>
+  <h1>Artist Program & Launch Plan</h1>
+  <p>The full roster across the major Central Oregon townships, the galleries and arts orgs that double as sourcing and event channels, the art programs, and the launch-event plan. Status is marked: anchor (confirmed, ready to approach), candidate (researched, needs outreach), or source-at-rollout.</p>
+</div></div>
+
+<!-- ROSTER -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">01</span><h2>Roster</h2><span class="line"></span></div>
+
+  <div class="town-h">Redmond <span class="ct">· flagship</span></div>
+  <table>
+    <thead><tr><th>Artist</th><th>Medium</th><th>Offers / notes</th><th>Status</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Artist">RC Mae Designs</td><td data-l="Medium">Hand-drawn realistic Western & wildlife illustration</td><td data-l="Notes">Prints, commissions. Young Redmond native; uses a local Redmond print shop (a flyer/sticker lead).</td><td class="pillcell" data-l="Status"><span class="pill anchor">Anchor</span></td><td data-l="Link"><a href="https://rcmaedesigns.myshopify.com/">site</a></td></tr>
+      <tr><td class="nm" data-l="Artist">Charis Art Studio<br>McKaylie Capps</td><td data-l="Medium">Watercolor; nature/landscape, faith-driven</td><td data-l="Notes">Originals, prints, cards, commissions, tattoo design, live paint-and-sip classes.</td><td class="pillcell" data-l="Status"><span class="pill anchor">Anchor · live paint</span></td><td data-l="Link"><a href="https://www.artstudiocharis.com/">site</a></td></tr>
+      <tr><td class="nm" data-l="Artist">ISoMiMo<br>(Nadia Dyer)</td><td data-l="Medium">Art/craft studio; custom apparel, classes, events</td><td data-l="Notes">Redmond-embedded. Merch/apparel + workshop host + likely brand-mark collaborator. Brand green &#8776; our juniper. Plays a partner role more than a single masthead feature.</td><td class="pillcell" data-l="Status"><span class="pill special">Special · events/merch/mark</span></td><td data-l="Link"><a href="https://www.isomimo.com/">site</a></td></tr>
+    </tbody>
+  </table>
+
+  <div class="town-h">Bend</div>
+  <table>
+    <thead><tr><th>Artist</th><th>Medium</th><th>Offers / notes</th><th>Status</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Artist">Hannah Jensen Creative</td><td data-l="Medium">Contemporary Western landscape, acrylic & oil; winding line</td><td data-l="Notes">Prints, originals, commissions, murals, cards & stickers. Closest to the strata masthead.</td><td class="pillcell" data-l="Status"><span class="pill anchor">Anchor · masthead/mural</span></td><td data-l="Link"><a href="https://www.hannahjensencreative.com/">site</a></td></tr>
+      <tr><td class="nm" data-l="Artist">Sheila Dunn</td><td data-l="Medium">Large-scale vibrant oil, figure + landscape</td><td data-l="Notes">Originals, prints, stickers, cards, commissions. Donates to ONDA, Central Oregon LandWatch — strong public-lands values. Sells direct, avoids galleries.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate · values fit</span></td><td data-l="Link"><a href="https://www.sheiladunnart.com/">site</a></td></tr>
+      <tr><td class="nm" data-l="Artist">Emily Livengood</td><td data-l="Medium">Acrylic high-desert & PNW landscape, impressionistic</td><td data-l="Notes">Originals, prints, cards. Ecology/illustration background; environmentalist.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate</span></td><td data-l="Link"><a href="https://emilylivengood.com/">site</a></td></tr>
+      <tr><td class="nm" data-l="Artist">Michele Michael</td><td data-l="Medium">Bold graphic Central Oregon landscapes & landmarks</td><td data-l="Notes">Originals, prints, stickers, cards; retail + wholesale. ONDA donor. Flat graphic style scales well to icons/swag.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate · graphic/sticker</span></td><td data-l="Link"><a href="https://michelemichaelart.com/">site</a></td></tr>
+      
+    </tbody>
+  </table>
+
+  <div class="town-h">Sisters</div>
+  <table>
+    <thead><tr><th>Artist</th><th>Medium</th><th>Offers / notes</th><th>Status</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Artist">Raina Verhey</td><td data-l="Medium">Self-taught oil; Western landscapes & "its unique humanity"</td><td data-l="Notes">Shown at The Barn, Sisters. Reach via the Sisters Arts Association / Hood Avenue scene.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate · confirm contact</span></td><td data-l="Link">via SAA</td></tr>
+    </tbody>
+  </table>
+
+  <div class="town-h">Prineville</div>
+  <table>
+    <thead><tr><th>Artist</th><th>Medium</th><th>Offers / notes</th><th>Status</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Artist">June Jaeger</td><td data-l="Medium">Painter, quilter, pattern designer; works by hand</td><td data-l="Notes">Prineville-born, Redmond-raised. "Soul of the Land"; hand-craft, no computers — strong mētis/authenticity fit. Bridges Prineville and Redmond.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate · values fit</span></td><td data-l="Link">via Bowman Museum</td></tr>
+      <tr><td class="nm" data-l="Artist">Glenn Ness</td><td data-l="Medium">Contemporary-realism oil + muralist</td><td data-l="Notes">Prineville. Storytelling everyday Central Oregon scenes; paints murals — an event asset.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate · mural/event</span></td><td data-l="Link">via Rimrock</td></tr>
+    </tbody>
+  </table>
+
+  <div class="town-h">Madras / Jefferson County</div>
+  <table>
+    <thead><tr><th>Artist</th><th>Medium</th><th>Offers / notes</th><th>Status</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Artist">Jana Charl</td><td data-l="Medium">Mixed-media & acrylic</td><td data-l="Notes">Jefferson County ranch; board member at Art Adventure Gallery. Reach via the gallery.</td><td class="pillcell" data-l="Status"><span class="pill cand">Candidate</span></td><td data-l="Link">via Art Adventure</td></tr>
+    </tbody>
+  </table>
+
+  <div class="town-h">La Pine</div>
+  <table>
+    <thead><tr><th>Artist</th><th>Medium</th><th>Offers / notes</th><th>Status</th><th>Link</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Artist">—</td><td data-l="Medium">No standout individual surfaced yet</td><td data-l="Notes">Smallest market. Source locally at rollout via La Pine community groups, schools, and the chamber.</td><td class="pillcell" data-l="Status"><span class="pill src">Source at rollout</span></td><td data-l="Link">—</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<!-- COVERAGE -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">02</span><h2>Township coverage</h2><span class="line"></span></div>
+  <table>
+    <thead><tr><th>Township</th><th>Anchor / lead</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Township">Redmond</td><td data-l="Lead">RC Mae · Charis</td><td data-l="Status">Two anchors</td></tr>
+      <tr><td class="nm" data-l="Township">Bend</td><td data-l="Lead">Hannah Jensen (+ Sheila Dunn, Emily Livengood, Michele Michael)</td><td data-l="Status">Deep</td></tr>
+      <tr><td class="nm" data-l="Township">Sisters</td><td data-l="Lead">Raina Verhey (via SAA)</td><td data-l="Status">Candidate</td></tr>
+      <tr><td class="nm" data-l="Township">Prineville</td><td data-l="Lead">June Jaeger · Glenn Ness</td><td data-l="Status">Candidates</td></tr>
+      <tr><td class="nm" data-l="Township">Madras</td><td data-l="Lead">Jana Charl (via Art Adventure)</td><td data-l="Status">Candidate</td></tr>
+      <tr><td class="nm" data-l="Township">La Pine</td><td data-l="Lead">—</td><td data-l="Status">Source at rollout</td></tr>
+    </tbody>
+  </table>
+</div></section>
+
+<!-- PARTNERS -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">03</span><h2>Institutional partners & channels</h2><span class="line"></span></div>
+  <p class="body" style="margin-bottom:12px">These galleries and arts orgs are how we source artists in towns where we don't yet have one — and most double as ready-made launch-event venues with existing foot traffic.</p>
+  <table>
+    <thead><tr><th>Place</th><th>Partner</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td class="nm" data-l="Place">Redmond</td><td data-l="Partner">Dry Canyon Community Arts Center · High Desert Art League · ISoMiMo</td><td data-l="Use">Sourcing + workshops + event venue (First Friday)</td></tr>
+      <tr><td class="nm" data-l="Place">Bend</td><td data-l="Partner">Scalehouse · SageBrushers Art Society · High Desert Museum</td><td data-l="Use">Workshops, events, sourcing</td></tr>
+      <tr><td class="nm" data-l="Place">Sisters</td><td data-l="Partner">Sisters Arts Association / Hood Avenue Art (4th Friday Artwalk) · Sisters Outdoor Quilt Show</td><td data-l="Use">Sourcing + high-traffic events</td></tr>
+      <tr><td class="nm" data-l="Place">Prineville</td><td data-l="Partner">Rimrock Gallery · Bowman Museum (Belknap Exhibit Center)</td><td data-l="Use">Sourcing + exhibit space</td></tr>
+      <tr><td class="nm" data-l="Place">Madras</td><td data-l="Partner">Art Adventure Gallery (Jefferson County Arts Assn) · Madras Downtown Association (First Thursdays)</td><td data-l="Use">Sourcing + events</td></tr>
+    </tbody>
+  </table>
+  <div class="callout" style="margin-top:14px">
+    <h3>Not sourcing channels: Warm Springs cultural institutions</h3>
+    <p>Research surfaced the Museum at Warm Springs and Tananáwit (a Confederated Tribes Native-artist collective). These are <b>sovereign cultural institutions and are explicitly excluded</b> from this pipeline. Any engagement with tribal artists is Tribe-led under the Digital Sovereignty framework, on the listening-posture timeline — never sourced through a gallery channel or commissioned masthead.</p>
+  </div>
+</div></section>
+
+<!-- PROGRAMS -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">04</span><h2>Programs</h2><span class="line"></span></div>
+
+  <div class="prog">
+    <h3><span class="blaze"></span>Masthead of the Month <span class="tag">website</span></h3>
+    <p>The Strata Seal stays constant everywhere; the <b>hero masthead artwork</b> rotates monthly. The generative landscape is the default, and a featured local piece takes its place for the month, credited inline and archived in a Masthead Gallery that links back to the artist. Paid commission or license; artist keeps copyright. Start every other month, move to monthly as the pipeline fills.</p>
+  </div>
+  <div class="prog">
+    <h3><span class="blaze"></span>Township versions <span class="tag">app</span></h3>
+    <p>App versions align with the townships above; each carries a local artist's masthead representing that place, recruited as the version launches. The seal stays constant; the artwork localizes. Warm Springs is never a township slot (see partners note).</p>
+  </div>
+  <div class="prog">
+    <h3><span class="blaze"></span>Flyers <span class="tag">early build</span></h3>
+    <p>Next print stream after the cards, same A/B QR convention (utm per variant → Plausible Signup goal, via self-owned /j and /q redirects). First run brand-spare; a later featured-artist variant uses the Masthead art. Print locally — RC Mae's Redmond shop is the first lead. Modest, editable runs until the mark resolves.</p>
+  </div>
+  <div class="prog">
+    <h3><span class="blaze"></span>Stickers <span class="tag">launch swag</span></h3>
+    <p>Free swag for events plus a member welcome perk. Strata Seal die-cut, a playful "$4 a month" sticker, and artist-collab stickers — the pipeline is rich, since Sheila Dunn, Michele Michael, and Hannah Jensen already produce stickers and ISoMiMo does custom apparel. Local print, modest runs.</p>
+  </div>
+</div></section>
+
+<!-- LAUNCH EVENTS -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">05</span><h2>Launch events · Redmond</h2><span class="line"></span></div>
+
+  <div class="soft">
+    <h3><span class="blaze"></span>Initial release · Redmond Compass town hall <span class="tag" style="font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);padding:2px 7px;border-radius:4px">soft launch</span></h3>
+    <p>The first public moment rides along on a Redmond Compass town hall — primarily about Compass and improving local businesses, with Steppe getting a short soft-launch slot: here's what Steppe is, sign up if it speaks to you. Low-key, no hard sell. Bring the QR signup cards (Coin/Quiet) and capture emails on the /j and /q redirects so the Plausible Signup goal is live from day one.</p>
+  </div>
+
+  <p class="body" style="margin-bottom:6px">The rest run as distinct tracks. Art activations stay separate from the business-and-community events.</p>
+
+  <div class="town-h">Flagship <span class="ct">· business + community</span></div>
+  <div class="ev"><div><div class="et">Herringbone inaugural · with Holli &amp; Brandon</div><div class="ek">business advice + community reach</div></div><div class="ed">The major co-hosted Redmond moment with Holli Cobb and Brandon Weimer, focused on business advice and community reach. Steppe is present with a short introduction and a sign-up and swag table — no live painting or art showcase here.</div></div>
+
+  <div class="town-h">Relational core <span class="ct">· the conversion engine</span></div>
+  <div class="ev"><div><div class="et">Kitchen-table gatherings</div><div class="ek">intimate · highest conversion</div></div><div class="ed">Small house meetings inside the 35-neighborhood captain model. Trust-based and the strongest sign-up driver.</div></div>
+  <div class="ev"><div><div class="et">Captain kickoff night</div><div class="ek">org backbone</div></div><div class="ed">Recruit and train the first neighborhood captains — the organizing engine behind everything else.</div></div>
+
+  <div class="town-h">Show the model</div>
+  <div class="ev"><div><div class="et">Live Exchange board</div><div class="ek">product demo</div></div><div class="ed">A physical offer / need / gather / mutual-aid board where neighbors post real cards. People grasp Steppe instantly by watching it work. Deployable at the market table or an art night.</div></div>
+  <div class="ev"><div><div class="et">Verify-then-forget booth</div><div class="ek">privacy made tangible</div></div><div class="ed">Sign up, verify Redmond residency, watch the proof get deleted on the spot. Collects verified members and proves the privacy promise.</div></div>
+
+  <div class="town-h">Art-forward <span class="ct">· separate from the business events</span></div>
+  <div class="ev"><div><div class="et">Masthead unveiling · Dry Canyon Arts / First Friday</div><div class="ek">art-forward</div></div><div class="ed">Debut the first Masthead-of-the-Month and the artist (RC Mae or Charis). A Steppe-led evening, kept apart from the Compass and Herringbone business events.</div></div>
+  <div class="ev"><div><div class="et">Paint-and-sip with Charis</div><div class="ek">ticketed · relaxed</div></div><div class="ed">Charis runs a paint-and-sip at a Redmond venue — an easy, social on-ramp with sign-ups.</div></div>
+  <div class="ev"><div><div class="et">Craft night with ISoMiMo</div><div class="ek">hands-on</div></div><div class="ed">Make Steppe patches and stickers in ISoMiMo's Redmond space — community plus merch.</div></div>
+
+  <div class="town-h">Steady presence</div>
+  <div class="ev"><div><div class="et">Saturday Market / First Friday table</div><div class="ek">recurring</div></div><div class="ed">A captain-staffed downtown table with QR sign-ups — steady, low-cost visibility.</div></div>
+
+  <div class="town-h">Civic-tech narrative <span class="ct">· own channel</span></div>
+  <div class="ev"><div><div class="et">Library / community-center talk</div><div class="ek">own channel</div></div><div class="ed">A free public talk at Redmond Public Library or Becky Johnson Community Center on community-owned civic infrastructure. The one place the civic-tech story leads, kept separate from the hyper-local story.</div></div>
+
+  <p class="body" style="margin-top:12px">Sequence: Compass soft-launch &#8594; Herringbone flagship (business + community) &#8594; captain kickoff and kitchen-table gatherings as the engine &#8594; art nights, the market table, and a library talk as sustained reach. The two narratives stay in separate channels throughout.</p>
+</div></section>
+
+<!-- TIMELINE -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">06</span><h2>When to engage artists</h2><span class="line"></span></div>
+  <div class="tl">
+    <div><div class="when">Now · pre-launch</div><h3>Open relationships, don't commission</h3><p>Warm, honest intros and event invitations — no exposure-only asks. Priority: RC Mae and Charis (Redmond anchors); confirm Sisters/Prineville/Madras candidates through their galleries.</p></div>
+    <div><div class="when">At launch</div><h3>First paid commissions</h3><p>Commission the first one-to-three mastheads from Redmond artists; open the Masthead Gallery; live painting and swag at the Herringbone inaugural.</p></div>
+    <div><div class="when">Township rollout</div><h3>Recruit by place</h3><p>Bring on each township's artist as its version ships, sourcing through the local gallery/arts org where we don't yet have a name.</p></div>
+  </div>
+</div></section>
+
+<!-- PRINCIPLES -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">07</span><h2>How we work with artists</h2><span class="line"></span></div>
+  <div class="princ">
+    <div class="p"><span class="blaze"></span><span>Pay fairly — honorarium or commission, never exposure alone.</span></div>
+    <div class="p"><span class="blaze"></span><span>Artists keep copyright; Steppe takes a limited, revocable display license. Credit and a link, always.</span></div>
+    <div class="p"><span class="blaze"></span><span>A short written agreement per piece: scope, term, fee, usage, archive.</span></div>
+    <div class="p"><span class="blaze"></span><span>Reciprocity — the gallery links back; we point members to buy from the artists.</span></div>
+    <div class="p"><span class="blaze"></span><span>COI: Greg commissions as ED inside the nonprofit, arm's-length and at market rate; documented.</span></div>
+    <div class="p"><span class="blaze"></span><span>Local-first, vendor-neutral printing; modest, editable runs until the ISoMiMo mark resolves.</span></div>
+    <div class="p"><span class="blaze"></span><span>Tribal art only under the Digital Sovereignty framework, Tribe-led — never through this pipeline.</span></div>
+    <div class="p"><span class="blaze"></span><span>Several roster artists share our public-lands values (Sheila Dunn, Michele Michael) — a natural fit, not a sales pitch.</span></div>
+  </div>
+</div></section>
+
+<!-- OPEN -->
+<section class="band"><div class="wrap">
+  <div class="sk"><span class="n">08</span><h2>To confirm / next</h2><span class="line"></span></div>
+  <div class="open"><ul>
+    <li>Masthead honorarium and its funding source (small arts line, donations, or the Community Fund later).</li>
+    <li>First one-to-three mastheads for launch — likely the Redmond anchors plus Hannah.</li>
+    <li>Confirm and contact the candidates: Raina Verhey (Sisters), June Jaeger / Glenn Ness (Prineville), Jana Charl (Madras).</li>
+    <li>Decide which gallery partnerships to formalize first (Sisters Arts Association and Art Adventure Gallery are the most useful early).</li>
+    <li>Build the Masthead Gallery page into the broadsheet site work.</li>
+    <li>Draft the three outreach notes (RC Mae, Charis, Hannah) — the concrete "engage now" step.</li>
+  </ul></div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <p class="lab" style="margin-bottom:8px">Steppe · Artist Program & Launch Plan</p>
+  <p class="chg">v5 — 2026-06 — refocused the Holli &amp; Brandon (Herringbone) flagship on business advice and community reach, removed live painting/mural/masthead from it; reorganized Redmond launch events into tracks (flagship, relational, show-the-model, art-forward, steady, civic) with art kept separate from the business events.<br>v4 — 2026-06 — ISoMiMo recategorized as Redmond-embedded (partner: events/merch/mark) and moved out of Bend everywhere.<br>v3 — 2026-06 — added researched roster across all major townships (Sheila Dunn, Emily Livengood, Michele Michael, ISoMiMo/Bend; Raina Verhey/Sisters; June Jaeger, Glenn Ness/Prineville; Jana Charl/Madras); confirmed Charis = Redmond, ISoMiMo = Bend; added institutional partners & channels; added launch-events plan with the Redmond Compass soft-launch.<br>v2 — 2026-06 — Hannah Jensen confirmed in Bend; Bend-version anchor.<br>v1 — 2026-06 — initial three-artist roster and programs.</p>
+</div></footer>
+</body>
+</html>
