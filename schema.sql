@@ -238,6 +238,38 @@ create table interest_signups (
   created_at timestamptz not null default now()
 );
 
+-- QR A/B aggregate counter (migration 0015). First-party and zero-PII: four
+-- rolling counters per day (variant {quiet,square} × kind {scan,join}) and
+-- NOTHING else — no IP, user-agent, cookie, or identifier. The privacy-by-
+-- architecture alternative to a third-party tracker (CLAUDE.md invariant 8; the
+-- live "no third-party trackers, no behavioral profiles" promise). RLS-enabled
+-- with NO policies (deny-by-default); only the service-role client writes it, via
+-- increment_qr_count() below (see section 7 + /api/qr).
+create table qr_counts (
+  variant text not null check (variant in ('quiet','square')),
+  kind    text not null check (kind in ('scan','join')),
+  day     date not null default current_date,
+  count   integer not null default 0,
+  primary key (variant, kind, day)
+);
+
+-- Atomic per-day increment ("create the row at 1, else bump it") — can't be
+-- expressed through PostgREST/supabase-js, so the /api/qr route calls this. Runs
+-- SECURITY INVOKER; EXECUTE is service-role-only (granted in section 7), and only
+-- the service role holds the table write grant.
+create or replace function public.increment_qr_count(p_variant text, p_kind text)
+returns void language plpgsql set search_path = public as $$
+begin
+  if p_variant not in ('quiet','square') or p_kind not in ('scan','join') then
+    raise exception 'invalid qr counter';
+  end if;
+  insert into qr_counts (variant, kind, day, count)
+  values (p_variant, p_kind, current_date, 1)
+  on conflict (variant, kind, day)
+  do update set count = qr_counts.count + 1;
+end; $$;
+revoke all on function public.increment_qr_count(text, text) from public;
+
 -- ============================================================================
 -- 3 · HELPERS  (SECURITY DEFINER so they bypass RLS and never cause policy recursion)
 -- ============================================================================
@@ -999,6 +1031,9 @@ alter table group_members      enable row level security;
 -- interest_signups stays default-DENY: RLS on, NO policies (see migration 0014).
 -- The pre-launch list is written only by the service role; never expose it.
 alter table interest_signups   enable row level security;
+-- qr_counts stays default-DENY: RLS on, NO policies (see migration 0015). The
+-- aggregate counter is written only by the service role via increment_qr_count().
+alter table qr_counts          enable row level security;
 
 -- Public reference data
 create policy nb_read  on neighborhoods for select to anon, authenticated using (true);
@@ -1148,6 +1183,10 @@ grant select on categories, groups, group_members, groups_directory to authentic
 -- interest_signups (migration 0014): no anon/authenticated grant at all — the
 -- service role is the only writer/reader (it bypasses RLS).
 grant select, insert on interest_signups to service_role;
+-- qr_counts (migration 0015): same posture — service role only. It writes through
+-- increment_qr_count() (EXECUTE locked to service_role) and reads via SQL editor.
+grant select, insert, update on qr_counts to service_role;
+grant execute on function public.increment_qr_count(text, text) to service_role;
 grant select, insert, update, delete on
   profiles, verifications, neighborhood_requests, consents, events, event_rsvps,
   proposals, votes, moderation_actions, appeals, audit_log

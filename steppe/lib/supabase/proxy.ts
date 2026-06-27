@@ -22,7 +22,9 @@ export async function updateSession(request: NextRequest) {
   // Public endpoints reachable by anonymous visitors (the /join and /contact
   // forms post here); each enforces its own rules server-side.
   const isPublicApi =
-    pathname === "/api/interest" || pathname === "/api/contact";
+    pathname === "/api/interest" ||
+    pathname === "/api/contact" ||
+    pathname === "/api/qr";
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||

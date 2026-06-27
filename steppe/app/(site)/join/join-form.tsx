@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 /**
@@ -14,10 +14,50 @@ import { useTranslations } from "next-intl";
  */
 type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
 
+// QR A/B counter (first-party, zero-PII; see /api/qr). The printed pre-launch QR
+// codes carry ?utm_content=quiet|square. We count an aggregate scan on arrival and
+// an aggregate join on conversion — nothing identifying is ever sent.
+const isQrVariant = (v: string | null): v is "quiet" | "square" =>
+  v === "quiet" || v === "square";
+
+// Fire-and-forget: must never block render or surface an error to the member.
+function postQrCount(variant: "quiet" | "square", kind: "scan" | "join") {
+  try {
+    void fetch("/api/qr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ variant, kind }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    /* analytics must never break the page */
+  }
+}
+
 export function JoinForm() {
   const t = useTranslations("join");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+
+  // QR scan count, on mount: when a printed QR lands here with
+  // ?utm_content=quiet|square, record ONE scan per scan-session (sessionStorage
+  // dedupes refreshes) and remember the variant for the conversion event below.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const variant = new URLSearchParams(window.location.search).get(
+        "utm_content",
+      );
+      if (!isQrVariant(variant)) return;
+      const flag = `qr_scan_${variant}`;
+      if (sessionStorage.getItem(flag)) return;
+      sessionStorage.setItem(flag, "1");
+      sessionStorage.setItem("qr_variant", variant);
+      postQrCount(variant, "scan");
+    } catch {
+      /* sessionStorage / URL unavailable — skip silently */
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,6 +90,14 @@ export function JoinForm() {
 
       if (res.ok && data.ok) {
         setStatus(data.duplicate ? "duplicate" : "success");
+        // QR A/B conversion — same session as the scan; aggregate only, and
+        // wrapped so an analytics failure can never break the join.
+        try {
+          const variant = sessionStorage.getItem("qr_variant");
+          if (isQrVariant(variant)) postQrCount(variant, "join");
+        } catch {
+          /* never break the join over analytics */
+        }
       } else {
         setError(data.error || t("errGeneric"));
         setStatus("error");
