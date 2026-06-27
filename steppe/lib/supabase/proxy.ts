@@ -17,6 +17,7 @@ export async function updateSession(request: NextRequest) {
     pathname === "/join" ||
     pathname === "/privacy" ||
     pathname === "/legal/privacy" ||
+    pathname === "/legal/terms" ||
     pathname === "/contact";
   // Public endpoints reachable by anonymous visitors (the /join and /contact
   // forms post here); each enforces its own rules server-side.
