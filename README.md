@@ -36,13 +36,25 @@ drawn from Ostrom, Doctorow, Meadows, Scott, Hirschman, and Baradaran, plus a to
 The database **is** the enforcement layer: access rules, vote weight, secret ballots, and the
 verify-then-forget guarantees live in Postgres RLS and triggers (`schema.sql`), not just the UI.
 
+## Where this lives
+
+- **Canonical repository — Codeberg** (hosted Forgejo): `codeberg.org/<CODEBERG_OWNER>/steppe`.
+  This is the source of truth; open issues and pull requests here.
+- **Deploy mirror — GitHub:** `github.com/High-Desert-Central-Oregon/High-Desert` is a
+  **write-only mirror** that Vercel watches. Pushes to Codeberg are mirrored to GitHub so
+  production keeps auto-deploying — don't open PRs against it.
+- **CI:** Woodpecker on Codeberg — [`.woodpecker/ci.yml`](./.woodpecker/ci.yml) (lint + build).
+- Cutover runbook: [`docs/ops/codeberg-cutover.md`](./docs/ops/codeberg-cutover.md). Rationale and
+  the deferred self-host path: [`docs/decisions/codeberg-migration.md`](./docs/decisions/codeberg-migration.md).
+
 ## Getting started
 
 **Prerequisites:** Node.js + git, and a free Supabase project.
 
 ```bash
 # 1. Install
-git clone [repo URL] steppe && cd steppe
+git clone https://codeberg.org/<CODEBERG_OWNER>/steppe.git steppe && cd steppe
+git config core.hooksPath .githooks   # enable the per-clone DCO sign-off hook
 npm install
 
 # 2. Set up the database
