@@ -1,0 +1,46 @@
+# Woodpecker CI — Steppe
+#
+# NEW CI PARITY, *not* a translation. This repository never had GitHub Actions
+# (there was no `.github/workflows/` to convert), so nothing was ported. These
+# steps reproduce the only quality gates the project actually has — the lint and
+# build scripts in `steppe/package.json` — so Codeberg CI matches local dev.
+#
+# There is intentionally NO test step: no test framework or test files exist yet.
+# Add a `test` step here when one lands.
+#
+# Everything runs inside the app subdirectory `steppe/` (the Next.js app lives
+# there; the repo root holds schema.sql, docs, and migrations).
+#
+# Build secrets are referenced BY NAME only and are added by a human in the
+# Codeberg repo settings (Woodpecker → Secrets), never committed here:
+#   - NEXT_PUBLIC_SUPABASE_URL
+#   - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+# (`next build` reads these; they inline as undefined if unset, so a faithful
+# build wants them present.)
+
+when:
+  - event: [push, pull_request]
+
+steps:
+  install:
+    image: node:22
+    directory: steppe
+    commands:
+      - npm ci
+
+  lint:
+    image: node:22
+    directory: steppe
+    commands:
+      - npm run lint
+
+  build:
+    image: node:22
+    directory: steppe
+    environment:
+      NEXT_PUBLIC_SUPABASE_URL:
+        from_secret: NEXT_PUBLIC_SUPABASE_URL
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
+        from_secret: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+    commands:
+      - npm run build
