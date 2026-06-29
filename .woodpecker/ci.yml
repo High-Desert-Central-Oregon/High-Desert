@@ -44,3 +44,33 @@ steps:
         from_secret: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
     commands:
       - npm run build
+
+  # ===========================================================================
+  # OPT-IN (DISABLED): trigger a Vercel deploy directly from Woodpecker.
+  #
+  # Default behavior is to change NOTHING: Vercel keeps building off its GitHub
+  # Git integration (the mirror), so this step stays commented out. It exists for
+  # the future fully-off-GitHub path — when Vercel no longer watches GitHub, this
+  # is how Codeberg CI kicks a production build.
+  #
+  # To enable:
+  #   1. In the Vercel project, create a Deploy Hook (Settings -> Git -> Deploy
+  #      Hooks) for the production branch; copy its URL.
+  #   2. In Codeberg (Woodpecker -> Secrets), add a secret named VERCEL_DEPLOY_HOOK
+  #      with that URL as the value. NEVER commit the URL — it is a deploy trigger.
+  #   3. Uncomment the step below.
+  #
+  # The hook URL is read from the secret into the env and POSTed; it is never
+  # echoed or logged (no `curl -v`, no `echo "$VERCEL_DEPLOY_HOOK"`).
+  #
+  # deploy:
+  #   image: curlimages/curl:latest
+  #   when:
+  #     - event: push
+  #       branch: main
+  #   environment:
+  #     VERCEL_DEPLOY_HOOK:
+  #       from_secret: VERCEL_DEPLOY_HOOK
+  #   commands:
+  #     - curl -fsS -X POST "$VERCEL_DEPLOY_HOOK" -o /dev/null
+  # ===========================================================================
