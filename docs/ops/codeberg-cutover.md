@@ -4,7 +4,7 @@ Moving Steppe's **canonical** home to **Codeberg** (hosted Forgejo) while keepin
 production deploys on **Vercel** working. Codeberg becomes the source of truth;
 **GitHub becomes a write-only deploy mirror** that Vercel watches.
 
-- Canonical repo (Codeberg): `codeberg.org/<CODEBERG_OWNER>/steppe`
+- Canonical repo (Codeberg): `codeberg.org/steppe-community/steppe`
 - Deploy mirror (GitHub, unchanged): `github.com/High-Desert-Central-Oregon/High-Desert`
 
 > **Secrets:** never paste a token, password, or hook URL into this file, a
@@ -35,7 +35,7 @@ is **not** stored in the repo and does **not** survive a fresh clone — without
 After cloning the canonical repo from Codeberg, run:
 
 ```bash
-git clone git@codeberg.org:<CODEBERG_OWNER>/steppe.git steppe
+git clone git@codeberg.org:steppe-community/steppe.git steppe
 cd steppe
 git config core.hooksPath .githooks   # re-arm the auto DCO sign-off hook
 ```
@@ -55,20 +55,20 @@ the GitHub mirror.
 
 ```bash
 # 1) Point origin's fetch URL at Codeberg (CANONICAL).
-git remote set-url origin git@codeberg.org:<CODEBERG_OWNER>/steppe.git
+git remote set-url origin git@codeberg.org:steppe-community/steppe.git
 #   HTTPS alternative:
-#   git remote set-url origin https://codeberg.org/<CODEBERG_OWNER>/steppe.git
+#   git remote set-url origin https://codeberg.org/steppe-community/steppe.git
 
 # 2) Add explicit push URLs. The FIRST `--add --push` replaces the implicit
 #    "push = fetch URL", so you must add BOTH targets explicitly — Codeberg first
 #    (canonical), then the GitHub mirror.
-git remote set-url --add --push origin git@codeberg.org:<CODEBERG_OWNER>/steppe.git
+git remote set-url --add --push origin git@codeberg.org:steppe-community/steppe.git
 git remote set-url --add --push origin git@github.com:High-Desert-Central-Oregon/High-Desert.git
 
 # 3) Verify: fetch = Codeberg; push = BOTH.
 git remote -v
-# origin  git@codeberg.org:<CODEBERG_OWNER>/steppe.git (fetch)
-# origin  git@codeberg.org:<CODEBERG_OWNER>/steppe.git (push)
+# origin  git@codeberg.org:steppe-community/steppe.git (fetch)
+# origin  git@codeberg.org:steppe-community/steppe.git (push)
 # origin  git@github.com:High-Desert-Central-Oregon/High-Desert.git (push)
 ```
 

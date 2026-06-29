@@ -31,7 +31,7 @@ submodules**, and — notably — **no CI to port** (there was never a `.github/
 ## Decisions
 
 ### 1. Codeberg is canonical; GitHub is a write-only deploy mirror
-- The **source of truth** is `codeberg.org/<CODEBERG_OWNER>/steppe` (repo name
+- The **source of truth** is `codeberg.org/steppe-community/steppe` (repo name
   **`steppe`**, not the legacy GitHub name `High-Desert`). Issues and PRs live there.
 - **GitHub** (`High-Desert-Central-Oregon/High-Desert`) stays as a **write-only
   mirror** so Vercel's existing Git integration keeps auto-deploying with **no Vercel

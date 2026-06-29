@@ -38,7 +38,7 @@ verify-then-forget guarantees live in Postgres RLS and triggers (`schema.sql`), 
 
 ## Where this lives
 
-- **Canonical repository — Codeberg** (hosted Forgejo): `codeberg.org/<CODEBERG_OWNER>/steppe`.
+- **Canonical repository — Codeberg** (hosted Forgejo): `codeberg.org/steppe-community/steppe`.
   This is the source of truth; open issues and pull requests here.
 - **Deploy mirror — GitHub:** `github.com/High-Desert-Central-Oregon/High-Desert` is a
   **write-only mirror** that Vercel watches. Pushes to Codeberg are mirrored to GitHub so
@@ -53,7 +53,7 @@ verify-then-forget guarantees live in Postgres RLS and triggers (`schema.sql`), 
 
 ```bash
 # 1. Install
-git clone https://codeberg.org/<CODEBERG_OWNER>/steppe.git steppe && cd steppe
+git clone https://codeberg.org/steppe-community/steppe.git steppe && cd steppe
 git config core.hooksPath .githooks   # enable the per-clone DCO sign-off hook
 npm install
 
