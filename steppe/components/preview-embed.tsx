@@ -16,10 +16,11 @@ import { useTranslations } from "next-intl";
  *
  * Two states:
  *  - Inline (default): a paper-backed phone frame at a comfortable size. The export
- *    centers a 402×872 phone with 40px of paper padding (≈482px of natural width),
- *    so on viewports narrower than that we scale-to-fit (transform) rather than let
- *    the page gain a horizontal scrollbar. The iframe's own overflow is clipped by
- *    the frame; the page never scrolls sideways.
+ *    centers a 402×872 phone with 40px of paper padding (≈482×952 natural box). We
+ *    CONTAIN that whole box in the frame — scale to fit BOTH width and height, then
+ *    center — so the ENTIRE phone is always visible (no cut-off), and the app's own
+ *    feed is the only thing that scrolls (no confusing second scrollbar). The frame
+ *    is phone-shaped (CSS aspect-ratio), so there's no letterbox.
  *  - Full screen: a mobile affordance (the trigger is hidden on desktop in
  *    preview.css, where the inline embed is the experience). A fixed overlay
  *    (role="dialog", aria-modal) filling the viewport in dvw/dvh units. The phone
@@ -51,7 +52,9 @@ export function PreviewEmbed() {
 
   const [loaded, setLoaded] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
-  const [scale, setScale] = useState(1);
+  const [inlineStyle, setInlineStyle] = useState<React.CSSProperties | null>(
+    null,
+  );
   const [overlayStyle, setOverlayStyle] = useState<React.CSSProperties | null>(
     null,
   );
@@ -62,14 +65,26 @@ export function PreviewEmbed() {
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const scrollYRef = useRef(0);
 
-  // Scale-to-fit the inline frame: measure the visible width and shrink the iframe
-  // so the phone never overflows a narrow viewport. Runs in an effect (SSR-safe).
+  // Inline sizing: CONTAIN the whole padded export (phone + its paper frame) in the
+  // view box — scale to fit BOTH width and height, then center — so the entire phone
+  // is visible with no cut-off and no second scrollbar (only the app's feed scrolls).
+  // Runs in an effect (SSR-safe); recomputed on resize via ResizeObserver.
   useEffect(() => {
     const el = viewRef.current;
     if (!el || typeof ResizeObserver === "undefined") return;
     const measure = () => {
-      const w = el.clientWidth;
-      setScale(w > 0 ? Math.min(1, w / BASE_W) : 1);
+      const W = el.clientWidth;
+      const H = el.clientHeight;
+      if (!W || !H) return;
+      const s = Math.min(W / BASE_W, H / BASE_H);
+      const tx = (W - BASE_W * s) / 2;
+      const ty = (H - BASE_H * s) / 2;
+      setInlineStyle({
+        width: `${BASE_W}px`,
+        height: `${BASE_H}px`,
+        transform: `translate(${tx}px, ${ty}px) scale(${s})`,
+        transformOrigin: "0 0",
+      });
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -214,12 +229,7 @@ export function PreviewEmbed() {
           src={APP_SRC}
           title={t("embedTitle")}
           onLoad={() => setLoaded(true)}
-          style={{
-            width: `${BASE_W}px`,
-            height: `${100 / scale}%`,
-            transform: `scale(${scale})`,
-            transformOrigin: "top left",
-          }}
+          style={{ ...(inlineStyle ?? {}), opacity: inlineStyle ? 1 : 0 }}
         />
         <noscript>
           {/* Without JS the scale/overlay can't run; offer the app in a new tab. */}

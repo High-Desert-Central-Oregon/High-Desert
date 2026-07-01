@@ -1242,9 +1242,15 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
  * preview-embed.tsx) fills it exactly, and is centered by the 482px max-width. */
 .site-root .preview .pe-view {
   position: relative;
-  width: 100%;
-  max-width: 482px;
-  height: min(760px, 80vh);
+  /* Phone-shaped box (matches the export's 482×952 padded content), sized by
+   * height and capped to the viewport, so the WHOLE phone fits with no cut-off and
+   * no second scrollbar. `align-self: center` keeps the flex column from stretching
+   * it; the iframe is contained + centered inside by preview-embed.tsx. */
+  align-self: center;
+  width: auto;
+  max-width: 100%;
+  height: min(760px, 82vh);
+  aspect-ratio: 482 / 952;
   margin: 0 auto;
   overflow: hidden;
   background: #fbf7ee;
@@ -1253,9 +1259,12 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   box-shadow: 0 30px 70px -40px rgba(42, 46, 44, 0.5);
 }
 .site-root .preview .pe-iframe {
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
   border: 0;
   background: #fbf7ee;
+  transition: opacity 0.2s ease;
 }
 
 /* Loading skeleton until the iframe's onLoad fires. */
@@ -1368,7 +1377,8 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   .site-root .preview .pe-spinner {
     animation: none;
   }
-  .site-root .preview .pe-overlay-iframe {
+  .site-root .preview .pe-overlay-iframe,
+  .site-root .preview .pe-iframe {
     transition: none;
   }
 }
