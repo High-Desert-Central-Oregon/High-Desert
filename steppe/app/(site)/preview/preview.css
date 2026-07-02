@@ -1329,8 +1329,9 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   background: #fbf7ee;
   transition: opacity 0.2s ease;
 }
-/* Exit control floats over the app (top-right) so it costs no app height; a paper
- * pill with a shadow keeps it legible against whatever's behind it. */
+/* Exit control floats over the app (top-right) so it costs no app height. It sits
+ * ON the running app screen, so app law applies: no drop shadows in-app — the
+ * near-opaque paper pill + 1px border keep it legible without one. */
 .site-root .preview .pe-x {
   position: absolute;
   top: calc(env(safe-area-inset-top, 0px) + 12px);
@@ -1346,7 +1347,6 @@ html[data-theme="dark"] .site-root .preview .vchip.active {
   background: rgba(251, 247, 238, 0.92);
   color: var(--text);
   cursor: pointer;
-  box-shadow: 0 2px 12px -2px rgba(42, 46, 44, 0.45);
   transition:
     background 0.18s ease,
     border-color 0.18s ease;
