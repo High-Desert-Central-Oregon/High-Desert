@@ -32,6 +32,10 @@
   /* Broadsheet ("Broadsheet × Plate") presentation tokens. */
   --ink: #2a2e2c; /* matches --text; named for the broadsheet ink rules */
   --ink-soft: #5f5a4e; /* mono labels / secondary text on paper (AA on bone/paper) */
+  /* NAME COLLISION with the Exchange app tokens: there `--rule` is a 2px border
+     WIDTH and this color is named `--hairline` (docs/design/
+     exchange-design-tokens-reference.css). Scopes never meet today; if these
+     token sets ever merge, rename this one, not the app's. */
   --rule: rgba(42, 46, 44, 0.22); /* ink hairline (broadsheet) */
 
   /* Marketing typefaces (next/font, see app/layout.tsx). */

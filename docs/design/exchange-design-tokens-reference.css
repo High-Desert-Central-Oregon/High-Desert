@@ -1,0 +1,61 @@
+/* Steppe Exchange — canonical design tokens
+ * Extracted verbatim from the design artifact:
+ * Exchange_App_Phone__Preview__offline (Claude design, 2026-07)
+ * This file is REFERENCE ground truth for visual conformance.
+ * The app's live tokens live in tokens.css / site-base.css and
+ * must agree with these values (light theme).
+ */
+
+:root{
+    /* colour */
+    --paper:#FBF7EE;            /* base surface */
+    --bone:#EDE6D5;             /* raised surface · row press */
+    --ink:#2A2E2C;              /* primary text · 12.9:1 */
+    --ink-soft:#5F5A4E;         /* secondary text · 6.4:1 */
+    --hairline:rgba(42,46,44,.22); /* 1px dividers */
+    --rust:#A8542C;             /* ACCENT only — markers/active/chevron/drop-cap/sun · 4.9:1 */
+    --rust-deep:#984A26;        /* rust pressed */
+    --juniper:#36563D;          /* links · titles · 7.6:1 */
+    --juniper-deep:#2B4733;     /* PRIMARY ACTION fill · paper-on it 9.6:1 */
+    --juniper-deepest:#22382A;  /* primary action pressed */
+    --sage:#9CAD8B;             /* monogram ground */
+    --sage-deep:#6E8A5B;        /* Offer marker · status dot */
+    --ochre:#A8842F;            /* Event marker */
+    --slate:#4F6B7A;            /* Mutual-aid marker */
+    --goods:#8C6A45;            /* Goods marker */
+    --basalt:#34383D;           /* strata base */
+    --canvas:#C9C0AD;           /* surrounding board */
+    --paper-code:#F4EEDF;       /* token code panel */
+    --grabber:#C4B7A0;          /* sheet grabber */
+    --placeholder:#9A937F;      /* input placeholder */
+    --comment:#9A8F76;          /* code comment */
+    --shimmer:#F4EEE0;          /* skeleton highlight */
+    /* category (marker fill — always paired with a label) */
+    --cat-offer:var(--sage-deep); --cat-need:var(--rust); --cat-event:var(--ochre);
+    --cat-aid:var(--slate); --cat-job:var(--juniper); --cat-goods:var(--goods);
+    /* GOVERN build-out — new semantics; do NOT overload reserved rust */
+    --vote-pass:var(--juniper);          /* outcome PASSED (fill/marker) */
+    --vote-fail:var(--ink-soft);         /* outcome FAILED — neutral, never rust */
+    --vote-abstain:#6E6A5E;              /* abstain marker */
+    --turnout-track:rgba(42,46,44,.12);  /* ruled tally-track ground */
+    --turnout-fill:var(--ink);           /* turnout fill — matte, never glossy */
+    --quorum-mark:var(--rust);           /* quorum threshold tick (rust = marker) */
+    --chip-on:var(--sage-deep);          /* status "VOTED" dot */
+    /* type scale (post-italics-change: titles are roman) */
+    --fs-title:40px; --fs-title-cmp:20px; --fs-item:24px; --fs-pinned:26px;
+    --fs-drop:48px; --fs-detail:30px; --fs-body:15px; --fs-body-lg:16px;
+    --fs-kicker:10.5px; --fs-byline:10px; --fs-chip:11.5px; --fs-tab:10px; --fs-btn:15.5px;
+    --lh-title:1.22; --ls-title:-.01em; --ls-kicker:.12em;
+    /* spacing */
+    --pad-screen:22px; --row-rhythm:25px; --row-min:64px; --fab-clear:96px;
+    --hair:1px; --rule:2px;
+    --safe-top:44px; --safe-bottom:18px; --nav-exp:170px; --nav-cmp:58px; --tab-h:72px;
+    --sun-halo:rgba(168,84,44,.16); --scrim:rgba(42,46,44,.34); /* sun bloom · sheet scrim */
+    /* radii (square-first; surfaces unrounded) */
+    --r-flat:0; --r-marker:2px; --r-bubble:14px; --r-round:50%;
+    /* motion */
+    --ease:cubic-bezier(.22,1,.36,1);
+    --dur-nav:280ms; --dur-push:260ms; --dur-sheet:280ms; --dur-toast:200ms; --dur-shimmer:1200ms;
+    /* elevation — no drop shadows in-app */
+    --letterpress:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(0,0,0,.28),inset 0 0 0 1px rgba(0,0,0,.2);
+  }
