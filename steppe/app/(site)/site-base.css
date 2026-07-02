@@ -1061,7 +1061,9 @@ html[data-js] .site-root .rv.in {
   font-family: var(--mono);
   font-size: 10px;
   letter-spacing: 0.06em;
-  color: #a59f90;
+  /* Token, not a literal: #a59f90 was 2.47:1 on paper (AA fail). --ink-soft is
+     6.42:1 light / 6.94:1 dark (it re-resolves per theme). */
+  color: var(--ink-soft);
   margin-top: 14px;
 }
 
