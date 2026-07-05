@@ -153,6 +153,61 @@ ratify, and the Terms because none of the above exists in the product yet.
 
 ---
 
+## Part IV — Deliberate vs emergent: Rumelt, Mintzberg, and where each governs
+
+"Emergent strategy" names two different things, and the distinction matters here:
+**brown's** (Parts II–III above — relational practice, fractals, adaptation as
+discipline) and **Mintzberg's** (strategy that *emerges* from patterns of action,
+against the deliberate school). Steppe's strategy corpus leans deliberately toward
+**Rumelt's *Good Strategy*** — and that is correct, not a contradiction, provided
+each school governs the layer it's good at.
+
+### The Rumelt scorecard (the strategy corpus is genuinely "good strategy")
+
+| Kernel element | Where Steppe has it | Evidence |
+|---|---|---|
+| **Diagnosis** | Extractive, engagement-optimized platform monoculture has hollowed local civic fabric; the honest hard problem is named — adoption (~2,300 paying members ≈ 6.5% of Redmond), not arithmetic | GTM Framing; BP v12; budget v1 |
+| **Guiding policy** (channels effort by *excluding*) | Trust transferred through real people is the only channel; dues-fund-core-always; structure-is-the-hook; the four non-negotiables rule whole tactic classes out permanently | GTM non-negotiables |
+| **Leverage from asymmetry** | "A competitor can match a feature; it cannot match an ownership structure without restructuring" — transparency and ownership as the un-copyable advantage | GTM Framing ¶3 |
+| **Proximate objectives** | 50–100 on the list *before* the public moment; a real vote in week one; funnel-before-push ("fix the pipe, then open the tap") | GTM Phases 0–1 |
+| **Coherent action** | Vouching growth ↔ verification model ↔ transparency marketing ↔ captains structure — each reinforces the others; phases sequenced with hard dependencies | GTM Phases 0–5 |
+
+Bad-strategy markers (fluff, goals-as-strategy, incoherent objectives, ducking
+the challenge): substantially absent — the remaining instances (mis-sized asks,
+the $2/$4 incoherence) were exactly what the funder-pack corrections removed.
+
+### The reconciliation: a fixed kernel with governed emergence
+
+Rumelt himself treats strategy as a **hypothesis** to be tested and revised;
+Mintzberg's point is that the revision material comes from *patterns in action*,
+not the planning room. Steppe's canon already resolves the tension the same way
+at every other layer — an invariant core with an adaptive periphery:
+
+| Layer | Fixed kernel (deliberate) | Governed emergence (adaptive) |
+|---|---|---|
+| Constitution | Non-votable legal floor; entrenched articles | Member-amendable Schedule of Defaults |
+| Product | The invariants (no ads, no ranking, verify-then-forget) | Features, by member vote |
+| **Strategy** | **Diagnosis + guiding policy + non-negotiables** | **Tactics, channels, phase mechanics — hypotheses tested by the health signals** |
+
+So the rule, now explicit (**ADOPTED A4**, codified in GTM v1.2): the strategy
+*kernel* changes only the way the constitution does — deliberately, in the open,
+with the members. The *action layer* is licensed to emerge: every phase's health
+signals are its falsification instruments; the A1 reflection cadence and phase
+gates are where observed patterns get promoted into the written plan (a version
+bump) or discarded. "Congruence is the test" already polices the boundary —
+emergence never gets to erode the kernel, and the kernel never gets to freeze
+the tactics.
+
+One caution each way: pure Rumelt hardens into plan-worship (the map outliving
+the territory between annual rewrites); pure Mintzberg drifts into
+tyranny-of-structurelessness at the strategy layer — the same Freeman failure
+the captains model guards against. The layered rule is the guard against both.
+
+---
+
 **Changelog**
+- v1.1 (2026-07-04) — Part IV added: Rumelt scorecard, the two senses of
+  "emergent strategy," and the kernel/emergence layering rule (A4) codified into
+  GTM v1.2.
 - v1 (2026-07-04) — initial assessment; A1–A3 adopted; P1–P6 tabled for the
   cohort/board.

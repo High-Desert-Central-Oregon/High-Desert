@@ -1,9 +1,10 @@
 # Steppe — Go-to-Market & Organizing Plan
 
-**v1.1 · July 2026** · supersedes v1 (June 2026). v1.1 is an editorial pass: the
-working-session voice was rewritten as plan prose; no strategy changed. Fiscal-sponsor
-status: **Ignite Empowerment Foundation** selected (Central Oregon 501(c)(3)); agreement
-pending signature — see `docs/sponsors-programmatic-partners-landscape.md`.
+**v1.2 · July 2026** · supersedes v1.1. v1.2 adds "How this plan changes" (the
+kernel/emergence rule from the doctrine assessment); v1.1 was an editorial voice
+pass — no strategy changed in either. Fiscal-sponsor status: **Ignite Empowerment
+Foundation** selected (Central Oregon 501(c)(3)); agreement pending signature — see
+`docs/sponsors-programmatic-partners-landscape.md`.
 
 ---
 
@@ -152,6 +153,28 @@ A short list, because what Steppe refuses defines the brand as much as what it d
 - No marketing on Tribal or Indigenous partnerships.
 - No growth-tier features promised at MVP to chase momentum (the month-grid calendar problem — keep scope discipline under marketing pressure).
 - No analytics surveillance of members to optimize conversion (the no-Google-Analytics line holds; it stays).
+
+---
+
+## How this plan changes (deliberate kernel, emergent edges)
+
+This plan is deliberately Rumelt-shaped — diagnosis, guiding policy, coherent
+phased action — and it stays that way. But the two layers of it change under
+different rules (see `docs/steppe-governable-spaces-emergent-strategy-v1.md`,
+Part IV):
+
+- **The kernel is deliberate.** The framing diagnosis, the guiding policy
+  (trust-through-real-people as the only channel; structure-is-the-hook), and
+  the four non-negotiables change only the way the constitution changes:
+  openly, versioned, and — where they touch member commitments — by the members.
+- **The tactics are hypotheses.** Every phase's *health signals are its
+  falsification instruments*: if captains stall, if the first vote draws no one,
+  if member stories don't come unprompted, the tactic is wrong — not the
+  members. Patterns observed in action get promoted into this document (a
+  version bump, changelog noted) or discarded at the reflection cadence and
+  phase gates; they are never patched silently.
+- **"Congruence is the test" polices the boundary in both directions.**
+  Emergence never erodes the kernel; the kernel never freezes the tactics.
 
 ---
 
