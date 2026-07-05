@@ -1,0 +1,24 @@
+# TEMPLATE — Stage 2, do not deploy before its gate (see docker-compose.yml).
+# Host-installed Caddy in front of the loopback-bound app container. Auto-TLS
+# (Let's Encrypt) is Caddy's default — no config needed beyond the hostnames.
+# Mirrors current production canonicalization: apex 308 → www.
+
+steppe.community {
+	redir https://www.steppe.community{uri} 308
+}
+
+www.steppe.community {
+	reverse_proxy localhost:3000
+
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		# SAMEORIGIN, not DENY: /preview embeds the app export in a same-origin iframe.
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+}

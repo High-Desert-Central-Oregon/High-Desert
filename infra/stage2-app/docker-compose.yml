@@ -1,0 +1,36 @@
+# =============================================================================
+# TEMPLATE — Stage 2, do not deploy before its gate.
+# Gate (docs/decisions/selfhosting-staged-roadmap.md, Stage 1→2): a second
+# person who can own operations exists. This file is INERT scaffolding — it is
+# not wired into CI, Vercel, or any runtime path.
+#
+# Stage 2 = the Next.js app ONLY. All state (Postgres, Auth, Storage, PITR)
+# stays in managed Supabase, so losing this box means redeploy, not data loss.
+#
+# Env is passed BY NAME from ./.env (chmod 600; never commit it). Required names
+# — values live only on the box:
+#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY   (build-time
+#     args too — they inline into the client bundle)
+#   NEXT_PUBLIC_SITE_URL          (https://www.steppe.community)
+#   SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, CONTACT_FROM, CONTACT_TO
+#   LAUNCH_PHASE                  (prelaunch | live)
+# =============================================================================
+
+services:
+  app:
+    build:
+      # Build context is the app directory; the Dockerfile lives beside this
+      # file (BuildKit resolves a dockerfile outside the context — compose v2).
+      context: ../../steppe
+      dockerfile: ../infra/stage2-app/Dockerfile
+      args:
+        # NEXT_PUBLIC_* must be present AT BUILD TIME (they inline).
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+    env_file: .env
+    restart: unless-stopped
+    # Loopback only — Caddy (host-installed, see ./Caddyfile) is the sole public
+    # listener. Nothing else on this box publishes a port.
+    ports:
+      - "127.0.0.1:3000:3000"
