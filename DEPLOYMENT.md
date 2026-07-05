@@ -23,6 +23,7 @@ the last two are server-only and must never be exposed to the client.
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable (a.k.a. **anon**) key. RLS still gates every row, so this is safe in the browser. Public. |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase secret/service-role key. **Bypasses RLS** — server-only (used by `lib/supabase/admin.ts`, e.g. `/api/interest`). Never prefix with `NEXT_PUBLIC_`. |
 | `LAUNCH_PHASE` | `prelaunch` (default) serves only the public marketing pages + `/join`; `live` opens the member app. See `lib/supabase/proxy.ts`. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical site origin (`https://www.steppe.community`) for absolute metadata URLs (OG/Twitter cards). Falls back to `VERCEL_URL`, then localhost — set it in prod so shared links don't carry the `*.vercel.app` machine name. Public. |
 
 > **Naming note:** the code reads `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. This is
 > Supabase's newer name for what older docs and dashboards call the **anon key** —

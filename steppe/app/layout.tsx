@@ -46,9 +46,15 @@ const marketingFontVars = `${besley.variable} ${schibsted.variable} ${martianMon
 // writes data-* the member app ignores (it themes via the next-themes `class`).
 const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',hour12:false}).format(new Date()),10)%24;var t=(h>=5&&h<8)?'dawn':(h>=8&&h<18)?'day':(h>=18&&h<21)?'dusk':'night';d.setAttribute('data-time',t);d.setAttribute('data-theme',t==='night'?'dark':'light')}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+// Canonical site origin for absolute metadata URLs (OG/Twitter cards, canonical).
+// Prefer the explicit NEXT_PUBLIC_SITE_URL (set to https://www.steppe.community in
+// prod) so shared links resolve to the real domain, not the *.vercel.app machine
+// name; VERCEL_URL remains the fallback so preview deploys stay self-referential.
+const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ? process.env.NEXT_PUBLIC_SITE_URL
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),

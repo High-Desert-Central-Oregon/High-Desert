@@ -22,11 +22,14 @@ export async function updateSession(request: NextRequest) {
     pathname === "/p" ||
     pathname === "/contact";
   // Public endpoints reachable by anonymous visitors (the /join and /contact
-  // forms post here); each enforces its own rules server-side.
+  // forms post here; the landing hero polls /api/weather — a keyless, cached
+  // public-data proxy that sends no user data upstream); each enforces its own
+  // rules server-side.
   const isPublicApi =
     pathname === "/api/interest" ||
     pathname === "/api/contact" ||
-    pathname === "/api/qr";
+    pathname === "/api/qr" ||
+    pathname === "/api/weather";
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
