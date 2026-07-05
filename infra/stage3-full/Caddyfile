@@ -1,0 +1,40 @@
+# TEMPLATE — Stage 3, do not deploy before its gate (see docker-compose.yml).
+# Caddy replaces Kong: TLS + the /auth /rest /storage path routing the Supabase
+# clients already speak. NEXT_PUBLIC_SUPABASE_URL points at api.steppe.community.
+
+steppe.community {
+	redir https://www.steppe.community{uri} 308
+}
+
+www.steppe.community {
+	reverse_proxy app:3000
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+}
+
+api.steppe.community {
+	# Kong-parity routes, minus everything the stack excludes.
+	handle_path /auth/v1/* {
+		reverse_proxy auth:9999
+	}
+	handle_path /rest/v1/* {
+		reverse_proxy rest:3000
+	}
+	handle_path /storage/v1/* {
+		reverse_proxy storage:5000
+	}
+	# No /realtime, /functions, /analytics routes — excluded services (compose
+	# header). Add the route WITH the service if one is ever reintroduced.
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		-Server
+	}
+}

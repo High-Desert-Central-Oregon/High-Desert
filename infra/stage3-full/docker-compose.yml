@@ -1,0 +1,155 @@
+# =============================================================================
+# TEMPLATE — Stage 3, do not deploy before its gate.
+# Gate (docs/decisions/selfhosting-staged-roadmap.md, Stage 3): production does
+# NOT cut over until the DR restore drill in ./dr/README.md has passed on a
+# wiped staging box. Self-hosted Supabase has no managed backups and no PITR.
+# This file is INERT scaffolding — not wired into CI, Vercel, or any runtime.
+#
+# DECOMPOSED Supabase: only what Steppe actually uses — Postgres, GoTrue (auth),
+# PostgREST (the API RLS speaks through), Storage — with CADDY in front instead
+# of Kong (hundreds of MB lighter; terminates TLS; routes the /auth /rest
+# /storage paths the clients already call). Secrets come from ./.env by NAME
+# (see .env.template — never ship example values).
+#
+# ---------------------------------------------------------------------------
+# EXCLUDED SERVICES — why, and how to reintroduce
+#   realtime      The app makes zero realtime subscriptions (no .channel()/
+#                 .subscribe() anywhere). Reintroduce: add supabase/realtime,
+#                 point it at db, add a Caddy route for /realtime/v1 websockets.
+#   functions     No Edge Functions exist in the repo (supabase/functions/ absent);
+#                 server work runs in Next server actions. Reintroduce: add the
+#                 edge-runtime service + route /functions/v1.
+#   imgproxy      No next/image and no storage image transforms are used.
+#                 Reintroduce alongside storage with IMGPROXY_* env.
+#   analytics     (Logflare) Contrary to the no-tracking posture (invariant 8)
+#   /vector       and pure ops weight at this scale. Reintroduce only if log
+#                 aggregation is ever voted in; prefer host-level logs.
+#   studio+meta   Attack surface. NEVER public. See the commented block at the
+#                 bottom — SSH-tunnel only, started on demand, stopped after.
+# ---------------------------------------------------------------------------
+
+networks:
+  internal: {} # every service lives here; ONLY caddy publishes host ports
+
+volumes:
+  db-data:
+  storage-data:
+  caddy-data:
+
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: # the ONLY published ports on this stack
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    networks: [internal]
+    depends_on: [app, auth, rest, storage]
+
+  app:
+    # Carried forward from Stage 2 (same Dockerfile + build args — see
+    # ../stage2-app/). At Stage 3 it joins this stack's network; no host port.
+    build:
+      context: ../../steppe
+      dockerfile: ../infra/stage2-app/Dockerfile
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+    env_file: .env
+    restart: unless-stopped
+    networks: [internal]
+
+  db:
+    image: supabase/postgres:15.8.1.085 # pin; upgrade deliberately, never :latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # pgBackRest config + WAL archiving hooks mount here at build-out —
+      # see ./dr/README.md before first boot, not after.
+    networks: [internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      retries: 6
+
+  auth:
+    image: supabase/gotrue:v2.170.0 # pin to the tested version at cutover
+    restart: unless-stopped
+    environment:
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_SITE_URL: ${SITE_URL}
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+      GOTRUE_MAILER_AUTOCONFIRM: "false" # magic-link flow requires real email
+      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
+      GOTRUE_DISABLE_SIGNUP: "false" # revisit with shouldCreateUser posture
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [internal]
+
+  rest:
+    image: postgrest/postgrest:v12.2.12
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,storage
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db: { condition: service_healthy }
+    networks: [internal]
+
+  storage:
+    image: supabase/storage-api:v1.19.1
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://supabase_storage_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      ANON_KEY: ${ANON_KEY}
+      SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      FILE_SIZE_LIMIT: "10485760" # 10 MB — matches MAX_EVIDENCE_BYTES
+      STORAGE_BACKEND: file
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: steppe
+      REGION: local
+    volumes:
+      - storage-data:/var/lib/storage
+    depends_on:
+      db: { condition: service_healthy }
+      rest: { condition: service_started }
+    networks: [internal]
+
+  # ---------------------------------------------------------------------------
+  # studio + meta — SSH-TUNNEL ONLY, NEVER PUBLIC. Uncomment to run on demand
+  # (docker compose up studio meta), reach it via
+  #   ssh -L 54323:localhost:54323 <box>
+  # and stop it when done. No Caddy route exists for it, deliberately.
+  # ---------------------------------------------------------------------------
+  # meta:
+  #   image: supabase/postgres-meta:v0.89.0
+  #   environment:
+  #     PG_META_DB_HOST: db
+  #     PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+  #   networks: [internal]
+  # studio:
+  #   image: supabase/studio:latest
+  #   ports:
+  #     - "127.0.0.1:54323:3000" # loopback only; reach via SSH tunnel
+  #   environment:
+  #     STUDIO_PG_META_URL: http://meta:8080
+  #     SUPABASE_URL: ${API_EXTERNAL_URL}
+  #     SUPABASE_ANON_KEY: ${ANON_KEY}
+  #     SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+  #   networks: [internal]
