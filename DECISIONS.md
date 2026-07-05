@@ -7,6 +7,40 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-07-04 — Doctrine assessment: Governable Spaces + Emergent Strategy; reflection cadence adopted
+
+**Decision.** Assessed the shipped system and canon against Nathan Schneider's
+*Governable Spaces* and adrienne maree brown's *Emergent Strategy*
+(`docs/steppe-governable-spaces-emergent-strategy-v1.md` — a living scorecard).
+Adopted now, as operating practice (no code, no governance-rule change):
+- **A1 — beta reflection cadence:** a monthly three-question member pulse
+  (what's working / what's hard / what should change) summarized publicly on the
+  transparency surface, and a quarterly retrospective whose outputs enter the
+  Govern tab **as draft proposals** — reflection feeds governance, not a
+  suggestion box.
+- **A2 — canon acknowledgment:** Schneider and brown named in the README's
+  intellectual canon.
+
+**Why.** The audit found Steppe already unusually strong against both doctrines
+(anti-feudal plumbing: secret ballot, appeals with separation of duties,
+append-only transparency, exit-with-your-data; emergent practice: vouching
+growth, fractal captains, living documents) — but adaptation had documents
+without a *ritual*, and two feudal residues remain unowned.
+
+**Deliberately NOT decided here (cohort/board proposals, tabled in the
+assessment):** P1 moderator selection-and-recall by member vote (fills the
+Charter 8.9 silence — the top-priority residue); P2 tenure-weight ratification
+with a re-ratification sunset (default-if-silent = flat, matching the app's
+launch copy); P3 a voluntary restorative path in moderation (build first, then
+put in Terms); P4 hardship-waiver self-attestation; P5 rules-as-visible-objects
+surface; P6 founder-protection countdown on the transparency page. Governance
+policy stays the members' to ratify.
+
+**Revisit.** Re-run the scorecard at each stage gate (budget doc stages); retire
+the pulse ritual if participation shows it's theater.
+
+---
+
 ## 2026-07-04 — Scope supersession logged: Groups/Calendar/Exchange v2 pulls three deferred items into beta scope
 
 **Decision (recording an already-made one).** `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md`

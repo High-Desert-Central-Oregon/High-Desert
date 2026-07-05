@@ -24,8 +24,10 @@ These are structural commitments the code and governance *enforce*, not promises
 - **No engagement engineering.** Chronological and proximity, not an attention-maximizing feed.
 
 The full set of design invariants is in [`CLAUDE.md`](./CLAUDE.md). The reasoning behind each —
-drawn from Ostrom, Doctorow, Meadows, Scott, Hirschman, and Baradaran, plus a tool-design layer
-(Illich, Norman, Ousterhout, and others) — is in the design docs under [`docs/`](./docs).
+drawn from Ostrom, Doctorow, Meadows, Scott, Hirschman, and Baradaran, with Nathan Schneider's
+*Governable Spaces* and adrienne maree brown's *Emergent Strategy* as governance-practice lenses,
+plus a tool-design layer (Illich, Norman, Ousterhout, and others) — is in the design docs under
+[`docs/`](./docs); see `docs/steppe-governable-spaces-emergent-strategy-v1.md` for the scorecard.
 
 ## Tech stack
 
