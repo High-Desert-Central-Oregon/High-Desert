@@ -99,6 +99,12 @@ Settings" / "Push Mirrors"), then add a mirror:
   below. **Never** put this value in the repo, a command, or a commit.
 - **Sync interval:** e.g. every 8h, and/or enable **"Sync when new commits are
   pushed"** for near-immediate mirroring.
+- **Branch filter:** `main`. Not strictly required, but recommended: the mirror's
+  only job is feeding Vercel production (which watches `main`); unfiltered, every
+  topic branch mirrored to GitHub triggers a Vercel preview build, and WIP
+  branches surface on the public mirror before they land. Globs work
+  (`main,release/*`) if more is ever needed; branches already on GitHub but
+  outside the filter just go stale until deleted manually.
 
 ### The token recipe (the org gotcha)
 
