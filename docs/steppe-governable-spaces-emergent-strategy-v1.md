@@ -153,14 +153,16 @@ ratify, and the Terms because none of the above exists in the product yet.
 
 ---
 
-## Part IV — Deliberate vs emergent: Rumelt, Mintzberg, and where each governs
+## Part IV — Deliberate vs emergent: Rumelt × brown
 
-"Emergent strategy" names two different things, and the distinction matters here:
-**brown's** (Parts II–III above — relational practice, fractals, adaptation as
-discipline) and **Mintzberg's** (strategy that *emerges* from patterns of action,
-against the deliberate school). Steppe's strategy corpus leans deliberately toward
-**Rumelt's *Good Strategy*** — and that is correct, not a contradiction, provided
-each school governs the layer it's good at.
+The strategy corpus leans deliberately toward **Rumelt's *Good Strategy*** —
+diagnosis, guiding policy, coherent action. The live question is whether that
+contradicts **brown's emergent strategy** (Parts II–III). The answer, verified
+against the documents rather than asserted: no — and not because they "govern
+different layers," but because **at Steppe they converge at the kernel**. (A
+side note for precision: Mintzberg's unrelated "emergent strategy" — plans as
+patterns learned in action — is a different doctrine; it supplies one useful
+mechanism below, nothing more.)
 
 ### The Rumelt scorecard (the strategy corpus is genuinely "good strategy")
 
@@ -176,12 +178,28 @@ Bad-strategy markers (fluff, goals-as-strategy, incoherent objectives, ducking
 the challenge): substantially absent — the remaining instances (mis-sized asks,
 the $2/$4 incoherence) were exactly what the funder-pack corrections removed.
 
-### The reconciliation: a fixed kernel with governed emergence
+### The convergence: the guiding policy IS brown's doctrine in Rumelt's form
 
-Rumelt himself treats strategy as a **hypothesis** to be tested and revised;
-Mintzberg's point is that the revision material comes from *patterns in action*,
-not the planning room. Steppe's canon already resolves the tension the same way
-at every other layer — an invariant core with an adaptive periphery:
+Look at what the kernel actually says. Rumelt demands a guiding policy that
+concentrates force on an asymmetry competitors can't copy. Steppe's guiding
+policy — *trust transferred through real people as the only channel; the way it
+grows is itself proof of what it is* — is **"move at the speed of trust" and
+"small is all" stated as strategy**. The captains fractal is simultaneously the
+Rumelt leverage (an un-copyable structural advantage) and the brown practice
+(the small-scale pattern that produces the large-scale outcome). "What you pay
+attention to grows" is why the health signals measure participation and trust
+rather than reach. The corpus doesn't *balance* Rumelt against brown; it uses
+Rumelt's discipline to concentrate effort on brown's mechanism. That coincidence
+is rare and worth protecting — most orgs' deliberate strategy fights their
+relational practice.
+
+### Where they divide labor: a fixed kernel with governed emergence
+
+Rumelt treats strategy as a **hypothesis** to be tested and revised; brown makes
+adaptation a continuous, relational discipline rather than an annual replan
+(Mintzberg's pattern-promotion is the mechanical version of the same loop).
+Steppe's canon already resolves this the same way at every other layer — an
+invariant core with an adaptive periphery:
 
 | Layer | Fixed kernel (deliberate) | Governed emergence (adaptive) |
 |---|---|---|
@@ -191,23 +209,30 @@ at every other layer — an invariant core with an adaptive periphery:
 
 So the rule, now explicit (**ADOPTED A4**, codified in GTM v1.2): the strategy
 *kernel* changes only the way the constitution does — deliberately, in the open,
-with the members. The *action layer* is licensed to emerge: every phase's health
-signals are its falsification instruments; the A1 reflection cadence and phase
-gates are where observed patterns get promoted into the written plan (a version
-bump) or discarded. "Congruence is the test" already polices the boundary —
-emergence never gets to erode the kernel, and the kernel never gets to freeze
-the tactics.
+with the members. The *action layer* is licensed to emerge, in brown's sense:
+adaptation is continuous and relational (the A1 pulse and retro are where the
+felt experience of members enters the plan), with the health signals as the
+falsifiers Rumelt would demand — a tactic that fails its signals is wrong, and
+gets revised in a version bump, never patched silently. "Congruence is the
+test" polices the boundary — emergence never erodes the kernel, and the kernel
+never freezes the tactics.
 
 One caution each way: pure Rumelt hardens into plan-worship (the map outliving
-the territory between annual rewrites); pure Mintzberg drifts into
-tyranny-of-structurelessness at the strategy layer — the same Freeman failure
-the captains model guards against. The layered rule is the guard against both.
+the territory between rewrites); emergence without the kernel's discipline
+drifts into the tyranny of structurelessness at the strategy layer — the same
+Freeman failure the captains model guards against. brown's own guardrail
+("intentional adaptation" — intentional first) and Rumelt's (strategy as
+testable hypothesis) point at the same layered rule.
 
 ---
 
 **Changelog**
-- v1.1 (2026-07-04) — Part IV added: Rumelt scorecard, the two senses of
-  "emergent strategy," and the kernel/emergence layering rule (A4) codified into
-  GTM v1.2.
+- v1.2 (2026-07-04) — Part IV re-centered on brown per clarification: the
+  question was Rumelt × brown (not Mintzberg). Names the convergence — Steppe's
+  Rumelt guiding policy *is* brown's doctrine in strategy form — and keeps the
+  kernel/emergence layering rule (A4) with brown's relational adaptation as the
+  action-layer discipline.
+- v1.1 (2026-07-04) — Part IV added: Rumelt scorecard and the layering rule
+  (A4) codified into GTM v1.2.
 - v1 (2026-07-04) — initial assessment; A1–A3 adopted; P1–P6 tabled for the
   cohort/board.
