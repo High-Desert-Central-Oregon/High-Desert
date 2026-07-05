@@ -18,8 +18,8 @@ import { weatherToMood } from "@/lib/weather";
  * The shader owns the SCENE (sky/sun/moon/ridges/foreground/stars + mood response);
  * the engine owns the MOVING weather — so there's no double weather. Notably there is
  * NO SunOrb here: the shader already draws the sun/moon (no second sun). Clouds and
- * wind/rain/snow/fog are day-only and reduced-motion-safe (gated in hero-sky.tsx +
- * landing.css); the shooting stars show at night.
+ * wind/rain/snow/fog are day-only and reduced-motion-safe (gated in hero-sky.tsx);
+ * the shooting stars show at night.
  *
  * Weather data: the shader mood comes from useHeroWeather (mapped via weatherToMood);
  * the engine reads the same cached /api/weather (WeatherController). Both hit only the

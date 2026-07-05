@@ -5,10 +5,11 @@
 // the layered strata horizon. Built on the existing hero-sky (weather canvas /
 // stars / sun) + strata-horizon — nothing here is redesigned, only unified.
 //
-//   size="tall"  — the landing's full atmospheric scene (weather drift, night
+//   size="tall"  — the original full atmospheric scene (weather drift, night
 //                  stars/meteors, drifting clouds + readout, sun/moon orb, and the
-//                  tall strata band). Reproduces the landing markup verbatim so the
-//                  landing stays pixel-identical and keeps its own landing.css.
+//                  tall strata band). DORMANT: no page uses it since the landing
+//                  moved to the Broadsheet layout (its landing.css was removed);
+//                  kept for a future tall-hero surface.
 //   size="band"  — inner pages: the shorter compact strata band under the copy.
 //                  Renders the same .hero / .hero-in / .hero-grid class names each
 //                  page's CSS already targets, so no new CSS is needed and each

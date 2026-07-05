@@ -19,3 +19,25 @@ source.
 
 These `_design-source/*.html` files are reference artifacts only; nothing imports them at
 build or runtime.
+
+---
+
+## Addendum (2026-07-04) — page canon, type system, and the preview export
+
+- **Landing source of truth:** `steppe-align-broadsheet-mix.html` (the Broadsheet × Plate
+  mock; commit `6487458` named it so). The implemented landing is
+  `steppe/app/(site)/page.tsx` + `broadsheet.css`. `steppe-landing.html` and
+  `steppe-landing-v5.html` are superseded for the landing; v5 survives in subpage hero
+  language and tokens.
+- **Page pairs:** the `-v5` / `-v2` / `-v3` files supersede their unversioned siblings
+  (`steppe-landing`, `steppe-partners`, `steppe-preview`).
+- **Type system:** the site migrated to **Besley / Schibsted Grotesk / Martian Mono**
+  (commit `60a1d8c`). The subpage design files still name the earlier
+  Newsreader / Libre Franklin / DM Mono system — read their type specs as superseded;
+  layout/structure/copy remain the reference.
+- **The live preview embed** (`steppe/public/preview-app/steppe-exchange.html`) is a
+  self-contained Claude Design runtime export with no `_design-source/` counterpart. Its
+  canonical copy + extracted tokens live at `docs/design/exchange-preview-2026-07.html`
+  (byte-identical, SHA-256 `2e5d4a2d…`) and `docs/design/exchange-design-tokens-reference.css`.
+  The old in-page facsimile from `steppe-preview-v3.html` was replaced by this embed; its
+  dead CSS was removed 2026-07-04.
