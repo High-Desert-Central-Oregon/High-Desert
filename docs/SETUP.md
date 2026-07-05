@@ -58,10 +58,11 @@ account. The repo's `schema.sql`, `CLAUDE.md`, and `SPEC.md` are referenced thro
    policies — one **INSERT** (target role `authenticated`, the `with check` body above) and one
    **SELECT** (target role `authenticated`, the `using` body above). Don't leave target roles on
    "all (public) roles," and don't combine both operations into one policy (their rules differ).
-3. **No UPDATE or DELETE policy is needed.** The evidence file is removed server-side by an edge
-   function when `decide_verification()` runs (the secret key bypasses RLS). The DB drops the
-   pointer; the function drops the file — the "forget" half of verify-then-forget. See
-   *What's stubbed* below.
+3. **No UPDATE or DELETE policy is needed.** The evidence file is removed server-side by the
+   `decideVerification` server action (service-role client, which bypasses RLS) BEFORE the
+   decision commits; the `decide_verification()` trigger then nulls the pointer. There is no
+   edge function — that early framing was corrected in `DECISIONS.md`. Together these are the
+   "forget" half of verify-then-forget. See *Setup still needed* below.
 
 ## 4. API keys + environment
 
@@ -88,8 +89,9 @@ safe to expose) and **secret** keys (`sb_secret_…`, server-only). The legacy `
 ## 5. Auth (magic link)
 
 1. **Authentication → Providers:** Email is enabled by default, which covers magic links.
-2. **Authentication → URL Configuration:** set **Site URL** to `http://localhost:3000` for local
-   dev (add your production URL later) so magic-link redirects resolve.
+2. **Authentication → URL Configuration:** set **Site URL** to `http://localhost:3100` for local
+   dev (the dev script runs on port 3100; add your production URL later) so magic-link
+   redirects resolve.
 3. The built-in email sender works for the founding cohort but is rate-limited — wire up a real
    SMTP provider (e.g. Resend) before launch.
 
@@ -119,8 +121,9 @@ That's a working backend.
 With `.env.local` in place:
 
 ```bash
+cd steppe        # the app lives in the steppe/ subdirectory
 npm install
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:3100
 ```
 
 **Building with Claude Code:** run `claude` in the repo root — it reads `CLAUDE.md` (invariants +
@@ -150,4 +153,4 @@ The two former code stubs are now implemented; what remains is environment setup
 
 ---
 
-*Part of the Steppe documentation, licensed CC BY-SA 4.0 (see `docs/LICENSE`).*
+*Part of the Steppe documentation, licensed CC BY-SA 4.0 (see `docs/LICENSE.md`).*

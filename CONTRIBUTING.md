@@ -96,7 +96,7 @@ By signing off, you certify the statement below.
 ## Reporting security or privacy issues
 
 Please do **not** open a public issue for a security or privacy vulnerability. Email
-`[security contact — fill in]` so it can be fixed before disclosure. Given verify-then-forget
+`hello@steppe.community` so it can be fixed before disclosure. Given verify-then-forget
 and the member-data commitments, privacy bugs are treated as security bugs.
 
 ## Per-file header notice (new source files)

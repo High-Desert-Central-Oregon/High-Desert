@@ -51,4 +51,4 @@ DOCUMENTATION & DESIGN MATERIALS
 Documentation and design materials (the pattern language, development framework,
 build spec, and other written design docs) are licensed separately under
 Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
-See LICENSE-docs (place at docs/LICENSE in the repo).
+See docs/LICENSE.md in the repo.

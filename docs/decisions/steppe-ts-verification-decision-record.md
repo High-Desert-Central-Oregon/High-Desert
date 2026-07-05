@@ -3,7 +3,8 @@
 **Date:** 2026-06-27
 **Status:** Adopted (canon). Supersedes prior verification-storage and T&S assumptions noted below.
 **Scope:** Policy and data-handling posture. Legal specifics flagged for counsel, not settled here.
-**Suggested repo path:** `docs/decisions/trust-safety-verification-retention.md`
+**Repo path:** `docs/decisions/steppe-ts-verification-decision-record.md` (filed under this
+name; the originally suggested `trust-safety-verification-retention.md` was not used)
 
 ---
 

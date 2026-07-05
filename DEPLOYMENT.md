@@ -36,7 +36,7 @@ the last two are server-only and must never be exposed to the client.
 ## 2. Runtime
 
 - **Node.js:** there is no `.nvmrc` or `engines` field pinning a version. The
-  app is developed on **Node 26 / npm 11**. Next.js 15 requires **Node ≥ 18.18**,
+  app is developed on **Node 26 / npm 11**. Next.js 16 requires **Node ≥ 20.9**,
   so any current LTS (20 or 22) works; pin one on the host for reproducibility
   (e.g. add an `.nvmrc`).
 - **Package manager:** **npm** (the lockfile is `steppe/package-lock.json`). Use
@@ -74,9 +74,9 @@ Supabase project — hosted or self-hosted — but the SQL itself is standard Po
 - **`schema.sql`** — the canonical, full schema: tables, RLS policies, triggers,
   views, and seeds. This is the source of truth.
 - **`migrations/`** — ordered, idempotent incremental changes (`0001_*` …
-  `0014_*`), each already folded into `schema.sql`.
+  `0015_*`), each already folded into `schema.sql`.
 
-> `supabase/migrations/` is intentionally empty — migrations live in the
+> There is no `supabase/migrations/` directory — migrations live in the
 > repo-root `migrations/` directory.
 
 **Applying it:**
@@ -93,7 +93,7 @@ supabase db reset        # local: rebuild from schema.sql + migrations + seeds
 For an existing database, apply only the new migration(s) in order, e.g.:
 
 ```bash
-psql "$DATABASE_URL" -f migrations/0014_interest_signups.sql
+psql "$DATABASE_URL" -f migrations/0015_qr_counts.sql
 ```
 
 Always apply pending migrations **before** deploying the matching app build, or
@@ -134,9 +134,10 @@ To keep that move mechanical, the codebase stays on the standard
 - **No Vercel-managed services:** no Vercel **KV**, **Cron**, **Blob**, or
   **Postgres**. Use the project's Postgres for data, Supabase Storage for files,
   and a plain scheduler (cron / systemd timer) if a periodic job is ever needed.
-- **No platform-specific runtime assumptions.** Routes that need the service-role
-  key already pin `export const runtime = "nodejs"`; don't rely on an edge-only
-  runtime or platform-injected request context.
+- **No platform-specific runtime assumptions.** There are **no** `export const
+  runtime` pins anywhere — `cacheComponents` (next.config) is incompatible with
+  them, and every route runs on the default Node runtime. Don't add one, and
+  don't rely on an edge-only runtime or platform-injected request context.
 - Anything host-specific (reverse proxy, TLS, process supervision, scheduled
   jobs) lives on the host, configured per §5 — never baked into the app.
 

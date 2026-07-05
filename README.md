@@ -3,8 +3,9 @@
 **Community-owned, verified, ad-free digital civic infrastructure for Redmond, Oregon.**
 
 Steppe is a place for verified neighbors to find each other, organize, help one another,
-and govern the platform together. It is run by [Steppe], a member-governed Oregon nonprofit
-public benefit corporation (ORS 65, on a 501(c)(3) pathway). It is not social media and it is not
+and govern the platform together. It is run by Steppe, a member-governed Oregon nonprofit
+public benefit corporation (ORS 65, on a 501(c)(3) pathway; formal entity name pending
+incorporation — see `NOTICE`). It is not social media and it is not
 advertising-supported — the people it serves are the only customer.
 
 > **Status: pre-launch.** We're building the prototype — a functional closed-beta MVP for a
@@ -55,22 +56,25 @@ verify-then-forget guarantees live in Postgres RLS and triggers (`schema.sql`), 
 # 1. Install
 git clone https://codeberg.org/steppe-community/steppe.git steppe && cd steppe
 git config core.hooksPath .githooks   # enable the per-clone DCO sign-off hook
+cd steppe                             # the Next.js app lives in the steppe/ subdirectory
 npm install
 
-# 2. Set up the database
+# 2. Set up the database (repo root: ../schema.sql)
 #    In the Supabase SQL editor, run the contents of schema.sql, then (per the notes
 #    at the bottom of that file):
 #      - create a PRIVATE Storage bucket named 'verification-evidence' (+ its two policies)
 #      - make yourself an admin:
 #          update profiles set role='admin' where id='<your-auth-user-id>';
 
-# 3. Configure environment — create .env.local with:
+# 3. Configure environment — create steppe/.env.local (see steppe/.env.example):
 #      NEXT_PUBLIC_SUPABASE_URL=...
-#      NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-#    (server-only keys, e.g. a service-role key for admin tasks, go here too — without
-#     the NEXT_PUBLIC_ prefix, so they never reach the client.)
+#      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...   # Supabase's newer name for the anon key —
+#                                                 # use THIS exact variable name or the app
+#                                                 # boots without a working Supabase client
+#    (server-only keys, e.g. SUPABASE_SERVICE_ROLE_KEY, go here too — without the
+#     NEXT_PUBLIC_ prefix, so they never reach the client.)
 
-# 4. Run
+# 4. Run (from steppe/) — dev serves on http://localhost:3100
 npm run dev
 ```
 
@@ -86,17 +90,20 @@ respect every invariant in CLAUDE.md."*
 ├── README.md          — this file
 ├── CLAUDE.md          — design invariants, build order, do-not-build list (read first)
 ├── SPEC.md            — the working build spec
+├── DECISIONS.md       — the running decision log
+├── DEPLOYMENT.md      — how to deploy (host-agnostic)
 ├── schema.sql         — Postgres schema, RLS, triggers, seeds (run first)
+├── migrations/        — ordered incremental changes, already folded into schema.sql
 ├── LICENSE            — GNU AGPL-3.0-or-later (the code)
 ├── NOTICE             — copyright + trademark policy
 ├── CONTRIBUTING.md    — how to contribute (DCO + working style)
-├── docs/              — design materials (CC BY-SA 4.0)
-│   ├── LICENSE
+├── docs/              — design materials (CC BY-SA 4.0) + ops/decision records
+│   ├── LICENSE.md
 │   ├── pattern-language.html
 │   ├── dev-framework.html
-│   └── build-spec.html
+│   └── building-spec.html
 ├── content/legal/     — Terms & Privacy (seeds the documents table; pending legal review)
-└── app/               — the Next.js application
+└── steppe/            — the Next.js application (its own package.json and lockfile)
 ```
 
 ## Contributing
@@ -113,15 +120,14 @@ The design is meant to be **adopted, adapted, or refused** by other communities 
 own terms, by the Confederated Tribes of Warm Springs. The AGPL keeps any fork open; the patterns
 (CC BY-SA 4.0) travel with their reasoning intact. You may run and modify the code freely, but you
 may not operate it *as* "Steppe" — see [`NOTICE`](./NOTICE). If you'd like to run your own
-instance, [get in touch][contact].
+instance, [get in touch](https://steppe.community/contact).
 
 ## License
 
 - **Code:** GNU Affero General Public License v3.0 or later — [`LICENSE`](./LICENSE)
-- **Documentation & design materials:** Creative Commons Attribution-ShareAlike 4.0 — [`docs/LICENSE`](./docs/LICENSE)
+- **Documentation & design materials:** Creative Commons Attribution-ShareAlike 4.0 — [`docs/LICENSE.md`](./docs/LICENSE.md)
 - **"Steppe"** name and logo: reserved trademark — [`NOTICE`](./NOTICE)
 
 ---
 
-*[Steppe] · Redmond, Oregon. Replace the bracketed placeholders ([repo URL], [contact],
-and the entity name) before publishing.*
+*Steppe · Redmond, Oregon.*
