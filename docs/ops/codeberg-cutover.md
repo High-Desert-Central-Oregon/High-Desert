@@ -93,13 +93,36 @@ In the Codeberg repo: **Settings → Repository → Push Mirrors** (Forgejo "Mir
 Settings" / "Push Mirrors"), then add a mirror:
 
 - **Git Remote Repository URL:** `https://github.com/High-Desert-Central-Oregon/High-Desert.git`
-- **Authorization → Username:** your GitHub username
-- **Authorization → Password/Token:** **`<GITHUB_PAT>`** — a GitHub Personal Access
-  Token *you* create and paste here. Fine-grained, scoped to **only** that repo, with
-  **Contents: Read and write** (enough to push). **Never** put this value in the repo,
-  a command, or a commit.
+  (plain https — do **not** embed credentials in the URL).
+- **Authorization → Username:** your GitHub username (`Gchism94`).
+- **Authorization → Password/Token:** **`<GITHUB_PAT>`** — see the token recipe
+  below. **Never** put this value in the repo, a command, or a commit.
 - **Sync interval:** e.g. every 8h, and/or enable **"Sync when new commits are
   pushed"** for near-immediate mirroring.
+
+### The token recipe (the org gotcha)
+
+The mirror repo belongs to an **organization** (`High-Desert-Central-Oregon`),
+and that changes which tokens work:
+
+- **Recommended: a CLASSIC PAT with the `repo` scope.** GitHub → Settings →
+  Developer settings → Personal access tokens → **Tokens (classic)** → generate
+  with **`repo`** checked. A classic PAT acts with your full push rights on org
+  repos with no org-side opt-in. (Verified: a classic `repo`-scoped token pushes
+  to this org repo; `main` carries no branch protection; the account has push +
+  admin.)
+- **A fine-grained PAT only works here if BOTH are true:** (1) its **Resource
+  owner** is set to `High-Desert-Central-Oregon` — *not* your personal account —
+  with **Repository access → Only select repositories → High-Desert** and
+  **Permissions → Contents: Read and write**; and (2) the org has fine-grained
+  PATs **enabled** (org Settings → Third-party Access → Personal access tokens —
+  GitHub restricts them by default, and may queue them for approval). A
+  fine-grained token created under the personal account, or under an org that
+  hasn't opted in, fails with a permission error even though your account can
+  push — this is the failure mode observed 2026-07-04.
+- After saving the mirror, use **"Synchronize now"** and check the mirror row's
+  error column: a red timestamp with a permission message means the token, not
+  the repo.
 
 With this in place, the local dual-push in §2 is optional — pushing to Codeberg alone
 keeps GitHub (and therefore Vercel) up to date. Using both is harmless (the mirror is
@@ -107,7 +130,9 @@ idempotent).
 
 > If GitHub's token policy or the mirror ever needs rotation, regenerate the PAT in
 > GitHub and update **only** the Codeberg mirror's stored token in the UI. No repo
-> change is needed.
+> change is needed. Until the mirror is green, deploys require a manual
+> `git push https://github.com/High-Desert-Central-Oregon/High-Desert.git main`
+> after each Codeberg push.
 
 ---
 
