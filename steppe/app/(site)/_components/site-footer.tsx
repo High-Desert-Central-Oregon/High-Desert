@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 /**
  * Shared marketing footer (Broadsheet × Plate). Broadsheet restraint: a 3px ink top
- * rule, the structural attribution, the Contact · Privacy · Terms links, the founder credit
+ * rule, the structural attribution, the Contact · Privacy · Terms · Partners links, the founder credit
  * linking out to gregtchism.com, and a mono dateline line. Server component; strings
  * come from the active locale.
  */
@@ -18,6 +18,7 @@ export async function SiteFooter() {
             <Link href="/contact">{t("contact")}</Link>
             <Link href="/privacy">{t("privacy")}</Link>
             <Link href="/legal/terms">{t("terms")}</Link>
+            <Link href="/partners">{t("partners")}</Link>
           </nav>
           <p className="foot-credit">
             {t("ledBy")}{" "}

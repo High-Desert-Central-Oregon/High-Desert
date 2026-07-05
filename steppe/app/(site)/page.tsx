@@ -107,32 +107,32 @@ export default async function HomePage() {
                 <i style={{ background: "var(--sage-deep)" }}></i>
                 {t("bsCatOffer")}
               </span>
-              <span className="item">Free tomato starts, 40+ plants</span>
-              <span className="loc">M.R. · SW Redmond · 2h</span>
+              <span className="item">{t("bsItem1")}</span>
+              <span className="loc">{t("bsLoc1")}</span>
             </div>
             <div className="cl">
               <span className="cat">
                 <i style={{ background: "var(--rust)" }}></i>
                 {t("bsCatNeed")}
               </span>
-              <span className="item">Electrician who knows older homes</span>
-              <span className="loc">J.T. · Dry Canyon · 5h</span>
+              <span className="item">{t("bsItem2")}</span>
+              <span className="loc">{t("bsLoc2")}</span>
             </div>
             <div className="cl">
               <span className="cat">
                 <i style={{ background: "var(--ochre)" }}></i>
                 {t("bsCatGather")}
               </span>
-              <span className="item">Member meeting, July</span>
-              <span className="loc">Community hall · Jul 18</span>
+              <span className="item">{t("bsItem3")}</span>
+              <span className="loc">{t("bsLoc3")}</span>
             </div>
             <div className="cl">
               <span className="cat">
                 <i style={{ background: "var(--range)" }}></i>
                 {t("bsCatAid")}
               </span>
-              <span className="item">Rides to medical appointments</span>
-              <span className="loc">all neighborhoods · ongoing</span>
+              <span className="item">{t("bsItem4")}</span>
+              <span className="loc">{t("bsLoc4")}</span>
             </div>
           </div>
         </div>
