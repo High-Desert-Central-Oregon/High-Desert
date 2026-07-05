@@ -95,18 +95,26 @@ undermine them:
 
 ## Do NOT build (out of prototype scope — see SPEC.md §02)
 
+> **Superseded in part (2026-07-04, see DECISIONS.md):** groups, event recurrence, the
+> Local Exchange listing primitive (needs/offers/goods/jobs/mutual-aid listings), and
+> member messages moved INTO closed-beta scope under
+> `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md` (+ Spec v3). Groups are shipped
+> (migration 0013). Everything below remains out.
+
 Don't scaffold these even if they seem helpful; they're deliberately deferred or refused:
-mutual-aid board, skills/trades trust graph, skill exchange, recurring events, resilience
-alerts/SMS, payments / sliding-scale UI, **the regional discussion board** (highest-conflict
-surface, deferred & logged), local marketplace, visitor posting/voting, multi-community
-expansion, youth (under-18) accounts. If a task seems to require one of these, stop and ask.
+skills/trades trust graph, resilience alerts/SMS, payments / sliding-scale UI (the
+Exchange is listings-only — no on-platform transactions, ever, in the prototype),
+**the regional discussion board** (highest-conflict surface, deferred & logged), a
+payments marketplace, visitor posting/voting, multi-community expansion, youth (under-18)
+accounts. If a task seems to require one of these, stop and ask.
 
 ## Key files
 
 - `schema.sql` — the database: tables, RLS, triggers, the `proposal_results` view, seeds
   (35 Redmond neighborhoods; placeholder Terms/Privacy rows). Run it first.
-- `SPEC.md` — the full build spec (scope, data model, RLS, per-feature implementation,
-  sequence, locked decisions).
+- `SPEC.md` — the base build spec (scope, data model, RLS, per-feature implementation,
+  sequence, locked decisions). For groups / calendar / the Exchange, the active companion
+  is `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md` (see DECISIONS.md 2026-07-04).
 - Terms & Privacy draft (`highdesert-terms-privacy-v1`) — plain-language, pending Oregon
   legal review; replace the placeholder `documents` bodies before launch.
 
@@ -116,5 +124,5 @@ expansion, youth (under-18) accounts. If a task seems to require one of these, s
   unless told to remove it.
 - Terms & Privacy are a **draft pending legal review** — do not present them as final.
 - Governance numbers (quorum 15%, major 60%, immutable 75% + 30 days; tenure 1×/1.5×/2×/3×
-  by <1yr / 1–2yr / 2–4yr / 4yr+, Business Plan v11) are provisional config for the cohort to
+  by <1yr / 1–2yr / 2–4yr / 4yr+, Business Plan v12) are provisional config for the cohort to
   ratify — keep them in config, not hardcoded.

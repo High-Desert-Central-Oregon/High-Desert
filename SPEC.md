@@ -39,7 +39,7 @@ the community later, but the build no longer waits on any of them.
 - **Verification pathways:** ID / utility bill / voter reg / property record / **mailed postcard
   code**, all human-reviewed. The postcard path is the PO-Box / Warm Springs / unbanked accommodation.
 - **Governance numbers (provisional config):** quorum 15%, major 60%, immutable 75% + 30 days;
-  tenure weight (Business Plan v11, 1×–3×): `< 1 yr` 1.0× · `1–2 yr` 1.5× · `2–4 yr` 2.0× · `4 yr+` 3.0×.
+  tenure weight (Business Plan v12, 1×–3×): `< 1 yr` 1.0× · `1–2 yr` 1.5× · `2–4 yr` 2.0× · `4 yr+` 3.0×.
 - **Vote visibility:** secret until close, aggregate-only after (anti-coercion).
 - **Billing:** cohort free; defer Stripe.
 - **Terms & Privacy:** plain-language design-specific draft exists (`highdesert-terms-privacy-v1`),
@@ -63,10 +63,15 @@ the community later, but the build no longer waits on any of them.
 
 ### Out — deliberately deferred or refused
 
-Mutual aid (C1), skills/trades trust graph (C2), skill exchange/learning webs (C3), recurring
-events (B4), resilience alerts + SMS (C5), real payments + sliding-scale UI, the **regional
-discussion board** (deferred & logged), local marketplace, visitor posting/voting, youth
-version, historical archive, multi-community expansion.
+> **Superseded in part (2026-07-04, DECISIONS.md):** groups, recurring events (B4), the
+> Local Exchange listing primitive (which absorbs mutual-aid listings, C1), and member
+> messages are now IN closed-beta scope per
+> `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md`. The list below stands for the rest.
+
+Skills/trades trust graph (C2), skill exchange/learning webs (C3), resilience alerts +
+SMS (C5), real payments + sliding-scale UI, the **regional discussion board** (deferred &
+logged), a payments marketplace, visitor posting/voting, youth version, historical
+archive, multi-community expansion.
 
 ### Why each is deferred or out
 

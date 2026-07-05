@@ -7,6 +7,39 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-07-04 — Scope supersession logged: Groups/Calendar/Exchange v2 pulls three deferred items into beta scope
+
+**Decision (recording an already-made one).** `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md`
+("Draft for build … in scope for the first closed beta") and
+`docs/Steppe-Spec-v3-Identity-Privacy-Exchange.md` supersede parts of `SPEC.md` §02's
+"Out" list: **groups** (shipped as migration `0013_groups_core.sql`), **event recurrence**
+(v2 brought recurrence into v1 of the calendar), and the **Local Exchange listing
+primitive** (needs / offers / goods / jobs / mutual aid — "pulled forward from
+post-beta"), plus member-to-member messages (Spec v3 §5). This entry exists because the
+2026-07-04 audit found the supersession real in the specs and the schema but recorded
+nowhere — `CLAUDE.md`'s do-not-build and `SPEC.md` §02 still said the opposite.
+
+**What is still out (unchanged).** No payments anywhere (the Exchange is listings-only;
+transactions happen off-platform), no skills/trades trust graph, no resilience alerts/SMS,
+no regional discussion board, no visitor posting/voting, no multi-community expansion, no
+youth accounts, no historical archive. "Local marketplace" in the old out-list meant a
+payments marketplace — that remains out; the listings Exchange is not it.
+
+**Why.** The cohort's first real use is coordination (groups, gatherings, simple
+listings); shipping the Exchange primitive early makes the beta a genuine test of the
+one-feed model. The two-tier moderation model and prohibited-items list (Terms §2, §4)
+shipped alongside it.
+
+**Also.** Business Plan **v12** (June 2026) supersedes v11; the governance numbers are
+unchanged (quorum 15%, major 60%, immutable 75% + 30 days, tenure 1×/1.5×/2×/3×), so
+older "v11" citations in historical records are historical rather than wrong; `CLAUDE.md`
+and `SPEC.md` now cite v12.
+
+**Revisit.** If the Exchange proves too heavy for the beta cohort, the fallback is the
+v2 spec's own phase gates — not a return of the old out-list.
+
+---
+
 ## 2026-06-11 — Two stubs resolved (scheduled close; evidence deletion)
 
 Pre-launch coherence sweep. The two long-standing stubs noted in `schema.sql` are
