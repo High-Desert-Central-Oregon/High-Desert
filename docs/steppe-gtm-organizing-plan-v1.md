@@ -1,6 +1,9 @@
 # Steppe — Go-to-Market & Organizing Plan
 
-**v1 · June 2026 · first canonical version**
+**v1.1 · July 2026** · supersedes v1 (June 2026). v1.1 is an editorial pass: the
+working-session voice was rewritten as plan prose; no strategy changed. Fiscal-sponsor
+status: **Ignite Empowerment Foundation** selected (Central Oregon 501(c)(3)); agreement
+pending signature — see `docs/sponsors-programmatic-partners-landscape.md`.
 
 ---
 
@@ -57,7 +60,7 @@ Lead with ownership and permanence. *Redmond owns this. It cannot be sold. It an
 **Tactics**
 
 - **A physical launch at Herringbone.** Brandon's space, a board candidate, a natural Redmond gathering point. Partners co-host so it reads as civic, not personal. The event is the moment; the digital push follows it, not the reverse.
-- **Press, on the founder-institution angle.** *Local professor builds a civic institution Redmond actually owns* is the strongest pitch — concrete, local, slightly surprising. Targets: The Bulletin, KTVZ, Central Oregon Daily, the Source Weekly (the alt-weekly civic angle fits well), and the Redmond community press. You know the live local landscape better than I do; confirm which outlets are active and who covers civic and tech. Pitch the story as about *residents*, not about software.
+- **Press, on the founder-institution angle.** *Local professor builds a civic institution Redmond actually owns* is the strongest pitch — concrete, local, slightly surprising. Targets: The Bulletin, KTVZ, Central Oregon Daily, the Source Weekly (the alt-weekly civic angle fits well), and the Redmond community press. Before pitching, confirm which outlets are currently active and who covers civic life and technology. Pitch the story as about *residents*, not about software.
 - **Give the cohort a real first vote.** The single best launch tactic is to hand the founding members something genuine to decide in their first week — a Community Fund seed allocation, a name, a neighborhood-priority ranking. A membership that votes on day one is real in a way that a membership that waits cannot be. This is the launch's center of gravity, not a footnote.
 - **Activate the list in sequence, not all at once.** Event → press hits → list activation → first decision opens. Each step feeds the next and gives the press something live to point at.
 
@@ -73,9 +76,9 @@ Lead with ownership and permanence. *Redmond owns this. It cannot be sold. It an
 
 **The captains model**
 
-Turn Redmond's 35 neighborhoods into 35 organizing units, each with a member who vouches for and onboards their block. This mirrors your own subsidiarity design and the verification-by-vouching model — growth happens through relationship and local standing, not spend. It is the single most important Phase 2 structure.
+Turn Redmond's 35 neighborhoods into 35 organizing units, each with a member who vouches for and onboards their block. This mirrors Steppe's subsidiarity design and the verification-by-vouching model — growth happens through relationship and local standing, not spend. It is the single most important Phase 2 structure.
 
-One caution worth holding from your own canon: a pure captains-by-vibes arrangement will reproduce exactly the failure Jo Freeman named — informal structure that quietly concentrates power in whoever has the most time and the loudest voice. Captains need *light, explicit* structure: a clear, simple charge, a defined onboarding flow, and a known way to hand the role off. Not bureaucracy — legibility. Enough mētis to stay human, enough épistēmē to stay fair.
+One caution from the project's own canon: a pure captains-by-vibes arrangement will reproduce exactly the failure Jo Freeman named — informal structure that quietly concentrates power in whoever has the most time and the loudest voice. Captains need *light, explicit* structure: a clear, simple charge, a defined onboarding flow, and a known way to hand the role off. Not bureaucracy — legibility. Enough mētis to stay human, enough épistēmē to stay fair.
 
 **Tactics**
 
@@ -85,7 +88,7 @@ One caution worth holding from your own canon: a pure captains-by-vibes arrangem
 - **Post the numbers publicly.** Member count, dues collected, comp paid. Radical transparency as recruitment: the meter running in the open is itself the pitch, and it makes the $4 → comp-ceiling logic visible rather than asserted.
 - **Vouching, not incentivized referral.** Members bring members because they believe in it and stake their standing on it — congruent with verification. A referral bounty would be the growth-hack version and would cheapen the thing. Keep it social.
 
-**Health signals:** member count toward 2,300 (a genuine outcome — it's the funding condition, not a vanity number); neighborhoods with an active captain; quorum-level participation (your 15%) holding as the base grows; volume of member stories coming in unprompted.
+**Health signals:** member count toward 2,300 (a genuine outcome — it's the funding condition, not a vanity number); neighborhoods with an active captain; quorum-level participation (the 15% floor) holding as the base grows; volume of member stories coming in unprompted.
 
 ---
 
@@ -96,9 +99,9 @@ One caution worth holding from your own canon: a pure captains-by-vibes arrangem
 **Tactics**
 
 - **High Desert Connect as an earned-media generator.** Rural broadband is a press-friendly, human story with obvious stakes. The program arm (grant-funded, 2027+) gives outlets something concrete and sympathetic to cover, and it positions Steppe as a builder of infrastructure, not just a membership app.
-- **Net Inclusion 2027 (Columbus, Feb 23–25) as the national moment.** If the workshop is accepted, the applied session with Steppe as case study puts it in front of the digital-inclusion community that confers legitimacy in this space. That recognition travels home: Redmonders join faster when the thing they're joining is respected elsewhere. Next step on acceptance is the deck from your existing outline — flag when you want it built.
+- **Net Inclusion 2027 (Columbus, Feb 23–25) as the national moment.** If the workshop is accepted, the applied session with Steppe as case study puts it in front of the digital-inclusion community that confers legitimacy in this space. That recognition travels home: Redmonders join faster when the thing they're joining is respected elsewhere. On acceptance, the next step is building the session deck from the existing workshop outline.
 - **The annual report as a flagship asset.** The radically-transparent report is a marketing artifact in its own right. Full financials, no funder over 30%, comp disclosed — published openly. No competitor can run this play without restructuring, which is exactly why it works.
-- **Position the thesis in the discourse, carefully.** Your writing and speaking on structural ownership — the Ostrom commons frame, Baradaran on who owns what, the Hirschman point that Steppe solves enshittification through *ownership* rather than *exit* — situates the project in the civic-tech conversation and draws the funders and peers who matter. Keep this in a separate channel from local recruitment (see "the two-narratives problem" below).
+- **Position the thesis in the discourse, carefully.** The founder's writing and speaking on structural ownership — the Ostrom commons frame, Baradaran on who owns what, the Hirschman point that Steppe solves enshittification through *ownership* rather than *exit* — situates the project in the civic-tech conversation and draws the funders and peers who matter. Keep this in a separate channel from local recruitment (see "the two-narratives problem" below).
 - **Conference pipeline as listening and legitimacy:** Platform Cooperativism Consortium (philosophical fit), the U.S. Indigenous Data Sovereignty Summit in Tucson (low travel cost given UA affiliation; listening posture).
 
 **The Tribal work stays off the marketing surface.** This is a firm line, not a soft preference. The Tribal Digital Sovereignty Program and the Warm Springs relationship are governed by the partners' sovereignty, including over visibility. Steppe does not put Indigenous partnerships on a slide to borrow credibility. The work proceeds; what is said about it, and when, belongs to the partners.
@@ -115,7 +118,7 @@ One caution worth holding from your own canon: a pure captains-by-vibes arrangem
 
 - **Government funding, handled in the open.** When public money enters (2028+, radically transparent), the transparency *is* the story. "We took government funding and here's every dollar, in public" is a credibility-builder, not a risk to manage — provided no single funder crosses 30%.
 - **Replication as narrative, not sales.** Other communities are a movement, not a market. The 12-community hard cap means this is never customer acquisition — it's the proof that the model is real and the deliberate refusal to scale past what stays governable. The cap is itself a thing to talk about: chosen smallness as an ethic, the opposite of the growth logic everyone else is running.
-- **Durability as marketing.** As the founder-protection period sunsets (5–7 years) and your role transitions to the advisory seat, the story becomes *it doesn't depend on one person.* An institution that survives its founder is more trustworthy than one that doesn't, and saying so plainly is good marketing for the structure.
+- **Durability as marketing.** As the founder-protection period sunsets (5–7 years) and the founder's role transitions to the advisory seat, the story becomes *it doesn't depend on one person.* An institution that survives its founder is more trustworthy than one that doesn't, and saying so plainly is good marketing for the structure.
 - **The annual report as a recurring moment.** Each year's transparent report is a flagship release — a predictable, on-brand beat that compounds.
 
 **Health signals:** funder diversification (no funder >30%); replication inquiries from other communities; institutional durability indicators (board health, leadership transition readiness).
@@ -135,20 +138,20 @@ There is a real strategic risk to manage from Phase 3 onward, and it ties to the
 - **The local story** (members): *Redmond owns this.* Hyper-local, concrete, structural. This is the recruitment narrative and it must stay clean.
 - **The civic-tech story** (funders, conferences, other communities): *a replicable model for community-owned civic infrastructure.* Broader, more abstract, movement-flavored.
 
-If these bleed, the local message muddies — a Redmond resident does not want to hear about a national civic-tech movement; they want to know who owns the thing in their town. Keep them in separate channels with separate framing. The local site, events, and press stay relentlessly about Redmond. The thesis writing, conference talks, and funder materials carry the broader story. Resolve which lane the articles and the 501(c)(3) filing commit to *before* filing, because that legal choice will constrain which story you can tell.
+If these bleed, the local message muddies — a Redmond resident does not want to hear about a national civic-tech movement; they want to know who owns the thing in their town. Keep them in separate channels with separate framing. The local site, events, and press stay relentlessly about Redmond. The thesis writing, conference talks, and funder materials carry the broader story. Resolve which lane the articles and the 501(c)(3) filing commit to *before* filing, because that legal choice constrains which story the organization can tell.
 
 ---
 
 ## What we deliberately do not do
 
-A short list, because what you refuse defines the brand as much as what you do:
+A short list, because what Steppe refuses defines the brand as much as what it does:
 
 - No paid advertising of any kind, at any stage.
 - No incentivized or bounty-based referral.
 - No urgency manufacturing — countdowns, false scarcity, "spots running out."
 - No marketing on Tribal or Indigenous partnerships.
 - No growth-tier features promised at MVP to chase momentum (the month-grid calendar problem — keep scope discipline under marketing pressure).
-- No analytics surveillance of members to optimize conversion (you've held the no-Google-Analytics line; it stays).
+- No analytics surveillance of members to optimize conversion (the no-Google-Analytics line holds; it stays).
 
 ---
 
