@@ -1,6 +1,6 @@
 # Steppe — Staged Self-Hosting Roadmap
 
-**Version 1.1 · July 2026** · reference framework · living document · companions:
+**Version 1.0 · July 2026** · reference framework · living document · companions:
 `docs/portability-audit.md`, `DEPLOYMENT.md` §5–6, `docs/decisions/codeberg-migration.md`
 (the year-two sovereignty milestone), `infra/stage2-app/` + `infra/stage3-full/`
 (inert scaffolding — templates gated on this document's stage gates, never deployed
@@ -111,9 +111,9 @@ reproducible rebuild — the docker-compose/Coolify config in the repo *is* the
 backup.
 
 **Gate to advance:** the maintainer has comfortably run the app box through at
-least one real incident/redeploy cycle. (The US-hosting filter that used to sit in
-this gate is **decided** — see "Hosting jurisdiction — DECIDED" below; provider
-choice at Stage 2→3 applies it.) Only then take on stateful services.
+least one real incident/redeploy cycle. (Provider choice at Stage 2→3 applies the
+decided US-hosting filter — see "Hosting jurisdiction — DECIDED" below.) Only then
+take on stateful services.
 
 ---
 
@@ -237,13 +237,11 @@ latency to Central Oregon members; no ad or data-monetization business model).
 
 ## Changelog
 
-- **v1.1** — Hosting-jurisdiction decision **closed** (residency binding, domicile
-  as re-evaluation trigger, jurisdictionally redundant backups); "Stack, cost &
-  maintenance per stage" appended; inert scaffolding referenced
-  (`infra/stage2-app/`, `infra/stage3-full/`).
-- **v1.0** — Initial framework. Five stages (0–4) mapping infrastructure sovereignty
-  onto Steppe growth, attention rising under a capacity line. Year-two sovereignty
-  milestone placed at Stage 3, gated on a rehearsed DR restore (self-hosted Supabase
-  has no managed PITR). Open decision flagged: US-hosting filter (physical residency
-  vs. US-domiciled company), which gates provider choice at Stage 2→3 *(closed in
-  v1.1 above)*.
+- **v1.0** — Initial adoption, born decided. Five stages (0–4) mapping
+  infrastructure sovereignty onto Steppe growth, attention rising under a capacity
+  line. Year-two sovereignty milestone placed at Stage 3, gated on a rehearsed DR
+  restore (self-hosted Supabase has no managed PITR). "Stack, cost & maintenance
+  per stage" included. Hosting-jurisdiction decision **closed at creation**
+  (residency binding, domicile as re-evaluation trigger, jurisdictionally
+  redundant backups). Inert scaffolding referenced (`infra/stage2-app/`,
+  `infra/stage3-full/`).
