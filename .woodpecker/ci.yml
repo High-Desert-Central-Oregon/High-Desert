@@ -23,19 +23,19 @@ when:
 
 steps:
   install:
-    image: node:22
+    image: node:26
     directory: steppe
     commands:
       - npm ci
 
   lint:
-    image: node:22
+    image: node:26
     directory: steppe
     commands:
       - npm run lint
 
   build:
-    image: node:22
+    image: node:26
     directory: steppe
     environment:
       NEXT_PUBLIC_SUPABASE_URL:
