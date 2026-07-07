@@ -1294,14 +1294,11 @@ on conflict (slug) do nothing;
 -- • Make yourself an admin (so you can review verifications):
 --     update profiles set role = 'admin' where id = '<your-auth-user-id>';
 --
--- • STORAGE: create a PRIVATE bucket named 'verification-evidence', then add:
---     create policy "evidence upload (own folder)" on storage.objects
---       for insert to authenticated
---       with check (bucket_id = 'verification-evidence'
---                   and (storage.foldername(name))[1] = auth.uid()::text);
---     create policy "evidence read (moderators)" on storage.objects
---       for select to authenticated
---       using (bucket_id = 'verification-evidence' and public.is_moderator());
+-- • STORAGE: the PRIVATE 'verification-evidence' bucket + its two policies are now
+--   scripted in migrations/0016_verification_evidence_bucket.sql (Supabase-only —
+--   needs the storage schema, so it's applied after this file, not inlined here).
+--   Apply it in the SQL editor as owner, or via `supabase db push`; it's idempotent
+--   and re-running FORCES the bucket private (repairs an accidentally-public bucket).
 --   Verify-then-forget is completed in-app: the trg_purge_evidence trigger nulls
 --   the pointer, and the decideVerification server action deletes the Storage
 --   object via the service-role client BEFORE committing the decision

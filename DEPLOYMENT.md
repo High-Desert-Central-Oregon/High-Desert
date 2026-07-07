@@ -75,7 +75,9 @@ Supabase project — hosted or self-hosted — but the SQL itself is standard Po
 - **`schema.sql`** — the canonical, full schema: tables, RLS policies, triggers,
   views, and seeds. This is the source of truth.
 - **`migrations/`** — ordered, idempotent incremental changes (`0001_*` …
-  `0015_*`), each already folded into `schema.sql`.
+  `0016_*`), each already folded into `schema.sql` **except `0016`** (the
+  verification-evidence Storage bucket + policies), which is Supabase-only
+  (needs the `storage` schema) and is applied after `schema.sql`, not inlined.
 
 > There is no `supabase/migrations/` directory — migrations live in the
 > repo-root `migrations/` directory.

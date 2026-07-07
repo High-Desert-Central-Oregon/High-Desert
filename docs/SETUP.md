@@ -31,28 +31,17 @@ account. The repo's `schema.sql`, `CLAUDE.md`, and `SPEC.md` are referenced thro
 
 ## 3. Storage: the verification-evidence bucket + policies
 
-1. **Storage → New bucket.** Name it exactly `verification-evidence` and set it **Private**
-   (not public). Create.
-2. Add two access policies. Easiest is to paste them into the **SQL Editor** (storage policies
-   are just RLS on `storage.objects`) — they're also in the notes at the bottom of `schema.sql`:
+Scripted — no dashboard clicking. In the **SQL Editor** (as the project owner), or via
+`supabase db push`, apply **`migrations/0016_verification_evidence_bucket.sql`**. It creates
+the **private** `verification-evidence` bucket (10 MB / image + PDF, mirroring
+`lib/verification.ts`) and its two RLS policies:
 
-   ```sql
-   -- Members can upload only into a folder named after their own user id.
-   create policy "evidence upload (own folder)" on storage.objects
-     for insert to authenticated
-     with check (
-       bucket_id = 'verification-evidence'
-       and (storage.foldername(name))[1] = auth.uid()::text
-     );
+- **upload** — a member may write only into a folder named after their own user id;
+- **read** — moderators/admins only (members never read evidence, their own included).
 
-   -- Only moderators/admins can read evidence. Members never read files — their own included.
-   create policy "evidence read (moderators)" on storage.objects
-     for select to authenticated
-     using (
-       bucket_id = 'verification-evidence'
-       and public.is_moderator()
-     );
-   ```
+It is idempotent, and re-running it **forces the bucket private** — so it also repairs a
+bucket that was ever accidentally created public. (There is deliberately no update/delete
+policy: eviction is the service-role `decideVerification` action, "verify then forget".)
 
    If you'd rather use the dashboard UI (**Storage → Policies → New policy**): make two separate
    policies — one **INSERT** (target role `authenticated`, the `with check` body above) and one

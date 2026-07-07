@@ -25,7 +25,8 @@ paste block.
 
 1. Apply `schema.sql` to a fresh staging DB — that's all. `schema.sql` is the
    complete current schema (the snapshot through head). The numbered migrations
-   `0001`–`0015` are historical deltas already folded into it; they exist only to
+   `0001`–`0016` are historical deltas already folded into it (except `0016`, the
+   Supabase-only Storage bucket, applied separately); they exist only to
    bring an *existing* DB forward and must **not** be replayed on top of
    `schema.sql` (doing so collides — e.g. `0003` fails with `cannot drop columns
    from view`, since the snapshot already has the evolved `proposal_results`). If

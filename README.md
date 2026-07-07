@@ -64,7 +64,8 @@ npm install
 # 2. Set up the database (repo root: ../schema.sql)
 #    In the Supabase SQL editor, run the contents of schema.sql, then (per the notes
 #    at the bottom of that file):
-#      - create a PRIVATE Storage bucket named 'verification-evidence' (+ its two policies)
+#      - apply migrations/0016_verification_evidence_bucket.sql (the PRIVATE
+#        'verification-evidence' bucket + its two RLS policies)
 #      - make yourself an admin:
 #          update profiles set role='admin' where id='<your-auth-user-id>';
 
