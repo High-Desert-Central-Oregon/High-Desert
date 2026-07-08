@@ -5,8 +5,9 @@
 # steps reproduce the only quality gates the project actually has — the lint and
 # build scripts in `steppe/package.json` — so Codeberg CI matches local dev.
 #
-# There is intentionally NO test step: no test framework or test files exist yet.
-# Add a `test` step here when one lands.
+# The `test` step runs the Vitest smoke suite (steppe/tests). Supabase secrets are
+# intentionally NOT passed to it, so the DB-backed RLS suite skips itself and only
+# the hermetic route suite runs — CI stays fast and never touches a real database.
 #
 # Everything runs inside the app subdirectory `steppe/` (the Next.js app lives
 # there; the repo root holds schema.sql, docs, and migrations).
@@ -33,6 +34,12 @@ steps:
     directory: steppe
     commands:
       - npm run lint
+
+  test:
+    image: node:26
+    directory: steppe
+    commands:
+      - npm run test
 
   build:
     image: node:26
