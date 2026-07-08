@@ -247,6 +247,17 @@
     "errGeneric": "Algo salió mal. Inténtalo de nuevo.",
     "errNetwork": "No pudimos conectar con el servidor. Inténtalo de nuevo."
   },
+  "interestEmail": {
+    "subject": "Ya estás en la lista de Steppe",
+    "greetingNamed": "Hola {name}:",
+    "greeting": "Hola:",
+    "body1": "Gracias por registrarte. Ya estás en la lista de Steppe.",
+    "body2": "Steppe es una plataforma para Redmond, propiedad de sus miembros y gestionada por ellos. No hay anuncios ni inversionistas, y no vendemos tus datos.",
+    "body3": "Todavía no está abierta. Cuando abramos la membresía al grupo fundador, te enviaremos un solo correo para avisarte. No te enviaremos nada más antes de eso.",
+    "body4": "¿Preguntas? Responde a este correo y te contestamos.",
+    "signoff": "— El equipo de Steppe",
+    "place": "Redmond, Oregon"
+  },
   "privacy": {
     "heroEyebrow": "Privacidad",
     "heroTitle": "No tenemos <em>nada que ganar</em> con tus datos.",

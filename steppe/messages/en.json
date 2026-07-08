@@ -245,6 +245,17 @@
     "errGeneric": "Something went wrong. Please try again.",
     "errNetwork": "Couldn't reach the server. Please try again."
   },
+  "interestEmail": {
+    "subject": "You're on the Steppe list",
+    "greetingNamed": "Hi {name},",
+    "greeting": "Hi,",
+    "body1": "Thanks for signing up. You're on the list for Steppe.",
+    "body2": "Steppe is a platform for Redmond, owned and run by its members. There are no ads and no investors, and we don't sell your data.",
+    "body3": "It's not open yet. When we open membership to the founding cohort, we'll email you once to let you know. We won't send anything else before then.",
+    "body4": "Questions? Just reply and one of us will get back to you.",
+    "signoff": "— The Steppe team",
+    "place": "Redmond, Oregon"
+  },
   "privacy": {
     "heroEyebrow": "Privacy",
     "heroTitle": "We have <em>nothing to gain</em> from your data.",

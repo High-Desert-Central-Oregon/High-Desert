@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { getTranslations } from "next-intl/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendInterestConfirmation } from "@/lib/interest-email";
 
 /**
  * Pre-launch interest capture (app/(site)/join → here).
@@ -23,6 +25,20 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// --- Abuse limiter (SCAFFOLDED, INTENTIONALLY OFF) --------------------------
+// This route now sends outbound mail, so a scripted flood of DISTINCT addresses
+// could try to use Steppe as a confirmation-spam relay. We deliberately do NOT
+// enforce a per-IP limit yet: the Phase 1 launch — a room of people behind one
+// venue NAT signing up at once — would trip it. Today's backstops are the
+// honeypot below, the on-conflict dedup (each address is mailed at most once),
+// and Resend's own account send caps. When volume warrants, implement one of:
+//   (a) a generous per-IP window (see app/api/contact/route.ts for the pattern), or
+//   (b) a global circuit-breaker (cap total sends/min across the instance).
+// To turn it on, fill in this body; the call site below already honors the result.
+function interestRateLimited(_ip: string): boolean {
+  return false; // not implemented — no enforcement yet; every request passes.
+}
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -58,6 +74,20 @@ export async function POST(request: Request) {
     );
   }
 
+  // Abuse limiter — scaffolded but inert (see interestRateLimited above).
+  const ip =
+    (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
+    "unknown";
+  if (interestRateLimited(ip)) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "Too many signups just now. Please try again in a little while.",
+      },
+      { status: 429 },
+    );
+  }
+
   const firstNameRaw =
     typeof data.first_name === "string" ? data.first_name.trim() : "";
   const first_name = firstNameRaw === "" ? null : firstNameRaw.slice(0, 120);
@@ -85,5 +115,37 @@ export async function POST(request: Request) {
   }
 
   const duplicate = !inserted || inserted.length === 0;
+
+  // New signup → send a one-time confirmation in the member's current language
+  // (locale resolved from the NEXT_LOCALE cookie via i18n/request.ts). Best-effort
+  // and fully swallowed: the row is already written, so a missing key (local dev)
+  // or a provider hiccup must never turn a successful signup into an error. We do
+  // NOT re-confirm a duplicate — that address was already welcomed once.
+  if (!duplicate) {
+    try {
+      const t = await getTranslations("interestEmail");
+      const greeting = first_name
+        ? t("greetingNamed", { name: first_name })
+        : t("greeting");
+      const text = [
+        greeting,
+        "",
+        t("body1"),
+        "",
+        t("body2"),
+        "",
+        t("body3"),
+        "",
+        t("body4"),
+        "",
+        t("signoff"),
+        t("place"),
+      ].join("\n");
+      await sendInterestConfirmation({ to: email, subject: t("subject"), text });
+    } catch {
+      // Localization or delivery failure must not break the signup. Swallow.
+    }
+  }
+
   return NextResponse.json(duplicate ? { ok: true, duplicate: true } : { ok: true });
 }
