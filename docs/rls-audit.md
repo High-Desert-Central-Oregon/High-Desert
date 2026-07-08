@@ -217,9 +217,10 @@ Default `EXECUTE … TO PUBLIC` makes every `public` function a callable RPC.
   exploitable. ✅
 
 ## Storage (verification-evidence bucket)
-Policies live on `storage.objects` (see `seed/storage-verification-evidence.sql`
-and schema NOTES): insert = own `<uid>/…` folder; select = moderators only; **no
-delete policy** — deletion is the service-role admin client (verify-then-forget).
+Policies live on `storage.objects` (see
+`migrations/0016_verification_evidence_bucket.sql`): insert = own `<uid>/…`
+folder; select = moderators only; **no delete policy** — deletion is the
+service-role admin client (verify-then-forget).
 ✅ A member can never read another member's (or even their own) evidence file.
 
 ## Append-only — in-DB backstop *(N4 → resolved, 0012)*
