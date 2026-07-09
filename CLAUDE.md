@@ -32,7 +32,7 @@ undermine them:
 
 1. **Verify, then forget.** Verification documents live briefly in the private
    `verification-evidence` bucket and are deleted the instant a decision is made. Keep only
-   `profiles.verified` + the method. Never persist evidence anywhere else.
+   `profiles.verified`, the verification date, and the method. Never persist evidence anywhere else.
 2. **Server sets trust, never the client.** `profiles.verified`, `role`, and `tenure_start`
    are server-only (frozen on self-edit by a trigger). A user cannot make themselves verified,
    a moderator, or more tenured.

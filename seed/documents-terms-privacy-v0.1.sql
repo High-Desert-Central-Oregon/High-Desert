@@ -49,7 +49,7 @@ Why — the boundary that makes a commons work: verified residents only, plus a 
 
 To participate fully you agree to verify your Redmond residency through one of several pathways (for example a government ID, a utility bill, voter registration, a property record, or a one-time code we mail to your address). A person reviews each submission. We may decline or revoke verification we reasonably believe to be inaccurate.
 
-**We delete your verification documents as soon as a decision is made.** We keep only the fact that you are verified and which method you used — never the underlying documents (see Privacy, Section 3).
+**We delete your verification documents as soon as a decision is made.** We keep only the fact that you are verified, the date, and which method you used — never the underlying documents (see Privacy, Section 3).
 
 Why — verification that fits real people, plus verify-then-forget.
 
@@ -139,7 +139,7 @@ We collect as little as possible, we never sell your data, and we run no adverti
 
 ## 3 · Verify, then forget
 
-Verification documents are stored briefly in restricted storage, readable only by the people reviewing them, and **deleted automatically the moment your verification is approved or rejected.** Afterward we keep only two things: that you are verified, and which method you used. We do not keep the documents themselves.
+Verification documents are stored briefly in restricted storage, readable only by the people reviewing them, and **deleted automatically the moment your verification is approved or rejected.** Afterward we keep only three things: that you are verified, the date, and which method you used. We do not keep the documents themselves.
 
 ## 4 · Your votes are secret
 
