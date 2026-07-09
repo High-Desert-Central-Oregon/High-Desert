@@ -102,9 +102,9 @@ respect every invariant in CLAUDE.md."*
 ├── CONTRIBUTING.md    — how to contribute (DCO + working style)
 ├── docs/              — design materials (CC BY-SA 4.0) + ops/decision records
 │   ├── LICENSE.md
-│   ├── pattern-language.html
-│   ├── dev-framework.html
-│   └── building-spec.html
+│   └── library/       — long-form HTML docs, brand-styled (pattern language, dev
+│                        framework, build spec, How-It-Works, Model & Sustainability,
+│                        artist program)
 ├── seed/              — dev/staging SQL seeds (Terms & Privacy draft bodies for the consent gate; dry-run accounts)
 └── steppe/            — the Next.js application (its own package.json and lockfile; legal page drafts under steppe/content/legal/)
 ```
