@@ -1,4 +1,4 @@
-# Counsel Packet — Steppe (Trust & Safety · Verification Retention · Governance & COI)
+# Counsel Packet — Steppe (Trust & Safety · Verification Retention · Governance · COI · Budget)
 
 Prepared 2026-07-08; governance & COI documents added the same day. A consolidated bundle for
 Oregon nonprofit / platform-liability counsel. **Every document here is DRAFT pending counsel
@@ -45,6 +45,12 @@ Both surfaces state the posture correctly:
 > (`.gitignore: *.docx`) — so those `.docx` are not in git history, and this packet's markdown is the
 > first tracked copy of their content. Formatting (tables, signature blocks) may differ from the
 > Word source; request the `.docx` originals from the founder for editing/signature.
+
+**Financial:**
+
+| # | Document | Source path | Last commit |
+|---|---|---|---|
+| 08 | **Operating Budget** (staged; **PROPOSED** planning numbers, not commitments) — fiscal sponsor **Ignite Empowerment Foundation**, sponsorship agreement pending signature; companion to Business Plan v12 | `docs/steppe-operating-budget-v1.md` | **`0daa1f1`** (2026-07-04) |
 
 ## 3. Contradictions / discrepancies vs the decision record
 
