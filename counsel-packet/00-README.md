@@ -1,6 +1,8 @@
-# Counsel Packet — Steppe Trust & Safety / Verification Retention
+# Counsel Packet — Steppe (Trust & Safety · Verification Retention · Governance & COI)
 
-Prepared 2026-07-08. **Read-only export — nothing was committed to the repository.**
+Prepared 2026-07-08; governance & COI documents added the same day. A consolidated bundle for
+Oregon nonprofit / platform-liability counsel. **Every document here is DRAFT pending counsel
+review — none is a legal instrument, and none has force until adopted.**
 
 ## 1. Alignment status: **EXECUTED** (2026-06-27)
 
@@ -20,14 +22,29 @@ Both surfaces state the posture correctly:
 | Retain flag / date / method only | ✓ "keep only that you're verified, the date, and the method" | ✓ "we retain only the verified status, the date, and the method" |
 | "Can't disclose" scoped to verification, not all data | ✓ "Because we don't keep the proof, we can't produce or disclose it" | ✓ same, **and explicit** that "account details and content within their retention window do exist and may be subject to lawful disclosure" |
 
-## 2. The four documents
+## 2. Documents in this packet
+
+**Trust & safety / verification retention:**
 
 | # | Document | Source path | Last commit (content) |
 |---|---|---|---|
 | 01 | **/privacy** page | `steppe/app/(site)/privacy/page.tsx` + `steppe/messages/en.json` ("privacy" namespace) | copy aligned **`d6db153`** (2026-06-27); component `aae429a` (2026-06-22) |
 | 02 | **/legal/terms** page | `steppe/content/legal/terms.md` | **`8f13a3f`** (2026-06-27) |
 | 03 | **Decision record** (canon) | `docs/decisions/steppe-ts-verification-decision-record.md` | **`bfb4fb4`** (2026-07-04) |
-| 04 | **Consent / membership agreement** ("Terms of Membership" + Privacy, `documents` table v0.1, rendered at `/welcome`) | `seed/documents-terms-privacy-v0.1.sql` | **`1c89aec`** (2026-06-14) |
+| 04 | **Consent / membership agreement** ("Terms of Membership" + Privacy, `documents` table v0.1, rendered at `/welcome`) | `seed/documents-terms-privacy-v0.1.sql` | **`38ccbc9`** (2026-07-08) |
+
+**Governance & entity (nonprofit / 501(c)(3)):**
+
+| # | Document | Source path | Status |
+|---|---|---|---|
+| 05 | **Governance Charter & Bylaws** (ORS 65 / intended 501(c)(3); Business Plan v11 basis) | `docs/Steppe-Governance-Charter-v0.1-DRAFT.docx` | Working Draft v0.1 — **NOT YET ADOPTED** |
+| 06 | **Conflict-of-Interest Disclosure Packet** (board + founder disclosures & signable forms) | `docs/Steppe-COI-Disclosure-Packet-v1.2.docx` | v1.2 — working draft for counsel |
+| 07 | **COI Register** | `docs/steppe-coi-register-v1.md` | **`7f68e78`** (2026-06-27) |
+
+> **05 and 06** are rendered to markdown from Word originals that are intentionally **gitignored**
+> (`.gitignore: *.docx`) — so those `.docx` are not in git history, and this packet's markdown is the
+> first tracked copy of their content. Formatting (tables, signature blocks) may differ from the
+> Word source; request the `.docx` originals from the founder for editing/signature.
 
 ## 3. Contradictions / discrepancies vs the decision record
 
@@ -57,5 +74,17 @@ originally-suggested name "was not used").
 placeholders (specifics to fill: effective date, service area, legal entity). The live page
 strips `[CONFIRM …]` and stays **noindex** until every placeholder is filled and counsel signs off.
 
+## 5. Governance & COI — status for counsel
+
+- **Charter & Bylaws (05)** is a **working draft, not yet adopted** (adoption is under its own
+  Article XII). It carries bracketed items and a Schedule A punch list of decisions still to be
+  confirmed. It is written for revision by the founder and review by qualified Oregon nonprofit
+  counsel — explicitly *not* a legal instrument or legal advice.
+- **COI Disclosure Packet (06)** records the conflict-of-interest disclosures of the three
+  individuals in Steppe's founding governance; Parts 2–4 are signable forms with bracketed items
+  to complete before signature. To be finalized by counsel before adoption or signature.
+
 ---
-*Read-only export. No repository changes were committed.*
+*All documents are DRAFT pending Oregon nonprofit / platform-liability counsel review — not legal
+instruments, no force until adopted. This packet is committed to the repo; the `.docx` originals
+behind 05 and 06 are gitignored and are not.*
