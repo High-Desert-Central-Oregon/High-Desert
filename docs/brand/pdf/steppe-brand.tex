@@ -3,6 +3,10 @@
 \usepackage{fontspec}
 \usepackage{titlesec}
 \usepackage{titling}
+\usepackage{amssymb}
+\usepackage{pifont}
+\usepackage{newunicodechar}
+\usepackage{etoolbox}
 
 \definecolor{steppeink}{HTML}{2A2E2C}
 \definecolor{steppesoft}{HTML}{5F5A4E}
@@ -10,10 +14,12 @@
 \definecolor{steppedeep}{HTML}{36563D}
 \definecolor{steppesand}{HTML}{E4D8BF}
 \definecolor{steppepaper}{HTML}{FBF7EE}
+\definecolor{steppered}{HTML}{B23B3B}
+\definecolor{steppeamber}{HTML}{C8912F}
 
 \setmainfont{SchibstedGrotesk}[Path=docs/brand/fonts/, Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Regular, AutoFakeSlant=0.15]
 \newfontfamily\brandhead{Besley}[Path=docs/brand/fonts/, Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Italic]
-\setmonofont{MartianMono}[Path=docs/brand/fonts/, Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Medium, Scale=0.82]
+\setmonofont{MartianMono}[Path=docs/brand/fonts/, Extension=.ttf, UprightFont=*-Regular, BoldFont=*-Medium, Scale=0.80]
 
 \pagecolor{steppepaper}
 \AtBeginDocument{\color{steppeink}}
@@ -21,3 +27,20 @@
 \titleformat*{\section}{\Large\bfseries\brandhead\color{steppedeep}}
 \titleformat*{\subsection}{\large\bfseries\brandhead\color{steppedeep}}
 \titleformat*{\subsubsection}{\normalsize\bfseries\brandhead\color{steppesage}}
+
+% Glyph fallbacks — the brand fonts lack these; map to pifont/symbol equivalents.
+\newunicodechar{✓}{\textcolor{steppesage}{\ding{51}}}
+\newunicodechar{✔}{\textcolor{steppesage}{\ding{51}}}
+\newunicodechar{✅}{\textcolor{steppesage}{\ding{51}}}
+\newunicodechar{✗}{\ding{55}}
+\newunicodechar{✕}{\ding{55}}
+\newunicodechar{⚠}{\textbf{\textcolor{steppeamber}{!}}}
+\newunicodechar{🔴}{\textcolor{steppered}{\ding{108}}}
+\newunicodechar{🟡}{\textcolor{steppeamber}{\ding{108}}}
+\newunicodechar{🟢}{\textcolor{steppesage}{\ding{108}}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+
+% Roomier, breakable tables so long mono paths don't collide.
+\AtBeginEnvironment{longtable}{\footnotesize\setlength{\tabcolsep}{4pt}}
+\setlength{\emergencystretch}{2.5em}
+\newunicodechar{️}{}
