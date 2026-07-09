@@ -142,8 +142,9 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# Microsoft Docs
-*.docx
+# Microsoft Word lock/temp files only — the real .docx (business plan, charter,
+# COI, funding pack, etc.) are tracked so they have version history.
+~$*.docx
 
 # macOS
 .DS_Store
