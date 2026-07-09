@@ -37,24 +37,55 @@ Both surfaces state the posture correctly:
 
 | # | Document | Source path | Status |
 |---|---|---|---|
-| 05 | **Governance Charter & Bylaws** (ORS 65 / intended 501(c)(3); Business Plan v11 basis) | `docs/Steppe-Governance-Charter-v0.1-DRAFT.docx` | Working Draft v0.1 — **NOT YET ADOPTED** |
-| 06 | **Conflict-of-Interest Disclosure Packet** (board + founder disclosures & signable forms) | `docs/Steppe-COI-Disclosure-Packet-v1.2.docx` | v1.2 — working draft for counsel |
-| 07 | **COI Register** | `docs/steppe-coi-register-v1.md` | **`7f68e78`** (2026-06-27) |
+| 05 | **Governance Charter & Bylaws** (ORS 65 / intended 501(c)(3); Business Plan v12 basis) | `docs/governance/Steppe-Governance-Charter-v0.2-DRAFT.md` (+ `.docx`) | Working Draft v0.2 — **NOT YET ADOPTED** |
+| 06 | **Conflict-of-Interest Disclosure Packet** (board + founder disclosures & signable forms) | `docs/governance/Steppe-COI-Disclosure-Packet-v1.4.md` (+ `.docx`) | **v1.4** (2026-07-08: Chism–Cobb relationship confirmed via Three Canyon; Weimer + IEF spousal disclosure added) — working draft for counsel |
+| 07 | **COI Register** | `docs/governance/steppe-coi-register-v2.md` | **v2** (2026-07-08) |
 
-> **05 and 06** are rendered to markdown from Word originals that are intentionally **gitignored**
-> (`.gitignore: *.docx`) — so those `.docx` are not in git history, and this packet's markdown is the
-> first tracked copy of their content. Formatting (tables, signature blocks) may differ from the
-> Word source; request the `.docx` originals from the founder for editing/signature.
+> **Source model (corrected 2026-07-08):** the governance sources now live in **`docs/governance/`**.
+> The real `.docx` are **tracked** (`.gitignore` only ignores Word lock files `~$*.docx`) — the earlier
+> "gitignored" note was wrong. Markdown (`.md`) is the tracked source-of-truth; the `.docx` are the
+> editable/signature copies, regenerated from the markdown via `pandoc`. Superseded originals are in
+> `docs/governance/superseded/`. See `docs/governance/README.md` for the folder index and the
+> **firm-vs-living document status** classification.
+>
+> **This review pass (2026-07-08)** updated: 05 (§4.2 verification; §8.9 honoraria note) → **v0.2**;
+> 06 (Three Canyon confirmed; Weimer + IEF disclosure) → **v1.4**; 07 (Entry 002) → **v2**; 08 (sponsor
+> confirmed IEF + honoraria resolution). The charter/COI `.docx` were regenerated from the updated
+> markdown; 09 (Schedule of Defaults) and 10 (review annex) were added.
 
 **Financial:**
 
 | # | Document | Source path | Last commit |
 |---|---|---|---|
-| 08 | **Operating Budget** (staged; **PROPOSED** planning numbers, not commitments) — fiscal sponsor **Ignite Empowerment Foundation**, sponsorship agreement pending signature; companion to Business Plan v12 | `docs/steppe-operating-budget-v1.md` | **`0daa1f1`** (2026-07-04) |
+| 08 | **Operating Budget** (staged; **PROPOSED** planning numbers, not commitments) — fiscal sponsor **Ignite Empowerment Foundation**, sponsorship agreement pending signature; companion to Business Plan v12 | `docs/governance/steppe-operating-budget-v1.md` | **`0daa1f1`** (2026-07-04); v1.1 this pass |
+
+**Governance norms & review (added 2026-07-08):**
+
+| # | Document | Source path | Status |
+|---|---|---|---|
+| 09 | **Schedule of Defaults** (member-governed community norms; fills the gap cited in 03 §3 and 02 §2) | `docs/governance/Steppe-Schedule-of-Defaults-v0.1.md` (new) | Working Draft v0.1 — **NOT YET RATIFIED** |
+| 10 | **Annex A — Pre-counsel review notes** (this pass; findings, punch list, and what's missing for counsel) | `counsel-packet/10-pre-counsel-review-notes.md` | Internal review, 2026-07-08 |
 
 ## 3. Contradictions / discrepancies vs the decision record
 
-**No hard contradictions.** Two items to note:
+**One material contradiction (governance/COI), addressed in this pass — see Annex A (10).**
+
+- **[06 ↔ 07 — COI financial relationship. RESOLVED 2026-07-08.]** The COI Disclosure Packet (06)
+  had stated there was *no* financial relationship between Greg Chism and Holli Cobb and relied on
+  that to let each approve the other's interested-person transactions; the COI Register (07, Entry
+  001) disclosed the opposite. **Confirmed:** the relationship is real and held by **Three Canyon
+  Consulting LLC** (paid engagement with Redmond Compass, Director Cobb's company). 06 was revised
+  to **v1.4** and 07 to **v2** — neither director is disinterested as to the other, and a
+  disinterested body independent of **both** is required.
+- **[Fiscal sponsor + board independence. New 2026-07-08.]** The sponsor is confirmed as **Ignite
+  Empowerment Foundation (IEF)** (resolving the earlier IEF-vs-Aspiration discrepancy in favor of
+  IEF; the separate privacy-policy draft still says Aspiration and must be updated). **Director
+  Brandon Weimer is the spouse of IEF's founder** — a new related-party conflict (07, Entry 002)
+  that also means Weimer is not the clean independent director previously assumed. With all three
+  directors entangled, **Steppe plans to seat a fourth, fully independent director.** **[COUNSEL:
+  §4958 approving-body / recusal map; P0.]**
+
+On the verification-retention posture there remain **no hard contradictions**. Two prior notes:
 
 1. **[RESOLVED 2026-07-08]** The consent-gate **Terms of Membership** (documents v0.1)
    previously enumerated the retained set as *"the fact that you are verified and which method

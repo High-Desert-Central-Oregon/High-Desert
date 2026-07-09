@@ -4,8 +4,12 @@
 the founding cohort and board ratify or amend these figures; update at each stage
 gate and whenever a real invoice replaces an estimate. Companion to Business Plan
 v12 (§04 revenue ladder, §07 dues, §08 stewards) and the Funder Eligibility
-Reference v3. Fiscal sponsor: **Ignite Empowerment Foundation** (agreement pending
-signature — the sponsor admin fee below is a planning placeholder until signed).
+Reference v3. Fiscal sponsor: **Ignite Empowerment Foundation (IEF)** — **confirmed**;
+the sponsorship agreement is pending signature and the sponsor admin fee below is a
+planning placeholder until it is signed. **Related-party note:** Director Brandon Weimer
+is the spouse of IEF's founder, so the Steppe–IEF terms (admin fee, fund flows) are an
+interested-person matter, to be approved by the disinterested directors with Mr. Weimer
+recused (COI Register, Entry 002).
 
 **Purpose.** BP v12 asserts "dues alone carry core operations at every rung" but no
 document derived it. This table makes the claim checkable — and it surfaces the one
@@ -72,18 +76,20 @@ government money never core.
 
 ---
 
-## 4 · The honoraria arithmetic — proposed resolution (board item)
+## 4 · The honoraria arithmetic — resolution (needs Charter §8.9 amendment)
 
 Current policy: $50–100/month per moderator, three-moderator minimum (BP §08;
 Charter 8.9), **capped at 8% of operating expenses**. The floor (3 × $50 × 12 =
 $1,800/yr) is only permitted by the cap at opex ≥ $22,500/yr — which no early stage
 reaches. As written, the policy cannot pay the minimum it promises.
 
-**Proposed fix (for board/cohort ratification):** honoraria = **the greater of the
-$1,800/yr floor or 8% of core opex**, hard-capped at $100/mo/moderator, and
+**Resolution (adopted as this budget's planning basis; requires board/cohort
+ratification and a matching amendment to Charter §8.9):** honoraria = **the greater
+of the $1,800/yr floor or 8% of core opex**, hard-capped at $100/mo/moderator, and
 **grant-funded until Stage 2** (own-determination + $24K dues), after which dues
 surplus may carry it. This keeps stewards paid from day one without breaching the
-dues-cover-core rule.
+dues-cover-core rule. **Charter §8.9 (the flat 8%-of-opex cap) must be amended to this
+rule so the two documents agree** — flagged in the review annex and noted at §8.9.
 
 ---
 
@@ -95,5 +101,8 @@ numbers; the next revision replaces estimates with actuals as invoices land
 (hosting, IEF fee, insurance quote) and records the honoraria ratification.
 
 **Changelog**
+- v1.1 (2026-07-08) — fiscal sponsor confirmed as Ignite Empowerment Foundation with a
+  related-party note (Director Weimer is the spouse of IEF's founder); honoraria fix
+  adopted as the planning basis and flagged for a matching Charter §8.9 amendment.
 - v1 (2026-07-04) — first derivation; created from the strategy audit's finding
   that no operating budget existed anywhere in the doc set.

@@ -1,8 +1,3 @@
-<!-- Governance Charter & Bylaws (Working Draft v0.1 — NOT YET ADOPTED)
-     Source-of-truth: docs/governance/Steppe-Governance-Charter-v0.2-DRAFT.md (+ .docx regenerated via pandoc)
-     Converted to markdown for review; formatting (tables, signature blocks) may differ from the .docx.
-     DRAFT — pending Oregon nonprofit counsel review. -->
-
 **STEPPE**
 
 *A community-owned civic commons for Redmond and Central Oregon*
