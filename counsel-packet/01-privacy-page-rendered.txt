@@ -1,0 +1,167 @@
+/PRIVACY PAGE — rendered text
+Live: https://www.steppe.community/privacy
+Source copy: steppe/messages/en.json "privacy" namespace + steppe/app/(site)/privacy/page.tsx
+Aligned to verify-then-forget in commit d6db153 (2026-06-27).
+NOTE: the first ~8 and last ~4 lines below are site nav/footer chrome; the privacy body is between.
+========================================================================
+
+Vol. I · No. 1Redmond · Central Oregon · Est. 2026
+
+EN
+
+·
+
+ES
+
+[]Steppe
+
+CharterMembershipExchangePreviewContact
+
+Privacy
+
+We have nothing to gain from your data.
+
+Most platforms bury privacy in a menu you have to go find. Here it's
+part of what Steppe is: a member-owned nonprofit that runs no ads, keeps
+no trackers, and has nothing to gain from your information.
+
+Last updated June 2026
+
+[]
+
+Our commitments
+
+Six promises we keep.
+
+a.
+
+We never sell or share your data
+
+There's no one to sell it to, and no business here that wants it. Steppe
+runs on member dues, full stop.
+
+b.
+
+No advertising, no ad-tech
+
+No third-party trackers, no advertising pixels, and no behavioral
+profiles. Nothing watches what you do in order to sell you something or
+to someone later.
+
+c.
+
+We verify you're a neighbor, then delete the proof
+
+Membership means showing you live in the area. The moment a person
+confirms it, we delete what you sent and keep only that you're verified,
+the date, and the method — never an ID, a document, or your legal name.
+To each other, members are known by a username. Because we don't keep
+the proof, we can't produce or disclose it, even under legal process.
+
+d.
+
+Your profile is private by default
+
+Every field starts hidden. You choose, one at a time, whether it's
+visible to no one or to members.
+
+e.
+
+Messages stay inside Steppe
+
+Conversations between neighbors stay between neighbors. We don't read
+them, and we never sell or share them. We keep them only for a limited
+window, and would hand them over only if valid legal process required
+it.
+
+f.
+
+You can leave with everything
+
+Export all of your data any time, and delete your account whenever you
+want. When you go, we delete our copy.
+
+The record
+
+What we collect, and why.
+
+Only what we need to run a verified, member-owned community. Nothing is
+kept “just in case.”
+
+Account basicsRequired
+
+Your email and username, so you can sign in and neighbors can reach you.
+
+While a memberdeleted on leaving
+
+Dues & paymentRequired
+
+Handled by our payment processor. We see that you've paid, and we never
+store your card.
+
+Processornot held by us
+
+Residency checkOnce
+
+Proof you live in the area. A person reviews it to confirm you're
+eligible, then it's deleted — we keep only that you passed, the date,
+and the method.
+
+Deletedthe moment it's checked
+
+What you postYou choose
+
+Listings, messages, group activity, and the votes you cast. You create
+it, and you can remove it.
+
+Until youdelete it
+
+Minimal logsSecurity
+
+Basic technical records to keep the service running and safe. No
+tracking profiles.
+
+Short-termthen purged
+
+Your rights
+
+You're in charge of it.
+
+[]
+
+See itView everything we hold about you.
+
+[]
+
+Export itDownload your data and take it with you.
+
+[]
+
+Correct itFix anything that's wrong, any time.
+
+[]
+
+Delete itClose your account and we erase our copy.
+
+This plain-language page is the one we actually live by. We keep only
+what a verified, member-owned community needs — your account, what you
+choose to post, and messages for a short window — each kept to a minimum
+and shared only if valid legal process requires it. Your verification
+proof isn't on that list: once we've confirmed you're a neighbor, it's
+gone. There's a full legal policy with the formal detail if you want it,
+and we're always glad to answer questions.
+
+Full policy: steppe.community/legal/privacy
+Questions: Contact us
+The full legal policy is available in English, and the English version
+governs.
+
+Steppe is a member-governed Oregon public benefit nonprofit. No owner.
+It can't be sold, and the mission is written into the articles.
+hello@steppe.community
+
+ContactPrivacyTermsFor partners
+
+Led by Greg Chism
+
+REDMOND · CENTRAL OREGON · EST. 2026
