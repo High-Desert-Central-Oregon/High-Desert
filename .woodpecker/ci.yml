@@ -6,8 +6,9 @@
 # build scripts in `steppe/package.json` — so Codeberg CI matches local dev.
 #
 # The `test` step runs the Vitest smoke suite (steppe/tests). Supabase secrets are
-# intentionally NOT passed to it, so the DB-backed RLS suite skips itself and only
-# the hermetic route suite runs — CI stays fast and never touches a real database.
+# intentionally NOT passed to it, so the DB-backed suites (anon-key RLS + the
+# impersonated refusals) skip themselves and only the hermetic route suite runs —
+# CI stays fast and never touches a real database.
 #
 # Everything runs inside the app subdirectory `steppe/` (the Next.js app lives
 # there; the repo root holds schema.sql, docs, and migrations).

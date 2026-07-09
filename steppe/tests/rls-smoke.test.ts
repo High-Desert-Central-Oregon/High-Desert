@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { createClient } from "@supabase/supabase-js";
+import { describe, it, expect, beforeAll } from "vitest";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 // RLS smoke test — proves the database refuses what the invariants forbid, from an
 // ANONYMOUS client (the anon/publishable key, RLS-gated). It only attempts
@@ -13,8 +13,13 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const enabled = Boolean(url && anonKey);
 
 describe.skipIf(!enabled)("RLS smoke — deny-by-default (anonymous client)", () => {
-  const supa = createClient(url as string, anonKey as string, {
-    auth: { persistSession: false, autoRefreshToken: false },
+  // Built in beforeAll (not at describe-body top level) so a SKIPPED suite never calls
+  // createClient — which throws on an empty/absent URL and would fail collection in CI.
+  let supa: SupabaseClient;
+  beforeAll(() => {
+    supa = createClient(url as string, anonKey as string, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
   });
 
   it("anon cannot READ interest_signups — the interest list never leaks", async () => {
