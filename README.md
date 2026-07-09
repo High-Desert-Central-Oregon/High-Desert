@@ -105,8 +105,8 @@ respect every invariant in CLAUDE.md."*
 │   ├── pattern-language.html
 │   ├── dev-framework.html
 │   └── building-spec.html
-├── content/legal/     — Terms & Privacy (seeds the documents table; pending legal review)
-└── steppe/            — the Next.js application (its own package.json and lockfile)
+├── seed/              — dev/staging SQL seeds (Terms & Privacy draft bodies for the consent gate; dry-run accounts)
+└── steppe/            — the Next.js application (its own package.json and lockfile; legal page drafts under steppe/content/legal/)
 ```
 
 ## Contributing

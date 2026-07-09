@@ -382,7 +382,7 @@ visible and no member can read another's ballot**. After the clock passes
 close. Proves: server-set weight, secret ballot, results-by-clock, the close
 audit.
 
-### B0 · Pre-state — the four tiers (Business Plan v11, 1×–3×)
+### B0 · Pre-state — the four tiers (Business Plan v12, 1×–3×)
 
 **▶ as owner**
 
@@ -1013,7 +1013,7 @@ against the pre-launch overhaul (brand, privacy, account data, coherence): every
 row below still passes.** The only walkthrough that changed is **B** — the vote now
 has five ballots (the new turnout floor withholds the breakdown below five), so B4
 shows `revealed=true` with `ballots=5, yes=4.5, no=1.0, abstain=3.0` (weighted by
-the Business Plan v11 1×–3× tenure scheme — migration 0011). No invariant or gap
+the Business Plan v12 1×–3× tenure scheme — migration 0011). No invariant or gap
 regressed.
 
 | # | Invariant (CLAUDE.md) / Gap (rls-audit.md) | Proven by |

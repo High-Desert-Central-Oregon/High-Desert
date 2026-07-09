@@ -347,7 +347,7 @@ wildflower · windsong
 <section id="seq">
   <div class="wrap">
     <div class="sec-head"><span class="sec-num">06</span><h2>Build Sequence</h2></div>
-    <p class="sec-intro">Dependency-ordered. The trust substrate is built before anything to participate in; the discussion-style surfaces are never built at all. This maps to the June "technical build" milestone and feeds the closed-beta gate in Business Plan v11 §07.</p>
+    <p class="sec-intro">Dependency-ordered. The trust substrate is built before anything to participate in; the discussion-style surfaces are never built at all. This maps to the June "technical build" milestone and feeds the closed-beta gate in Business Plan v12.</p>
     <ol class="steps">
       <li><h4>Scaffold &amp; seed</h4><p>Next.js + Tailwind app, Supabase project, env + CI + deploy target. Create the schema and RLS skeleton. Seed neighborhoods and the first T&amp;C document.</p><span class="gate"><b>Done when:</b> a deployed empty app talks to the database under RLS.</span></li>
       <li><h4>Auth &amp; profile</h4><p>Magic-link sign-in; profile-on-signup trigger; profile RLS (own-edit, server-only status). Visitor can browse, nothing else.</p><span class="gate"><b>Gate:</b> status/role/tenure provably not self-editable.</span></li>
