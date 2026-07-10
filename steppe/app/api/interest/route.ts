@@ -127,21 +127,23 @@ export async function POST(request: Request) {
       const greeting = first_name
         ? t("greetingNamed", { name: first_name })
         : t("greeting");
-      const text = [
+      // Paragraphs for both the plain-text part and the branded HTML shell. The
+      // shell's footer already carries "Steppe · Redmond, Oregon", so `place` is
+      // not repeated in the body.
+      const paragraphs = [
         greeting,
-        "",
         t("body1"),
-        "",
         t("body2"),
-        "",
         t("body3"),
-        "",
         t("body4"),
-        "",
         t("signoff"),
-        t("place"),
-      ].join("\n");
-      await sendInterestConfirmation({ to: email, subject: t("subject"), text });
+      ];
+      await sendInterestConfirmation({
+        to: email,
+        subject: t("subject"),
+        heading: t("emailHeading"),
+        paragraphs,
+      });
     } catch {
       // Localization or delivery failure must not break the signup. Swallow.
     }

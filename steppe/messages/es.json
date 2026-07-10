@@ -249,6 +249,7 @@
   },
   "interestEmail": {
     "subject": "Ya estás en la lista de Steppe",
+    "emailHeading": "Estás en la lista",
     "greetingNamed": "Hola {name}:",
     "greeting": "Hola:",
     "body1": "Gracias por registrarte. Ya estás en la lista de Steppe.",

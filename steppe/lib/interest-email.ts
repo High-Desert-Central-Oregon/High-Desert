@@ -13,17 +13,23 @@
 // invariant (and tracking stays off at the domain).
 //
 // The copy is composed by the caller (localized via next-intl) and passed in as a
-// plain subject + text body, so this module stays request-agnostic and trivially
-// testable — the same reason lib/contact.ts takes structured input.
+// heading + plain paragraphs, so this module stays request-agnostic and testable.
+// It sends MULTIPART: a plain-text part (the paragraphs) plus the branded HTML shell
+// (lib/email-shell.mjs) — the same shell the Supabase auth templates use, so every
+// Steppe email looks the same. Plain text keeps deliverability high and covers clients
+// that don't render HTML.
 //
 // Fails gracefully — NEVER throws. A confirmation that can't be sent must never turn
 // a successful signup into an error: by the time we're here the interest row is
 // already written, and the caller ignores a non-ok result (a missing key in local
 // dev, a provider hiccup) and still reports success to the member.
+import { renderBrandEmail } from "./email-shell.mjs";
+
 export type InterestEmail = {
   to: string; // the new signup's address
   subject: string;
-  text: string;
+  heading: string; // the email's H1
+  paragraphs: string[]; // body paragraphs (plain text; the caller localizes them)
 };
 
 export type SendResult =
@@ -45,6 +51,13 @@ export async function sendInterestConfirmation(
   const from = process.env.INTEREST_FROM ?? "Steppe <notify@steppe.community>";
   const replyTo = process.env.INTEREST_REPLY_TO ?? "hello@steppe.community";
 
+  const text = email.paragraphs.join("\n\n");
+  const html = renderBrandEmail({
+    heading: email.heading,
+    paragraphs: email.paragraphs,
+    preheader: email.subject,
+  });
+
   try {
     const { Resend } = await import("resend");
     const resend = new Resend(apiKey);
@@ -53,7 +66,8 @@ export async function sendInterestConfirmation(
       to: email.to,
       replyTo,
       subject: email.subject,
-      text: email.text,
+      text,
+      html,
     });
     if (error) return { ok: false, code: "send", error: "Send failed." };
     return { ok: true };

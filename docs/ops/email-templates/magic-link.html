@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Your sign-in link</title>
+</head>
+<body style="margin:0; padding:0; background:#ede6d5; -webkit-font-smoothing:antialiased;">
+  <div style="display:none; max-height:0; overflow:hidden; opacity:0;">Your one-time sign-in link for Steppe.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ede6d5;">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px; background:#fbf7ee; border:1px solid #e4d8bf; border-radius:14px;">
+        <tr><td style="padding:26px 32px 0 32px;">
+          <div style="font-family:'Martian Mono',ui-monospace,Menlo,Consolas,monospace; font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#6e8a5b;">Steppe</div>
+        </td></tr>
+        <tr><td style="padding:14px 32px 4px 32px;">
+          <h1 style="margin:0 0 12px 0; font-family:'Besley',Georgia,'Times New Roman',serif; font-weight:700; font-size:24px; line-height:1.2; color:#36563d;">Your sign-in link</h1>
+          <p style="margin:0 0 0px 0; font-family:'Schibsted Grotesk',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:15px; line-height:1.6; color:#2a2e2c;">Tap the button below to sign in to Steppe. The link works once and expires soon.</p>
+        </td></tr>
+        <tr><td style="padding:20px 32px 6px 32px;">
+          <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+            <td style="border-radius:9px; background:#36563d;">
+              <a href="{{ .ConfirmationURL }}" style="display:inline-block; padding:13px 28px; font-family:'Schibsted Grotesk',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:15px; font-weight:600; color:#fbf7ee; text-decoration:none; border-radius:9px;">Sign in to Steppe</a>
+            </td>
+          </tr></table>
+        </td></tr>
+        <tr><td style="padding:10px 32px 4px 32px;">
+          <p style="margin:0 0 4px 0; font-family:'Schibsted Grotesk',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:12.5px; line-height:1.5; color:#5f5a4e;">Button not working? Paste this link into your browser:</p>
+          <p style="margin:0; font-family:'Martian Mono',ui-monospace,Menlo,Consolas,monospace; font-size:11.5px; line-height:1.5; color:#6e8a5b; word-break:break-all;">{{ .ConfirmationURL }}</p>
+        </td></tr>
+        <tr><td style="padding:20px 32px 0 32px;"><div style="height:1px; background:#e4d8bf; line-height:1px;">&nbsp;</div></td></tr>
+        <tr><td style="padding:16px 32px 28px 32px;">
+          <p style="margin:0 0 12px 0; font-family:'Schibsted Grotesk',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:12.5px; line-height:1.6; color:#5f5a4e;">If you didn't try to sign in, you can ignore this email. Nothing will happen, and no one can sign in without this link.</p><p style="margin:0; font-family:'Martian Mono',ui-monospace,Menlo,Consolas,monospace; font-size:11px; letter-spacing:.04em; color:#6e8a5b;">Steppe · Redmond, Oregon</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
