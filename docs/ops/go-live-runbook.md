@@ -24,8 +24,9 @@ invariant harness). **Do not flip until every step below is green.**
 | Prod DB | ✅ schema applied (35 neighborhoods, 2 `documents`); RLS deny-by-default confirmed against prod (anon can't read/write `interest_signups`, can't read `votes` / base `profiles`) |
 | Governance config | ✅ tenure weights centralized + provisional (`vote_weight_for()`); turnout floor provisional (5); **no hardcoded pass/fail thresholds** — outcome is human-read (invariant 5) |
 | Terms/Privacy | 🔴 **draft — legal review pending** (counsel packet still in draft) |
-| Storage bucket (0016) | ⏳ must verify/apply on prod (owner-only; not observable from outside) |
-| Auth SMTP / pg_cron / cohort | ⏳ pending (see steps) |
+| Storage bucket (0016) | ✅ applied on prod (founder, 2026-07-10); staging rehearsal green — private, MIME/size limits, both policies. **Verify-then-forget proven**: service-role upload of an allowed type succeeds, a disallowed MIME is rejected, anon read is denied (no leak), and a service-role delete removes the object. |
+| Scheduled close | ✅ rehearsed — `close_due_proposals()` closes a past-window proposal and writes the aggregate audit; `pg_cron` confirmed installable on the Postgres image |
+| Auth SMTP / cohort / flip | ⏳ pending — see steps 3, 5, 7 |
 
 **Hard blocker:** step 1 (legal). Everything else can be staged behind it.
 
@@ -46,15 +47,31 @@ In the Supabase SQL editor (as owner), run
 - Verify: `select id, public from storage.buckets where id = 'verification-evidence';` → `public = false`, and the two policies exist on `storage.objects`.
 
 ### 3. 🔧 Auth — magic-link SMTP + URLs
-Supabase → Authentication: Email provider on; wire **Resend SMTP** (so links aren't
-rate-limited); set **Site URL** + **Redirect URLs** to `https://www.steppe.community`.
-- Verify: request a magic link in prod → it arrives (inbox, not spam) → login works (step 9 covers the full round trip).
+Supabase → **Authentication → Providers → Email**: ensure enabled.
+**Authentication → Emails → SMTP Settings** → enable **Custom SMTP** (Resend):
+- Host `smtp.resend.com` · Port `465` (SSL) or `587` (TLS)
+- Username `resend` · Password = your **`RESEND_API_KEY`**
+- Sender `notify@steppe.community` (a Resend-verified domain sender) · Sender name `Steppe`
+
+**Authentication → URL Configuration:**
+- Site URL: `https://www.steppe.community`
+- Redirect URLs (allow-list): `https://www.steppe.community/**`
+
+Why SMTP: Supabase's built-in mailer is rate-limited (a few/hour) — fine for a test,
+not a cohort. Resend removes the cap and gives deliverability (SPF/DKIM already set for
+the funnel email).
+- Verify: request a magic link in prod → arrives (inbox, not spam) → login works (step 8).
 
 ### 4. 🔧 Scheduled proposal close (pg_cron)
-Enable the `pg_cron` extension and install the `cron.schedule(...)` for
-`close_due_proposals()` (migration `0010`). *(Optional for launch — a moderator can
-close manually; the trigger audits either path exactly once.)*
-- Verify: `select jobname from cron.job;` shows `close-due-proposals`.
+In the Supabase SQL editor (rehearsal confirmed both steps work):
+```sql
+create extension if not exists pg_cron;
+select cron.schedule('close-due-proposals', '* * * * *',
+                     $$select public.close_due_proposals();$$);
+```
+*(Optional for launch — a moderator can close manually; the trigger audits either path
+exactly once.)*
+- Verify: `select jobname, schedule from cron.job where jobname = 'close-due-proposals';`
 
 ### 5. 👤 🔧 Founding cohort + admins
 Seed the **real, verified** founding members. **Never** load
@@ -79,6 +96,22 @@ read at runtime by `lib/supabase/proxy.ts`; a redeploy makes it take effect).
 - Data export works; a11y / Spanish / mobile pass on the member surface.
 
 ---
+
+## Rehearsal log — 2026-07-10 (local staging mirror)
+
+Ran the go-live-specific checks the pure-SQL dry-run couldn't cover, on the local
+Supabase stack (schema + `0016` + seed):
+
+| Rehearsed | Result |
+|---|---|
+| `0016` apply | ✅ clean + idempotent; bucket private, 10 MB / 5 MIME types, both policies |
+| Storage **verify-then-forget** | ✅ service-role upload (allowed type) → 200; disallowed MIME → 400; anon read → denied; service-role delete → object row gone |
+| Scheduled close | ✅ `close_due_proposals()` closed a past-window proposal + wrote the aggregate audit; `pg_cron` installs on the image |
+| Full invariant dry-run (A–D + extended) | ✅ green earlier this session (`dry-run-report-2026-07-08.md`) |
+
+**Not rehearsable locally** (verify in prod at step 8): real magic-link SMTP round trip
+(needs Resend + a real inbox) and the Vercel `LAUNCH_PHASE` flip. The *code/DB/storage*
+paths behind them are proven.
 
 ## Rollback (instant, no data loss)
 
