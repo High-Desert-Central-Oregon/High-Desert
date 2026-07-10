@@ -86,3 +86,29 @@ sentence — apply M10's replacement language there in v13.
 4. Update FS errata (§4) and re-date the pipeline.
 5. Submit Roundhouse Open Call (≤$30K/12–18mo) with the budget doc attached —
    **before the August close**.
+
+---
+
+## 6 · Applied in the brand-PDF pass (2026-07-09)
+
+Rendered the funder/strategy set through the Steppe brand PDF template
+(`docs/brand/pdf/steppe-brand.tex`). Mechanical, source-verified corrections applied to the
+Markdown before rendering:
+
+- **Dues $2 → $4 a month** (M1, M2) — GrantPack, MasterCase.
+- **Program name → "Steppe Connect"** (M4) — FundingStrategy, MasterCase, Funder Eligibility, GTM plan.
+- **Moderator minimum two → three** (M7) — MasterCase.
+- **"Companion to Business Plan v11" → v12** (F4) — FundingStrategy.
+- **Fiscal sponsor named** (M9, F1): Ignite Empowerment Foundation, Central Oregon 501(c)(3),
+  EIN 99-3872440, agreement pending signature — added to each doc's dated internal banner;
+  sponsor-seeking sections flagged as historical.
+- **Board-independence false claim (M10)**: the Business Plan §08 "no director holds a business or
+  family relationship with any other" sentence was replaced with accurate disclosed-and-managed
+  language (COI Register 001 + 002).
+
+**Still to do before external submission (founder pass):** M3 (recompute 500-member coverage at
+$4 ≈ 5×), M5/M6 (resize Roundhouse asks: Small Grants cap $2,500; Open Call ceiling $30,000 /
+12–18 mo), M8 (member timeline "100 by end of 2026" → "early 2027"), F2/F3 (re-date 2026 pipeline;
+add the 30%-cap ramp rule), the remaining "majority-independent board" phrasing in the Business Plan
+summary/risk tables and the MasterCase, and the export version bumps (MasterCase v1.3, GrantPack v4,
+FundingStrategy v4).

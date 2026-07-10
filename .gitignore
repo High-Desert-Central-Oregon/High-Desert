@@ -142,9 +142,20 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
-# Microsoft Word lock/temp files only — the real .docx (business plan, charter,
-# COI, funding pack, etc.) are tracked so they have version history.
+# Word lock/temp files
 ~$*.docx
+
+# Governance / funding / strategy documents: Markdown is the tracked source-of-truth
+# and a versioned + dated .pdf is the tracked human-readable export. The .docx are
+# regenerated from the Markdown for editing/signature and are NOT tracked (binary,
+# non-diffable, regenerable). To push a .docx anyway, force-add it: `git add -f <file>`.
+docs/governance/**/*.docx
+docs/funding/**/*.docx
+docs/strategy/**/*.docx
+# (Other .docx — e.g. docs/brand/word/steppe-reference.docx — remain tracked.)
+
+# Stray pandoc/weasyprint intermediates (delete locally: rm -f docs/html2pdf*)
+docs/html2pdf*
 
 # macOS
 .DS_Store

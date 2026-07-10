@@ -15,7 +15,7 @@ This is an organizing plan, not a marketing plan. A member-owned, verification-g
 Three things follow from that and govern everything below:
 
 - **Place-anchored, not founder-anchored.** Every public moment should read as a Redmond thing that Greg helped start, never a Greg thing that happens to be in Redmond. Partners co-front; the founder recedes.
-- **Programs are the best marketing.** Once the work is real, the work is the pitch. High Desert Connect and the Net Inclusion case study generate legitimacy that loops back into local trust faster than any messaging could.
+- **Programs are the best marketing.** Once the work is real, the work is the pitch. Steppe Connect and the Net Inclusion case study generate legitimacy that loops back into local trust faster than any messaging could.
 - **Transparency is an asset no competitor can copy.** Near-total financial openness is a structural differentiator. A competitor can match a feature; it cannot match an ownership structure without restructuring. Lead with the structure.
 
 **Hard dependency:** Phase 1 cannot begin until the funnel works. The production DB rebuild, the `interest_signups` write, the Resend confirmation email, and the member-app un-gate must all be live before any public push. Marketing into a dead form burns the warmest contacts first. Fix the pipe, then open the tap.
@@ -95,11 +95,11 @@ One caution from the project's own canon: a pure captains-by-vibes arrangement w
 
 ## Phase 3 — Program Legitimacy (2027)
 
-**Objective:** Let the programs prove the mission. As High Desert Connect launches and the Net Inclusion case study lands, marketing shifts from *describing* Steppe to *demonstrating* it — and national legitimacy loops back into local trust.
+**Objective:** Let the programs prove the mission. As Steppe Connect launches and the Net Inclusion case study lands, marketing shifts from *describing* Steppe to *demonstrating* it — and national legitimacy loops back into local trust.
 
 **Tactics**
 
-- **High Desert Connect as an earned-media generator.** Rural broadband is a press-friendly, human story with obvious stakes. The program arm (grant-funded, 2027+) gives outlets something concrete and sympathetic to cover, and it positions Steppe as a builder of infrastructure, not just a membership app.
+- **Steppe Connect as an earned-media generator.** Rural broadband is a press-friendly, human story with obvious stakes. The program arm (grant-funded, 2027+) gives outlets something concrete and sympathetic to cover, and it positions Steppe as a builder of infrastructure, not just a membership app.
 - **Net Inclusion 2027 (Columbus, Feb 23–25) as the national moment.** If the workshop is accepted, the applied session with Steppe as case study puts it in front of the digital-inclusion community that confers legitimacy in this space. That recognition travels home: Redmonders join faster when the thing they're joining is respected elsewhere. On acceptance, the next step is building the session deck from the existing workshop outline.
 - **The annual report as a flagship asset.** The radically-transparent report is a marketing artifact in its own right. Full financials, no funder over 30%, comp disclosed — published openly. No competitor can run this play without restructuring, which is exactly why it works.
 - **Position the thesis in the discourse, carefully.** The founder's writing and speaking on structural ownership — the Ostrom commons frame, Baradaran on who owns what, the Hirschman point that Steppe solves enshittification through *ownership* rather than *exit* — situates the project in the civic-tech conversation and draws the funders and peers who matter. Keep this in a separate channel from local recruitment (see "the two-narratives problem" below).
