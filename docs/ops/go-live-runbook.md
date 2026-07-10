@@ -54,7 +54,10 @@ Supabase → **Authentication → Providers → Email**: ensure enabled.
 - Sender `notify@steppe.community` (a Resend-verified domain sender) · Sender name `Steppe`
 
 **Authentication → URL Configuration:**
-- Site URL: `https://www.steppe.community`
+- Site URL: `https://www.steppe.community` — the **root domain**, never `/join`. Every
+  link Supabase mints (magic-link, confirm, invite, email-change) resolves against this,
+  so members land on the app/home. `/join` is the public prelaunch funnel, not a
+  post-auth destination.
 - Redirect URLs (allow-list): `https://www.steppe.community/**`
 
 Why SMTP: Supabase's built-in mailer is rate-limited (a few/hour) — fine for a test,
