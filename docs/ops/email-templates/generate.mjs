@@ -43,7 +43,7 @@ const templates = {
   invite: {
     heading: "You're invited to Steppe",
     paragraphs: [
-      "Someone invited you to Steppe, a community-owned civic space for verified Redmond neighbors. Tap the button below to accept and set up your account.",
+      "Someone invited you to Steppe, a community-owned civic commons for verified Redmond neighbors. Tap the button below to accept and set up your account.",
     ],
     action: { url: confirmURL("invite"), label: "Accept invitation" },
     securityNote: "If this wasn't meant for you, you can ignore this email.",

@@ -40,21 +40,6 @@ export const en = {
     accountLink: "Account",
   },
 
-  landing: {
-    title: "A neighborhood you can trust.",
-    subtitle:
-      "Steppe is verified, ad-free, member-owned civic infrastructure for the people of Redmond. No ads. No tracking. Your data stays yours.",
-    signInCta: "Sign in or join",
-    dashboardCta: "Go to your home",
-    commitmentsTitle: "What we promise",
-    commitments: [
-      "No advertising, ever — you are the member, not the product.",
-      "We verify your residency, then forget the documents.",
-      "Members govern this place, and your vote is secret.",
-      "Your data is yours: export it, and leave with it any time.",
-    ],
-  },
-
   auth: {
     title: "Sign in to Steppe",
     subtitle:

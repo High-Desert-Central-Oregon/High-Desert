@@ -44,21 +44,6 @@ export const es: Dictionary = {
     accountLink: "Cuenta",
   },
 
-  landing: {
-    title: "Un vecindario en el que puedes confiar.",
-    subtitle:
-      "Steppe es infraestructura cívica verificada, sin anuncios y de propiedad de sus miembros para la gente de Redmond. Sin anuncios. Sin rastreo. Tus datos siguen siendo tuyos.",
-    signInCta: "Inicia sesión o únete",
-    dashboardCta: "Ir a tu inicio",
-    commitmentsTitle: "Lo que prometemos",
-    commitments: [
-      "Sin publicidad, nunca: tú eres el miembro, no el producto.",
-      "Verificamos tu residencia y luego olvidamos los documentos.",
-      "Los miembros gobiernan este lugar, y tu voto es secreto.",
-      "Tus datos son tuyos: expórtalos y llévatelos cuando quieras.",
-    ],
-  },
-
   auth: {
     title: "Inicia sesión en Steppe",
     subtitle:
