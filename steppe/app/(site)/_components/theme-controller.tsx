@@ -5,20 +5,19 @@ import { useEffect, useState } from "react";
 /**
  * Marketing theme + time-of-day controller.
  *
- * The no-flash inline script in app/layout.tsx already set data-time, data-theme
- * and data-js on <html> before paint, using the same rule as here. This client
- * component keeps it live and exposes the toggle:
- *   - data-time tracks the local clock; data-theme follows it automatically
- *     (night → dark, otherwise → light) so the theme moves with the strata,
- *   - re-evaluates on a timer and when the tab returns (visibilitychange/focus),
- *     so a session left open across sunset switches itself,
- *   - the toggle is a manual override cycling Auto → Light → Dark → Auto; a manual
- *     choice persists to localStorage("steppe-theme") and stops auto-switching;
- *     "Auto" (the default, no stored value) resumes following time.
+ * POLICY (2026-07-11): light is the default, always — dark is OPT-IN ONLY.
+ * Nothing automatic flips the theme: not OS preference, not the clock. The
+ * no-flash inline script in app/layout.tsx already applied the stored choice
+ * (localStorage "steppe-theme") before paint; this component keeps it live:
+ *   - data-time still tracks the local clock (dawn/day/dusk/night) — that is
+ *     AMBIENCE ONLY (the hero sky/sun); it never touches data-theme,
+ *   - the toggle flips Light ↔ Dark and persists the explicit choice,
+ *   - re-evaluates on a timer and when the tab returns, so the SKY tracks
+ *     sunset while the theme stays exactly what the member chose.
  *
  * The sun/moon icon swap is pure CSS keyed on html[data-theme].
  */
-type Mode = "auto" | "light" | "dark";
+type Mode = "light" | "dark";
 type Time = "dawn" | "day" | "dusk" | "night";
 const STORAGE_KEY = "steppe-theme";
 const REEVAL_MS = 5 * 60_000;
@@ -32,35 +31,30 @@ function timeOfDay(hour: number): Time {
 
 function readMode(): Mode {
   try {
-    const s = localStorage.getItem(STORAGE_KEY);
-    if (s === "light" || s === "dark") return s;
+    if (localStorage.getItem(STORAGE_KEY) === "dark") return "dark";
   } catch {
     // ignore storage access errors (private mode, etc.)
   }
-  return "auto";
+  return "light";
 }
 
-// Apply data-time (always by clock) and data-theme (manual override, else by time).
+// data-time follows the clock (sky ambience); data-theme is the member's choice.
 function apply(mode: Mode) {
   const root = document.documentElement;
-  const t = timeOfDay(new Date().getHours());
-  root.setAttribute("data-time", t);
-  root.setAttribute(
-    "data-theme",
-    mode === "auto" ? (t === "night" ? "dark" : "light") : mode,
-  );
+  root.setAttribute("data-time", timeOfDay(new Date().getHours()));
+  root.setAttribute("data-theme", mode);
 }
 
 export function ThemeController() {
-  const [mode, setMode] = useState<Mode>("auto");
+  const [mode, setMode] = useState<Mode>("light");
 
   useEffect(() => {
     const m = readMode();
     setMode(m);
     apply(m);
 
-    // Re-evaluate periodically and when the tab regains focus, so an open session
-    // tracks sunrise/sunset on its own (only changes theme while in auto mode).
+    // Keep the SKY tracking sunrise/sunset in an open session; the theme is
+    // re-applied from the stored choice and never changes on its own.
     const tick = () => apply(readMode());
     const id = window.setInterval(tick, REEVAL_MS);
     const onVis = () => {
@@ -76,12 +70,10 @@ export function ThemeController() {
   }, []);
 
   function cycle() {
-    const next: Mode =
-      mode === "auto" ? "light" : mode === "light" ? "dark" : "auto";
+    const next: Mode = mode === "light" ? "dark" : "light";
     setMode(next);
     try {
-      if (next === "auto") localStorage.removeItem(STORAGE_KEY);
-      else localStorage.setItem(STORAGE_KEY, next);
+      localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // persistence is best-effort
     }
@@ -89,11 +81,9 @@ export function ThemeController() {
   }
 
   const label =
-    mode === "auto"
-      ? "Theme: automatic by time of day. Activate to set light."
-      : mode === "light"
-        ? "Theme: light. Activate to set dark."
-        : "Theme: dark. Activate to return to automatic.";
+    mode === "light"
+      ? "Theme: light (default). Activate to switch to dark."
+      : "Theme: dark. Activate to switch to light.";
 
   return (
     <button

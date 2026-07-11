@@ -38,13 +38,15 @@ const marketingFontVars = `${besley.variable} ${schibsted.variable} ${martianMon
 
 // No-flash ambient init for the marketing layer. Runs synchronously before first paint
 // so the (site) pages never flash the wrong theme or sky. Sets, on <html>:
-//   data-time  Redmond's time of day (dawn 5–8, day 8–18, dusk 18–21, else night)
-//   data-theme AUTOMATIC by Redmond time — night → dark, otherwise light. No manual
-//              toggle (consistent with the no-end-user-toggles canon).
+//   data-time  Redmond's time of day (dawn 5–8, day 8–18, dusk 18–21, else night) —
+//              ambience only (hero sky/sun); it never drives the theme.
+//   data-theme LIGHT BY DEFAULT — dark only when the member explicitly chose it via
+//              the ThemeController (localStorage "steppe-theme"). No automatic dark:
+//              neither OS preference nor the clock flips the theme.
 //   data-js    a marker so reveal-on-scroll only hides content when JS can show it
 // Mirrors lib/time-of-day.ts (redmondTimeOfDay); keep the hour boundaries in sync. Only
 // writes data-* the member app ignores (it themes via the next-themes `class`).
-const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',hour12:false}).format(new Date()),10)%24;var t=(h>=5&&h<8)?'dawn':(h>=8&&h<18)?'day':(h>=18&&h<21)?'dusk':'night';d.setAttribute('data-time',t);d.setAttribute('data-theme',t==='night'?'dark':'light')}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
+const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',hour12:false}).format(new Date()),10)%24;var t=(h>=5&&h<8)?'dawn':(h>=8&&h<18)?'day':(h>=18&&h<21)?'dusk':'night';d.setAttribute('data-time',t);var m=null;try{m=localStorage.getItem('steppe-theme')}catch(e){}d.setAttribute('data-theme',m==='dark'?'dark':'light')}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
 
 // Canonical site origin for absolute metadata URLs (OG/Twitter cards, canonical).
 // Prefer the explicit NEXT_PUBLIC_SITE_URL (set to https://www.steppe.community in
@@ -75,10 +77,11 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {/* Marketing no-flash ambient init — must run before first paint. */}
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        {/* Light by default: dark is opt-in only (a future member-app toggle);
+            the .dark token mappings stay defined in globals.css. */}
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
           disableTransitionOnChange
         >
           {children}
