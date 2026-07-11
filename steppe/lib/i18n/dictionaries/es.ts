@@ -62,14 +62,14 @@ export const es: Dictionary = {
   auth: {
     title: "Inicia sesión en Steppe",
     subtitle:
-      "¿Eres nuevo? Usa el mismo formulario: crearemos tu cuenta. Te enviamos un enlace seguro por correo, así no hay contraseña que recordar ni que se pueda filtrar.",
+      "¿Eres nuevo? Usa el mismo formulario: crearemos tu cuenta. Te enviamos por correo un enlace de acceso que funciona una sola vez, así no hay contraseña que recordar ni que se pueda filtrar.",
     emailLabel: "Correo electrónico",
     emailPlaceholder: "tu@ejemplo.com",
     submit: "Envíenme un enlace para entrar",
     submitting: "Enviando…",
     checkEmailTitle: "Revisa tu correo",
     checkEmailBody:
-      "Si esa dirección puede unirse, enviamos un enlace seguro de acceso a {email}. Ábrelo en este dispositivo para continuar. El enlace caduca pronto.",
+      "Si esa dirección puede unirse, enviamos un enlace de acceso a {email}. Ábrelo en este dispositivo para continuar. El enlace funciona una sola vez y caduca pronto.",
     sendAnother: "Usar otro correo",
     errorGeneric:
       "No pudimos enviar el enlace. Revisa la dirección e inténtalo de nuevo.",
@@ -107,7 +107,7 @@ export const es: Dictionary = {
       "Tu aceptación de los Términos y la Privacidad actuales está registrada. Gracias.",
     nextTitle: "Qué sigue",
     nextBody:
-      "Verificar que vives en Redmond desbloquea los eventos del vecindario y la votación comunitaria.",
+      "Verifica que vives en Redmond para participar en los eventos del vecindario y la votación comunitaria.",
     statusVerified: "Residente verificado",
     statusUnverified: "Aún no verificado",
     statusLabel: "Estado de membresía",

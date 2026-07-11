@@ -58,14 +58,14 @@ export const en = {
   auth: {
     title: "Sign in to Steppe",
     subtitle:
-      "New here? Use the same form — we'll create your account. We email you a secure link, so there's no password to remember or leak.",
+      "New here? Use the same form — we'll create your account. We email you a sign-in link that works once, so there's no password to remember or leak.",
     emailLabel: "Email address",
     emailPlaceholder: "you@example.com",
     submit: "Email me a sign-in link",
     submitting: "Sending…",
     checkEmailTitle: "Check your email",
     checkEmailBody:
-      "If that address can join, we sent a secure sign-in link to {email}. Open it on this device to continue. The link expires soon.",
+      "If that address can join, we sent a sign-in link to {email}. Open it on this device to continue. The link works once and expires soon.",
     sendAnother: "Use a different email",
     errorGeneric: "We couldn't send the link. Check the address and try again.",
     privacyNote:
@@ -102,7 +102,7 @@ export const en = {
       "Your agreement to the current Terms & Privacy is on file. Thank you.",
     nextTitle: "What's next",
     nextBody:
-      "Verifying that you live in Redmond unlocks neighborhood events and the community vote.",
+      "Verify that you live in Redmond to join neighborhood events and the community vote.",
     statusVerified: "Verified resident",
     statusUnverified: "Not yet verified",
     statusLabel: "Membership status",
