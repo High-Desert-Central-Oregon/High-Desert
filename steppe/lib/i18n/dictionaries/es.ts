@@ -325,7 +325,7 @@ export const es: Dictionary = {
     intro:
       "Los eventos del vecindario y la votación comunitaria son para residentes verificados de Redmond. Elige una forma de mostrar que vives aquí, y un vecino del equipo de revisión la comprueba a mano.",
     forget:
-      "Borramos tu documento en el momento en que una persona decide. Solo conservamos que estás verificado y qué método usaste — nunca el documento en sí.",
+      "Borramos tu documento en el momento en que una persona decide. Solo conservamos que estás verificado, la fecha y el método — nunca el documento en sí.",
     methodLegend: "¿Cómo te gustaría verificarte?",
     fileLabel: "Sube tu documento",
     fileHint: "Una foto clara o un PDF, hasta 10 MB.",

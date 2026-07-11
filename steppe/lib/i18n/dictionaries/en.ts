@@ -317,7 +317,7 @@ export const en = {
     intro:
       "Neighborhood events and the community vote are for verified Redmond residents. Choose one way to show you live here, and a neighbor on the review team checks it by hand.",
     forget:
-      "We delete your document the moment a reviewer decides. We keep only that you're verified and which method you used — never the document itself.",
+      "We delete your document the moment a reviewer decides. We keep only that you're verified, the date, and the method — never the document itself.",
     methodLegend: "How would you like to verify?",
     fileLabel: "Upload your document",
     fileHint: "A clear photo or PDF, up to 10 MB.",
