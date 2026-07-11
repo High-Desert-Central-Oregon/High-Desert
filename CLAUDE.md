@@ -78,6 +78,9 @@ undermine them:
   convenience, never the gate. Don't add an API route that bypasses RLS with the service key
   unless it's a deliberate server action that itself enforces the rule.
 - **Plain language in the UI** (Pattern 22) — the member should never need an explanation.
+- **Never add Co-Authored-By lines or any AI attribution** to commit messages, PR
+  descriptions, or git metadata. Commits carry the DCO sign-off (`git commit -s`) and
+  nothing else. (Enforced by `.claude/settings.json` → `attribution`.)
 
 ## Build order (see SPEC.md §06)
 
