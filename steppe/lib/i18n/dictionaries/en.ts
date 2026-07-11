@@ -34,7 +34,7 @@ export const en = {
     neighborhoodLink: "Neighborhood",
     eventsLink: "Events",
     groupsLink: "Groups",
-    governanceLink: "Proposals",
+    governanceLink: "Govern",
     appealsLink: "Appeals",
     transparencyLink: "Transparency",
     accountLink: "Account",
@@ -182,7 +182,7 @@ export const en = {
     // Directory
     title: "Groups",
     intro:
-      "Community groups — boards, calendars, and more. Browse by category or search by name.",
+      "Community groups — boards, calendars, events. Browse by category or search by name.",
     create: "Create group",
     searchLabel: "Search",
     searchPlaceholder: "Search groups by name",
@@ -205,7 +205,8 @@ export const en = {
     joinError: "We couldn't complete that. Please try again.",
     leave: "Leave group",
     leaving: "Leaving…",
-    confirmLeave: "Leave this group? You'll lose access to members-only content.",
+    confirmLeave:
+      "Leave this group? You'll lose access to its members-only posts and events.",
     leaveError: "We couldn't leave the group. Please try again.",
     leaveLastMaintainer:
       "You're the only maintainer. Make someone else a maintainer before you leave.",

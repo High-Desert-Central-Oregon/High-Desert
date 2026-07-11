@@ -38,7 +38,7 @@ export const es: Dictionary = {
     neighborhoodLink: "Vecindario",
     eventsLink: "Eventos",
     groupsLink: "Grupos",
-    governanceLink: "Propuestas",
+    governanceLink: "Gobernar",
     appealsLink: "Apelaciones",
     transparencyLink: "Transparencia",
     accountLink: "Cuenta",
@@ -187,7 +187,7 @@ export const es: Dictionary = {
     // Directorio
     title: "Grupos",
     intro:
-      "Grupos de la comunidad — tableros, calendarios y más. Explora por categoría o busca por nombre.",
+      "Grupos de la comunidad — tableros, calendarios, eventos. Explora por categoría o busca por nombre.",
     create: "Crear grupo",
     searchLabel: "Buscar",
     searchPlaceholder: "Busca grupos por nombre",
@@ -211,7 +211,7 @@ export const es: Dictionary = {
     leave: "Salir del grupo",
     leaving: "Saliendo…",
     confirmLeave:
-      "¿Salir de este grupo? Perderás el acceso al contenido solo para miembros.",
+      "¿Salir de este grupo? Perderás el acceso a sus publicaciones y eventos solo para miembros.",
     leaveError: "No pudimos salir del grupo. Inténtalo de nuevo.",
     leaveLastMaintainer:
       "Eres el único responsable. Nombra a otro responsable antes de salir.",
