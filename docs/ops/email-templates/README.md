@@ -24,15 +24,23 @@ node docs/ops/email-templates/generate.mjs
 
 Then paste each into **Supabase → Authentication → Email Templates**, and set the subject:
 
-| File | Supabase template | Subject | Token used |
+| File | Supabase template | Subject | Link/token form |
 |---|---|---|---|
-| `magic-link.html` | Magic Link | `Your Steppe sign-in link` | `{{ .ConfirmationURL }}` |
-| `confirm-signup.html` | Confirm signup | `Confirm your Steppe email` | `{{ .ConfirmationURL }}` |
-| `invite.html` | Invite user | `You're invited to Steppe` | `{{ .ConfirmationURL }}` |
-| `email-change.html` | Change Email Address | `Confirm your new Steppe email` | `{{ .ConfirmationURL }}` |
-| `reauthentication.html` | Reauthentication | `Your Steppe confirmation code` | `{{ .Token }}` |
+| `magic-link.html` | Magic Link | `Your Steppe sign-in link` | `…/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink` |
+| `confirm-signup.html` | Confirm signup | `Confirm your Steppe email` | `…&type=signup` |
+| `invite.html` | Invite user | `You're invited to Steppe` | `…&type=invite` |
+| `email-change.html` | Change Email Address | `Confirm your new Steppe email` | `…&type=email_change&next=/protected/account` |
+| `reauthentication.html` | Reauthentication | `Your Steppe confirmation code` | `{{ .Token }}` (6-digit code, no link) |
 
 *(No "Reset Password" template — Steppe is passwordless / magic-link.)*
+
+> **Why `{{ .TokenHash }}`, not `{{ .ConfirmationURL }}`.** The app verifies links in
+> `app/auth/confirm/route.ts` with `verifyOtp({ token_hash, type })` (the Supabase SSR
+> pattern), so every link must point at **our own** `/auth/confirm` carrying
+> `token_hash` + the matching `type`. `{{ .ConfirmationURL }}` instead points at
+> Supabase's hosted verifier and returns a `?code=` the route can't consume — the cause
+> of the "Email link is invalid or has expired" bounce to the site root. Regenerate with
+> `node docs/ops/email-templates/generate.mjs`; never hand-edit the `.html`.
 
 ## Changing an email
 
