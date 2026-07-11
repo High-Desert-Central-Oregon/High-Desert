@@ -38,8 +38,12 @@ Both surfaces state the posture correctly:
 | # | Document | Source path | Status |
 |---|---|---|---|
 | 05 | **Governance Charter & Bylaws** (ORS 65 / intended 501(c)(3); Business Plan v12 basis) | `docs/governance/Steppe-Governance-Charter-v0.2-DRAFT.md` (+ `.docx`) | Working Draft v0.2 — **NOT YET ADOPTED** |
-| 06 | **Conflict-of-Interest Disclosure Packet** (board + founder disclosures & signable forms) | `docs/governance/Steppe-COI-Disclosure-Packet-v1.4.md` (+ `.docx`) | **v1.4** (2026-07-08: Chism–Cobb relationship confirmed via Three Canyon; Weimer + IEF spousal disclosure added) — working draft for counsel |
 | 07 | **COI Register** | `docs/governance/steppe-coi-register-v2.md` | **v2** (2026-07-08) |
+
+> **Removed 2026-07-10:** documents **06** (COI Disclosure Packet — individual disclosure forms)
+> and **10** (Annex A, pre-counsel review notes) were removed from the repository and this packet
+> and are retained privately; they go to counsel directly, not through the repo. Numbering keeps
+> their gaps — the packet now carries **9 files** (00–05, 07–09).
 
 > **Source model (corrected 2026-07-08):** the governance sources now live in **`docs/governance/`**.
 > The real `.docx` are **tracked** (`.gitignore` only ignores Word lock files `~$*.docx`) — the earlier
@@ -64,11 +68,10 @@ Both surfaces state the posture correctly:
 | # | Document | Source path | Status |
 |---|---|---|---|
 | 09 | **Schedule of Defaults** (member-governed community norms; fills the gap cited in 03 §3 and 02 §2) | `docs/governance/Steppe-Schedule-of-Defaults-v0.1.md` (new) | Working Draft v0.1 — **NOT YET RATIFIED** |
-| 10 | **Annex A — Pre-counsel review notes** (this pass; findings, punch list, and what's missing for counsel) | `counsel-packet/10-pre-counsel-review-notes.md` | Internal review, 2026-07-08 |
 
 ## 3. Contradictions / discrepancies vs the decision record
 
-**One material contradiction (governance/COI), addressed in this pass — see Annex A (10).**
+**One material contradiction (governance/COI), addressed in this pass — see Annex A (retained privately; removed from the packet 2026-07-10).**
 
 - **[06 ↔ 07 — COI financial relationship. RESOLVED 2026-07-08.]** The COI Disclosure Packet (06)
   had stated there was *no* financial relationship between Greg Chism and Holli Cobb and relied on
@@ -117,11 +120,11 @@ strips `[CONFIRM …]` and stays **noindex** until every placeholder is filled a
   Article XII). It carries bracketed items and a Schedule A punch list of decisions still to be
   confirmed. It is written for revision by the founder and review by qualified Oregon nonprofit
   counsel — explicitly *not* a legal instrument or legal advice.
-- **COI Disclosure Packet (06)** records the conflict-of-interest disclosures of the three
-  individuals in Steppe's founding governance; Parts 2–4 are signable forms with bracketed items
-  to complete before signature. To be finalized by counsel before adoption or signature.
+- The **COI Disclosure Packet** (individual disclosure forms) is retained privately and goes to
+  counsel directly (removed from the repo 2026-07-10); the public **COI Register (07)** remains
+  the packet's COI record.
 
 ---
 *All documents are DRAFT pending Oregon nonprofit / platform-liability counsel review — not legal
-instruments, no force until adopted. This packet is committed to the repo; the `.docx` originals
-behind 05 and 06 are gitignored and are not.*
+instruments, no force until adopted. This packet is committed to the repo; the COI disclosure
+forms and the pre-counsel review annex are retained privately and are not.*
