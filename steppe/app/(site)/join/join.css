@@ -73,7 +73,7 @@ html[data-theme="dark"] .site-root .join .hero h1 em {
 .site-root .join .formcard {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: var(--r); /* marketing-layer radius token (14px) — audit J1 */
   padding: clamp(22px, 3vw, 32px);
   box-shadow: 0 18px 42px -24px rgba(0, 0, 0, 0.45);
 }

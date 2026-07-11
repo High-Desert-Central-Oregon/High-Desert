@@ -34,45 +34,60 @@
     --font-serif: var(--font-display), Georgia, "Times New Roman", serif;
     --font-mono: var(--font-mono-mkt), ui-monospace, "SFMono-Regular", monospace;
 
-    /* EXACT brand palette — identical hexes to app/(site)/tokens.css and the
-     * /preview export (public/preview-app/steppe-exchange.html), so the member app
-     * reads as the same product as its own preview. Page = bone, cards = paper
-     * (cards sit brighter than the page, per the brand). AA re-verified against
-     * THESE colors (ratios inline); the three semantic status inks below are
-     * brand-family but tuned for text contrast the export never needed. */
-    --background: 42 40% 88.2%; /* bone     #ede6d5 (page) */
-    --foreground: 150 4.5% 17.3%; /* ink    #2a2e2c (11.06:1 on bone) */
-    --card: 42 61.9% 95.9%; /* paper    #fbf7ee (cards sit brighter than page) */
-    --card-foreground: 150 4.5% 17.3%; /* ink (12.87:1 on paper) */
+    /* LETTERPRESS DOCTRINE — converged on the design bundle's token layer
+     * (docs/design/exchange-design-tokens-reference.css is LAW; audit T1–T7).
+     * One paper sheet, ink hairlines, bone for raised/pressed, square-first
+     * radii, no drop shadows (letterpress insets on primary fills), rust is
+     * ACCENT ONLY. AA re-verified inline; the three semantic status inks are
+     * brand-family additions the reference never needed. */
+    --background: 42 61.9% 95.9%; /* paper  #fbf7ee — THE base sheet */
+    --foreground: 150 4.5% 17.3%; /* ink    #2a2e2c (12.9:1 on paper) */
+    --card: 42 61.9% 95.9%; /* paper — cards dissolve into the sheet + hairline */
+    --card-foreground: 150 4.5% 17.3%; /* ink */
     --popover: 42 61.9% 95.9%; /* paper */
     --popover-foreground: 150 4.5% 17.3%; /* ink */
-    --primary: 133 22.9% 27.5%; /* juniper  #36563d */
-    --primary-foreground: 42 61.9% 95.9%; /* paper on juniper (7.69:1) */
+    --primary: 137 24.6% 22.4%; /* juniper-deep #2b4733 — PRIMARY ACTION fill (paper on it 9.6:1); #36563d is for links/titles */
+    --primary-foreground: 42 61.9% 95.9%; /* paper */
     --secondary: 86 18.7% 75.9%; /* sage-soft #c3cdb6 */
     --secondary-foreground: 150 4.5% 17.3%; /* ink */
-    --muted: 41 40.7% 82.2%; /* sand     #e4d8bf (subtle fills) */
-    --muted-foreground: 42 9.8% 33.9%; /* ink-soft #5f5a4e (6.42:1 on paper, 5.52 on bone) */
-    --accent: 19 58.5% 41.6%; /* rust     #a8542c (brand accent — not error) */
+    --muted: 42 40% 88.2%; /* bone   #ede6d5 — raised surface · row press */
+    --muted-foreground: 42 9.8% 33.9%; /* ink-soft #5f5a4e (6.4:1 on paper, 5.5 on bone) */
+    --accent: 19 58.5% 41.6%; /* rust  #a8542c — accent only: markers/active, never large fills or failure */
     --accent-foreground: 0 0% 100%; /* white on rust (5.29:1) */
-    --destructive: 4 76.5% 40%; /* distinct red #B42318 (the error state) */
+    --destructive: 4 76.5% 40%; /* distinct red #B42318 (the error state — never rust) */
     --destructive-foreground: 0 0% 100%; /* white */
-    --success: 146 40.4% 29.6%; /* juniper-family green #2D6A47 — text clears 4.5 on bg + card; more saturated than primary juniper, so distinct */
+    --success: 146 40.4% 29.6%; /* juniper-family green #2D6A47 — 4.5+:1 as text on paper/bone; distinct from primary */
     --success-foreground: 0 0% 100%; /* white on a success surface (6.4:1) */
-    --warning: 41 81% 26.9%; /* earthy ochre #7C580D — text clears 4.5 on bg + card; distinct from the rust accent */
+    --warning: 41 81% 26.9%; /* earthy ochre #7C580D — 4.5+:1 as text; distinct from the rust accent */
     --warning-foreground: 0 0% 100%; /* white on a warning surface (6.4:1) */
-    --border: 86 18.7% 75.9%; /* sage-soft #c3cdb6 (decorative dividers) */
-    --input: 96 20.5% 44.9%; /* sage-deep #6e8a5b (control boundary, 3.6:1) */
-    --ring: 19 58.5% 41.6%; /* rust (focus ring) */
-    --radius: 0.5rem;
+    /* Boundaries are the INK system, not sage. --border/--input are consumed RAW
+     * (not hsl-wrapped) by tailwind.config so the alpha survives.
+     * DELIBERATE AA DEVIATION from the reference: its .22 hairline (1.5:1) fails
+     * WCAG 1.4.11 as a CONTROL boundary, so inputs use ink@.55 (3.3:1) — the
+     * minimum compliant density in the same ink system. Dividers stay hairline. */
+    --border: rgba(42, 46, 44, 0.22); /* --hairline (1px dividers, decorative) */
+    --input: rgba(42, 46, 44, 0.55); /* control boundary, 3.3:1 (AA 1.4.11) */
+    --ring: 133 22.9% 27.5%; /* juniper #36563d — focus is juniper, never rust */
+    /* Radii — square-first; surfaces unrounded (--r-flat). Markers 2px; message
+     * bubbles (future) 14px; circles via rounded-full. */
+    --radius: 0rem;
+    --radius-marker: 2px;
+    --radius-bubble: 14px;
+    /* Elevation — no drop shadows in-app; primary fills get the letterpress. */
+    --letterpress: inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
   }
 
   /* Warm dark mode: deep basalt/juniper ground, bone text, lighter rust + sage. */
   .dark {
-    --background: 37 13.8% 11.4%; /* deep basalt #211E19 */
+    /* Same doctrine, dark: ONE deep-basalt sheet (card = background), light-ink
+     * hairlines, bone text. Values adjusted for contrast, not hex-matched to the
+     * light reference. */
+    --background: 37 13.8% 11.4%; /* deep basalt #211E19 — the sheet */
     --foreground: 43 38.9% 92.9%; /* bone */
-    --card: 37 10.3% 15.3%; /* raised warm  #2B2823 */
+    --card: 37 13.8% 11.4%; /* same sheet — hairline is the card edge */
     --card-foreground: 43 38.9% 92.9%; /* bone */
-    --popover: 37 10.3% 15.3%;
+    --popover: 37 10.3% 15.3%; /* overlays keep one raised step (#2B2823) */
     --popover-foreground: 43 38.9% 92.9%;
     --primary: 83 14% 56.7%; /* sage #94A081 (lighter accent in dark) */
     --primary-foreground: 38 13.3% 11.8%; /* basalt */
@@ -88,9 +103,9 @@
     --success-foreground: 38 13.3% 11.8%; /* basalt on a success surface (8.1:1) */
     --warning: 42 62.2% 60.6%; /* lighter ochre #D9B45C — text clears 4.5 on bg (8.41) + card (7.43) */
     --warning-foreground: 38 13.3% 11.8%; /* basalt on a warning surface (8.4:1) */
-    --border: 40 11.5% 20.4%; /* warm divider #3A362E */
-    --input: 43 11.2% 43.7%; /* lighter control boundary #7C7563 (3.6:1) */
-    --ring: 20 58% 56.1%; /* lighter rust */
+    --border: rgba(236, 230, 218, 0.16); /* light-ink hairline on basalt */
+    --input: rgba(236, 230, 218, 0.55); /* control boundary (AA 1.4.11) */
+    --ring: 83 14% 56.7%; /* sage #94A081 — focus follows the dark primary; rust stays accent */
   }
 }
 
@@ -102,11 +117,34 @@
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "ss01"; /* DM Sans single-storey a — friendlier reading */
   }
-  /* Playfair Display for the display/heading layer. */
+  /* Besley for the display/heading layer. */
   h1,
   h2,
   h3,
   h4 {
     @apply font-serif;
+  }
+}
+
+/* Broadsheet type vocabulary (T7, from the reference's type scale) — defined at
+ * the token layer; surfaces adopt them in their own passes, never ad hoc. */
+@layer components {
+  .kicker {
+    @apply font-mono uppercase text-foreground;
+    font-size: 10.5px; /* --fs-kicker */
+    font-weight: 600;
+    letter-spacing: 0.12em; /* --ls-kicker */
+  }
+  .byline {
+    @apply font-mono uppercase text-muted-foreground;
+    font-size: 10px; /* --fs-byline */
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+  .masthead {
+    @apply font-serif text-foreground;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.01em; /* --ls-title */
   }
 }

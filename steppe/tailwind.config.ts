@@ -55,14 +55,34 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
+        // Boundaries are consumed RAW (full CSS colors, not hsl triplets) so the
+        // ink-alpha hairline system survives — see globals.css --border/--input.
+        border: "var(--border)",
+        input: "var(--input)",
         ring: "hsl(var(--ring))",
       },
+      // Square-first (letterpress doctrine): every scale step resolves to the
+      // flat token, so existing rounded-{sm,md,lg,xl} markup goes flat with no
+      // per-page edits. marker/bubble are the only sanctioned curves
+      // (rounded-full stays for circles/monograms).
       borderRadius: {
+        xl: "var(--radius)",
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        md: "var(--radius)",
+        sm: "var(--radius)",
+        marker: "var(--radius-marker)",
+        bubble: "var(--radius-bubble)",
+      },
+      // No drop shadows in-app — the whole scale flattens; primary fills carry
+      // the letterpress inset instead (see components/ui/button.tsx).
+      boxShadow: {
+        none: "none",
+        DEFAULT: "none",
+        sm: "none",
+        md: "none",
+        lg: "none",
+        xl: "none",
+        letterpress: "var(--letterpress)",
       },
     },
   },
