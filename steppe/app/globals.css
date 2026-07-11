@@ -24,33 +24,45 @@
  */
 @layer base {
   :root {
-    --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
-    --font-serif: "Playfair Display Variable", Georgia, "Times New Roman", serif;
-    --font-mono: "DM Mono", ui-monospace, "SFMono-Regular", monospace;
+    /* The member app shares the ONE brand type system with the marketing site
+     * and every transactional email: Besley (display), Schibsted Grotesk (body/UI),
+     * Martian Mono (labels). Those faces are loaded once by next/font in
+     * app/layout.tsx and exposed on <html> as --font-display / --font-sans-mkt /
+     * --font-mono-mkt; we simply point the shadcn contract at them (no separate
+     * @fontsource copy to drift out of sync). */
+    --font-sans: var(--font-sans-mkt), ui-sans-serif, system-ui, sans-serif;
+    --font-serif: var(--font-display), Georgia, "Times New Roman", serif;
+    --font-mono: var(--font-mono-mkt), ui-monospace, "SFMono-Regular", monospace;
 
-    --background: 43 38.9% 92.9%; /* bone     #F4F0E6 */
-    --foreground: 38 13.3% 11.8%; /* basalt   #221F1A */
-    --card: 41 36.7% 88.2%; /* bone-2   #ECE5D6 */
-    --card-foreground: 38 13.3% 11.8%; /* basalt */
-    --popover: 41 36.7% 88.2%; /* bone-2 */
-    --popover-foreground: 38 13.3% 11.8%; /* basalt */
-    --primary: 141 13.4% 24.9%; /* juniper  #37483D */
-    --primary-foreground: 43 38.9% 92.9%; /* bone */
-    --secondary: 82 13.5% 72.4%; /* sage-soft #BBC2AF */
-    --secondary-foreground: 38 13.3% 11.8%; /* basalt */
-    --muted: 41 36.7% 88.2%; /* bone-2 */
-    --muted-foreground: 43 12.6% 32.7%; /* muted text #5E5849 (AA-darkened from #736E60) */
-    --accent: 19 54.2% 44.5%; /* rust     #AF5A34 (brand accent — not error) */
-    --accent-foreground: 0 0% 100%; /* white on rust (4.84:1) */
+    /* EXACT brand palette — identical hexes to app/(site)/tokens.css and the
+     * /preview export (public/preview-app/steppe-exchange.html), so the member app
+     * reads as the same product as its own preview. Page = bone, cards = paper
+     * (cards sit brighter than the page, per the brand). AA re-verified against
+     * THESE colors (ratios inline); the three semantic status inks below are
+     * brand-family but tuned for text contrast the export never needed. */
+    --background: 42 40% 88.2%; /* bone     #ede6d5 (page) */
+    --foreground: 150 4.5% 17.3%; /* ink    #2a2e2c (11.06:1 on bone) */
+    --card: 42 61.9% 95.9%; /* paper    #fbf7ee (cards sit brighter than page) */
+    --card-foreground: 150 4.5% 17.3%; /* ink (12.87:1 on paper) */
+    --popover: 42 61.9% 95.9%; /* paper */
+    --popover-foreground: 150 4.5% 17.3%; /* ink */
+    --primary: 133 22.9% 27.5%; /* juniper  #36563d */
+    --primary-foreground: 42 61.9% 95.9%; /* paper on juniper (7.69:1) */
+    --secondary: 86 18.7% 75.9%; /* sage-soft #c3cdb6 */
+    --secondary-foreground: 150 4.5% 17.3%; /* ink */
+    --muted: 41 40.7% 82.2%; /* sand     #e4d8bf (subtle fills) */
+    --muted-foreground: 42 9.8% 33.9%; /* ink-soft #5f5a4e (6.42:1 on paper, 5.52 on bone) */
+    --accent: 19 58.5% 41.6%; /* rust     #a8542c (brand accent — not error) */
+    --accent-foreground: 0 0% 100%; /* white on rust (5.29:1) */
     --destructive: 4 76.5% 40%; /* distinct red #B42318 (the error state) */
     --destructive-foreground: 0 0% 100%; /* white */
-    --success: 146 40.4% 29.6%; /* juniper-family green #2D6A47 — text clears 4.5 on bg (5.65) + card (5.13); more saturated than primary juniper, so distinct */
+    --success: 146 40.4% 29.6%; /* juniper-family green #2D6A47 — text clears 4.5 on bg + card; more saturated than primary juniper, so distinct */
     --success-foreground: 0 0% 100%; /* white on a success surface (6.4:1) */
-    --warning: 41 81% 26.9%; /* earthy ochre #7C580D — text clears 4.5 on bg (5.66) + card (5.14); distinct from the rust accent */
+    --warning: 41 81% 26.9%; /* earthy ochre #7C580D — text clears 4.5 on bg + card; distinct from the rust accent */
     --warning-foreground: 0 0% 100%; /* white on a warning surface (6.4:1) */
-    --border: 82 13.5% 72.4%; /* sage-soft #BBC2AF (decorative dividers) */
-    --input: 84 13% 42.4%; /* sage-deep #6F7A5E (control boundary, 3:1) */
-    --ring: 19 54.2% 44.5%; /* rust (focus ring) */
+    --border: 86 18.7% 75.9%; /* sage-soft #c3cdb6 (decorative dividers) */
+    --input: 96 20.5% 44.9%; /* sage-deep #6e8a5b (control boundary, 3.6:1) */
+    --ring: 19 58.5% 41.6%; /* rust (focus ring) */
     --radius: 0.5rem;
   }
 

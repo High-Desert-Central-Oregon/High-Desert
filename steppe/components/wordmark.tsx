@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * The Steppe brand mark, in two forms:
  *
- *  - <Wordmark> — just the name in the display serif (Playfair). Compact, for the
+ *  - <Wordmark> — just the name in the display serif (Besley). Compact, for the
  *    app navbar and inline use.
  *  - <Lockup> — the wordmark over the descriptor tagline ("a high desert civic
  *    commons"). Note the descriptor's "high desert" is the lowercase GEOGRAPHIC

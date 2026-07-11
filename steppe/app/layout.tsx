@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Besley, Schibsted_Grotesk, Martian_Mono } from "next/font/google";
-// Member-app brand fonts (no external CDN) — these feed app/globals.css, not the
-// marketing layer, so they stay as they are.
-import "@fontsource-variable/dm-sans";
-import "@fontsource-variable/playfair-display";
-import "@fontsource/dm-mono/400.css";
-import "@fontsource/dm-mono/500.css";
+// ONE brand type system across the whole app: Besley / Schibsted Grotesk /
+// Martian Mono are loaded once below (next/font, no external CDN) and drive both
+// the marketing layer AND the member app — globals.css points the shadcn
+// --font-* contract at these same faces. (DM Sans / Playfair / DM Mono removed
+// 2026-07-10: the member app now shares the brand fonts, so those extra @fontsource
+// copies are gone.)
 import "./globals.css";
 
 // Marketing typefaces for the public (site) route group — self-hosted and optimized
