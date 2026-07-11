@@ -17,26 +17,32 @@
 # Terms of Membership
 
 ```
-Effective date:  [EFFECTIVE DATE]
+Effective date:  June 22, 2026
 Version:         Draft v1
-Last updated:    [LAST UPDATED]
+Last updated:    June 22, 2026
 Status:          Draft (pending legal review)
 ```
 
 Steppe is community-owned, ad-free civic infrastructure for Redmond, Central
-Oregon, operated by [LEGAL ENTITY]. These Terms of Membership govern your use of
+Oregon, operated by Steppe, a fiscally sponsored nonprofit (fiscal sponsor: Ignite
+Empowerment Foundation, a Central Oregon 501(c)(3)). These Terms of Membership govern your use of
 Steppe. A plain-language summary of how Steppe works lives across the site, and a
 companion [Privacy Policy](/legal/privacy) explains how we handle data; this
 document is the formal version. By becoming a member you agree to these terms.
 
-> [CONFIRM: Greg + counsel — confirm the controlling legal entity name and the
-> governing-law / venue clause for an Oregon public benefit nonprofit.]
+> [CONFIRM: Greg + counsel — Steppe operates as a fiscally sponsored nonprofit (sponsor:
+> Ignite Empowerment Foundation). Confirm which entity is the contracting party and data
+> controller for members (Steppe vs. the fiscal sponsor), reconcile with the "Oregon public
+> benefit corporation / articles of incorporation" language used elsewhere, and confirm the
+> governing-law / venue clause.]
 
 ## 1. Membership and Verification
 
-Membership is open to verified residents of [SERVICE AREA] who are at least
-[MINIMUM AGE]. Steppe is not anonymous: you prove once that you live here, and
-that gate is what keeps the community real.
+Membership is open to verified residents of Central Oregon (beginning with Redmond,
+Oregon) who are at least 18 years old. Steppe is not anonymous: you prove once that you
+live here, and that gate is what keeps the community real. Membership is limited to
+adults; a version for ages 13–17 is planned for the future, with its own protections,
+and is not yet available.
 
 A person reviews your proof of residency, and **the proof is deleted the moment
 that check is made.** We keep only that you are verified, the date, and the
@@ -144,7 +150,13 @@ append-only governance and transparency record.
 ## 9. Disclaimers and Limitation of Liability
 
 The service is provided "as is," without warranties, to the fullest extent
-permitted by law. [LIABILITY LIMITATION CLAUSE]
+permitted by law. To the fullest extent Oregon law allows, Steppe and its directors,
+officers, employees, and volunteers are not liable for indirect, incidental, or
+consequential damages, and our total liability for any claim is limited to the dues you
+paid us in the twelve months before the claim (which is zero during any period when
+membership is free). Nothing here limits liability that cannot be limited under Oregon
+law — including for gross negligence, willful misconduct, or personal injury — or any
+non-waivable rights you have under the Oregon Unlawful Trade Practices Act.
 
 > [CONFIRM: counsel — supply the warranty disclaimer and liability-limitation
 > language appropriate for an Oregon public benefit nonprofit.]
@@ -160,4 +172,4 @@ notice in advance.
 
 Questions about these terms can be sent to
 [hello@steppe.community](mailto:hello@steppe.community) or by mail to
-[MAILING ADDRESS].
+3566 NW 8th Street, Redmond, OR 97756.

@@ -10,7 +10,7 @@
 -- ⚑ THIS IS A DRAFT, NOT FINAL TEXT.
 --   • Version stays '0.1'; the wording is **pending Oregon legal review**
 --     (CLAUDE.md "Open items"). The gate shows a visible draft banner.
---   • Bracketed items like [contact email] are placeholders to fill before
+--   • Bracketed items like hello@steppe.community are placeholders to fill before
 --     publishing. Do NOT present this as final.
 --   • Re-runnable: UPDATEs the existing 0.1 rows in place. When the final,
 --     lawyer-reviewed text is ready, publish it as a NEW version (e.g. '1.0')
@@ -22,7 +22,7 @@
 update documents set body = $tos$
 # Terms of Membership
 
-**Draft v0.1 — pending Oregon legal review.** This plain-language draft is written to be clear and protective, but it is not legal advice and has not yet been reviewed by an Oregon attorney. Bracketed items like [contact email] are placeholders to fill before publishing.
+**Draft v0.1 — pending Oregon legal review.** This plain-language draft is written to be clear and protective, but it is not legal advice and has not yet been reviewed by an Oregon attorney. Bracketed items like hello@steppe.community are placeholders to fill before publishing.
 
 ## Our commitments, in one place
 
@@ -35,7 +35,7 @@ update documents set body = $tos$
 
 ## 1 · What Steppe is
 
-Steppe is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by [Steppe], an Oregon nonprofit public benefit corporation — member-governed, with no owner and a mission entrenched in its articles. It is **not** advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.
+Steppe is community-owned digital civic infrastructure for the people of Redmond, Oregon. It is operated by Steppe, an Oregon nonprofit public benefit corporation — member-governed, with no owner and a mission entrenched in its articles. It is **not** advertising-supported social media and is not built to be sold. By creating an account you agree to these Terms and to our Privacy Policy.
 
 ## 2 · Who can join
 
@@ -116,14 +116,14 @@ Why — dispute terms that don't quietly strip member voice.
 
 ## 14 · Contact
 
-Questions about these Terms: [contact email] · [mailing address]. [Steppe], Redmond, Oregon.
+Questions about these Terms: hello@steppe.community · 3566 NW 8th Street, Redmond, OR 97756. Steppe, Redmond, Oregon.
 $tos$
 where kind = 'terms' and version = '0.1';
 
 update documents set body = $pp$
 # Privacy Policy
 
-**Draft v0.1 — pending Oregon legal review.** This plain-language draft is not legal advice and has not yet been reviewed by an Oregon attorney. Bracketed items like [contact email] are placeholders to fill before publishing.
+**Draft v0.1 — pending Oregon legal review.** This plain-language draft is not legal advice and has not yet been reviewed by an Oregon attorney. Bracketed items like hello@steppe.community are placeholders to fill before publishing.
 
 ## 1 · The short version
 
@@ -183,6 +183,6 @@ This Policy is versioned. If we make a material change, we will show you what ch
 
 ## 14 · Contact
 
-Privacy questions or data requests: [contact email] · [mailing address]. [Steppe], Redmond, Oregon.
+Privacy questions or data requests: hello@steppe.community · 3566 NW 8th Street, Redmond, OR 97756. Steppe, Redmond, Oregon.
 $pp$
 where kind = 'privacy' and version = '0.1';

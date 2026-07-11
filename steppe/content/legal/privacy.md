@@ -13,14 +13,15 @@
 # Privacy Policy
 
 ```
-Effective date:  [EFFECTIVE DATE]
+Effective date:  June 22, 2026
 Version:         Draft v1
-Last updated:    [LAST UPDATED]
+Last updated:    June 22, 2026
 Status:          Draft (pending legal review)
 ```
 
 Steppe is community-owned, ad-free civic infrastructure for Redmond, Central
-Oregon, operated by [DATA CONTROLLER]. This policy explains what we collect, why,
+Oregon, operated by Steppe, a fiscally sponsored nonprofit (fiscal sponsor: Ignite
+Empowerment Foundation, a Central Oregon 501(c)(3)). This policy explains what we collect, why,
 and the choices you have. A plain-language summary of these commitments lives at
 [steppe.community/privacy](/privacy); this document is the formal version.
 
@@ -87,7 +88,7 @@ delete it.
 | Account basics | While you are a member; deleted on leaving |
 | Residency proof | Deleted after verification |
 | What you post | Until you delete it |
-| Minimal logs | [RETENTION PERIOD], then purged |
+| Minimal logs | up to 90 days, then purged |
 
 ## 6. Your Rights and Choices
 
@@ -104,8 +105,11 @@ members and regulators of a breach as required by law.
 ## 8. Children's Privacy
 
 Steppe is for adults. The service is not directed to children, and you must be at
-least [MINIMUM AGE] to become a member. We do not knowingly collect information
-from anyone under that age.
+least 18 to become a member. We do not knowingly collect information from anyone under
+18, and we do not knowingly collect information from a child under 13 (consistent with
+the federal Children's Online Privacy Protection Act). A version for ages 13–17 is
+planned and will launch only with its own protections and applicable children's-privacy
+compliance.
 
 > [CONFIRM: Greg + counsel — confirm the minimum membership age.]
 
@@ -118,4 +122,4 @@ effective date and, for material changes, give members notice in advance.
 
 Questions or requests about this policy, or your data, can be sent to
 [hello@steppe.community](mailto:hello@steppe.community) or by mail to
-[MAILING ADDRESS].
+3566 NW 8th Street, Redmond, OR 97756.
