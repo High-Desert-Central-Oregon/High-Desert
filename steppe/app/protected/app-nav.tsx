@@ -64,7 +64,8 @@ export function AppNav({
 
   return (
     <nav lang={locale} className="flex w-full justify-center border-b">
-      <div className="flex w-full max-w-3xl items-center gap-4 p-3 px-5 text-sm">
+      {/* Nav rail aligns to the same --content-max column as <main>. */}
+      <div className="flex w-full max-w-[var(--content-max)] items-center gap-4 p-3 px-[var(--pad-screen)] text-sm">
         <Link
           href="/protected"
           className="shrink-0 py-1 focus-visible:underline focus-visible:outline-none"

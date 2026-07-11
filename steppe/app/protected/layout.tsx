@@ -110,7 +110,13 @@ export default function ProtectedLayout({
         <ConsentGuard />
       </Suspense>
 
-      <main id="main" className="flex w-full max-w-3xl flex-1 flex-col gap-8 p-5">
+      {/* ONE centered reading column (--content-max) with the reference sheet
+          rhythm: screen pad 22px, row rhythm 25px. The phone composition given
+          room — no second column, no sidebar. */}
+      <main
+        id="main"
+        className="flex w-full max-w-[var(--content-max)] flex-1 flex-col gap-[var(--row-rhythm)] p-[var(--pad-screen)]"
+      >
         {children}
       </main>
     </div>

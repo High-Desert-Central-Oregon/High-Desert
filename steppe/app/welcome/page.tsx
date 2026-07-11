@@ -31,7 +31,7 @@ async function WelcomeContent() {
     <main
       id="main"
       lang={locale}
-      className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-8 sm:py-12"
+      className="mx-auto flex w-full max-w-[var(--content-max)] flex-col gap-[var(--row-rhythm)] px-[var(--pad-screen)] py-8 sm:py-12"
     >
       <header className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -92,7 +92,7 @@ export default function WelcomePage() {
   return (
     <Suspense
       fallback={
-        <main className="mx-auto w-full max-w-2xl px-4 py-8 sm:py-12">
+        <main className="mx-auto w-full max-w-[var(--content-max)] px-[var(--pad-screen)] py-8 sm:py-12">
           <PageSkeleton />
         </main>
       }
