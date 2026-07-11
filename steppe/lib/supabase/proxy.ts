@@ -20,6 +20,9 @@ export async function updateSession(request: NextRequest) {
     pathname === "/legal/terms" ||
     pathname === "/q" ||
     pathname === "/p" ||
+    pathname === "/d" ||
+    pathname === "/e" ||
+    pathname === "/c" ||
     pathname === "/contact";
   // Public endpoints reachable by anonymous visitors (the /join and /contact
   // forms post here; the landing hero polls /api/weather — a keyless, cached
