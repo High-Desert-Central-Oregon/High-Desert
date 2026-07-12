@@ -20,7 +20,15 @@ export async function SiteFooter() {
           alt={t("sealAlt")}
           width={110}
           height={110}
-          className="foot-seal"
+          className="foot-seal foot-seal-color"
+        />
+        {/* Dark mode swaps to the mono seal via CSS mask, so the ink inverts to
+            the theme's foreground (external SVG — fill can't be set directly,
+            so we mask; see site-base.css). */}
+        <span
+          role="img"
+          aria-label={t("sealAlt")}
+          className="foot-seal foot-seal-mono"
         />
         <p className="att">{t.rich("attribution", { b: (c) => <b>{c}</b> })}</p>
         <div className="foot-end">

@@ -1015,6 +1015,20 @@ html[data-js] .site-root .rv.in {
   height: auto;
   margin-bottom: 16px;
 }
+.site-root .foot .foot-seal-mono {
+  display: none;
+}
+html[data-theme="dark"] .site-root .foot .foot-seal-color {
+  display: none;
+}
+html[data-theme="dark"] .site-root .foot .foot-seal-mono {
+  display: block;
+  height: 110px;
+  width: 110px;
+  background: var(--text);
+  mask: url("/brand/steppe-strata-seal-mono.svg") no-repeat center / contain;
+  -webkit-mask: url("/brand/steppe-strata-seal-mono.svg") no-repeat center / contain;
+}
 
 .site-root .foot {
   background: var(--paper);

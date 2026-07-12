@@ -24,6 +24,15 @@
 \pagecolor{steppepaper}
 \AtBeginDocument{\color{steppeink}}
 
+% Mono Strata Seal — a small stamp in the document footer (brand-kit single-color
+% tier, floor 48px ≈ 0.5in at 96dpi; we set 0.55in). Page number sits beneath it.
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\raisebox{-0.1in}{\includegraphics[width=0.55in]{docs/brand/steppe-strata-seal-mono.png}}\\[2pt]{\footnotesize\thepage}}
+
 \titleformat*{\section}{\Large\bfseries\brandhead\color{steppedeep}}
 \titleformat*{\subsection}{\large\bfseries\brandhead\color{steppedeep}}
 \titleformat*{\subsubsection}{\normalsize\bfseries\brandhead\color{steppesage}}
