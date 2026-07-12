@@ -9,6 +9,7 @@ import { MarkerChip } from "@/components/broadsheet/chips";
 import { PostRow, Monogram, initialsFor } from "@/components/broadsheet/post-row";
 import { VerifiedGate } from "@/components/verified-gate";
 import { PullToRefresh } from "./pull-to-refresh";
+import { ExchangeSegments } from "./exchange-segments";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -350,6 +351,9 @@ async function BoardContent({
         flush
       />
       <Fab href="/protected/exchange/new" label={dict.exchange.postNew} />
+
+      {/* Board | Upcoming — the calendar is a view here, not a tab (§7.1). */}
+      <ExchangeSegments active="board" dict={dict} />
 
       <FilterBar active={f} dict={dict} />
 

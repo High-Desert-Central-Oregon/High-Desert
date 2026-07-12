@@ -180,6 +180,7 @@ export const es: Dictionary = {
       "Las publicaciones aparecen de más nueva a más antigua para cada miembro verificado — nada se ordena por clics.",
     eventChipHint: "Los eventos tienen su propio formulario: fechas, lugar y RSVP.",
     segUpcoming: "Próximos",
+    upcomingEmpty: "Aún no hay nada en el calendario — publica el primer encuentro.",
   },
 
   events: {
@@ -195,6 +196,9 @@ export const es: Dictionary = {
     empty: "Aún no hay eventos próximos. Sé quien cree el primero.",
     allRedmond: "Todo Redmond",
     chipEvent: "Evento",
+    addCal: "Añadir al calendario",
+    icsNote: "Añádelo a tu calendario — o copia estos datos",
+    icsDescription: "Un evento comunitario de Steppe. Los RSVP se quedan en Steppe.",
     hostedBy: "Organizado por {name}",
     whenLabel: "Cuándo",
     whereLabel: "Dónde",
@@ -242,6 +246,7 @@ export const es: Dictionary = {
     empty: "Ningún grupo coincide. Prueba otra búsqueda o crea uno.",
     visibilityPublic: "Público",
     visibilityMembersOnly: "Solo miembros",
+    upcomingSection: "Próximos",
     memberCount: { one: "{count} miembro", other: "{count} miembros" },
     // Controles de membresía
     join: "Unirse",

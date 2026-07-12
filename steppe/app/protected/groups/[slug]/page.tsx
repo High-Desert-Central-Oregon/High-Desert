@@ -6,14 +6,18 @@ import { Lock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MarkerChip } from "@/components/broadsheet/chips";
+import { SectionLabel } from "@/components/broadsheet/section-row";
+import { DateTileRow } from "@/components/broadsheet/date-tile-row";
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "../membership-control";
 import { LeaveGroupButton } from "../leave-group-button";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
+import { getHiddenIds } from "@/lib/moderation";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { groupControl } from "@/lib/groups";
 import { categoryMarker, visibilityMarker } from "@/lib/markers";
+import { formatRedmondDateTime } from "@/lib/time";
 import { plural } from "@/lib/i18n";
 import type {
   Category,
@@ -153,6 +157,22 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
   const showCount = isPublic || isActiveMember;
   const description = full?.description ?? null;
 
+  // The group's upcoming events (0018 events.group_id) — RLS already scopes
+  // members-only groups to active members; hidden events drop out (P7).
+  const [{ data: upRows }, hiddenEvents] = await Promise.all([
+    supabase
+      .from("events")
+      .select("id, title, starts_at, location")
+      .eq("group_id", dir.id)
+      .eq("status", "active")
+      .gte("starts_at", new Date().toISOString())
+      .order("starts_at", { ascending: true })
+      .limit(10)
+      .returns<{ id: string; title: string; starts_at: string; location: string | null }[]>(),
+    getHiddenIds(supabase, "event"),
+  ]);
+  const upcoming = (upRows ?? []).filter((e) => !hiddenEvents.has(e.id));
+
   return (
     <div lang={locale} className="flex flex-col gap-8">
       <Link
@@ -237,6 +257,30 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
           </p>
         )}
       </section>
+
+      {/* Upcoming — the group's calendar slice (spec §6.4/§7.2): date-tile
+          rows, soonest first. RLS scopes events to members for members-only
+          groups; an empty list renders nothing (no dead rows). */}
+      {upcoming.length > 0 && (
+        <section className="flex flex-col gap-1">
+          <SectionLabel>{dict.groups.upcomingSection}</SectionLabel>
+          <ul className="flex flex-col border-t">
+            {upcoming.map((e) => (
+              <li key={e.id}>
+                <DateTileRow
+                  href={`/protected/events/${e.id}`}
+                  iso={e.starts_at}
+                  locale={locale}
+                  title={e.title}
+                  when={[formatRedmondDateTime(e.starts_at, locale), e.location]
+                    .filter(Boolean)
+                    .join(" · ")}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Members */}
       <section className="flex flex-col gap-3">

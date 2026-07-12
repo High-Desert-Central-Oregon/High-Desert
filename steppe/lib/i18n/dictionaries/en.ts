@@ -176,6 +176,7 @@ export const en = {
       "Posts appear newest first for every verified member — nothing is sorted for clicks.",
     eventChipHint: "Events have their own form — dates, place, and RSVPs.",
     segUpcoming: "Upcoming",
+    upcomingEmpty: "Nothing on the calendar yet — post the first gathering.",
   },
 
   events: {
@@ -192,6 +193,9 @@ export const en = {
     empty: "No upcoming events yet. Be the first to create one.",
     allRedmond: "All of Redmond",
     chipEvent: "Event",
+    addCal: "Add to calendar",
+    icsNote: "Add to your calendar — or copy these details",
+    icsDescription: "A Steppe community event. RSVPs stay inside Steppe.",
     hostedBy: "Hosted by {name}",
     whenLabel: "When",
     whereLabel: "Where",
@@ -240,6 +244,7 @@ export const en = {
     empty: "No groups match. Try a different search, or create one.",
     visibilityPublic: "Public",
     visibilityMembersOnly: "Members only",
+    upcomingSection: "Upcoming",
     memberCount: { one: "{count} member", other: "{count} members" },
     // Membership controls
     join: "Join",

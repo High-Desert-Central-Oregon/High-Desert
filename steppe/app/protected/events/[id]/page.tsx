@@ -6,6 +6,7 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedGate } from "@/components/verified-gate";
 import { RsvpForm } from "./rsvp-form";
+import { AddToCalendar } from "./add-to-calendar";
 import { RemovedBanner } from "../../moderation/removed-banner";
 import { ModerationControl } from "../../moderation/moderation-control";
 import { AppealArea } from "../../moderation/appeal-area";
@@ -284,6 +285,20 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           </div>
         )}
       </section>
+
+      {/* Your calendar app is the calendar (spec §7.3) — a client-built .ics
+          with a copy-details fallback; zero server state. */}
+      <AddToCalendar
+        eventId={event.id}
+        title={event.title}
+        startsAt={event.starts_at}
+        location={event.location}
+        labels={{
+          button: dict.events.addCal,
+          note: dict.events.icsNote,
+          description: dict.events.icsDescription,
+        }}
+      />
 
       {isMod && (
         <ModerationControl
