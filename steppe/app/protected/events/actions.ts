@@ -61,6 +61,8 @@ export async function createEvent(
   if (error || !data) return { error: "create-failed" };
 
   revalidatePath("/protected/events");
+  // The list surface events actually appear on is the Exchange board now.
+  revalidatePath("/protected/exchange");
   redirect(`/protected/events/${data.id}`);
 }
 

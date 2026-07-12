@@ -163,6 +163,18 @@ export const en = {
     updating: "Updating…",
     updated: "Updated just now",
     segBoard: "Board",
+    titleRequired: "Please add a title.",
+    bodyRequired: "Please add the details.",
+    errorGeneric: "Something went wrong. Please try again.",
+    gateTitle: "Verify to read and post on the Exchange",
+    gateBody:
+      "The Exchange is the community board for verified Redmond residents. Verify your residency to read it and post to it.",
+    gateCta: "Verify your residency",
+    backToBoard: "Back to the Exchange",
+    newTitle: "New post",
+    newIntro:
+      "Posts appear newest first for every verified member — nothing is sorted for clicks.",
+    eventChipHint: "Events have their own form — dates, place, and RSVPs.",
     segUpcoming: "Upcoming",
   },
 
@@ -503,6 +515,7 @@ export const en = {
   moderation: {
     removedTitleEvent: "This event was removed by a moderator.",
     removedTitleProposal: "This proposal was removed by a moderator.",
+    removedTitlePost: "This post was removed by a moderator.",
     removedReason: "Reason",
     appealable: "If you posted this, you can appeal.",
     controlHeading: "Moderator tools",
@@ -517,6 +530,7 @@ export const en = {
     error: "We couldn't record that. Please try again.",
     noticesTitle: "Moderation notices",
     noticeEventRemoved: 'Your event "{title}" was removed by a moderator.',
+    noticePostRemoved: 'Your post "{title}" was removed by a moderator.',
     noticeProposalRemoved: 'Your proposal "{title}" was removed by a moderator.',
     noticeView: "View details and appeal",
     appealHeading: "Appeal this removal",
@@ -533,6 +547,7 @@ export const en = {
       "Open appeals from members, oldest first. You can't resolve an appeal of your own action — a different moderator must.",
     appealsEmpty: "No open appeals.",
     appealOnEvent: "Removal of an event",
+    appealOnPost: "Appeal on a removed post",
     appealOnProposal: "Removal of a proposal",
     appealRemovalReason: "Removal reason",
     appealBy: "Appeal by {name}",

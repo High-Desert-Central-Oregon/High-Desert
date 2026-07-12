@@ -36,11 +36,14 @@ export function StatusChip({
 export function MarkerChip({
   label,
   color,
+  size = 10,
   className,
 }: {
   label: string;
   /** A brand marker color (e.g. "var(--marker, #6E8A5B)") — squares are always labeled. */
   color: string;
+  /** Square size: 9px in feed rows/filters, 10px in detail/composer (spec §3). */
+  size?: 9 | 10;
   className?: string;
 }) {
   return (
@@ -52,8 +55,8 @@ export function MarkerChip({
     >
       <span
         aria-hidden="true"
-        className="inline-block size-[10px] rounded-marker"
-        style={{ background: color }}
+        className="inline-block rounded-marker"
+        style={{ background: color, width: size, height: size }}
       />
       {label}
     </span>

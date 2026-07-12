@@ -30,7 +30,11 @@ export async function moderateContent(
   if (!user) return { error: "unauthenticated" };
   if (!(await isModerator())) return { error: "forbidden" };
   if (action !== "remove" && action !== "restore") return { error: "bad-action" };
-  if (targetType !== "event" && targetType !== "proposal") {
+  if (
+    targetType !== "event" &&
+    targetType !== "proposal" &&
+    targetType !== "post"
+  ) {
     return { error: "bad-target" };
   }
   const trimmed = reason.trim();
@@ -47,9 +51,15 @@ export async function moderateContent(
   if (error) return { error: "moderate-failed" };
 
   const base =
-    targetType === "event" ? "/protected/events" : "/protected/governance";
+    targetType === "event"
+      ? "/protected/events"
+      : targetType === "post"
+        ? "/protected/exchange"
+        : "/protected/governance";
   revalidatePath(`${base}/${targetId}`);
   revalidatePath(base);
+  // Events surface on the Exchange board too (the UNION feed).
+  if (targetType === "event") revalidatePath("/protected/exchange");
   revalidatePath("/protected");
   revalidatePath("/protected/transparency");
   return { ok: true };

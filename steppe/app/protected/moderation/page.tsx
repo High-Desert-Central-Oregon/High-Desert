@@ -64,11 +64,13 @@ async function AppealsContent() {
   const names = new Map<string, string>();
   const eventTitles = new Map<string, string>();
   const proposalTitles = new Map<string, string>();
+  const postTitles = new Map<string, string>();
   if (appeals.length > 0) {
     const userIds = [...new Set(appeals.map((a) => a.user_id))];
     const eventIds = [...actions.values()].filter((a) => a.target_type === "event").map((a) => a.target_id);
     const proposalIds = [...actions.values()].filter((a) => a.target_type === "proposal").map((a) => a.target_id);
-    const [{ data: people }, { data: evs }, { data: props }] = await Promise.all([
+    const postIds = [...actions.values()].filter((a) => a.target_type === "post").map((a) => a.target_id);
+    const [{ data: people }, { data: evs }, { data: props }, { data: pos }] = await Promise.all([
       supabase.from("profiles").select("id, display_name").in("id", userIds),
       eventIds.length
         ? supabase.from("events").select("id, title").in("id", eventIds)
@@ -76,10 +78,14 @@ async function AppealsContent() {
       proposalIds.length
         ? supabase.from("proposals").select("id, title").in("id", proposalIds)
         : Promise.resolve({ data: [] as { id: string; title: string }[] }),
+      postIds.length
+        ? supabase.from("posts").select("id, title").in("id", postIds)
+        : Promise.resolve({ data: [] as { id: string; title: string }[] }),
     ]);
     for (const p of people ?? []) names.set(p.id, p.display_name);
     for (const e of evs ?? []) eventTitles.set(e.id, e.title);
     for (const p of props ?? []) proposalTitles.set(p.id, p.title);
+    for (const po of pos ?? []) postTitles.set(po.id, po.title);
   }
 
   return (
@@ -102,8 +108,14 @@ async function AppealsContent() {
           {appeals.map((appeal) => {
             const action = actions.get(appeal.moderation_action_id);
             const isEvent = action?.target_type === "event";
+            const isPost = action?.target_type === "post";
             const title = action
-              ? (isEvent ? eventTitles : proposalTitles).get(action.target_id)
+              ? (isEvent
+                  ? eventTitles
+                  : isPost
+                    ? postTitles
+                    : proposalTitles
+                ).get(action.target_id)
               : undefined;
             const ownAction = action?.actor_id === profile.id;
 
@@ -116,7 +128,9 @@ async function AppealsContent() {
                   <p className="font-medium">
                     {isEvent
                       ? dict.moderation.appealOnEvent
-                      : dict.moderation.appealOnProposal}
+                      : isPost
+                        ? dict.moderation.appealOnPost
+                        : dict.moderation.appealOnProposal}
                     {title ? ` — ${title}` : ""}
                   </p>
                   {action?.reason && (

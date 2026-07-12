@@ -40,15 +40,19 @@ async function Home() {
   // a member their own title doesn't re-expose anything (only they see this).
   const notices: Notice[] = [];
   if (supabase && user) {
-    const [{ data: myEvents }, { data: myProposals }] = await Promise.all([
-      supabase.from("events").select("id, title").eq("creator_id", user.id),
-      supabase.from("proposals").select("id, title").eq("author_id", user.id),
-    ]);
+    const [{ data: myEvents }, { data: myProposals }, { data: myPosts }] =
+      await Promise.all([
+        supabase.from("events").select("id, title").eq("creator_id", user.id),
+        supabase.from("proposals").select("id, title").eq("author_id", user.id),
+        supabase.from("posts").select("id, title").eq("author_id", user.id),
+      ]);
     const titles = new Map<string, { type: ModeratableTarget; title: string }>();
     for (const e of myEvents ?? [])
       titles.set(e.id, { type: "event", title: e.title });
     for (const p of myProposals ?? [])
       titles.set(p.id, { type: "proposal", title: p.title });
+    for (const po of myPosts ?? [])
+      titles.set(po.id, { type: "post", title: po.title });
 
     if (titles.size > 0) {
       const { data: removed } = await supabase
@@ -100,7 +104,9 @@ async function Home() {
                   {t(
                     n.targetType === "event"
                       ? dict.moderation.noticeEventRemoved
-                      : dict.moderation.noticeProposalRemoved,
+                      : n.targetType === "post"
+                        ? dict.moderation.noticePostRemoved
+                        : dict.moderation.noticeProposalRemoved,
                     { title: n.title },
                   )}
                 </p>
@@ -111,7 +117,11 @@ async function Home() {
                 )}
                 <Link
                   href={`/protected/${
-                    n.targetType === "event" ? "events" : "governance"
+                    n.targetType === "event"
+                      ? "events"
+                      : n.targetType === "post"
+                        ? "exchange"
+                        : "governance"
                   }/${n.targetId}`}
                   className="text-primary underline-offset-2 hover:underline"
                 >

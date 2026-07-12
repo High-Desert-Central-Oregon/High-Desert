@@ -167,6 +167,18 @@ export const es: Dictionary = {
     updating: "Actualizando…",
     updated: "Actualizado ahora",
     segBoard: "Tablón",
+    titleRequired: "Agrega un título, por favor.",
+    bodyRequired: "Agrega los detalles, por favor.",
+    errorGeneric: "Algo salió mal. Inténtalo de nuevo.",
+    gateTitle: "Verifícate para leer y publicar en el Intercambio",
+    gateBody:
+      "El Intercambio es el tablón comunitario para residentes verificados de Redmond. Verifica tu residencia para leerlo y publicar.",
+    gateCta: "Verifica tu residencia",
+    backToBoard: "Volver al Intercambio",
+    newTitle: "Publicar",
+    newIntro:
+      "Las publicaciones aparecen de más nueva a más antigua para cada miembro verificado — nada se ordena por clics.",
+    eventChipHint: "Los eventos tienen su propio formulario: fechas, lugar y RSVP.",
     segUpcoming: "Próximos",
   },
 
@@ -506,6 +518,7 @@ export const es: Dictionary = {
   moderation: {
     removedTitleEvent: "Un moderador eliminó este evento.",
     removedTitleProposal: "Un moderador eliminó esta propuesta.",
+    removedTitlePost: "Un moderador retiró esta publicación.",
     removedReason: "Motivo",
     appealable: "Si tú lo publicaste, puedes apelar.",
     controlHeading: "Herramientas de moderación",
@@ -521,6 +534,7 @@ export const es: Dictionary = {
     error: "No pudimos registrar eso. Inténtalo de nuevo.",
     noticesTitle: "Avisos de moderación",
     noticeEventRemoved: 'Un moderador eliminó tu evento "{title}".',
+    noticePostRemoved: 'Un moderador retiró tu publicación "{title}".',
     noticeProposalRemoved: 'Un moderador eliminó tu propuesta "{title}".',
     noticeView: "Ver detalles y apelar",
     appealHeading: "Apelar esta eliminación",
@@ -537,6 +551,7 @@ export const es: Dictionary = {
       "Apelaciones abiertas de los miembros, las más antiguas primero. No puedes resolver la apelación de tu propia acción: debe hacerlo otro moderador.",
     appealsEmpty: "No hay apelaciones abiertas.",
     appealOnEvent: "Eliminación de un evento",
+    appealOnPost: "Apelación sobre una publicación retirada",
     appealOnProposal: "Eliminación de una propuesta",
     appealRemovalReason: "Motivo de la eliminación",
     appealBy: "Apelación de {name}",

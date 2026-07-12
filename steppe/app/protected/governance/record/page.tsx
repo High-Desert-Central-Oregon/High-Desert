@@ -57,6 +57,7 @@ function contentHref(row: AuditRow): string | null {
   if (row.entity === "event") return `/protected/events/${row.entity_id}`;
   if (row.entity === "proposal")
     return `/protected/governance/${row.entity_id}`;
+  if (row.entity === "post") return `/protected/exchange/${row.entity_id}`;
   return null;
 }
 

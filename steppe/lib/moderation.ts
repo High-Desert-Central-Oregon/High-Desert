@@ -9,7 +9,7 @@ import type { ContentModerationRow } from "@/lib/types/db";
  * view). Hidden content is not deleted — its detail page shows a legible removed
  * state with the reason and that it's appealable.
  */
-export type ModeratableTarget = "event" | "proposal";
+export type ModeratableTarget = "event" | "proposal" | "post";
 
 export type ContentModeration = {
   hidden: boolean;

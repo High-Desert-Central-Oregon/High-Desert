@@ -32,7 +32,9 @@ export function RemovedBanner({
           <h2 className="font-semibold">
             {targetType === "event"
               ? dict.moderation.removedTitleEvent
-              : dict.moderation.removedTitleProposal}
+              : targetType === "post"
+                ? dict.moderation.removedTitlePost
+                : dict.moderation.removedTitleProposal}
           </h2>
           {reason && (
             <p className="text-sm">

@@ -31,6 +31,21 @@ export function categoryMarker(slug: string | null | undefined): string {
 /** Uncategorized events: the bundle's own event marker (--cat-event, ochre). */
 export const EVENT_MARKER = OCHRE;
 
+/** Exchange post categories (X1): the bundle's --cat-* set verbatim
+ *  (need=rust, offer=sage, event=ochre, aid=slate, job=juniper, goods=goods). */
+export type PostCategory = "need" | "offer" | "event" | "aid" | "job" | "goods";
+const POST_CATEGORY_MARKERS: Record<PostCategory, string> = {
+  need: RUST,
+  offer: SAGE,
+  event: OCHRE,
+  aid: SLATE,
+  job: JUNIPER,
+  goods: GOODS,
+};
+export function postCategoryMarker(cat: PostCategory): string {
+  return POST_CATEGORY_MARKERS[cat];
+}
+
 /** Visibility: open green for public, the quiet neutral for members-only. */
 export function visibilityMarker(v: "public" | "members_only"): string {
   return v === "public" ? SAGE : NEUTRAL;
