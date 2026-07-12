@@ -30,11 +30,14 @@ export function LanguageSwitcher({ current }: { current: Locale }) {
     es: dict.common.spanish,
   };
 
+  // EN|ES segmented control, the bundle's shell-header language toggle
+  // (preview-nav-spec §4: mono codes; active = ink fill / paper text). The full
+  // language names stay on aria-labels for screen readers (invariant 9).
   return (
     <div
       role="group"
       aria-label={dict.common.languageLabel}
-      className="inline-flex items-center rounded-md border text-xs"
+      className="inline-flex items-center border"
     >
       {locales.map((locale, i) => {
         const active = locale === current;
@@ -45,16 +48,17 @@ export function LanguageSwitcher({ current }: { current: Locale }) {
             lang={locale}
             onClick={() => choose(locale)}
             aria-pressed={active}
+            aria-label={labelFor[locale]}
             disabled={isPending}
             className={cn(
-              "px-3 py-1.5 transition-colors disabled:opacity-60",
+              "px-2.5 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors disabled:opacity-60",
               i > 0 && "border-l",
               active
-                ? "bg-foreground text-background font-medium"
-                : "hover:bg-accent text-muted-foreground",
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:bg-muted",
             )}
           >
-            {labelFor[locale]}
+            {locale.toUpperCase()}
           </button>
         );
       })}

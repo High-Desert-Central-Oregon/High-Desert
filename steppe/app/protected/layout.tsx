@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { AppNav, type NavItem } from "./app-nav";
-import { getCurrentUser, getMyProfile } from "@/lib/auth";
+import { AppNav } from "./app-nav";
+import { TabBar } from "./tab-bar";
+import { destinations } from "./nav-destinations";
+import { getCurrentUser } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
 
@@ -42,50 +44,23 @@ async function SkipLink() {
 
 async function NavBar() {
   const { locale, dict } = await getServerDictionary();
-  const profile = await getMyProfile();
-  const user = await getCurrentUser();
-  const isMod = profile?.role === "moderator" || profile?.role === "admin";
-  const verified = profile?.verified ?? false;
-
-  // Primary destinations sit inline at md+ and in the mobile sheet; the rest
-  // (account + role-gated surfaces) consolidate into one menu at md+ so the bar
-  // never wraps. The mobile sheet lists primary + account together.
-  const primary: NavItem[] = [
-    ...(verified
-      ? [
-          { href: "/protected/events", label: dict.nav.eventsLink },
-          { href: "/protected/groups", label: dict.nav.groupsLink },
-          { href: "/protected/governance", label: dict.nav.governanceLink },
-        ]
-      : []),
-    { href: "/protected/neighborhoods", label: dict.nav.neighborhoodLink },
-    { href: "/protected/transparency", label: dict.nav.transparencyLink },
-  ];
-
-  const account: NavItem[] = [
-    { href: "/protected/account", label: dict.nav.accountLink },
-    ...(!verified ? [{ href: "/protected/verify", label: dict.nav.verifyLink }] : []),
-    ...(isMod
-      ? [
-          { href: "/protected/review", label: dict.nav.reviewLink },
-          { href: "/protected/moderation", label: dict.nav.appealsLink },
-        ]
-      : []),
-  ];
-
+  // One shared destination source drives BOTH the md+ rail here and the <md
+  // bottom TabBar below (preview-nav-spec §1/§5) — the two cannot drift. Tabs
+  // are not verification-gated: the pages gate (spec §2). Neighborhood, Verify,
+  // Reviews and Appeals now live as sections under You (/protected/account).
   return (
-    <AppNav
-      primary={primary}
-      account={account}
+    <AppNav items={destinations(dict)} locale={locale} wordmark={dict.app.name} />
+  );
+}
+
+async function BottomTabs() {
+  const { locale, dict } = await getServerDictionary();
+  return (
+    <TabBar
+      items={destinations(dict)}
       locale={locale}
-      wordmark={dict.app.name}
-      email={user?.email ?? null}
-      labels={{
-        menu: dict.nav.openMenu,
-        close: dict.nav.closeMenu,
-        signOut: dict.nav.signOut,
-        account: dict.nav.accountLink,
-      }}
+      navLabel={dict.nav.home}
+      confirmDiscard={dict.nav.confirmDiscard}
     />
   );
 }
@@ -115,10 +90,16 @@ export default function ProtectedLayout({
           room — no second column, no sidebar. */}
       <main
         id="main"
-        className="flex w-full max-w-[var(--content-max)] flex-1 flex-col gap-[var(--row-rhythm)] p-[var(--pad-screen)]"
+        className="flex w-full max-w-[var(--content-max)] flex-1 flex-col gap-[var(--row-rhythm)] p-[var(--pad-screen)] max-md:pb-24"
       >
         {children}
       </main>
+
+      {/* Bottom tab bar (< md) — the mobile navigation; the main column above
+          reserves clearance for it (max-md:pb-24). */}
+      <Suspense>
+        <BottomTabs />
+      </Suspense>
     </div>
   );
 }

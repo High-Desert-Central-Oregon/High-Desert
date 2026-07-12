@@ -38,10 +38,11 @@ export const es: Dictionary = {
     neighborhoodLink: "Vecindario",
     eventsLink: "Eventos",
     groupsLink: "Grupos",
-    governanceLink: "Gobernar",
+    governanceLink: "Gobernanza",
     appealsLink: "Apelaciones",
     transparencyLink: "Transparencia",
-    accountLink: "Cuenta",
+    accountLink: "Tú",
+    confirmDiscard: "¿Descartar lo que escribiste?",
   },
 
   auth: {

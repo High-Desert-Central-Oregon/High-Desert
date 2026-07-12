@@ -37,7 +37,8 @@ export const en = {
     governanceLink: "Govern",
     appealsLink: "Appeals",
     transparencyLink: "Transparency",
-    accountLink: "Account",
+    accountLink: "You",
+    confirmDiscard: "Discard what you've typed?",
   },
 
   auth: {
