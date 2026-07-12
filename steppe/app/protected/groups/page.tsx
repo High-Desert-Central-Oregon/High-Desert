@@ -101,6 +101,7 @@ async function DirectoryContent({
         title={dict.groups.title}
         kicker={dict.groups.dateline}
         voice={dict.groups.voice}
+        flush
       />
       <Fab href="/protected/groups/new" label={dict.groups.create} />
 

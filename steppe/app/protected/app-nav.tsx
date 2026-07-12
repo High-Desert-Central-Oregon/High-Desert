@@ -35,7 +35,10 @@ export function AppNav({
     "py-1 text-muted-foreground hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none";
 
   return (
-    <div className="w-full">
+    // The whole shell header sits on the bundle's tinted bone ground
+    // (navStyle :1865: background var(--bone)); the rail's hairline below is
+    // the zone's rule. Flush page mastheads continue the same bone beneath it.
+    <div className="w-full bg-muted">
       {/* The bundle's horizon band tops the shell (strata + sun, decoration). */}
       <HorizonBand />
       <nav lang={locale} className="flex w-full justify-center border-b">

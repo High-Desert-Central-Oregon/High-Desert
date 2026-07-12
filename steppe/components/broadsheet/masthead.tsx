@@ -1,22 +1,40 @@
+import { cn } from "@/lib/utils";
+
 /**
  * Broadsheet masthead — the preview bundle's screen-title anatomy
  * (inner.html :459-461; parity audit T7): a Besley display title, a mono
  * UPPERCASE kicker/dateline, and the system's ONLY italic — the Besley voice
  * line. Order is fixed: title → kicker → voice.
+ *
+ * The masthead sits on the bundle's tinted BONE ground (navStyle :1865:
+ * background var(--bone), hairline bottom rule) — a band distinct from the
+ * paper sheet, bleeding to the column edges. `flush` pulls the band up to
+ * meet the shell header so the two read as one bone zone (use it when the
+ * masthead opens the page; Govern can't — its segmented control sits above,
+ * on paper, exactly where the bundle places it).
  */
 export function Masthead({
   title,
   kicker,
   voice,
   lang,
+  flush,
 }: {
   title: string;
   kicker?: string;
   voice?: string;
   lang?: string;
+  /** Bleed up to the shell header (bone-on-bone, one continuous zone). */
+  flush?: boolean;
 }) {
   return (
-    <header lang={lang} className="flex flex-col">
+    <header
+      lang={lang}
+      className={cn(
+        "-mx-[var(--pad-screen)] flex flex-col border-b bg-muted px-[var(--pad-screen)] pb-5 pt-4",
+        flush && "-mt-[var(--pad-screen)]",
+      )}
+    >
       <h1 className="font-serif text-[clamp(32px,6vw,40px)] font-semibold leading-none tracking-[-0.01em] text-foreground">
         {title}
       </h1>

@@ -123,6 +123,7 @@ async function EventsContent() {
         title={dict.nav.eventsLink}
         kicker={dict.events.dateline}
         voice={dict.events.voice}
+        flush
       />
       <Fab href="/protected/events/new" label={dict.events.create} />
 

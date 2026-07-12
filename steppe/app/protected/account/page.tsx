@@ -69,6 +69,7 @@ async function AccountView() {
         title={profile?.display_name ?? dict.account.title}
         kicker={dateline || undefined}
         voice={dict.account.voice}
+        flush
       />
 
       {/* Sections — plain hairline rows. Reviews/Appeals appear for moderators
