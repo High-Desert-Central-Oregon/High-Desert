@@ -7,23 +7,26 @@
  * Desktop adaptation: the band is TWO layers so it can stretch without
  * distorting the sun. The ridgelines keep the bundle's verbatim geometry and
  * stretch to any width (preserveAspectRatio "none", like the original); the
- * sun is its own square-viewBox layer, horizontally centered and scaled
- * uniformly with the band height — a circle at every width, never an ellipse,
- * never clipped (the r=22 halo tops out at y=0 inside its 48-unit box). Band
- * height scales with the viewport: 48px through phone/tablet, up to 72px on
- * wide screens, with the sun/ridge composition held proportional.
+ * sun is its own square-viewBox layer at the bundle's own horizontal station —
+ * cx 246 of the 402-unit frame (≈61% across, deliberately right of center,
+ * "clear of the icons" per the bundle's asset note) — scaled uniformly with
+ * the band height: a circle at every width, never an ellipse, never clipped
+ * (the r=22 halo tops out at y=0 inside its 48-unit box). Band height scales
+ * with the viewport: 48px through phone/tablet, up to 72px on wide screens,
+ * with the sun/ridge composition held proportional.
  */
 export function HorizonBand() {
   return (
     <div
       aria-hidden="true"
-      className="relative h-[clamp(3rem,6vw,4.5rem)] w-full overflow-hidden bg-[#EDE6D5]"
+      className="relative h-[clamp(3rem,6vw,4.5rem)] w-full overflow-hidden bg-muted"
     >
-      {/* Sun layer — uniform scale, centered; paints behind the ridges. */}
+      {/* Sun layer — uniform scale, at the bundle's 246/402 station; paints
+          behind the ridges. */}
       <svg
         viewBox="0 0 48 48"
-        className="absolute left-1/2 top-0 h-full w-auto -translate-x-1/2"
-        style={{ aspectRatio: "1" }}
+        className="absolute top-0 h-full w-auto -translate-x-1/2"
+        style={{ aspectRatio: "1", left: "calc(100% * 246 / 402)" }}
       >
         <circle cx="24" cy="22" r="22" fill="#A8542C" opacity="0.09" />
         <circle cx="24" cy="22" r="16" fill="#A8542C" opacity="0.16" />
