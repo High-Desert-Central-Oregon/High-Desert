@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
 import { HorizonBand } from "@/components/broadsheet/horizon-band";
-import { IconSlot } from "@/components/broadsheet/chips";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { SearchSlot } from "./search-slot";
 import type { Locale } from "@/lib/i18n";
 import type { Destination } from "./nav-destinations";
 
@@ -64,29 +64,9 @@ export function AppNav({
 
         <div className="ml-auto flex items-center gap-[9px]">
           {/* The bundle's round header search slot (inner.html :448) — global
-              on member routes; targets the groups directory, the one indexed
-              search surface, and stays a plain link (?s=1, JS-optional). */}
-          <Link
-            href="/protected/groups?s=1"
-            aria-label={searchLabel}
-            className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <IconSlot>
-              <svg
-                width="17"
-                height="17"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#2A2E2C"
-                strokeWidth="1.9"
-                strokeLinecap="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="7" />
-                <path d="M21 21l-3.6-3.6" />
-              </svg>
-            </IconSlot>
-          </Link>
+              on member routes and SCOPE-AWARE: the Exchange searches the
+              Exchange, everywhere else searches groups (?s=1, JS-optional). */}
+          <SearchSlot label={searchLabel} />
           <LanguageSwitcher current={locale} />
         </div>
       </div>

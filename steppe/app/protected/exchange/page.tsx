@@ -8,6 +8,9 @@ import { Fab } from "@/components/broadsheet/fab";
 import { MarkerChip } from "@/components/broadsheet/chips";
 import { PostRow, Monogram, initialsFor } from "@/components/broadsheet/post-row";
 import { VerifiedGate } from "@/components/verified-gate";
+import { ActionLink } from "@/components/broadsheet/action-link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { PullToRefresh } from "./pull-to-refresh";
 import { ExchangeSegments } from "./exchange-segments";
 import { createClient } from "@/lib/supabase/server";
@@ -29,7 +32,7 @@ export const metadata = {
 /** The bundle's fixed six, in FILTER_ORDER (spec §1.1). */
 const CATS = ["need", "offer", "event", "aid", "job", "goods"] as const;
 
-type SearchParams = { f?: string; posted?: string };
+type SearchParams = { f?: string; posted?: string; s?: string; q?: string };
 
 type PostItem = {
   id: string;
@@ -224,6 +227,13 @@ async function BoardContent({
   const f = (CATS as readonly string[]).includes(sp.f ?? "")
     ? (sp.f as PostCategory)
     : null;
+  const q = (sp.q ?? "").trim();
+  // The header slot opens the search with ?s=1; it stays open server-side
+  // while a query is active — no JavaScript required (the groups pattern).
+  const searchOpen = sp.s === "1" || q !== "";
+  // PostgREST or() grammar: quote the pattern, strip the two characters that
+  // would escape it. % and _ stay live as wildcards — that's search.
+  const qPat = q.replace(/["\\]/g, "");
 
   const supabase = await createClient();
 
@@ -242,6 +252,19 @@ async function BoardContent({
   // ordinary members; the getHiddenIds pass keeps them out of the LIST for
   // the author and moderators too — the detail page carries the legible
   // removed state (P7), the same split the events surface uses.
+  // Search matches title + body + author name (spec §1.4, :1799-1800).
+  // Author matching resolves display names to ids first (public columns only).
+  let authorMatchIds: string[] = [];
+  if (qPat) {
+    const { data: matched } = await supabase
+      .from("public_profiles")
+      .select("id")
+      .ilike("display_name", `%${qPat}%`)
+      .limit(50)
+      .returns<{ id: string }[]>();
+    authorMatchIds = (matched ?? []).map((m) => m.id);
+  }
+
   let postQuery = supabase
     .from("posts")
     .select(
@@ -251,6 +274,16 @@ async function BoardContent({
     .order("created_at", { ascending: false })
     .limit(100);
   if (f) postQuery = postQuery.eq("category", f);
+  if (qPat)
+    postQuery = postQuery.or(
+      [
+        `title.ilike."%${qPat}%"`,
+        `body.ilike."%${qPat}%"`,
+        ...(authorMatchIds.length > 0
+          ? [`author_id.in.(${authorMatchIds.join(",")})`]
+          : []),
+      ].join(","),
+    );
   const [{ data: postRows }, hiddenPosts] = await Promise.all([
     postQuery.returns<PostItem[]>(),
     getHiddenIds(supabase, "post"),
@@ -262,7 +295,7 @@ async function BoardContent({
   // Explicit columns (0018 is applied; the 0017 select("*") interim retires).
   let events: EventItem[] = [];
   if (!f || f === "event") {
-    const { data: eventRows } = await supabase
+    let eventQuery = supabase
       .from("events")
       .select(
         "id, creator_id, title, starts_at, location, neighborhood_id, category_id, created_at",
@@ -271,8 +304,12 @@ async function BoardContent({
       .eq("status", "active")
       .gte("starts_at", new Date().toISOString())
       .order("created_at", { ascending: false })
-      .limit(100)
-      .returns<EventItem[]>();
+      .limit(100);
+    if (qPat)
+      eventQuery = eventQuery.or(
+        `title.ilike."%${qPat}%",location.ilike."%${qPat}%"`,
+      );
+    const { data: eventRows } = await eventQuery.returns<EventItem[]>();
     // Hidden (moderator-removed) events drop out of the listing; their detail
     // page still shows the legible removed state (P7).
     const hidden = await getHiddenIds(supabase, "event");
@@ -354,6 +391,39 @@ async function BoardContent({
 
       {/* Board | Upcoming — the calendar is a view here, not a tab (§7.1). */}
       <ExchangeSegments active="board" dict={dict} />
+
+      {/* Search — the header slot's ?s=1 reveal (JS-optional GET form; the
+          bundle's "Search the Exchange", matching title + body + author). */}
+      {searchOpen && (
+        <form
+          method="GET"
+          action="/protected/exchange"
+          role="search"
+          className="flex flex-col gap-3 border bg-muted/40 p-4 sm:flex-row sm:items-end"
+        >
+          {f && <input type="hidden" name="f" value={f} />}
+          <div className="flex flex-1 flex-col gap-1.5">
+            <label htmlFor="q" className="text-sm font-medium">
+              {dict.nav.searchLabel}
+            </label>
+            <Input
+              id="q"
+              name="q"
+              defaultValue={q}
+              placeholder={dict.exchange.searchPh}
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <Button type="submit" variant="outline">
+              {dict.exchange.searchSubmit}
+            </Button>
+            <ActionLink
+              href={f ? `/protected/exchange?f=${f}` : "/protected/exchange"}
+              label={dict.common.cancel}
+            />
+          </div>
+        </form>
+      )}
 
       <FilterBar active={f} dict={dict} />
 

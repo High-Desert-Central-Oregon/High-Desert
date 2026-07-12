@@ -147,6 +147,7 @@ export const en = {
     postNew: "New post",
     post: "Post",
     searchPh: "Search the Exchange",
+    searchSubmit: "Search",
     emptyTitle: "A quiet column today",
     emptySub: "Nothing in this filter yet. Check back, or post the first.",
     categoryField: "Category",

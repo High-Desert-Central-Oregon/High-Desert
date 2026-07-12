@@ -151,6 +151,7 @@ export const es: Dictionary = {
     postNew: "Publicar",
     post: "Publicar",
     searchPh: "Buscar en el Intercambio",
+    searchSubmit: "Buscar",
     emptyTitle: "Una columna tranquila hoy",
     emptySub: "Aún no hay nada en este filtro. Vuelve luego, o publica el primero.",
     categoryField: "Categoría",
