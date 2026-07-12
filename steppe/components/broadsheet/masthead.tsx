@@ -9,9 +9,10 @@ import { cn } from "@/lib/utils";
  * The masthead sits on the bundle's tinted BONE ground (navStyle :1865:
  * background var(--bone), hairline bottom rule) — a band distinct from the
  * paper sheet, bleeding to the column edges. `flush` pulls the band up to
- * meet the shell header so the two read as one bone zone (use it when the
- * masthead opens the page; Govern can't — its segmented control sits above,
- * on paper, exactly where the bundle places it).
+ * meet the shell header so the two read as one bone zone. Every tab root
+ * opens with a flush masthead — including Govern, whose segments-on-top
+ * bundle exception was overridden by the founder (2026-07-12; see the tokens
+ * reference notes + parity audit).
  */
 export function Masthead({
   title,

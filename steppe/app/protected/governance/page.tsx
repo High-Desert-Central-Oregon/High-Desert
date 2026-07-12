@@ -136,14 +136,17 @@ async function GovernanceContent() {
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
-      <GovSegments active="proposals" dict={dict} />
-      {/* Preview masthead grammar: the bundle's Govern dateline; the voice
-          drops the not-yet-true turnout clause (parity G1). Create = the chip. */}
+      {/* FOUNDER OVERRIDE (2026-07-12): masthead band ABOVE the segments,
+          matching every other tab root — the bundle's Govern exception
+          (segments on top, :637) is overridden; recorded in the tokens
+          reference notes + parity audit so conformance passes preserve it. */}
       <Masthead
         title={dict.nav.governanceLink}
         kicker={dict.governance.dateline}
         voice={dict.governance.voice}
+        flush
       />
+      <GovSegments active="proposals" dict={dict} />
       <Fab href="/protected/governance/new" label={dict.governance.create} />
 
       {all.length === 0 ? (

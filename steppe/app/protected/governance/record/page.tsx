@@ -8,6 +8,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { t, type Dictionary } from "@/lib/i18n";
+import { Masthead } from "@/components/broadsheet/masthead";
 import { GovSegments } from "../gov-segments";
 
 // The public Record — moderation + appeal outcomes — filed INSIDE Govern per
@@ -96,15 +97,14 @@ async function RecordContent() {
 
   return (
     <div lang={locale} className="flex flex-col gap-6">
+      {/* FOUNDER OVERRIDE (2026-07-12): masthead band above the segments —
+          same order as the proposals page and every other tab root. */}
+      <Masthead
+        title={dict.transparency.title}
+        voice={dict.transparency.intro}
+        flush
+      />
       <GovSegments active="record" dict={dict} />
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {dict.transparency.title}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {dict.transparency.intro}
-        </p>
-      </header>
 
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">

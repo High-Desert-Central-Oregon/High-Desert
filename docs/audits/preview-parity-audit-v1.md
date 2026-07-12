@@ -142,3 +142,16 @@ Bundle carries only the "verified, then forgotten" profile label + "Verified nei
 - **Founder + counsel forks (decide before either side changes):** Y1/Y2 (build per-field visibility + handles, or revise the counsel-gated /privacy and terms wording) and E1 (names-on-RSVP posture).
 
 *No fixes were made in this pass. Recommended next step: decide Y1/Y2 and E1 (they gate copy vs. build), then a single token-retheme commit (T1–T7), then the G4 preview copy tweak at the next re-export.*
+
+---
+
+## Amendment — 2026-07-12: Govern header order (FOUNDER OVERRIDE)
+
+The bundle renders the Govern tab with its Ballots/Record segment bar at the
+very top of the tab body, above the masthead zone (`inner.html:637`). The app
+deliberately inverts this: the **masthead band renders first (flush, one bone
+zone with the shell header), then the Proposals|Record segments**, on both
+pages of the pair — matching every other tab root. This is a founder override
+of the bundle, not drift: conformance/parity passes must preserve the app's
+order and must NOT re-flag it. Also recorded in
+`docs/design/exchange-design-tokens-reference.css` (conformance notes).
