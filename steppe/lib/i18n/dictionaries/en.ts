@@ -138,6 +138,7 @@ export const en = {
     upcomingTitle: "Upcoming events",
     empty: "No upcoming events yet. Be the first to create one.",
     allRedmond: "All of Redmond",
+    chipEvent: "Event",
     hostedBy: "Hosted by {name}",
     whenLabel: "When",
     whereLabel: "Where",

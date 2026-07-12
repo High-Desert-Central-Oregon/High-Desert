@@ -28,6 +28,9 @@ export function categoryMarker(slug: string | null | undefined): string {
   return (slug && CATEGORY_MARKERS[slug]) || SAGE;
 }
 
+/** Uncategorized events: the bundle's own event marker (--cat-event, ochre). */
+export const EVENT_MARKER = OCHRE;
+
 /** Visibility: open green for public, the quiet neutral for members-only. */
 export function visibilityMarker(v: "public" | "members_only"): string {
   return v === "public" ? SAGE : NEUTRAL;

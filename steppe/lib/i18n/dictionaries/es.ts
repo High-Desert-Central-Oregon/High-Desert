@@ -142,6 +142,7 @@ export const es: Dictionary = {
     upcomingTitle: "Próximos eventos",
     empty: "Aún no hay eventos próximos. Sé quien cree el primero.",
     allRedmond: "Todo Redmond",
+    chipEvent: "Evento",
     hostedBy: "Organizado por {name}",
     whenLabel: "Cuándo",
     whereLabel: "Dónde",

@@ -22,8 +22,11 @@
 --
 -- HOW TO RUN (manual, like seed/bootstrap-founder.sql — NOT applied by CI):
 --   Supabase Studio → SQL editor (runs as owner; RLS bypassed by design for
---   seeds) → paste the whole file → Run. Requires the founder profile to
---   exist first (bootstrap-founder.sql). Bodies are EN + ES paired.
+--   seeds) → paste the whole file → Run. Requires the founder profile
+--   (bootstrap-founder.sql) AND migration 0017 (events.category_id) first —
+--   the market events are tagged with the 'markets' category at insert.
+--   Already ran the pre-0017 version? Applying 0017 backfills the tag.
+--   Bodies are EN + ES paired.
 --
 -- SEASON-END OPERATIONALIZATION (flagged, not silent): three organizers state
 -- a closing MONTH, not a date. The series below end on the last in-pattern
@@ -110,8 +113,8 @@ begin
   --     hours live in the body (events have no ends_at column).
 
   -- Redmond Farmers Market — Fridays 3–7 p.m., Centennial Park.
-  insert into public.events (creator_id, title, body, starts_at, location)
-  select v_uid, 'Redmond Farmers Market',
+  insert into public.events (creator_id, category_id, title, body, starts_at, location)
+  select v_uid, v_cat, 'Redmond Farmers Market',
          'Weekly farmers market at Centennial Park — local produce, meats, honey, baked goods, art, and handmade goods, with live music and a Kids Corner. Fridays 3–7 p.m. through August; no market July 31. Organized by the Redmond Oregon Farmers Market (redmondoregonfarmersmarket.org).'
          || e'\n\n' ||
          'Mercado de agricultores semanal en Centennial Park: frutas y verduras locales, carnes, miel, pan, arte y productos hechos a mano, con música en vivo y un rincón para niños. Viernes de 3 a 7 p. m. hasta finales de agosto; no habrá mercado el 31 de julio. Organizado por Redmond Oregon Farmers Market (redmondoregonfarmersmarket.org).',
@@ -126,8 +129,8 @@ begin
   get diagnostics v_n = row_count; v_total := v_total + v_n;
 
   -- Bend Farmers Market — Wednesdays 11 a.m.–3 p.m., Brooks Alley.
-  insert into public.events (creator_id, title, body, starts_at, location)
-  select v_uid, 'Bend Farmers Market',
+  insert into public.events (creator_id, category_id, title, body, starts_at, location)
+  select v_uid, v_cat, 'Bend Farmers Market',
          'Downtown Bend''s farmers market in Brooks Alley — produce, pasture-raised meats, eggs, cheeses, flowers, and baked goods from local farms and ranches. Wednesdays 11 a.m.–3 p.m., rain or shine, through October 14. Accepts EBT/SNAP with Double Up Food Bucks. Organized by the Bend Farmers Market (bendfarmersmarket.com).'
          || e'\n\n' ||
          'El mercado de agricultores del centro de Bend en Brooks Alley: frutas y verduras, carnes de pastoreo, huevos, quesos, flores y pan de granjas y ranchos locales. Miércoles de 11 a. m. a 3 p. m., llueva o haga sol, hasta el 14 de octubre. Acepta EBT/SNAP con Double Up Food Bucks. Organizado por Bend Farmers Market (bendfarmersmarket.com).',
@@ -141,8 +144,8 @@ begin
   get diagnostics v_n = row_count; v_total := v_total + v_n;
 
   -- NorthWest Crossing Saturday Farmers Market — Saturdays 10 a.m.–2 p.m.
-  insert into public.events (creator_id, title, body, starts_at, location)
-  select v_uid, 'NorthWest Crossing Saturday Farmers Market',
+  insert into public.events (creator_id, category_id, title, body, starts_at, location)
+  select v_uid, v_cat, 'NorthWest Crossing Saturday Farmers Market',
          'Saturday farmers market on Bend''s westside — produce stands, local makers, cottage bakers, and live music along Northwest Crossing Drive. Saturdays 10 a.m.–2 p.m. through September 26. Produced by C3 Events (nwxfarmersmarket.com).'
          || e'\n\n' ||
          'Mercado de agricultores de los sábados en el lado oeste de Bend: puestos de frutas y verduras, artesanos locales, panaderos caseros y música en vivo a lo largo de Northwest Crossing Drive. Sábados de 10 a. m. a 2 p. m. hasta el 26 de septiembre. Producido por C3 Events (nwxfarmersmarket.com).',
@@ -156,8 +159,8 @@ begin
   get diagnostics v_n = row_count; v_total := v_total + v_n;
 
   -- Sisters Farmers Market — Sundays 10 a.m.–2 p.m., Fir Street Park.
-  insert into public.events (creator_id, title, body, starts_at, location)
-  select v_uid, 'Sisters Farmers Market',
+  insert into public.events (creator_id, category_id, title, body, starts_at, location)
+  select v_uid, v_cat, 'Sisters Farmers Market',
          'Sisters'' farmers market at Fir Street Park — 45+ local vendors, fresh produce, and handmade goods, one block north of Cascade Ave. Sundays 10 a.m.–2 p.m., June–October; closed September 27 and October 11 for citywide events. Organized by the Sisters Farmers Market (sistersfarmersmarket.com).'
          || e'\n\n' ||
          'El mercado de agricultores de Sisters en Fir Street Park: más de 45 vendedores locales, productos frescos y artículos hechos a mano, a una cuadra al norte de Cascade Ave. Domingos de 10 a. m. a 2 p. m., de junio a octubre; cerrado el 27 de septiembre y el 11 de octubre por eventos de la ciudad. Organizado por Sisters Farmers Market (sistersfarmersmarket.com).',
@@ -172,8 +175,8 @@ begin
   get diagnostics v_n = row_count; v_total := v_total + v_n;
 
   -- Madras Saturday Market — Saturdays 9 a.m.–2 p.m., Sahalee Park.
-  insert into public.events (creator_id, title, body, starts_at, location)
-  select v_uid, 'Madras Saturday Market',
+  insert into public.events (creator_id, category_id, title, body, starts_at, location)
+  select v_uid, v_cat, 'Madras Saturday Market',
          'Madras'' Saturday market at Sahalee Park (7th & B) — artisan items, baked goods, handmade products, and food. Saturdays 9 a.m.–2 p.m. through September 5. Organized by the Madras Saturday Market (madrassaturdaymarket.com).'
          || e'\n\n' ||
          'El mercado de los sábados de Madras en Sahalee Park (7th y B): artículos artesanales, pan casero, productos hechos a mano y comida. Sábados de 9 a. m. a 2 p. m. hasta el 5 de septiembre. Organizado por Madras Saturday Market (madrassaturdaymarket.com).',
@@ -187,8 +190,8 @@ begin
   get diagnostics v_n = row_count; v_total := v_total + v_n;
 
   -- CROP Farmers Market — Saturdays 9 a.m.–1 p.m., Stryker Park, Prineville.
-  insert into public.events (creator_id, title, body, starts_at, location)
-  select v_uid, 'CROP Farmers Market',
+  insert into public.events (creator_id, category_id, title, body, starts_at, location)
+  select v_uid, v_cat, 'CROP Farmers Market',
          'Prineville''s farmers market at Stryker Park — Crook County farmers, ranchers, and artisans with fresh local produce, handmade goods, and artisanal foods (CROP = Crooked River Open Pastures). Saturdays 9 a.m.–1 p.m., June–September. Organized by the CROP Farmers Market (cropfarmersmarket.org).'
          || e'\n\n' ||
          'El mercado de agricultores de Prineville en Stryker Park: agricultores, ganaderos y artesanos del condado de Crook con productos frescos locales, artículos hechos a mano y alimentos artesanales (CROP = Crooked River Open Pastures). Sábados de 9 a. m. a 1 p. m., de junio a septiembre. Organizado por CROP Farmers Market (cropfarmersmarket.org).',
