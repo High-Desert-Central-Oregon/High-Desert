@@ -20,6 +20,7 @@ export const en = {
     english: "English",
     spanish: "Español",
     somethingWrong: "Sorry, something went wrong.",
+    sealAlt: "Steppe Strata Seal — Redmond, Oregon",
   },
 
   nav: {

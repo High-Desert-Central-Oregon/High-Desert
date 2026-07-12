@@ -1,6 +1,20 @@
 {
-  "locale": { "label": "Language", "en": "EN", "es": "ES" },
-  "nav": { "preview": "Preview", "partners": "For partners", "join": "Join", "charter": "Charter", "membership": "Membership", "exchange": "Exchange", "contact": "Contact", "menuOpen": "Open menu", "menuClose": "Close menu" },
+  "locale": {
+    "label": "Language",
+    "en": "EN",
+    "es": "ES"
+  },
+  "nav": {
+    "preview": "Preview",
+    "partners": "For partners",
+    "join": "Join",
+    "charter": "Charter",
+    "membership": "Membership",
+    "exchange": "Exchange",
+    "contact": "Contact",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
   "footer": {
     "explore": "Explore",
     "preview": "Preview",
@@ -11,7 +25,8 @@
     "org1": "An Oregon public benefit nonprofit",
     "org2": "Redmond, Oregon · EST. 2026",
     "ledBy": "Led by",
-    "attribution": "<b>Steppe</b> is a member-governed Oregon public benefit nonprofit. No owner. It can't be sold, and the mission is written into the articles. <b>hello@steppe.community</b>"
+    "attribution": "<b>Steppe</b> is a member-governed Oregon public benefit nonprofit. No owner. It can't be sold, and the mission is written into the articles. <b>hello@steppe.community</b>",
+    "sealAlt": "Steppe Strata Seal — Redmond, Oregon"
   },
   "landing": {
     "heroLocation": "44.27°N  121.17°W · Redmond, Oregon",
@@ -241,7 +256,8 @@
     "dupH": "You're already on the list.",
     "dupP": "We already have your email, so we'll reach out the moment membership opens in Redmond.",
     "errGeneric": "Something went wrong. Please try again.",
-    "errNetwork": "Couldn't reach the server. Please try again."
+    "errNetwork": "Couldn't reach the server. Please try again.",
+    "sealAlt": "Steppe Strata Seal — Redmond, Oregon"
   },
   "interestEmail": {
     "subject": "You're on the Steppe list",

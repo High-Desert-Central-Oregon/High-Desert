@@ -184,6 +184,13 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
 .site-root .join .formnote a {
   color: var(--rust);
 }
+.site-root .join .success .seal {
+  display: block;
+  width: 168px;
+  height: auto;
+  margin: 0 auto 10px;
+}
+
 .site-root .join .success {
   text-align: center;
   padding: 14px 4px;

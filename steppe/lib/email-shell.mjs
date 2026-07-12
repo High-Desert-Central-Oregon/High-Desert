@@ -94,7 +94,7 @@ export function renderBrandEmail({ heading, paragraphs = [], action, code, secur
         </td></tr>${actionBlock}${codeBlock}
         <tr><td style="padding:20px 32px 0 32px;"><div style="height:1px; background:${C.sand}; line-height:1px;">&nbsp;</div></td></tr>
         <tr><td style="padding:16px 32px 28px 32px;">
-          ${security}<p style="margin:0; font-family:${MONO}; font-size:11px; letter-spacing:.04em; color:${C.sage};">Steppe · Redmond, Oregon</p>
+          ${security}<img src="https://www.steppe.community/brand/steppe-strata-seal-512.png" alt="Steppe Strata Seal — Redmond, Oregon" width="96" height="96" style="display:block; width:96px; height:96px; margin:0 0 12px 0;"><p style="margin:0; font-family:${MONO}; font-size:11px; letter-spacing:.04em; color:${C.sage};">Steppe · Redmond, Oregon</p>
         </td></tr>
       </table>
     </td></tr>

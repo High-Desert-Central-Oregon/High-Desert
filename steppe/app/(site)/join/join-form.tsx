@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -112,11 +113,15 @@ export function JoinForm() {
     return (
       <div className="formcard" id="join-form">
         <div className="success" role="status">
-          <div className="ck">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12l4 4 10-10" stroke="#6E8A5B" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
+          {/* The confirmation moment gets the certificate treatment: the Strata
+              Seal, prominent, in place of a generic check (brand-kit tier). */}
+          <Image
+            src="/brand/steppe-strata-seal.svg"
+            alt={t("sealAlt")}
+            width={168}
+            height={168}
+            className="seal"
+          />
           <h2>{status === "duplicate" ? t("dupH") : t("successH")}</h2>
           <p>{status === "duplicate" ? t("dupP") : t("successP")}</p>
         </div>

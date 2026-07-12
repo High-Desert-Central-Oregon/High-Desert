@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { CalendarClock, CalendarCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -159,11 +160,22 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
           <h1 className="text-2xl font-semibold tracking-tight">
             {proposal.title}
           </h1>
-          <div className="flex shrink-0 gap-2">
-            <Badge variant="outline">{dict.governance.kinds[proposal.kind]}</Badge>
-            <Badge variant={stateBadgeVariant}>
-              {dict.governance.states[state]}
-            </Badge>
+          <div className="flex shrink-0 items-start gap-3">
+            {/* Strata Seal — governance is an official surface (small + quiet;
+                floor 96px). Presentation only. */}
+            <Image
+              src="/brand/steppe-strata-seal.svg"
+              alt={dict.common.sealAlt}
+              width={96}
+              height={96}
+              className="order-last hidden sm:block"
+            />
+            <div className="flex gap-2">
+              <Badge variant="outline">{dict.governance.kinds[proposal.kind]}</Badge>
+              <Badge variant={stateBadgeVariant}>
+                {dict.governance.states[state]}
+              </Badge>
+            </div>
           </div>
         </div>
         {authorName && (

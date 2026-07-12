@@ -1000,6 +1000,14 @@ html[data-js] .site-root .rv.in {
 }
 
 /* ---- Broadsheet footer (Part 2) ---- */
+/* Strata Seal in the footer — official-moments tier (floor 96px). Color seal
+   in light; Part 4 swaps to the mono mask in dark. */
+.site-root .foot .foot-seal {
+  width: 110px;
+  height: auto;
+  margin-bottom: 16px;
+}
+
 .site-root .foot {
   background: var(--paper);
   border-top: 3px solid var(--ink);

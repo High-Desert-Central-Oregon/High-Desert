@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 /**
@@ -12,6 +13,15 @@ export async function SiteFooter() {
   return (
     <footer className="foot">
       <div className="wrap">
+        {/* Strata Seal — the official mark beside the commitments line
+            (brand-kit manifest tier: official moments; floor 96px). */}
+        <Image
+          src="/brand/steppe-strata-seal.svg"
+          alt={t("sealAlt")}
+          width={110}
+          height={110}
+          className="foot-seal"
+        />
         <p className="att">{t.rich("attribution", { b: (c) => <b>{c}</b> })}</p>
         <div className="foot-end">
           <nav className="foot-links" aria-label="Footer">

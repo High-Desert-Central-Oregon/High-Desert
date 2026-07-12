@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { castVote, type VoteState } from "../actions";
@@ -52,9 +53,20 @@ export function VoteForm({
         </p>
       )}
       {saved && !error && (
-        <p role="status" className="text-sm text-success">
-          {dict.governance.voteSaved}
-        </p>
+        <div className="flex items-center gap-3">
+          {/* Vote receipt — the Strata Seal marks the recorded ballot (official
+              surface, floor 96px). Presentation only: no logic/state change. */}
+          <Image
+            src="/brand/steppe-strata-seal.svg"
+            alt={dict.common.sealAlt}
+            width={96}
+            height={96}
+            className="shrink-0"
+          />
+          <p role="status" className="text-sm text-success">
+            {dict.governance.voteSaved}
+          </p>
+        </div>
       )}
 
       <form action={action} className="flex flex-col gap-4">
