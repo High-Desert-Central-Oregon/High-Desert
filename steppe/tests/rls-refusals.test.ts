@@ -113,3 +113,217 @@ describe.skipIf(!dbUp)("RLS core refusals (impersonated, owner connection)", () 
     });
   });
 });
+
+describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  // ---- Structural (privilege-level: the trust columns are not grantable) ----
+
+  it("pin: a client cannot UPDATE posts.pinned_at by any path (column privilege)", async () => {
+    await expect(h.runAs(RANDO, "update posts set pinned_at = now()")).rejects.toThrow(
+      /permission denied for table posts/,
+    );
+  });
+
+  it("pin: a client cannot INSERT a born-pinned post", async () => {
+    await expect(
+      h.runAs(
+        RANDO,
+        "insert into posts (group_id, author_id, category, title, body, pinned_at) values (gen_random_uuid(), $1, 'offer', 't', 'b', now())",
+        [RANDO],
+      ),
+    ).rejects.toThrow(/permission denied for table posts/);
+  });
+
+  it("invariant 7: a client cannot backdate created_at at insert (chronological feed)", async () => {
+    await expect(
+      h.runAs(
+        RANDO,
+        "insert into posts (group_id, author_id, category, title, body, created_at) values (gen_random_uuid(), $1, 'offer', 't', 'b', now() - interval '30 days')",
+        [RANDO],
+      ),
+    ).rejects.toThrow(/permission denied for table posts/);
+  });
+
+  it("G12: a client cannot UPDATE events.group_id (re-homing is not grantable)", async () => {
+    await expect(h.runAs(RANDO, "update events set group_id = gen_random_uuid()")).rejects.toThrow(
+      /permission denied for table events/,
+    );
+  });
+
+  // ---- Fixture-backed (row policies + the self-guarding pin RPC) ----
+
+  /** A members-only group with one active member, built as owner. */
+  async function makeMembersOnlyGroup(c: pg.Client, gid: string, member: string) {
+    await c.query(
+      "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'rls-x1-' || substr($2, 1, 8), 'X1 probe group', 'members_only', 'request')",
+      [gid, gid],
+    );
+    await c.query(
+      "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'active')",
+      [gid, member],
+    );
+  }
+
+  it("invariant 2: a member cannot post as someone else (author is pinned)", async () => {
+    await h.inTxn(async (c) => {
+      const a = "e1e10000-0000-0000-0000-000000000001";
+      const b = "e2e20000-0000-0000-0000-000000000001";
+      await h.createMember(a, "author-a@rls.test", { verified: true });
+      await h.createMember(b, "author-b@rls.test", { verified: true });
+      const { rows } = await c.query("select id from groups where slug='everyone'");
+      await h.actAs(a);
+      await expect(
+        c.query(
+          "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'forged', 'x')",
+          [rows[0].id, b],
+        ),
+      ).rejects.toThrow(/row-level security/);
+    });
+  });
+
+  it("G8/G12: a verified non-member can neither read nor write a members-only board", async () => {
+    await h.inTxn(async (c) => {
+      const insider = "e3e30000-0000-0000-0000-000000000001";
+      const outsider = "e4e40000-0000-0000-0000-000000000001";
+      const gid = "0e0e0000-0000-0000-0000-00000000000a";
+      await h.createMember(insider, "insider@rls.test", { verified: true });
+      await h.createMember(outsider, "outsider@rls.test", { verified: true });
+      await makeMembersOnlyGroup(c, gid, insider);
+      await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'need', 'members only', 'x')",
+        [gid, insider],
+      );
+      await h.actAs(outsider);
+      const read = await c.query("select count(*)::int as n from posts where group_id=$1", [gid]);
+      expect(read.rows[0].n).toBe(0);
+      await expect(
+        c.query(
+          "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'intrude', 'x')",
+          [gid, outsider],
+        ),
+      ).rejects.toThrow(/row-level security/);
+    });
+  });
+
+  it("G8: pending membership is NOT membership (reads 0, insert refused)", async () => {
+    await h.inTxn(async (c) => {
+      const insider = "e5e50000-0000-0000-0000-000000000001";
+      const pending = "e6e60000-0000-0000-0000-000000000001";
+      const gid = "0e0e0000-0000-0000-0000-00000000000b";
+      await h.createMember(insider, "insider2@rls.test", { verified: true });
+      await h.createMember(pending, "pending@rls.test", { verified: true });
+      await makeMembersOnlyGroup(c, gid, insider);
+      await c.query(
+        "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'pending')",
+        [gid, pending],
+      );
+      await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'need', 'p', 'x')",
+        [gid, insider],
+      );
+      await h.actAs(pending);
+      const read = await c.query("select count(*)::int as n from posts where group_id=$1", [gid]);
+      expect(read.rows[0].n).toBe(0);
+      await expect(
+        c.query(
+          "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'w', 'x')",
+          [gid, pending],
+        ),
+      ).rejects.toThrow(/row-level security/);
+    });
+  });
+
+  it("G-2: an unverified member reads ZERO Everyone posts (the boundary a vote must move)", async () => {
+    await h.inTxn(async (c) => {
+      const author = "e7e70000-0000-0000-0000-000000000001";
+      const unverified = "e8e80000-0000-0000-0000-000000000001";
+      await h.createMember(author, "vauthor@rls.test", { verified: true });
+      await h.createMember(unverified, "unverified@rls.test", { verified: false });
+      const { rows } = await c.query("select id from groups where slug='everyone'");
+      await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'public-ish', 'x')",
+        [rows[0].id, author],
+      );
+      await h.actAs(unverified);
+      const read = await c.query("select count(*)::int as n from posts");
+      expect(read.rows[0].n).toBe(0);
+    });
+  });
+
+  it("G-1: a plain member cannot pin the community board (set_post_pin gate)", async () => {
+    await h.inTxn(async (c) => {
+      const author = "e9e90000-0000-0000-0000-000000000001";
+      await h.createMember(author, "pinless@rls.test", { verified: true });
+      const { rows } = await c.query("select id from groups where slug='everyone'");
+      const post = await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'pin probe', 'x') returning id",
+        [rows[0].id, author],
+      );
+      await h.actAs(author);
+      await expect(c.query("select set_post_pin($1, true)", [post.rows[0].id])).rejects.toThrow(
+        /only a moderator/,
+      );
+    });
+  });
+
+  it("P7: removal hides a post from other members while the AUTHOR keeps the legible row", async () => {
+    await h.inTxn(async (c) => {
+      const author = "eaea0000-0000-0000-0000-000000000001";
+      const other = "ebeb0000-0000-0000-0000-000000000001";
+      const mod = "ecec0000-0000-0000-0000-000000000001";
+      await h.createMember(author, "removed-author@rls.test", { verified: true });
+      await h.createMember(other, "bystander@rls.test", { verified: true });
+      await h.createMember(mod, "mod-x1@rls.test", { verified: true, role: "moderator" });
+      const { rows } = await c.query("select id from groups where slug='everyone'");
+      const post = await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'to remove', 'x') returning id",
+        [rows[0].id, author],
+      );
+      await c.query(
+        "insert into moderation_actions (target_type, target_id, action, reason, actor_id) values ('post', $1, 'remove', 'probe', $2)",
+        [post.rows[0].id, mod],
+      );
+      await h.actAs(other);
+      const hiddenRead = await c.query("select count(*)::int as n from posts where id=$1", [post.rows[0].id]);
+      expect(hiddenRead.rows[0].n).toBe(0);
+      await h.actAs(author);
+      const ownRead = await c.query("select count(*)::int as n from posts where id=$1", [post.rows[0].id]);
+      expect(ownRead.rows[0].n).toBe(1);
+    });
+  });
+
+  it("0019: only the affected member may appeal a post removal", async () => {
+    await h.inTxn(async (c) => {
+      const author = "edee0000-0000-0000-0000-000000000001";
+      const stranger = "efef0000-0000-0000-0000-000000000001";
+      const mod = "f0f00000-0000-0000-0000-000000000001";
+      await h.createMember(author, "appellant@rls.test", { verified: true });
+      await h.createMember(stranger, "stranger@rls.test", { verified: true });
+      await h.createMember(mod, "mod-x2@rls.test", { verified: true, role: "moderator" });
+      const { rows } = await c.query("select id from groups where slug='everyone'");
+      const post = await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'appealable', 'x') returning id",
+        [rows[0].id, author],
+      );
+      const action = await c.query(
+        "insert into moderation_actions (target_type, target_id, action, reason, actor_id) values ('post', $1, 'remove', 'probe', $2) returning id",
+        [post.rows[0].id, mod],
+      );
+      await h.actAs(stranger);
+      await expect(
+        c.query("select file_appeal($1, 'not mine')", [action.rows[0].id]),
+      ).rejects.toThrow(/affected member/);
+    });
+  });
+});
