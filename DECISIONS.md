@@ -7,6 +7,39 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-07-12 — Exchange (X1) approved to build; four G-class flags resolved
+
+**Decision.** Build the Exchange per `docs/spec/exchange-x1-spec-v1.md`
+(§5–§8 recommendations adopted as written), with the spec's four open
+G-class flags resolved as follows:
+
+- **G-1 (steward pinning)** — SHIP the pin (moderator-set, audit-logged, one
+  per board, actor named in the kicker). A moderation-policy draft naming the
+  pin power goes to the cohort for ratification alongside the beta.
+- **G-2 (who reads the Exchange)** — **members-only.** Verified members read
+  and write; the v2-G6 anonymous/public read of public-group posts stays out
+  and may only arrive later via a real governance vote.
+- **G-4 (Everyone-board publication model)** — **post-moderation.** Posts
+  publish immediately; humans decide *removal* (remove + appeal, P7), not
+  permission. The v2 §3 pre-confirmation state machine is explicitly not
+  adopted for posts; the divergence goes on the governance docket.
+- **G-6 (terminology)** — **moderator / moderación.** All bundle
+  "steward"/"el consejo" strings are normalized to the app's existing
+  vocabulary at the dictionary layer; the spec's Part-I extraction stays
+  verbatim (it records what the bundle says, not what we ship).
+
+**Why.** The flags were exactly the points where the bundle's design, the v2/v3
+product specs, and the constitution could drift apart silently. Resolving them
+before any code means the build is a transcription, not a negotiation.
+
+**How it lands.** Spec §10 sequencing: migration `0018_posts.sql` (manual prod
+apply — a hard gate before any user-visible surface), nav/dictionary prep on a
+review branch, then feed/composer/detail, then Upcoming + .ics, then the RLS
+refusal-matrix extensions. See `docs/spec/exchange-x1-spec-v1.md` §9 for the
+full flag rationale.
+
+---
+
 ## 2026-07-04 — Doctrine assessment: Governable Spaces + Emergent Strategy; reflection cadence adopted
 
 **Decision.** Assessed the shipped system and canon against Nathan Schneider's
