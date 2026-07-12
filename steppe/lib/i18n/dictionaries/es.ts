@@ -25,6 +25,7 @@ export const es: Dictionary = {
     spanish: "Español",
     somethingWrong: "Lo sentimos, algo salió mal.",
     sealAlt: "Sello Strata de Steppe — Redmond, Oregón",
+    isomimoAlt: "Emblema de engranaje de Steppe con un paisaje de alto desierto",
   },
 
   nav: {

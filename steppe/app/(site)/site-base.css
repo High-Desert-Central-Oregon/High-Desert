@@ -1000,6 +1000,14 @@ html[data-js] .site-root .rv.in {
 }
 
 /* ---- Broadsheet footer (Part 2) ---- */
+/* ISoMiMo section illustration on the How-it-works band (warmth tier). */
+.site-root .howmark {
+  display: block;
+  width: min(260px, 56vw);
+  height: auto;
+  margin: 26px auto 6px;
+}
+
 /* Strata Seal in the footer — official-moments tier (floor 96px). Color seal
    in light; Part 4 swaps to the mono mask in dark. */
 .site-root .foot .foot-seal {

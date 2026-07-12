@@ -21,6 +21,7 @@ export const en = {
     spanish: "Español",
     somethingWrong: "Sorry, something went wrong.",
     sealAlt: "Steppe Strata Seal — Redmond, Oregon",
+    isomimoAlt: "Steppe gear emblem holding a high-desert landscape",
   },
 
   nav: {

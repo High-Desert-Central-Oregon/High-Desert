@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
@@ -27,6 +28,14 @@ async function NotFoundCard() {
         className="items-center text-center"
       />
       <Card className="w-full max-w-md">
+        {/* ISoMiMo — warmth on the lost page (floor 120px). */}
+        <Image
+          src="/brand/steppe-isomimo-512.png"
+          alt={dict.common.isomimoAlt}
+          width={160}
+          height={160}
+          className="mx-auto mt-6"
+        />
         <CardHeader>
           <h1 className="text-2xl font-semibold tracking-tight">
             {dict.notFound.title}

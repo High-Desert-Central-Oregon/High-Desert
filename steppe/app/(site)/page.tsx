@@ -4,6 +4,7 @@
 // Charter, How it works, the local Exchange, and the sign-panel CTA (Parts 4–5).
 // Marketing presentation only; copy is localized from the "landing" namespace.
 import Link from "next/link";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import "./broadsheet.css";
 import { GenerativeScene } from "./_components/generative-scene";
@@ -74,6 +75,15 @@ export default async function HomePage() {
             <h2 id="how-h">{t("bsHowH")}</h2>
             <span className="line"></span>
           </div>
+          {/* ISoMiMo — the warmth tier's section illustration (floor 120px;
+              the 512 PNG is the canonical screen file per the brand manifest). */}
+          <Image
+            src="/brand/steppe-isomimo-512.png"
+            alt={t("isomimoAlt")}
+            width={260}
+            height={260}
+            className="howmark"
+          />
           <div className="steps">
             {([1, 2, 3, 4] as const).map((n) => (
               <div className="step" key={n}>

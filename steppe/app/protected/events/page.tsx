@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -144,9 +145,16 @@ async function EventsContent() {
       </header>
 
       {all.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-          {dict.events.empty}
-        </p>
+        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-6 text-center">
+          {/* ISoMiMo warms the empty state (floor 120px). */}
+          <Image
+            src="/brand/steppe-isomimo-512.png"
+            alt={dict.common.isomimoAlt}
+            width={150}
+            height={150}
+          />
+          <p className="text-sm text-muted-foreground">{dict.events.empty}</p>
+        </div>
       ) : home && mine.length > 0 ? (
         <>
           <section className="flex flex-col gap-3">
