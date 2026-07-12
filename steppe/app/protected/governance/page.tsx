@@ -9,6 +9,7 @@ import { VerifiedGate } from "@/components/verified-gate";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { GovSegments } from "./gov-segments";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState, type ProposalState } from "@/lib/governance";
 import { getHiddenIds } from "@/lib/moderation";
@@ -127,6 +128,7 @@ async function GovernanceContent() {
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
+      <GovSegments active="proposals" dict={dict} />
       <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">

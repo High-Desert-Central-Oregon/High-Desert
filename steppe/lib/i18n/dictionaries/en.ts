@@ -36,7 +36,6 @@ export const en = {
     groupsLink: "Groups",
     governanceLink: "Govern",
     appealsLink: "Appeals",
-    transparencyLink: "Transparency",
     accountLink: "You",
     confirmDiscard: "Discard what you've typed?",
   },
@@ -367,6 +366,8 @@ export const en = {
   },
 
   governance: {
+    segProposals: "Proposals",
+    segRecord: "Record",
     listTitle: "Proposals & votes",
     listIntro:
       "Community proposals and their voting windows — open votes first, then upcoming, then closed. Your ballot is secret until a vote closes; results appear only after.",

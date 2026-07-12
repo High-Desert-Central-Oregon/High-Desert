@@ -40,7 +40,6 @@ export const es: Dictionary = {
     groupsLink: "Grupos",
     governanceLink: "Gobernanza",
     appealsLink: "Apelaciones",
-    transparencyLink: "Transparencia",
     accountLink: "Tú",
     confirmDiscard: "¿Descartar lo que escribiste?",
   },
@@ -374,6 +373,8 @@ export const es: Dictionary = {
   },
 
   governance: {
+    segProposals: "Propuestas",
+    segRecord: "Registro",
     listTitle: "Propuestas y votaciones",
     listIntro:
       "Propuestas de la comunidad y sus periodos de votación: primero las abiertas, luego las próximas y después las cerradas. Tu voto es secreto hasta que la votación cierra; los resultados aparecen solo después.",
