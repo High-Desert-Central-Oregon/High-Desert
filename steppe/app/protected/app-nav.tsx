@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/wordmark";
+import { HorizonBand } from "@/components/broadsheet/horizon-band";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Locale } from "@/lib/i18n";
 import type { Destination } from "./nav-destinations";
@@ -28,7 +29,10 @@ export function AppNav({
     "py-1 text-muted-foreground hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none";
 
   return (
-    <nav lang={locale} className="flex w-full justify-center border-b">
+    <div className="w-full">
+      {/* The bundle's horizon band tops the shell (strata + sun, decoration). */}
+      <HorizonBand />
+      <nav lang={locale} className="flex w-full justify-center border-b">
       {/* Rail aligns to the same --content-max column as <main>. */}
       <div className="flex w-full max-w-[var(--content-max)] items-center gap-4 p-3 px-[var(--pad-screen)] text-sm">
         <Link
@@ -53,6 +57,7 @@ export function AppNav({
           <LanguageSwitcher current={locale} />
         </div>
       </div>
-    </nav>
+      </nav>
+    </div>
   );
 }

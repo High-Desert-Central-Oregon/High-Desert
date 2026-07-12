@@ -51,7 +51,7 @@ export function LanguageSwitcher({ current }: { current: Locale }) {
             aria-label={labelFor[locale]}
             disabled={isPending}
             className={cn(
-              "px-2.5 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors disabled:opacity-60",
+              "px-[11px] py-[5px] font-mono text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors disabled:opacity-60",
               i > 0 && "border-l",
               active
                 ? "bg-foreground text-background"
