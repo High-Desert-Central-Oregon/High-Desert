@@ -40,6 +40,7 @@ export const en = {
     governanceLink: "Govern",
     appealsLink: "Appeals",
     accountLink: "You",
+    searchLabel: "Search",
     confirmDiscard: "Discard what you've typed?",
   },
 

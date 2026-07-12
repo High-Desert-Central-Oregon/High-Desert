@@ -1,16 +1,13 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { PageSkeleton } from "@/components/page-skeleton";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Masthead } from "@/components/broadsheet/masthead";
 import { SectionRow } from "@/components/broadsheet/section-row";
 import { Fab } from "@/components/broadsheet/fab";
-import { IconSlot } from "@/components/broadsheet/chips";
+import { MarkerChip } from "@/components/broadsheet/chips";
 import { ActionLink } from "@/components/broadsheet/action-link";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "./membership-control";
@@ -18,6 +15,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { groupControl } from "@/lib/groups";
+import { categoryMarker, visibilityMarker } from "@/lib/markers";
 import { plural } from "@/lib/i18n";
 import type {
   Category,
@@ -92,35 +90,18 @@ async function DirectoryContent({
     .order("name", { ascending: true })
     .returns<Pick<Category, "id" | "slug" | "name">[]>();
   const categories = cats ?? [];
-  const catName = new Map(categories.map((c) => [c.id, c.name]));
+  const catById = new Map(categories.map((c) => [c.id, c]));
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
-      <div className="flex items-start justify-between gap-3">
-        {/* Preview masthead grammar (dateline + voice are the bundle's own). */}
-        <Masthead
-          title={dict.groups.title}
-          kicker={dict.groups.dateline}
-          voice={dict.groups.voice}
-        />
-        {/* The bundle's round header search slot. JS-optional: the icon is a
-            link that sets ?s=1, so the server renders the search bar; Cancel
-            is a plain link back. */}
-        {!searchOpen && (
-          <Link
-            href="/protected/groups?s=1"
-            aria-label={dict.groups.searchLabel}
-            className="mt-1 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <IconSlot>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2A2E2C" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" />
-                <path d="M21 21l-3.6-3.6" />
-              </svg>
-            </IconSlot>
-          </Link>
-        )}
-      </div>
+      {/* Preview masthead grammar (dateline + voice are the bundle's own).
+          The search slot lives in the shell header now (AppNav) — same ?s=1
+          link, global on member routes. */}
+      <Masthead
+        title={dict.groups.title}
+        kicker={dict.groups.dateline}
+        voice={dict.groups.voice}
+      />
       <Fab href="/protected/groups/new" label={dict.groups.create} />
 
       {/* Browse/search — a plain GET form (JS-optional), revealed by the header
@@ -195,22 +176,33 @@ async function DirectoryContent({
             // Spec §1/§37: members_only groups are listed by name + category only;
             // member count + description show for public groups (or to a member).
             const showCount = isPublic || isActiveMember;
-            const kicker = [
-              g.category_id ? catName.get(g.category_id) ?? null : null,
-              isPublic
-                ? dict.groups.visibilityPublic
-                : dict.groups.visibilityMembersOnly,
-            ]
-              .filter(Boolean)
-              .join(" · ");
+            const cat = g.category_id ? catById.get(g.category_id) : undefined;
             return (
               <li key={g.id}>
-                {/* Preview row anatomy: mono kicker (category · visibility),
-                    linked Besley title, quiet description, mono member meta;
-                    the membership control keeps the right slot. */}
+                {/* Preview row anatomy: marker kicker (category + visibility
+                    chips — colored square, always labeled), linked Besley
+                    title, quiet description, mono member meta; the membership
+                    control keeps the right slot. */}
                 <SectionRow
                   titleHref={`/protected/groups/${g.slug}`}
-                  kicker={kicker}
+                  kicker={
+                    <>
+                      {cat && (
+                        <MarkerChip
+                          label={cat.name}
+                          color={categoryMarker(cat.slug)}
+                        />
+                      )}
+                      <MarkerChip
+                        label={
+                          isPublic
+                            ? dict.groups.visibilityPublic
+                            : dict.groups.visibilityMembersOnly
+                        }
+                        color={visibilityMarker(g.visibility)}
+                      />
+                    </>
+                  }
                   title={g.name}
                   sub={isPublic && g.description ? g.description : undefined}
                   meta={

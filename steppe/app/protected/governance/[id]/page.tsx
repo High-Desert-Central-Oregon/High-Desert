@@ -5,6 +5,7 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { CalendarClock, CalendarCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { MarkerChip } from "@/components/broadsheet/chips";
 import { VerifiedGate } from "@/components/verified-gate";
 import { VoteForm } from "./vote-form";
 import { CloseButton } from "./close-button";
@@ -16,6 +17,7 @@ import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState } from "@/lib/governance";
+import { kindMarker } from "@/lib/markers";
 import { getContentModeration } from "@/lib/moderation";
 import { t, plural } from "@/lib/i18n";
 import type { ProposalRow, ProposalResult, VoteChoice } from "@/lib/types/db";
@@ -170,8 +172,13 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
               height={96}
               className="order-last hidden sm:block"
             />
-            <div className="flex gap-2">
-              <Badge variant="outline">{dict.governance.kinds[proposal.kind]}</Badge>
+            <div className="flex items-center gap-x-[7px]">
+              {/* Kind gets the marker treatment (same chip as the list rows);
+                  the state keeps its semantic badge. */}
+              <MarkerChip
+                label={dict.governance.kinds[proposal.kind]}
+                color={kindMarker(proposal.kind)}
+              />
               <Badge variant={stateBadgeVariant}>
                 {dict.governance.states[state]}
               </Badge>

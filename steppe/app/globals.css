@@ -82,6 +82,16 @@
     /* Elevation — no drop shadows in-app; primary fills get the letterpress. */
     --letterpress: inset 0 1px 0 rgba(255, 255, 255, 0.18),
       inset 0 -1px 0 rgba(0, 0, 0, 0.28), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    /* Brand marker fills (exchange-design-tokens-reference.css) — MarkerChip
+     * squares only, ALWAYS beside a mono label, never color alone (lib/markers.ts
+     * maps taxonomies onto these). Rust as a MARKER is a sanctioned accent use. */
+    --marker-sage: #6e8a5b; /* offer/open — the reference's status green */
+    --marker-ochre: #a8842f; /* events / heightened attention */
+    --marker-slate: #4f6b7a; /* mutual aid */
+    --marker-goods: #8c6a45; /* goods / trade */
+    --marker-juniper: #36563d; /* services / routine governance */
+    --marker-rust: #a8542c; /* consequence (immutable proposals) */
+    --marker-neutral: #6e6a5e; /* quiet/closed — the reference's abstain tone */
   }
 
   /* Warm dark mode: deep basalt/juniper ground, bone text, lighter rust + sage. */

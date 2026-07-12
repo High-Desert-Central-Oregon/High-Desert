@@ -44,6 +44,7 @@ export const es: Dictionary = {
     governanceLink: "Gobernanza",
     appealsLink: "Apelaciones",
     accountLink: "Tú",
+    searchLabel: "Buscar",
     confirmDiscard: "¿Descartar lo que escribiste?",
   },
 

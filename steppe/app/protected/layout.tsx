@@ -49,7 +49,12 @@ async function NavBar() {
   // are not verification-gated: the pages gate (spec §2). Neighborhood, Verify,
   // Reviews and Appeals now live as sections under You (/protected/account).
   return (
-    <AppNav items={destinations(dict)} locale={locale} wordmark={dict.app.name} />
+    <AppNav
+      items={destinations(dict)}
+      locale={locale}
+      wordmark={dict.app.name}
+      searchLabel={dict.nav.searchLabel}
+    />
   );
 }
 

@@ -5,6 +5,7 @@ import { redirect, notFound } from "next/navigation";
 import { Lock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { MarkerChip } from "@/components/broadsheet/chips";
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "../membership-control";
 import { LeaveGroupButton } from "../leave-group-button";
@@ -12,6 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { groupControl } from "@/lib/groups";
+import { categoryMarker, visibilityMarker } from "@/lib/markers";
 import { plural } from "@/lib/i18n";
 import type {
   Category,
@@ -138,14 +140,14 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
     }
   }
 
-  const categoryName = dir.category_id
+  const category = dir.category_id
     ? (
         await supabase
           .from("categories")
-          .select("name")
+          .select("name, slug")
           .eq("id", dir.category_id)
-          .maybeSingle<Pick<Category, "name">>()
-      ).data?.name ?? null
+          .maybeSingle<Pick<Category, "name" | "slug">>()
+      ).data ?? null
     : null;
 
   const showCount = isPublic || isActiveMember;
@@ -164,13 +166,23 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">{dir.name}</h1>
-          <div className="flex flex-wrap items-center gap-2">
-            {categoryName && <Badge variant="secondary">{categoryName}</Badge>}
-            <Badge variant="outline">
-              {isPublic
-                ? dict.groups.visibilityPublic
-                : dict.groups.visibilityMembersOnly}
-            </Badge>
+          <div className="flex flex-wrap items-center gap-x-[7px] gap-y-1">
+            {/* Marker kicker — the same category/visibility chips as the
+                directory rows (colored square, always labeled). */}
+            {category && (
+              <MarkerChip
+                label={category.name}
+                color={categoryMarker(category.slug)}
+              />
+            )}
+            <MarkerChip
+              label={
+                isPublic
+                  ? dict.groups.visibilityPublic
+                  : dict.groups.visibilityMembersOnly
+              }
+              color={visibilityMarker(dir.visibility)}
+            />
             {showCount && (
               <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Users className="size-3.5 shrink-0" aria-hidden="true" />

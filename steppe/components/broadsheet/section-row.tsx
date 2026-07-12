@@ -49,7 +49,9 @@ export function SectionRow({
   href?: string;
   /** Link only the title — for rows whose right slot is interactive. */
   titleHref?: string;
-  kicker?: string;
+  /** Plain string gets the mono kicker style; pass nodes (MarkerChip + quiet
+   *  segments) for the bundle's marker-kicker row (inner.html :567). */
+  kicker?: React.ReactNode;
   title: string;
   sub?: string;
   /** Mono bottom line (e.g. "48 members"). */
@@ -71,11 +73,17 @@ export function SectionRow({
   const body = (
     <>
       <div className="min-w-0 flex-1">
-        {kicker && (
-          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            {kicker}
-          </p>
-        )}
+        {kicker != null &&
+          kicker !== "" &&
+          (typeof kicker === "string" ? (
+            <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              {kicker}
+            </p>
+          ) : (
+            <div className="flex flex-wrap items-center gap-x-[7px] gap-y-1">
+              {kicker}
+            </div>
+          ))}
         <p
           className={cn(
             "mt-1 font-serif text-[19px] font-semibold leading-[1.2] text-foreground",

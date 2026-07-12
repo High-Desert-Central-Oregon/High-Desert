@@ -1,10 +1,6 @@
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/page-skeleton";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { FilePlus2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { VerifiedGate } from "@/components/verified-gate";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
@@ -13,7 +9,9 @@ import { GovSegments } from "./gov-segments";
 import { Masthead } from "@/components/broadsheet/masthead";
 import { SectionLabel, SectionRow } from "@/components/broadsheet/section-row";
 import { Fab } from "@/components/broadsheet/fab";
+import { MarkerChip } from "@/components/broadsheet/chips";
 import { formatRedmondDateTime } from "@/lib/time";
+import { kindMarker } from "@/lib/markers";
 import { proposalState, type ProposalState } from "@/lib/governance";
 import { getHiddenIds } from "@/lib/moderation";
 import { t, type Dictionary } from "@/lib/i18n";
@@ -62,11 +60,22 @@ function ProposalCards({
     <ul className="flex flex-col border-t">
       {items.map((p) => (
         <li key={p.id}>
-          {/* Preview ballot-row anatomy: mono kicker (TYPE · STATE), Besley
-              title, quiet window line, rust chevron. */}
+          {/* Preview ballot-row anatomy: marker kicker (kind chip + quiet
+              "· STATE" segment, the bundle's feed-row grammar), Besley title,
+              quiet window line, rust chevron. */}
           <SectionRow
             href={`/protected/governance/${p.id}`}
-            kicker={`${dict.governance.kinds[p.kind]} · ${dict.governance.states[state]}`}
+            kicker={
+              <>
+                <MarkerChip
+                  label={dict.governance.kinds[p.kind]}
+                  color={kindMarker(p.kind)}
+                />
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  · {dict.governance.states[state]}
+                </span>
+              </>
+            }
             title={p.title}
             sub={windowLine(state, p, locale, dict)}
           />
