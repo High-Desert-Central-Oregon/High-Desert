@@ -1,11 +1,10 @@
 import { Suspense } from "react";
 import Image from "next/image";
 import { PageSkeleton } from "@/components/page-skeleton";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CalendarPlus, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Masthead } from "@/components/broadsheet/masthead";
+import { SectionLabel, SectionRow } from "@/components/broadsheet/section-row";
+import { Fab } from "@/components/broadsheet/fab";
 import { VerifiedGate } from "@/components/verified-gate";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
@@ -39,34 +38,24 @@ function EventList({
   dict: Dictionary;
 }) {
   return (
-    <ul className="flex flex-col gap-3">
-      {events.map((ev) => (
-        <li key={ev.id}>
-          <Link
-            href={`/protected/events/${ev.id}`}
-            className="block rounded-lg border bg-card p-4 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <h3 className="font-medium">{ev.title}</h3>
-              <Badge variant="secondary">
-                {ev.neighborhood_id
-                  ? neighborhoodNames.get(ev.neighborhood_id) ??
-                    dict.events.allRedmond
-                  : dict.events.allRedmond}
-              </Badge>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {formatRedmondDateTime(ev.starts_at, locale)}
-            </p>
-            {ev.location && (
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
-                {ev.location}
-              </p>
-            )}
-          </Link>
-        </li>
-      ))}
+    <ul className="flex flex-col border-t">
+      {events.map((ev) => {
+        const hood = ev.neighborhood_id
+          ? neighborhoodNames.get(ev.neighborhood_id) ?? dict.events.allRedmond
+          : dict.events.allRedmond;
+        return (
+          <li key={ev.id}>
+            {/* Preview row anatomy: mono kicker (when · where-in-town), Besley
+                title, quiet location sub, rust chevron. */}
+            <SectionRow
+              href={`/protected/events/${ev.id}`}
+              kicker={`${formatRedmondDateTime(ev.starts_at, locale)} · ${hood}`}
+              title={ev.title}
+              sub={ev.location ?? undefined}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -129,20 +118,13 @@ async function EventsContent() {
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {dict.events.listTitle}
-          </h1>
-          <p className="text-sm text-muted-foreground">{dict.events.listIntro}</p>
-        </div>
-        <Button asChild className="shrink-0">
-          <Link href="/protected/events/new">
-            <CalendarPlus className="size-4" aria-hidden="true" />
-            {dict.events.create}
-          </Link>
-        </Button>
-      </header>
+      {/* Preview masthead grammar; the create action is the floating chip. */}
+      <Masthead
+        title={dict.nav.eventsLink}
+        kicker={dict.events.dateline}
+        voice={dict.events.voice}
+      />
+      <Fab href="/protected/events/new" label={dict.events.create} />
 
       {all.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-6 text-center">
@@ -157,10 +139,8 @@ async function EventsContent() {
         </div>
       ) : home && mine.length > 0 ? (
         <>
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-medium text-muted-foreground">
-              {dict.events.inYourNeighborhood}
-            </h2>
+          <section className="flex flex-col gap-1">
+            <SectionLabel>{dict.events.inYourNeighborhood}</SectionLabel>
             <EventList
               events={mine}
               neighborhoodNames={neighborhoodNames}
@@ -169,10 +149,8 @@ async function EventsContent() {
             />
           </section>
           {rest.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground">
-                {dict.events.acrossRedmond}
-              </h2>
+            <section className="flex flex-col gap-1">
+              <SectionLabel>{dict.events.acrossRedmond}</SectionLabel>
               <EventList
                 events={rest}
                 neighborhoodNames={neighborhoodNames}
@@ -183,10 +161,8 @@ async function EventsContent() {
           )}
         </>
       ) : (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium text-muted-foreground">
-            {dict.events.upcomingTitle}
-          </h2>
+        <section className="flex flex-col gap-1">
+          <SectionLabel>{dict.events.upcomingTitle}</SectionLabel>
           <EventList
             events={all}
             neighborhoodNames={neighborhoodNames}

@@ -20,6 +20,7 @@ export const en = {
     english: "English",
     spanish: "Español",
     somethingWrong: "Sorry, something went wrong.",
+    cancel: "Cancel",
     sealAlt: "Steppe Strata Seal — Redmond, Oregon",
     isomimoAlt: "Steppe gear emblem holding a high-desert landscape",
   },
@@ -124,6 +125,9 @@ export const en = {
   },
 
   events: {
+    // Masthead grammar (preview vocabulary): mono dateline + italic voice.
+    dateline: "Neighborhood gatherings · Soonest first",
+    voice: "Real gatherings by verified neighbors — RSVP with one tap.",
     listTitle: "Neighborhood events",
     listIntro:
       "Upcoming gatherings, soonest first. Events in your neighborhood come first, then the rest of Redmond.",
@@ -166,7 +170,9 @@ export const en = {
   },
 
   groups: {
-    // Directory
+    // Directory — dateline + voice are the bundle's own strings.
+    dateline: "Neighborhood circles · Member-owned",
+    voice: "Small groups of verified neighbors — join freely, leave anytime.",
     title: "Groups",
     intro:
       "Community groups — boards, calendars, events. Browse by category or search by name.",
@@ -368,6 +374,11 @@ export const en = {
   },
 
   governance: {
+    // Dateline is the bundle's; the voice drops its "turnout shown while open"
+    // clause — that surface doesn't exist here yet (parity G1). Stay truthful.
+    dateline: "The community's public record · Everyone starts at 1×",
+    voice:
+      "Secret ballots — everyone starts at 1×; weight accrues with tenure (1×–3×, member-amendable).",
     segProposals: "Proposals",
     segRecord: "Record",
     listTitle: "Proposals & votes",
@@ -511,6 +522,7 @@ export const en = {
     viewContent: "View",
   },
   account: {
+    voice: "Private by default — you choose what neighbors see.",
     title: "Your account",
     intro:
       "Your data is yours. Take a copy whenever you like, or close your account and go.",

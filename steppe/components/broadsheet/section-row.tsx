@@ -37,20 +37,37 @@ export function SectionLabel({ children }: { children: React.ReactNode }) {
 
 export function SectionRow({
   href,
+  titleHref,
   kicker,
   title,
   sub,
+  meta,
   right,
   titleClassName,
 }: {
+  /** Link the WHOLE row (right slot defaults to the rust chevron). */
   href?: string;
+  /** Link only the title — for rows whose right slot is interactive. */
+  titleHref?: string;
   kicker?: string;
   title: string;
   sub?: string;
+  /** Mono bottom line (e.g. "48 members"). */
+  meta?: string;
   /** Right slot: omit for a rust chevron on linked rows; pass a chip/control otherwise. */
   right?: React.ReactNode;
   titleClassName?: string;
 }) {
+  const titleEl = titleHref ? (
+    <Link
+      href={titleHref}
+      className="underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
+    >
+      {title}
+    </Link>
+  ) : (
+    title
+  );
   const body = (
     <>
       <div className="min-w-0 flex-1">
@@ -65,11 +82,16 @@ export function SectionRow({
             titleClassName,
           )}
         >
-          {title}
+          {titleEl}
         </p>
         {sub && (
           <p className="mt-[3px] text-[12.5px] leading-[1.45] text-muted-foreground">
             {sub}
+          </p>
+        )}
+        {meta && (
+          <p className="mt-[7px] font-mono text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+            {meta}
           </p>
         )}
       </div>

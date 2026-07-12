@@ -10,6 +10,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { GovSegments } from "./gov-segments";
+import { Masthead } from "@/components/broadsheet/masthead";
+import { SectionLabel, SectionRow } from "@/components/broadsheet/section-row";
+import { Fab } from "@/components/broadsheet/fab";
 import { formatRedmondDateTime } from "@/lib/time";
 import { proposalState, type ProposalState } from "@/lib/governance";
 import { getHiddenIds } from "@/lib/moderation";
@@ -56,21 +59,17 @@ function ProposalCards({
   dict: Dictionary;
 }) {
   return (
-    <ul className="flex flex-col gap-3">
+    <ul className="flex flex-col border-t">
       {items.map((p) => (
         <li key={p.id}>
-          <Link
+          {/* Preview ballot-row anatomy: mono kicker (TYPE · STATE), Besley
+              title, quiet window line, rust chevron. */}
+          <SectionRow
             href={`/protected/governance/${p.id}`}
-            className="block rounded-lg border bg-card p-4 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <h3 className="font-medium">{p.title}</h3>
-              <Badge variant="outline">{dict.governance.kinds[p.kind]}</Badge>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {windowLine(state, p, locale, dict)}
-            </p>
-          </Link>
+            kicker={`${dict.governance.kinds[p.kind]} · ${dict.governance.states[state]}`}
+            title={p.title}
+            sub={windowLine(state, p, locale, dict)}
+          />
         </li>
       ))}
     </ul>
@@ -129,22 +128,14 @@ async function GovernanceContent() {
   return (
     <div lang={locale} className="flex flex-col gap-8">
       <GovSegments active="proposals" dict={dict} />
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {dict.governance.listTitle}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {dict.governance.listIntro}
-          </p>
-        </div>
-        <Button asChild className="shrink-0">
-          <Link href="/protected/governance/new">
-            <FilePlus2 className="size-4" aria-hidden="true" />
-            {dict.governance.create}
-          </Link>
-        </Button>
-      </header>
+      {/* Preview masthead grammar: the bundle's Govern dateline; the voice
+          drops the not-yet-true turnout clause (parity G1). Create = the chip. */}
+      <Masthead
+        title={dict.nav.governanceLink}
+        kicker={dict.governance.dateline}
+        voice={dict.governance.voice}
+      />
+      <Fab href="/protected/governance/new" label={dict.governance.create} />
 
       {all.length === 0 ? (
         <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
@@ -153,10 +144,8 @@ async function GovernanceContent() {
       ) : (
         <div className="flex flex-col gap-8">
           {open.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground">
-                {dict.governance.openSection}
-              </h2>
+            <section className="flex flex-col gap-1">
+              <SectionLabel>{dict.governance.openSection}</SectionLabel>
               <ProposalCards
                 items={open}
                 state="open"
@@ -166,10 +155,8 @@ async function GovernanceContent() {
             </section>
           )}
           {upcoming.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground">
-                {dict.governance.upcomingSection}
-              </h2>
+            <section className="flex flex-col gap-1">
+              <SectionLabel>{dict.governance.upcomingSection}</SectionLabel>
               <ProposalCards
                 items={upcoming}
                 state="upcoming"
@@ -179,10 +166,8 @@ async function GovernanceContent() {
             </section>
           )}
           {closed.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground">
-                {dict.governance.closedSection}
-              </h2>
+            <section className="flex flex-col gap-1">
+              <SectionLabel>{dict.governance.closedSection}</SectionLabel>
               <ProposalCards
                 items={closed}
                 state="closed"

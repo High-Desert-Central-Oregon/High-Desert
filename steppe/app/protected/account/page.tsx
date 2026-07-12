@@ -3,7 +3,9 @@ import Link from "next/link";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Masthead } from "@/components/broadsheet/masthead";
+import { SectionLabel } from "@/components/broadsheet/section-row";
+import { ActionLink } from "@/components/broadsheet/action-link";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -62,18 +64,12 @@ async function AccountView() {
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
-      {/* Identity — the bundle's You masthead (name + dateline), on the page. */}
-      <header className="flex flex-col gap-2">
-        <h1 className="font-serif text-2xl font-semibold tracking-tight">
-          {profile?.display_name ?? dict.account.title}
-        </h1>
-        {dateline && (
-          <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
-            {dateline}
-          </p>
-        )}
-        <p className="text-sm text-muted-foreground">{dict.account.intro}</p>
-      </header>
+      {/* Identity — the bundle's You masthead: name, dateline, privacy voice. */}
+      <Masthead
+        title={profile?.display_name ?? dict.account.title}
+        kicker={dateline || undefined}
+        voice={dict.account.voice}
+      />
 
       {/* Sections — plain hairline rows. Reviews/Appeals appear for moderators
           only (moderation plumbing filed under You, not primary nav). */}
@@ -93,23 +89,24 @@ async function AccountView() {
         </ul>
       </nav>
 
-      <section className="flex flex-col gap-3 rounded-lg border bg-card p-4">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold">{dict.account.exportHeading}</h2>
-          <p className="text-sm text-muted-foreground">
-            {dict.account.exportBody}
-          </p>
-        </div>
-        {/* A plain link: the route sets Content-Disposition: attachment, so it
-            downloads rather than navigates. */}
-        <Button asChild variant="secondary" className="self-start">
-          <a href="/protected/account/export" download>
-            {dict.account.exportButton}
-          </a>
-        </Button>
+      {/* Data export — boxed card becomes a hairline section with a mono
+          action link (preview vocabulary). The route sets Content-Disposition,
+          so the link downloads rather than navigates. */}
+      <section className="flex flex-col gap-2 border-b pb-5">
+        <SectionLabel>{dict.account.exportHeading}</SectionLabel>
+        <p className="text-sm text-muted-foreground">{dict.account.exportBody}</p>
+        <ActionLink
+          href="/protected/account/export"
+          label={dict.account.exportButton}
+          download
+        />
       </section>
 
-      <DeleteAccount dict={dict} />
+      {/* Delete keeps its danger box — with the rust rule on top marking the
+          consequential boundary. */}
+      <div className="border-t-2 border-accent pt-6">
+        <DeleteAccount dict={dict} />
+      </div>
 
       {/* Sign out — last, rust (the bundle's ySignout). */}
       <SignOutButton label={dict.nav.signOut} />

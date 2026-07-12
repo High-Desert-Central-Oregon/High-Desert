@@ -5,6 +5,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Plus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Masthead } from "@/components/broadsheet/masthead";
+import { SectionRow } from "@/components/broadsheet/section-row";
+import { Fab } from "@/components/broadsheet/fab";
+import { IconSlot } from "@/components/broadsheet/chips";
+import { ActionLink } from "@/components/broadsheet/action-link";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { VerifiedGate } from "@/components/verified-gate";
@@ -24,7 +29,7 @@ export const metadata = {
   title: "Groups · Steppe",
 };
 
-type SearchParams = { q?: string; category?: string };
+type SearchParams = { q?: string; category?: string; s?: string };
 
 async function DirectoryContent({
   searchParams,
@@ -50,6 +55,9 @@ async function DirectoryContent({
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const categoryId = (sp.category ?? "").trim();
+  // The search bar opens via the header slot (?s=1) and stays open server-side
+  // whenever a filter is active — no JavaScript required.
+  const searchOpen = sp.s === "1" || q !== "" || categoryId !== "";
 
   const supabase = await createClient();
 
@@ -88,25 +96,39 @@ async function DirectoryContent({
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {dict.groups.title}
-          </h1>
-          <p className="text-sm text-muted-foreground">{dict.groups.intro}</p>
-        </div>
-        <Button asChild className="shrink-0">
-          <Link href="/protected/groups/new">
-            <Plus className="size-4" aria-hidden="true" />
-            {dict.groups.create}
+      <div className="flex items-start justify-between gap-3">
+        {/* Preview masthead grammar (dateline + voice are the bundle's own). */}
+        <Masthead
+          title={dict.groups.title}
+          kicker={dict.groups.dateline}
+          voice={dict.groups.voice}
+        />
+        {/* The bundle's round header search slot. JS-optional: the icon is a
+            link that sets ?s=1, so the server renders the search bar; Cancel
+            is a plain link back. */}
+        {!searchOpen && (
+          <Link
+            href="/protected/groups?s=1"
+            aria-label={dict.groups.searchLabel}
+            className="mt-1 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <IconSlot>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2A2E2C" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-3.6-3.6" />
+              </svg>
+            </IconSlot>
           </Link>
-        </Button>
-      </header>
+        )}
+      </div>
+      <Fab href="/protected/groups/new" label={dict.groups.create} />
 
-      {/* Browse/search — a plain GET form, so it works without JavaScript. */}
+      {/* Browse/search — a plain GET form (JS-optional), revealed by the header
+          slot; the category filter lives INSIDE it, not stacked on the root. */}
+      {searchOpen && (
       <form
         method="GET"
-        className="flex flex-col gap-3 sm:flex-row sm:items-end"
+        className="flex flex-col gap-3 border bg-muted/40 p-4 sm:flex-row sm:items-end"
         role="search"
       >
         <div className="flex flex-1 flex-col gap-1.5">
@@ -138,10 +160,14 @@ async function DirectoryContent({
             ))}
           </select>
         </div>
-        <Button type="submit" variant="outline">
-          {dict.groups.searchSubmit}
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button type="submit" variant="outline">
+            {dict.groups.searchSubmit}
+          </Button>
+          <ActionLink href="/protected/groups" label={dict.common.cancel} />
+        </div>
       </form>
+      )}
 
       {rows.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-6 text-center">
@@ -155,7 +181,7 @@ async function DirectoryContent({
           <p className="text-sm text-muted-foreground">{dict.groups.empty}</p>
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col border-t">
           {rows.map((g) => {
             const mem = membership.get(g.id);
             const control = groupControl({
@@ -169,50 +195,40 @@ async function DirectoryContent({
             // Spec §1/§37: members_only groups are listed by name + category only;
             // member count + description show for public groups (or to a member).
             const showCount = isPublic || isActiveMember;
+            const kicker = [
+              g.category_id ? catName.get(g.category_id) ?? null : null,
+              isPublic
+                ? dict.groups.visibilityPublic
+                : dict.groups.visibilityMembersOnly,
+            ]
+              .filter(Boolean)
+              .join(" · ");
             return (
-              <li
-                key={g.id}
-                className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-start sm:justify-between"
-              >
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Link
-                      href={`/protected/groups/${g.slug}`}
-                      className="font-medium underline-offset-2 hover:underline focus-visible:underline focus-visible:outline-none"
-                    >
-                      {g.name}
-                    </Link>
-                    {g.category_id && (
-                      <Badge variant="secondary">
-                        {catName.get(g.category_id) ?? ""}
-                      </Badge>
-                    )}
-                    <Badge variant="outline">
-                      {isPublic
-                        ? dict.groups.visibilityPublic
-                        : dict.groups.visibilityMembersOnly}
-                    </Badge>
-                  </div>
-                  {isPublic && g.description && (
-                    <p className="text-sm text-muted-foreground">
-                      {g.description}
-                    </p>
-                  )}
-                  {showCount && (
-                    <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Users className="size-3.5 shrink-0" aria-hidden="true" />
-                      {plural(locale, g.member_count, dict.groups.memberCount)}
-                    </p>
-                  )}
-                </div>
-                <div className="shrink-0">
-                  <MembershipControl
-                    control={control}
-                    groupId={g.id}
-                    slug={g.slug}
-                    dict={dict}
-                  />
-                </div>
+              <li key={g.id}>
+                {/* Preview row anatomy: mono kicker (category · visibility),
+                    linked Besley title, quiet description, mono member meta;
+                    the membership control keeps the right slot. */}
+                <SectionRow
+                  titleHref={`/protected/groups/${g.slug}`}
+                  kicker={kicker}
+                  title={g.name}
+                  sub={isPublic && g.description ? g.description : undefined}
+                  meta={
+                    showCount
+                      ? plural(locale, g.member_count, dict.groups.memberCount)
+                      : undefined
+                  }
+                  right={
+                    <div className="shrink-0">
+                      <MembershipControl
+                        control={control}
+                        groupId={g.id}
+                        slug={g.slug}
+                        dict={dict}
+                      />
+                    </div>
+                  }
+                />
               </li>
             );
           })}

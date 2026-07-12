@@ -24,6 +24,7 @@ export const es: Dictionary = {
     english: "English",
     spanish: "Español",
     somethingWrong: "Lo sentimos, algo salió mal.",
+    cancel: "Cancelar",
     sealAlt: "Sello Strata de Steppe — Redmond, Oregón",
     isomimoAlt: "Emblema de engranaje de Steppe con un paisaje de alto desierto",
   },
@@ -129,6 +130,8 @@ export const es: Dictionary = {
   },
 
   events: {
+    dateline: "Encuentros del vecindario · Los más próximos primero",
+    voice: "Encuentros reales de vecinos verificados — confirma con un toque.",
     listTitle: "Eventos del vecindario",
     listIntro:
       "Próximos encuentros, los más cercanos primero. Los eventos de tu vecindario aparecen primero, luego el resto de Redmond.",
@@ -171,7 +174,8 @@ export const es: Dictionary = {
   },
 
   groups: {
-    // Directorio
+    dateline: "Círculos del barrio · De los miembros",
+    voice: "Grupos pequeños de vecinos verificados — únete libremente, sal cuando quieras.",
     title: "Grupos",
     intro:
       "Grupos de la comunidad — tableros, calendarios, eventos. Explora por categoría o busca por nombre.",
@@ -375,6 +379,9 @@ export const es: Dictionary = {
   },
 
   governance: {
+    dateline: "El registro público · Todos empiezan en 1×",
+    voice:
+      "Votos secretos — todos empiezan en 1× y el peso crece con la antigüedad (1×–3×, modificable por los miembros).",
     segProposals: "Propuestas",
     segRecord: "Registro",
     listTitle: "Propuestas y votaciones",
@@ -520,6 +527,7 @@ export const es: Dictionary = {
     viewContent: "Ver",
   },
   account: {
+    voice: "Privado por defecto — tú eliges qué ven los vecinos.",
     title: "Tu cuenta",
     intro:
       "Tus datos son tuyos. Llévate una copia cuando quieras, o cierra tu cuenta y vete.",
