@@ -3,12 +3,15 @@
 import { useState } from "react";
 
 /**
- * Add to calendar — bundle-verbatim behavior (inner.html :936-941,
- * addToCalendar :1712-1718): a hairline button that downloads a client-built
- * .ics (zero server state, works offline) and reveals a copy-details panel
- * with the raw ICS text as the no-download fallback. The event has no end
- * time in the schema, so the VEVENT carries only DTSTART — calendar apps
- * treat it as a point/default-length event; nothing is invented.
+ * Add to calendar — bundle behavior (inner.html :936-941, addToCalendar
+ * :1712-1718): a hairline button that downloads a client-built .ics (zero
+ * server state, works offline). The copy-details panel is the SECONDARY
+ * fallback: nothing renders until the button is tapped; after a successful
+ * download it appears collapsed (a details/summary the member can expand to
+ * copy), and it auto-expands only when the download itself failed. The event
+ * has no end time in the schema, so the VEVENT carries only DTSTART —
+ * calendar apps treat it as a point/default-length event; nothing is
+ * invented.
  */
 export function AddToCalendar({
   eventId,
@@ -23,7 +26,7 @@ export function AddToCalendar({
   location: string | null;
   labels: { button: string; note: string; description: string };
 }) {
-  const [open, setOpen] = useState(false);
+  const [state, setState] = useState<"idle" | "done" | "failed">("idle");
 
   const stamp = (iso: string) =>
     new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
@@ -58,10 +61,11 @@ export function AddToCalendar({
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 1500);
+      setState("done");
     } catch {
-      // The copy panel below is the fallback either way.
+      // No download — surface the copy panel expanded instead.
+      setState("failed");
     }
-    setOpen(true);
   };
 
   return (
@@ -87,15 +91,19 @@ export function AddToCalendar({
         </svg>
         {labels.button}
       </button>
-      {open && (
-        <div role="status" className="mt-[11px] border bg-muted p-[13px]">
-          <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+      {state !== "idle" && (
+        <details
+          role="status"
+          open={state === "failed"}
+          className="mt-[11px] border bg-muted"
+        >
+          <summary className="cursor-pointer p-[13px] font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
             {labels.note}
-          </p>
-          <pre className="mt-2 select-text whitespace-pre-wrap font-mono text-[11.5px] leading-[1.7] text-foreground">
+          </summary>
+          <pre className="select-text whitespace-pre-wrap px-[13px] pb-[13px] font-mono text-[11.5px] leading-[1.7] text-foreground">
             {ics}
           </pre>
-        </div>
+        </details>
       )}
     </div>
   );
