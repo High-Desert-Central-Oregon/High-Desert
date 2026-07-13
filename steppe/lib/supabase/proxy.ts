@@ -32,7 +32,13 @@ export async function updateSession(request: NextRequest) {
     pathname === "/api/interest" ||
     pathname === "/api/contact" ||
     pathname === "/api/qr" ||
-    pathname === "/api/weather";
+    pathname === "/api/weather" ||
+    // Calendar subscription feeds (C1 §6.1): polled by calendar apps with no
+    // cookies or headers — the 256-bit bearer token in the path is the whole
+    // credential, enforced by the service_role-only RPC behind the route.
+    // Must bypass BOTH the auth redirect and the launch-phase gate (a member
+    // could connect a feed during the beta while the site is prelaunch).
+    pathname.startsWith("/cal/");
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Besley, Schibsted_Grotesk, Martian_Mono } from "next/font/google";
+import { siteOrigin } from "@/lib/site-url";
 // ONE brand type system across the whole app: Besley / Schibsted Grotesk /
 // Martian Mono are loaded once below (next/font, no external CDN) and drive both
 // the marketing layer AND the member app — globals.css points the shadcn
@@ -49,15 +50,9 @@ const marketingFontVars = `${besley.variable} ${schibsted.variable} ${martianMon
 // and /auth theme via the next-themes class, forced light below.
 const themeInit = `(function(){try{var d=document.documentElement;d.setAttribute('data-js','');var h=parseInt(new Intl.DateTimeFormat('en-US',{timeZone:'America/Los_Angeles',hour:'numeric',hour12:false}).format(new Date()),10)%24;var t=(h>=5&&h<8)?'dawn':(h>=8&&h<18)?'day':(h>=18&&h<21)?'dusk':'night';d.setAttribute('data-time',t);var m=null;try{m=localStorage.getItem('steppe-theme')}catch(e){}d.setAttribute('data-theme',(m==='dark'||m==='light')?m:(t==='night'?'dark':'light'))}catch(e){var r=document.documentElement;r.setAttribute('data-theme','light');r.setAttribute('data-time','day')}})();`;
 
-// Canonical site origin for absolute metadata URLs (OG/Twitter cards, canonical).
-// Prefer the explicit NEXT_PUBLIC_SITE_URL (set to https://www.steppe.community in
-// prod) so shared links resolve to the real domain, not the *.vercel.app machine
-// name; VERCEL_URL remains the fallback so preview deploys stay self-referential.
-const defaultUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ? process.env.NEXT_PUBLIC_SITE_URL
-  : process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+// Canonical site origin for absolute metadata URLs (OG/Twitter cards,
+// canonical) — one source shared with the calendar-feed URLs (lib/site-url.ts).
+const defaultUrl = siteOrigin();
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),

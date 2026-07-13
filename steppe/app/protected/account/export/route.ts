@@ -35,6 +35,7 @@ export async function GET() {
     votes,
     appeals,
     auditLog,
+    calendarFeeds,
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
     supabase
@@ -52,6 +53,13 @@ export async function GET() {
       .eq("user_id", uid), // own ballots only (RLS); never anyone else's
     supabase.from("appeals").select("*").eq("user_id", uid),
     supabase.from("audit_log").select("*").eq("actor_id", uid),
+    // Calendar feeds, SANS TOKEN (spec §7.6): the metadata is the member's;
+    // the bearer secret stays out of a file that gets saved around. No
+    // explicit member filter — member_id isn't even selectable (0020), and
+    // cf_read already scopes rows to the owner.
+    supabase
+      .from("calendar_feeds")
+      .select("id, group_id, created_at, rotated_at, last_fetched_at"),
   ]);
 
   const payload = {
@@ -70,6 +78,7 @@ export async function GET() {
     votes: votes.data ?? [],
     appeals: appeals.data ?? [],
     audit_log: auditLog.data ?? [],
+    calendar_feeds: calendarFeeds.data ?? [],
   };
 
   return new NextResponse(JSON.stringify(payload, null, 2), {

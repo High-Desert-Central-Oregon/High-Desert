@@ -86,7 +86,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   const { data: event } = await supabase
     .from("events")
     .select(
-      "id, creator_id, neighborhood_id, title, body, starts_at, location, capacity, status, created_at",
+      "id, creator_id, neighborhood_id, title, body, starts_at, ends_at, location, capacity, status, created_at",
     )
     .eq("id", id)
     .maybeSingle<EventRow>();
@@ -292,6 +292,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
         eventId={event.id}
         title={event.title}
         startsAt={event.starts_at}
+        endsAt={event.ends_at}
         location={event.location}
         labels={{
           button: dict.events.addCal,

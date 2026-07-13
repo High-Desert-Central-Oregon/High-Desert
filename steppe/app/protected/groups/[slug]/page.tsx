@@ -18,6 +18,7 @@ import {
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "../membership-control";
 import { LeaveGroupButton } from "../leave-group-button";
+import { mintGroupFeed } from "../../account/calendar/actions";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getHiddenIds } from "@/lib/moderation";
@@ -331,6 +332,21 @@ async function GroupContent({
                 </li>
               ))}
             </ul>
+          )}
+          {/* Connect to calendar (C1 §1.4): mints THIS group's feed and lands
+              on You, where the URL renders — the secret displays in exactly
+              one place. Members only (Everyone: any verified member; the RPC
+              re-checks regardless). Mono action grammar, juniper. */}
+          {(isActiveMember || dir.is_system) && (
+            <form action={mintGroupFeed} className="mt-2">
+              <input type="hidden" name="group_id" value={dir.id} />
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                {dict.calendar.groupConnect}
+              </button>
+            </form>
           )}
         </section>
       )}

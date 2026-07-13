@@ -250,6 +250,22 @@ export const es: Dictionary = {
     gateBody:
       "Tu calendario se llena con tus RSVP y tus grupos — ambos empiezan con la verificación.",
     gateCta: "Verifica tu residencia",
+    connectHeading: "Conecta tu calendario",
+    connectBody:
+      "Un enlace privado que tu app de calendario consulta. Cualquiera con el enlace puede leer ese calendario — trátalo como una llave. Puedes reemplazarlo o quitarlo aquí cuando quieras.",
+    createLink: "Crear enlace de calendario",
+    pasteLabel: "Pégalo en tu app de calendario",
+    lastRead: "Última lectura {when}",
+    neverRead: "Sin lecturas",
+    rotate: "Reemplazar enlace",
+    rotateConfirm:
+      "¿Reemplazar este enlace? Las apps que usan el anterior dejarán de actualizarse hasta que pegues el nuevo.",
+    rotateCta: "Reemplazarlo",
+    remove: "Quitar",
+    removeConfirm: "¿Quitar este enlace? Las apps que lo usan dejarán de actualizarse.",
+    removeCta: "Quitarlo",
+    groupConnect: "Conecta con tu calendario",
+    feedError: "No pudimos actualizar tus enlaces de calendario. Inténtalo de nuevo.",
   },
 
   groups: {

@@ -40,6 +40,8 @@ export type EventRow = {
   title: string;
   body: string | null;
   starts_at: string;
+  /** Optional end (0020) — DTEND in the ICS layers when present. */
+  ends_at: string | null;
   location: string | null;
   capacity: number | null;
   status: EventStatus;

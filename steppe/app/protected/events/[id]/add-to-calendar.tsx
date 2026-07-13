@@ -9,21 +9,25 @@ import { buildIcs } from "@/lib/ics";
  * server state, works offline). The copy-details panel is the SECONDARY
  * fallback: nothing renders until the button is tapped; after a successful
  * download it appears collapsed (a details/summary the member can expand to
- * copy), and it auto-expands only when the download itself failed. The VEVENT
- * carries only DTSTART — calendar apps treat it as a point/default-length
- * event; nothing is invented. Document assembly (RFC 5545 escaping + line
- * folding) lives in lib/ics.ts, shared with the subscription-feed route.
+ * copy), and it auto-expands only when the download itself failed. DTEND is
+ * emitted only when the event has an end (events.ends_at, 0020) — otherwise
+ * calendar apps treat it as a point/default-length event; nothing is
+ * invented. Document assembly (RFC 5545 escaping + line folding) lives in
+ * lib/ics.ts, shared with the subscription-feed route.
  */
 export function AddToCalendar({
   eventId,
   title,
   startsAt,
+  endsAt,
   location,
   labels,
 }: {
   eventId: string;
   title: string;
   startsAt: string;
+  /** DTEND when the event has an end (events.ends_at, 0020). */
+  endsAt?: string | null;
   location: string | null;
   labels: { button: string; note: string; description: string };
 }) {
@@ -36,6 +40,7 @@ export function AddToCalendar({
         uid: `${eventId}@steppe.community`,
         dtstamp: new Date().toISOString(),
         dtstart: startsAt,
+        dtend: endsAt,
         summary: title,
         location,
         description: labels.description,

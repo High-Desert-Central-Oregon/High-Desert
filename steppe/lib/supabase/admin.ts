@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
  *
  * Use ONLY inside a server action that has itself already verified the caller's
  * authority, and ONLY for an operation RLS cannot express. In this build that is
- * exactly two things:
+ * exactly three things:
  *   1. deleting a member's verification-evidence object from storage when a
  *      moderator decides — the DB drops the pointer, this client drops the file,
  *      together completing "verify, then forget" (CLAUDE.md invariant 1). There
@@ -14,6 +14,11 @@ import { createClient } from "@supabase/supabase-js";
  *      anonymising + banning the auth identity — the parts the member's own
  *      session and the self-edit guard can't reach. We never hard-delete the
  *      auth user (that would cascade the profile and the preserved votes).
+ *   3. serving calendar subscription feeds (app/cal/[token]/route.ts) — the one
+ *      read RLS cannot express because the poller has no auth context at all;
+ *      the bearer token is the credential, and authorization lives in the
+ *      service_role-only calendar_feed_payload() RPC (migration 0020), which
+ *      re-derives the owner's standing on every serve.
  *
  * Never import this into client code, and never expose the secret key
  * (`SUPABASE_SERVICE_ROLE_KEY` is server-only — not `NEXT_PUBLIC_*`).

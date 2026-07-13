@@ -251,6 +251,24 @@ export const en = {
     gateBody:
       "Your calendar fills with your RSVPs and your groups — both start with verification.",
     gateCta: "Verify your residency",
+    // Connect to calendar — subscription feeds (spec §1.4). Capability
+    // language stays plain: the link is a key.
+    connectHeading: "Connect to calendar",
+    connectBody:
+      "A private link your calendar app checks for updates. Anyone who has the link can read that calendar — treat it like a key. You can replace or remove it here anytime.",
+    createLink: "Create calendar link",
+    pasteLabel: "Paste into your calendar app",
+    lastRead: "Last read {when}",
+    neverRead: "Never read",
+    rotate: "Replace link",
+    rotateConfirm:
+      "Replace this link? Apps using the old one stop updating until you paste the new one.",
+    rotateCta: "Replace it",
+    remove: "Remove",
+    removeConfirm: "Remove this link? Apps using it stop updating.",
+    removeCta: "Remove it",
+    groupConnect: "Connect to your calendar",
+    feedError: "We couldn't update your calendar links. Please try again.",
   },
 
   groups: {
