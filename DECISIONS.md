@@ -7,6 +7,62 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-07-12 — Calendar (C1) approved to build; four C-G flags resolved; ends_at folded in
+
+**Decision.** Build the calendar layer per `docs/spec/calendar-c1-spec-v1.md`
+(§1–§7 recommendations adopted as written), with its four flags resolved:
+
+- **C-G1 (public group feeds)** — **member-minted feeds only.** Every feed is
+  a verified member's capability onto content that member can read, dying
+  with their standing (checked at serve time). A member-independent public
+  feed — the Vendor Markets season on a poster or the library's site — is
+  anonymous read of member content as a *standing grant*: exactly what the
+  G-2 ruling reserved for a real governance vote. C1 ships nothing public;
+  the ballot question is drafted (`docs/governance/` — filed alongside the
+  pending G-1 moderation-policy ratification) so the cohort chooses.
+- **C-G2 (personal feeds export attendance intent)** — approved as designed:
+  minimized payload (titles/times/places only — no names, no bodies, no RSVP
+  fields), member-controlled, one-tap revocation, leak-visible. The
+  Terms/Privacy counsel packet gains a plain-language paragraph naming
+  calendar links, what they contain, and that the member controls them
+  (pre-counsel draft, review-gate branch).
+- **C-G3 (`last_fetched_at`)** — approved on the record. One timestamp,
+  overwritten in place, readable by the feed's owner alone, never aggregated
+  and never an input to any ordering or optimization (invariants 7/8). It is
+  a security affordance — it makes "is this key still in someone's pocket?"
+  answerable by the member — not analytics.
+- **C-G4 (plaintext token at rest)** — approved on the record, choosing
+  spec §7.5's trade explicitly: the token column is cleartext, readable only
+  by its owner (RLS row scope + column grants; the serving path is a
+  service_role-only RPC). Hashing would defend only a breach scoped to
+  exactly that table while costing every lost URL a rotation + re-add across
+  the member's devices; a full-DB breach already holds everything the tokens
+  guard. If a later security pass or the cohort wants hash-at-rest, the
+  migration is additive. Chosen, not drifted into.
+
+**Scope amendment.** `events.ends_at` (nullable timestamptz) folds into
+migration 0020 rather than waiting for its own migration — the ICS layers
+emit DTEND when present (the bundle's demo data always had ends, :1712), and
+the composer field follows when event durations matter to members. Separately
+sequenced: the RFC 5545 escaping fix (`lib/ics.ts`) ships first as a
+standalone fix — it corrects the existing Add-to-calendar button regardless
+of C1.
+
+**Why.** The sharp question was C-G1, and the line it draws is the one worth
+recording: *a member's own delegated read* (capability URL, revocable,
+standing-checked) is inside the members-only ruling; *a standing anonymous
+grant* is not, no matter how sympathetic the use case. Encoding that as
+"member feeds only, ballot for anything wider" keeps the Vendor Markets
+public-feed decision where it belongs — with the members.
+
+**How it lands.** Spec §10 as amended: escaping fix → spec+record → My
+Calendar (existing schema) → month grid + toggle → `0020_calendar_feeds.sql`
+(four-lens adversarial review; manual prod apply — a hard gate) → feed route
++ You management → Terms paragraph (branch) + ballot draft + refusal-matrix
+and walkthrough extensions.
+
+---
+
 ## 2026-07-12 — Exchange (X1) approved to build; four G-class flags resolved
 
 **Decision.** Build the Exchange per `docs/spec/exchange-x1-spec-v1.md`
