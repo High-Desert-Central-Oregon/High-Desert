@@ -1,14 +1,26 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { AppealResolver } from "./appeal-resolver";
+import { resolveReport } from "./actions";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { formatRedmondDateTime } from "@/lib/time";
 import { t } from "@/lib/i18n";
 
 export const metadata = {
   title: "Appeals · Steppe",
+};
+
+type ReportRow = {
+  id: string;
+  reporter_id: string;
+  target_type: string;
+  target_id: string;
+  body: string;
+  created_at: string;
 };
 
 type AppealRow = {
@@ -27,7 +39,11 @@ type ActionRow = {
   reason: string | null;
 };
 
-async function AppealsContent() {
+async function AppealsContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ reportErr?: string }>;
+}) {
   // Moderator-only flow gate; the RPCs are the hard gate.
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
@@ -36,6 +52,7 @@ async function AppealsContent() {
   }
 
   const { locale, dict } = await getServerDictionary();
+  const { reportErr } = await searchParams;
   const supabase = await createClient();
 
   // Open appeals, oldest first — chronological, never ranked (invariant 7).
@@ -88,6 +105,41 @@ async function AppealsContent() {
     for (const po of pos ?? []) postTitles.set(po.id, po.title);
   }
 
+  // Open member reports (0021), oldest first — same chronology-only rule.
+  // Moderators see all open rows via rp_read; members never reach this page.
+  const { data: reportsData } = await supabase
+    .from("reports")
+    .select("id, reporter_id, target_type, target_id, body, created_at")
+    .is("resolved_at", null)
+    .order("created_at", { ascending: true })
+    .returns<ReportRow[]>();
+  const reports = reportsData ?? [];
+
+  const reporterNames = new Map<string, string>();
+  const reportTargetTitles = new Map<string, string>();
+  if (reports.length > 0) {
+    const reporterIds = [...new Set(reports.map((r) => r.reporter_id))];
+    const rPostIds = reports.filter((r) => r.target_type === "post").map((r) => r.target_id);
+    const rEventIds = reports.filter((r) => r.target_type === "event").map((r) => r.target_id);
+    const [{ data: rPeople }, { data: rPosts }, { data: rEvents }] = await Promise.all([
+      supabase.from("profiles").select("id, display_name").in("id", reporterIds),
+      rPostIds.length
+        ? supabase.from("posts").select("id, title").in("id", rPostIds)
+        : Promise.resolve({ data: [] as { id: string; title: string }[] }),
+      rEventIds.length
+        ? supabase.from("events").select("id, title").in("id", rEventIds)
+        : Promise.resolve({ data: [] as { id: string; title: string }[] }),
+    ]);
+    for (const p of rPeople ?? []) reporterNames.set(p.id, p.display_name);
+    for (const p of rPosts ?? []) reportTargetTitles.set(p.id, p.title);
+    for (const e of rEvents ?? []) reportTargetTitles.set(e.id, e.title);
+  }
+
+  const reportTargetHref = (r: ReportRow) =>
+    r.target_type === "post"
+      ? `/protected/exchange/${r.target_id}`
+      : `/protected/events/${r.target_id}`;
+
   return (
     <div lang={locale} className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
@@ -99,6 +151,81 @@ async function AppealsContent() {
         </p>
       </header>
 
+      {/* ---- Member reports (0021) — read, act on the content via its own
+              page, then resolve. Resolution is audited; content decisions
+              stay in the remove/restore flow (invariant 5). A report on
+              private-group content a platform moderator doesn't belong to
+              shows the reporter's words + reportTargetGone (po_read/ev_read
+              gate it); the moderator can still act via the target_id. The
+              broader "should moderators read private-group content" question
+              is the G-1 moderation-visibility policy, not this migration. ---- */}
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold">{dict.moderation.reportsTitle}</h2>
+        <p className="text-sm text-muted-foreground">
+          {dict.moderation.reportsIntro}
+        </p>
+        {reportErr === "1" && (
+          <p role="status" className="text-sm font-medium text-accent">
+            {dict.moderation.reportError}
+          </p>
+        )}
+        {reports.length === 0 ? (
+          <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
+            {dict.moderation.reportsEmpty}
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {reports.map((r) => (
+              <li key={r.id} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+                <div className="text-sm">
+                  <p className="font-medium">
+                    <Link
+                      href={reportTargetHref(r)}
+                      className="underline-offset-2 hover:underline"
+                    >
+                      {reportTargetTitles.get(r.target_id) ??
+                        dict.moderation.reportTargetGone}
+                    </Link>
+                  </p>
+                  <p className="mt-1 text-muted-foreground">
+                    {t(dict.moderation.reportBy, {
+                      name: reporterNames.get(r.reporter_id) ?? "—",
+                      date: formatRedmondDateTime(r.created_at, locale),
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-md bg-muted/50 p-3 text-sm">
+                  <p className="whitespace-pre-wrap">{r.body}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <form action={resolveReport}>
+                    <input type="hidden" name="report_id" value={r.id} />
+                    <input type="hidden" name="outcome" value="actioned" />
+                    <button
+                      type="submit"
+                      className="inline-flex items-center border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    >
+                      {dict.moderation.reportActioned}
+                    </button>
+                  </form>
+                  <form action={resolveReport}>
+                    <input type="hidden" name="report_id" value={r.id} />
+                    <input type="hidden" name="outcome" value="dismissed" />
+                    <button
+                      type="submit"
+                      className="inline-flex items-center border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    >
+                      {dict.moderation.reportDismissed}
+                    </button>
+                  </form>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <h2 className="text-lg font-semibold">{dict.moderation.appealsQueueTitle}</h2>
       {appeals.length === 0 ? (
         <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
           {dict.moderation.appealsEmpty}
@@ -165,10 +292,14 @@ async function AppealsContent() {
   );
 }
 
-export default function AppealsPage() {
+export default function AppealsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ reportErr?: string }>;
+}) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <AppealsContent />
+      <AppealsContent searchParams={searchParams} />
     </Suspense>
   );
 }

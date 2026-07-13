@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, isModerator } from "@/lib/auth";
 import type { ModeratableTarget } from "@/lib/moderation";
@@ -130,4 +131,62 @@ export async function resolveAppeal(
   revalidatePath("/protected/transparency");
   revalidatePath("/protected");
   return null;
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * File a member report (0021 — the X1 fast-follow; messages-m1-spec §2).
+ * A private note to the moderators about content the reporter can read — the
+ * DB is the gate (rp_insert: verified, identity pinned, target readable under
+ * the reporter's own RLS). NO ORACLE: the confirmation is the same whatever
+ * moderation already knows or later decides; failure is one generic notice.
+ * Reports never hide or rank anything by themselves (invariant 5).
+ */
+export async function fileReport(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user) redirect("/auth/login");
+  const targetType = String(formData.get("target_type") ?? "");
+  const targetId = String(formData.get("target_id") ?? "");
+  const body = String(formData.get("body") ?? "").trim();
+  const back = String(formData.get("back") ?? "");
+  const safeBack = back.startsWith("/protected") ? back : "/protected";
+
+  if (
+    (targetType !== "post" && targetType !== "event") ||
+    !UUID.test(targetId) ||
+    !body
+  ) {
+    redirect(`${safeBack}?reportErr=1`);
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("reports").insert({
+    reporter_id: user.id,
+    target_type: targetType,
+    target_id: targetId,
+    body: body.slice(0, 2000),
+  });
+  redirect(`${safeBack}?${error ? "reportErr" : "reported"}=1`);
+}
+
+/**
+ * Close out a report (moderator). Acting on the CONTENT stays in the
+ * remove/restore flow above; this records that a human looked and decided.
+ * resolve_report() is the gate (moderator-only, once, audited).
+ */
+export async function resolveReport(formData: FormData) {
+  if (!(await isModerator())) redirect("/protected");
+  const reportId = String(formData.get("report_id") ?? "");
+  const outcome = String(formData.get("outcome") ?? "");
+  if (!UUID.test(reportId) || (outcome !== "actioned" && outcome !== "dismissed")) {
+    redirect("/protected/moderation?reportErr=1");
+  }
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("resolve_report", {
+    p_report: reportId,
+    p_outcome: outcome,
+  });
+  revalidatePath("/protected/moderation");
+  redirect(`/protected/moderation${error ? "?reportErr=1" : ""}`);
 }

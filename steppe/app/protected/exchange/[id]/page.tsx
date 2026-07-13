@@ -8,6 +8,7 @@ import { VerifiedGate } from "@/components/verified-gate";
 import { RemovedBanner } from "../../moderation/removed-banner";
 import { AppealArea } from "../../moderation/appeal-area";
 import { ModerationControl } from "../../moderation/moderation-control";
+import { ReportCard } from "../../moderation/report-card";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -35,12 +36,17 @@ type PostRowFull = {
   edited_at: string | null;
 };
 
+type SearchParams = { reported?: string; reportErr?: string };
+
 async function PostDetailContent({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   const { id } = await params;
+  const sp = await searchParams;
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
   const { locale, dict } = await getServerDictionary();
@@ -171,6 +177,29 @@ async function PostDetailContent({
         </p>
       </article>
 
+      {/* Report confirmation — identical every time (no oracle). */}
+      {sp.reported === "1" && (
+        <p role="status" className="text-sm font-medium text-foreground">
+          {dict.moderation.reportSent}
+        </p>
+      )}
+      {sp.reportErr === "1" && (
+        <p role="status" className="text-sm font-medium text-accent">
+          {dict.moderation.reportError}
+        </p>
+      )}
+
+      {/* The member Report intake (0021 — the X1 §8 action-row debt paid).
+          Not shown on your own post; moderators use their own tools below. */}
+      {post.author_id !== profile.id && !isMod && (
+        <ReportCard
+          targetType="post"
+          targetId={post.id}
+          back={`/protected/exchange/${post.id}`}
+          dict={dict}
+        />
+      )}
+
       {/* Moderators: the existing legible remove flow — reason required,
           appealable, never a quiet delete (G4/P7). */}
       {isMod && (
@@ -187,12 +216,14 @@ async function PostDetailContent({
 
 export default function PostDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <PostDetailContent params={params} />
+      <PostDetailContent params={params} searchParams={searchParams} />
     </Suspense>
   );
 }

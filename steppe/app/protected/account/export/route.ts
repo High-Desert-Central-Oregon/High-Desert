@@ -36,6 +36,7 @@ export async function GET() {
     appeals,
     auditLog,
     calendarFeeds,
+    reportsMade,
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
     supabase
@@ -60,6 +61,13 @@ export async function GET() {
     supabase
       .from("calendar_feeds")
       .select("id, group_id, created_at, rotated_at, last_fetched_at"),
+    // Reports the member filed (0021) — their own speech, invariant 8.
+    // rp_read scopes to the reporter; resolution fields ride along (the
+    // named-moderator posture, 0021 header).
+    supabase
+      .from("reports")
+      .select("id, target_type, target_id, body, created_at, resolved_at, outcome")
+      .eq("reporter_id", uid),
   ]);
 
   const payload = {
@@ -79,6 +87,7 @@ export async function GET() {
     appeals: appeals.data ?? [],
     audit_log: auditLog.data ?? [],
     calendar_feeds: calendarFeeds.data ?? [],
+    reports: reportsMade.data ?? [],
   };
 
   return new NextResponse(JSON.stringify(payload, null, 2), {
