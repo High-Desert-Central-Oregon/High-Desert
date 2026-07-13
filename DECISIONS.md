@@ -48,6 +48,18 @@ sequenced: the RFC 5545 escaping fix (`lib/ics.ts`) ships first as a
 standalone fix — it corrects the existing Add-to-calendar button regardless
 of C1.
 
+**Repair recorded (found by the 0020 four-lens review, verified live).**
+`delete_my_account()` (0009) has been broken since 0012 landed: its
+`delete from consents` line is refused by the append-only trigger for every
+role, so account deletion aborted for any member holding a consent row —
+i.e., everyone past the terms gate. 0020's replacement (needed anyway to
+purge calendar-feed bearer tokens, since the tombstoned profile means the FK
+cascade never fires) drops that line: consent records are permanent record
+(invariant 6) and stay anchored to the scrubbed "Former member" tombstone,
+exactly like votes and moderation records. The member-facing deletion copy
+never promised consent erasure, so no UI text changes. Regression-pinned in
+`seed/matrix-0020.sql` case 15b.
+
 **Why.** The sharp question was C-G1, and the line it draws is the one worth
 recording: *a member's own delegated read* (capability URL, revocable,
 standing-checked) is inside the members-only ruling; *a standing anonymous
