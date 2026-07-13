@@ -7,6 +7,7 @@ import { Masthead } from "@/components/broadsheet/masthead";
 import { Fab } from "@/components/broadsheet/fab";
 import { MarkerChip } from "@/components/broadsheet/chips";
 import { PostRow, Monogram, initialsFor } from "@/components/broadsheet/post-row";
+import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
 import { VerifiedGate } from "@/components/verified-gate";
 import { ActionLink } from "@/components/broadsheet/action-link";
 import { Button } from "@/components/ui/button";
@@ -171,35 +172,11 @@ function PinnedFeature({
   );
 }
 
-/** Empty state — the bundle's miniature strata (:584-597), sun kept a circle
- *  at any width (the horizon-band treatment: ridges stretch, sun doesn't). */
+/** Empty state — the bundle's miniature strata (:584-597), now the shared
+ *  QuietEmpty (My Calendar draws the same horizon). */
 function EmptyBoard({ dict }: { dict: Dictionary }) {
   return (
-    <div className="px-6 pb-10 pt-[14px] text-center">
-      <div aria-hidden="true" className="relative mt-[18px] h-16 w-full overflow-hidden">
-        <svg
-          viewBox="0 0 64 64"
-          className="absolute top-0 h-full w-auto -translate-x-1/2"
-          style={{ aspectRatio: "1", left: "calc(100% * 322 / 402)" }}
-        >
-          <circle cx="32" cy="22" r="14" fill="#A8542C" />
-        </svg>
-        <svg
-          viewBox="0 0 402 64"
-          preserveAspectRatio="none"
-          className="absolute inset-0 h-full w-full"
-        >
-          <path d="M0,40 C80,32 150,36 220,33 C300,29 360,35 402,32 L402,64 L0,64 Z" fill="#6E8A5B" />
-          <path d="M0,52 C90,46 150,49 230,48 C320,45 372,49 402,48 L402,64 L0,64 Z" fill="#34383D" />
-        </svg>
-      </div>
-      <p className="mt-4 font-serif text-[20px] font-semibold text-foreground">
-        {dict.exchange.emptyTitle}
-      </p>
-      <p className="mt-[6px] text-[13.5px] leading-[1.5] text-muted-foreground">
-        {dict.exchange.emptySub}
-      </p>
-    </div>
+    <QuietEmpty title={dict.exchange.emptyTitle} sub={dict.exchange.emptySub} />
   );
 }
 

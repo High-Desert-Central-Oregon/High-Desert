@@ -49,11 +49,18 @@ async function AccountView() {
     : null;
   const dateline = [neighborhood, since].filter(Boolean).join(" · ");
 
-  const rows: { href: string; label: string }[] = [
+  const rows: { href: string; label: string; sub?: string }[] = [
     { href: "/protected/neighborhoods", label: dict.nav.neighborhoodLink },
     ...(!verified
       ? [{ href: "/protected/verify", label: dict.nav.verifyLink }]
       : []),
+    // My Calendar (calendar-c1-spec §1.1): the You-row grammar's optional sub
+    // line (bundle :733-743) says what fills it.
+    {
+      href: "/protected/account/calendar",
+      label: dict.calendar.title,
+      sub: dict.calendar.rowSub,
+    },
     ...(isMod
       ? [
           { href: "/protected/review", label: dict.nav.reviewLink },
@@ -82,7 +89,14 @@ async function AccountView() {
                 href={r.href}
                 className="flex items-center justify-between py-3 text-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
-                <span>{r.label}</span>
+                <span className="flex min-w-0 flex-col">
+                  <span>{r.label}</span>
+                  {r.sub && (
+                    <span className="mt-0.5 text-xs text-muted-foreground">
+                      {r.sub}
+                    </span>
+                  )}
+                </span>
                 <ChevronRight className="size-4 text-accent" aria-hidden="true" />
               </Link>
             </li>

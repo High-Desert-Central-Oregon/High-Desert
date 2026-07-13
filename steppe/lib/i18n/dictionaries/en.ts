@@ -229,6 +229,24 @@ export const en = {
     gateCta: "Verify your residency",
   },
 
+  calendar: {
+    // My Calendar (calendar-c1-spec §1.1): masthead grammar — mono dateline
+    // (2026-07-12 amendment: "Your groups and your RSVPs", house · separators)
+    // + the one italic voice line.
+    title: "My calendar",
+    rowSub: "Your RSVPs and your groups' gatherings",
+    dateline: "Your groups · Your RSVPs",
+    voice:
+      "Your gatherings in one column — what you answered and where you belong.",
+    maybeTag: "Maybe",
+    emptyTitle: "Nothing on your calendar yet",
+    emptySub: "RSVP to a gathering, or join a group.",
+    gateTitle: "Verify to see your calendar",
+    gateBody:
+      "Your calendar fills with your RSVPs and your groups — both start with verification.",
+    gateCta: "Verify your residency",
+  },
+
   groups: {
     // Directory — dateline + voice are the bundle's own strings.
     dateline: "Neighborhood circles · Member-owned",

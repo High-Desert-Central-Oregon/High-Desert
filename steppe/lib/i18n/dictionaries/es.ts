@@ -232,6 +232,21 @@ export const es: Dictionary = {
     gateCta: "Verifica tu residencia",
   },
 
+  calendar: {
+    title: "Mi calendario",
+    rowSub: "Tus RSVP y los eventos de tus grupos",
+    dateline: "Tus grupos · Tus RSVP",
+    voice:
+      "Tus encuentros en una columna — lo que respondiste y donde perteneces.",
+    maybeTag: "Quizá",
+    emptyTitle: "Aún no hay nada en tu calendario",
+    emptySub: "Confirma tu asistencia a un evento, o únete a un grupo.",
+    gateTitle: "Verifícate para ver tu calendario",
+    gateBody:
+      "Tu calendario se llena con tus RSVP y tus grupos — ambos empiezan con la verificación.",
+    gateCta: "Verifica tu residencia",
+  },
+
   groups: {
     dateline: "Círculos del barrio · De los miembros",
     voice: "Grupos pequeños de vecinos verificados — únete libremente, sal cuando quieras.",
