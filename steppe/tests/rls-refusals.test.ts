@@ -327,3 +327,158 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
     });
   });
 });
+
+describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  // ---- Structural refusals (grant / function-guard level) ----
+
+  it("a stranger cannot mint — verification is the floor", async () => {
+    await expect(h.runAs(RANDO, "select * from public.mint_calendar_feed()")).rejects.toThrow(
+      /verified members/,
+    );
+  });
+
+  it("the serving RPC is service_role-only — even a signed-in caller is refused", async () => {
+    await expect(
+      h.runAs(RANDO, "select public.calendar_feed_payload(repeat('a', 64))"),
+    ).rejects.toThrow(/permission denied for function calendar_feed_payload/);
+  });
+
+  it("no client write path: INSERT and UPDATE on calendar_feeds are ungranted", async () => {
+    await expect(
+      h.runAs(
+        RANDO,
+        "insert into calendar_feeds (member_id, group_id, token) values ($1, null, repeat('b', 64))",
+        [RANDO],
+      ),
+    ).rejects.toThrow(/permission denied for table calendar_feeds/);
+    await expect(
+      h.runAs(RANDO, "update calendar_feeds set last_fetched_at = null"),
+    ).rejects.toThrow(/permission denied for table calendar_feeds/);
+  });
+
+  it("member_id is not even selectable (spec §5.3)", async () => {
+    await expect(h.runAs(RANDO, "select member_id from calendar_feeds")).rejects.toThrow(
+      /permission denied for table calendar_feeds/,
+    );
+  });
+
+  // ---- Fixture-backed (standing gates + cross-member walls) ----
+
+  it("an unverified member cannot mint; PENDING membership cannot mint a group feed", async () => {
+    await h.inTxn(async (c) => {
+      const unverified = "c1c10000-0000-0000-0000-000000000001";
+      await h.createMember(unverified, "c1-unverified@rls.test", { verified: false });
+      await h.actAs(unverified);
+      await expect(c.query("select * from public.mint_calendar_feed()")).rejects.toThrow(
+        /verified members/,
+      );
+    });
+    await h.inTxn(async (c) => {
+      const insider = "c1c10000-0000-0000-0000-000000000002";
+      const pending = "c1c10000-0000-0000-0000-000000000003";
+      const gid = "c1c10000-0000-0000-0000-00000000000a";
+      await h.createMember(insider, "c1-insider@rls.test", { verified: true });
+      await h.createMember(pending, "c1-pending@rls.test", { verified: true });
+      await c.query(
+        "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'rls-c1-' || substr($2, 1, 8), 'C1 probe group', 'members_only', 'request')",
+        [gid, gid],
+      );
+      await c.query(
+        "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'active'), ($1, $3, 'member', 'pending')",
+        [gid, insider, pending],
+      );
+      await h.actAs(pending);
+      await expect(
+        c.query("select * from public.mint_calendar_feed($1)", [gid]),
+      ).rejects.toThrow(/group members/);
+    });
+  });
+
+  it("cross-member: a feed is not probeable, rotatable, or deletable by anyone else", async () => {
+    await h.inTxn(async (c) => {
+      const a = "c1c10000-0000-0000-0000-000000000004";
+      const b = "c1c10000-0000-0000-0000-000000000005";
+      await h.createMember(a, "c1-owner@rls.test", { verified: true });
+      await h.createMember(b, "c1-other@rls.test", { verified: true });
+      await h.actAs(a);
+      const minted = (await c.query("select * from public.mint_calendar_feed()")).rows[0];
+      await h.actAs(b);
+      const probe = await c.query(
+        "select count(id)::int as n from calendar_feeds where token = $1 or id = $2",
+        [minted.feed_token, minted.feed_id],
+      );
+      expect(probe.rows[0].n).toBe(0);
+      const del = await c.query("delete from calendar_feeds where id = $1", [minted.feed_id]);
+      expect(del.rowCount).toBe(0);
+      await expect(
+        c.query("select public.rotate_calendar_feed($1)", [minted.feed_id]),
+      ).rejects.toThrow(/Not your calendar link/);
+    });
+  });
+
+  it("scope collapse: left group, demoted member, revoked token — all the bare dead object", async () => {
+    await h.inTxn(async (c) => {
+      const m = "c1c10000-0000-0000-0000-000000000006";
+      const gid = "c1c10000-0000-0000-0000-00000000000b";
+      await h.createMember(m, "c1-standing@rls.test", { verified: true });
+      await c.query(
+        "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'rls-c1-' || substr($2, 1, 8), 'C1 standing group', 'members_only', 'request')",
+        [gid, gid],
+      );
+      await c.query(
+        "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'active')",
+        [gid, m],
+      );
+      await h.actAs(m);
+      const personal = (await c.query("select * from public.mint_calendar_feed()")).rows[0];
+      const group = (
+        await c.query("select * from public.mint_calendar_feed($1)", [gid])
+      ).rows[0];
+
+      // Back to owner context — clear the lingering sub so the profile guard
+      // can't silently freeze the demotion below (auth.uid() must be null).
+      await c.query("select set_config('request.jwt.claims', '', true)");
+      await c.query("reset role");
+
+      // LEFT GROUP → the group feed dies whole, indistinguishable from absent.
+      await c.query("delete from group_members where group_id = $1 and user_id = $2", [gid, m]);
+      await c.query("set local role service_role");
+      const leftPayload = (
+        await c.query("select public.calendar_feed_payload($1) as p", [group.feed_token])
+      ).rows[0].p;
+      expect(leftPayload).toEqual({ ok: false });
+      await c.query("reset role");
+
+      // DEMOTED (unverified) → every feed of theirs dies.
+      await c.query("update profiles set verified = false where id = $1", [m]);
+      await c.query("set local role service_role");
+      const demotedPayload = (
+        await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token])
+      ).rows[0].p;
+      expect(demotedPayload).toEqual({ ok: false });
+      await c.query("reset role");
+
+      // REVOKED (row deleted) → dead even with standing restored.
+      await c.query("update profiles set verified = true where id = $1", [m]);
+      await c.query("delete from calendar_feeds where id = $1", [personal.feed_id]);
+      await c.query("set local role service_role");
+      const revokedPayload = (
+        await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token])
+      ).rows[0].p;
+      expect(revokedPayload).toEqual({ ok: false });
+      await c.query("reset role");
+    });
+  });
+});

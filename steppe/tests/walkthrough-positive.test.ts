@@ -101,11 +101,16 @@ describe.skipIf(!dbUp)("Walkthrough X1: post → pin → remove → appeal → o
       expect(pinAudit.rows[0].n).toBe(1);
 
       // 4 · Unpin (audited), then remove with a written reason (P7 — legible).
+      // The remove row is backdated 1s: inside this single test transaction
+      // now() is frozen, so remove and the later restore would otherwise tie
+      // on created_at and is_content_hidden's id-desc tiebreak becomes a
+      // random-UUID coin flip. Production never ties — the two actions are
+      // separate requests; the backdate restores the real ordering.
       await h.actAs(mod1);
       await c.query("select set_post_pin($1, false)", [post]);
       const action = (
         await c.query(
-          "insert into moderation_actions (target_type, target_id, action, reason, actor_id) values ('post', $1, 'remove', 'walkthrough probe', $2) returning id",
+          "insert into moderation_actions (target_type, target_id, action, reason, actor_id, created_at) values ('post', $1, 'remove', 'walkthrough probe', $2, now() - interval '1 second') returning id",
           [post, mod1],
         )
       ).rows[0].id;
@@ -130,6 +135,145 @@ describe.skipIf(!dbUp)("Walkthrough X1: post → pin → remove → appeal → o
         [post],
       );
       expect(trail.rows[0].n).toBe(2); // remove + restore — the append-only record
+    });
+  });
+});
+
+describe.skipIf(!dbUp)("Walkthrough C1: mint → fetch → rotate → leave → dead feed", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  it("carries a feed through its whole life under the owner's standing", async () => {
+    await h.inTxn(async (c) => {
+      const alice = "c1a10000-0000-0000-0000-00000000000a";
+      const gid = "c1a10000-0000-0000-0000-00000000000b";
+      await h.createMember(alice, "alice-c1@rls.test", { verified: true });
+      await c.query(
+        "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'c1-wt-' || substr($2, 1, 8), 'C1 walkthrough group', 'members_only', 'request')",
+        [gid, gid],
+      );
+      await c.query(
+        "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'active')",
+        [gid, alice],
+      );
+      // One group event (with an end → DTEND source), one Everyone event
+      // alice RSVP'd (the only door Everyone events have into My Calendar).
+      const ev1 = (
+        await c.query(
+          "insert into events (creator_id, group_id, title, starts_at, ends_at, location) values ($1, $2, 'Group hall night', now() + interval '3 days', now() + interval '3 days 2 hours', 'Grange Hall') returning id",
+          [alice, gid],
+        )
+      ).rows[0].id;
+      const everyone = (await c.query("select id from groups where slug = 'everyone'"))
+        .rows[0].id;
+      const ev2 = (
+        await c.query(
+          "insert into events (creator_id, group_id, title, starts_at, location) values ($1, $2, 'Town picnic', now() + interval '5 days', 'Sam Johnson Park') returning id",
+          [alice, everyone],
+        )
+      ).rows[0].id;
+      await c.query(
+        "insert into event_rsvps (event_id, user_id, status) values ($1, $2, 'going')",
+        [ev2, alice],
+      );
+
+      // MINT (as alice) — the server makes the secrets; 256-bit hex.
+      await h.actAs(alice);
+      const personal = (await c.query("select * from public.mint_calendar_feed()")).rows[0];
+      const group = (
+        await c.query("select * from public.mint_calendar_feed($1)", [gid])
+      ).rows[0];
+      expect(personal.feed_token).toMatch(/^[0-9a-f]{64}$/);
+      expect(group.feed_token).toMatch(/^[0-9a-f]{64}$/);
+
+      // FETCH (as the route does: service_role). Clear the sub first — every
+      // owner-context write below must see auth.uid() = null.
+      await c.query("select set_config('request.jwt.claims', '', true)");
+      await c.query("reset role");
+      await c.query("set local role service_role");
+      const pay = (
+        await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token])
+      ).rows[0].p;
+      expect(pay.ok).toBe(true);
+      expect(pay.cal_name).toBe("Steppe — My calendar · Mi calendario");
+      // Both scopes, one clock, ascending (+3d before +5d).
+      expect(pay.events.map((e: { id: string }) => e.id)).toEqual([ev1, ev2]);
+      // Minimized payload: exactly the seven keys, nothing more (spec §6.2).
+      expect(Object.keys(pay.events[0]).sort()).toEqual([
+        "created_at",
+        "ends_at",
+        "id",
+        "location",
+        "starts_at",
+        "status",
+        "title",
+      ]);
+      expect(pay.events[0].ends_at).not.toBeNull(); // DTEND source carried
+      await c.query("reset role");
+
+      // The member-visible leak detector stamped (C-G3).
+      const stamped = await c.query(
+        "select last_fetched_at from calendar_feeds where id = $1",
+        [personal.feed_id],
+      );
+      expect(stamped.rows[0].last_fetched_at).not.toBeNull();
+
+      // ROTATE (as alice) — the old token dies the instant the new one exists.
+      await h.actAs(alice);
+      const fresh = (
+        await c.query("select public.rotate_calendar_feed($1) as t", [personal.feed_id])
+      ).rows[0].t;
+      expect(fresh).not.toBe(personal.feed_token);
+      await c.query("select set_config('request.jwt.claims', '', true)");
+      await c.query("reset role");
+      await c.query("set local role service_role");
+      expect(
+        (await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token]))
+          .rows[0].p,
+      ).toEqual({ ok: false });
+      expect(
+        (await c.query("select public.calendar_feed_payload($1) as p", [fresh])).rows[0].p.ok,
+      ).toBe(true);
+      await c.query("reset role");
+
+      // LEAVE — the group's rows fall out of the personal feed (RSVP'd or
+      // not); the group feed dies whole. Fail closed, no cleanup job.
+      await c.query("delete from group_members where group_id = $1 and user_id = $2", [
+        gid,
+        alice,
+      ]);
+      await c.query("set local role service_role");
+      const after = (
+        await c.query("select public.calendar_feed_payload($1) as p", [fresh])
+      ).rows[0].p;
+      expect(after.ok).toBe(true);
+      expect(after.events.map((e: { id: string }) => e.id)).toEqual([ev2]);
+      expect(
+        (await c.query("select public.calendar_feed_payload($1) as p", [group.feed_token]))
+          .rows[0].p,
+      ).toEqual({ ok: false });
+      await c.query("reset role");
+
+      // REVOKE (as alice) — delete = the feed is gone for good.
+      await h.actAs(alice);
+      const del = await c.query("delete from calendar_feeds where id = $1", [personal.feed_id]);
+      expect(del.rowCount).toBe(1);
+      await c.query("select set_config('request.jwt.claims', '', true)");
+      await c.query("reset role");
+      await c.query("set local role service_role");
+      expect(
+        (await c.query("select public.calendar_feed_payload($1) as p", [fresh])).rows[0].p,
+      ).toEqual({ ok: false });
+      await c.query("reset role");
     });
   });
 });
