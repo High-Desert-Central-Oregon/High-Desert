@@ -43,6 +43,28 @@ withhold. This ballot is the giving-or-withholding.
 Choices: **Yes / No / Abstain**. Kind: **major** (provisional 60% threshold,
 15% quorum — Business Plan v12 config, itself pending cohort ratification).
 
+## Arguments
+
+**The case for.** The season on the poster is already given to the town —
+these dates are public information, and a feed is the poster's QR made
+durable: the same dates, in a neighbor's phone, staying current when the
+season changes. The exposure is bounded and visible by design; the mechanics
+below (the minimized payload, the transparency listing, the audit log,
+governance revocation) are the mitigations that keep it that way.
+
+**The case against.** This would be Steppe's first **standing anonymous
+grant** of member-created content — exactly the line the G-2 ruling reserved
+for the community, and a line is easiest to hold before its first crossing.
+Once third parties embed a feed — the library's website, a printed QR
+pointing at it — revocation stops being a clean delete and starts carrying
+real-world cost; the mitigations make withdrawal possible, not painless.
+
+**Docket note.** A YES as drafted carries a second consequence the cohort
+should see plainly: it also **creates the Vendor Markets group** (mechanics
+item 5 moves the season off the Everyone board so the public grant is scoped
+to what the poster actually advertises). The vote is therefore a capability
+*and* a new group with maintainers — not a settings change alone.
+
 ## What YES builds (mechanics)
 
 The recommended implementation, so the cohort votes on a concrete thing:
