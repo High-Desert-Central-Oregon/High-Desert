@@ -15,6 +15,12 @@
 --   • Re-runnable: UPDATEs the existing 0.1 rows in place. When the final,
 --     lawyer-reviewed text is ready, publish it as a NEW version (e.g. '1.0')
 --     so members are asked to re-consent (a new document id = re-confirm).
+--   • FOR COUNSEL (Privacy §7, "Calendar links you create"): the
+--     stops-working list enumerates leave-group / close-account / remove.
+--     Consider a catch-all — e.g. "or when your membership standing
+--     changes" — so unverification, group archival, and future standing
+--     edges are absorbed without enumerating each (the system already
+--     behaves this way; migration 0020 re-checks standing on every serve).
 --
 -- Run AFTER schema.sql, against the same Supabase project.
 -- ============================================================================
