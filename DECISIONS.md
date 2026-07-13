@@ -7,6 +7,83 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-07-13 — Messages (M1) approved to build; privacy posture ratified; seven M-G flags resolved
+
+**Decision.** Build member messaging per `docs/spec/messages-m1-spec-v1.md`
+(Part II adopted as written except where amended below): DMs only,
+context-anchored starts, text-only, poll-on-nav, one thread per pair.
+
+- **M-G1 (privacy architecture)** — **plaintext-with-RLS ratified**, on
+  three conditions, all binding:
+  1. **The zero-read pin.** No policy grants any non-participant SELECT on
+     threads, messages, thread state, or blocks — moderators and admins are
+     ordinary members here — and the refusal matrix + test suite pin this
+     *behaviorally* (a moderator persona reads nothing), so a regression
+     cannot pass green.
+  2. **The honest Terms paragraph.** The counsel packet gains plain
+     language: nobody who runs Steppe can read messages in the app; the
+     people who operate the database could technically access it; our rules
+     forbid it, our tooling doesn't provide it, and saying so plainly is
+     part of the promise.
+  3. **The full costing, on this record.** What rejecting E2E costs and
+     buys: E2E would make operator reading *impossible*, but on this
+     architecture it also means — magic-link auth leaves no durable client
+     key material, so a new device (or cleared browser) loses all history
+     unless keys are escrowed, which reintroduces the operator trust it
+     removed; the server-rendered, low-bandwidth app becomes a heavy
+     crypto-bearing client; promise-4 export stops being a server feature;
+     a reported excerpt can never be verified against anything, making
+     abuse review unverifiable hearsay; and a hand-rolled E2E layer fails
+     the intern-can-audit rule. Plaintext's cost, named without flinching:
+     the database, its backups, and the service key can technically reach
+     message bodies — the operator is a confidant by structure (enumerated
+     admin-client uses, messages never among them), not by cryptography.
+     Member-owned data cuts both ways: E2E maximizes exclusive possession;
+     plaintext preserves exportability, portability, and device continuity.
+     M1 weighs the second reading heavier; **E2E remains available to the
+     cohort as a real ballot**, never a config flip.
+- **M-G4 (sequencing)** — **Reports are M1 Part 1**: the intake ships
+  before any messaging surface, so the abuse valve exists before the
+  channel. This also pays the X1 §8 debt (the post-detail Report button).
+  Moderator access to message content is consent-based only: a participant's
+  own quoted excerpt attached to their report — never the thread.
+- **M-G2 (deletion & the counterpart's copy)** — **bodies survive, signed.**
+  A conversation is co-owned; deleting an account scrubs the leaver's
+  identity (the "Former member" tombstone) but does not erase their words
+  from the other member's thread — the appeals/votes precedent, the email
+  intuition, and the evidence-shredder argument all point the same way.
+  **Owed and tracked:** the member-facing deletion copy amendment (the
+  kept-list gains messages; the consent-record line is verified present —
+  0020 changed that behavior).
+- **M-G3 (block posture)** — **silent block.** No moderator is notified by
+  a block, so no copy may claim one was: the bundle's "Blocked · a steward
+  was notified" string is NOT shipped in any form. Notification belongs to
+  the Report verb, which is consent by definition.
+- **M-G5 (the host button)** — **deferred entirely.** The bundle messages
+  the group identity ("Repair Collective"); M1 cannot deliver a counterpart
+  that can actually answer, and substituting the creator's personal inbox
+  would misrepresent who is listening. Event detail ships with NO message
+  button until group counterparts arrive with the v2 §5 scope.
+- **Replies-as-DMs — recorded as chosen.** The bundle's model (a group
+  post's "replies" are direct messages to the author through the one store,
+  :1942; no comment feeds anywhere) is adopted deliberately, not by
+  omission. Steppe has no public reply/comment surface; conversation is
+  person-to-person.
+- **M-G6** — messages appear NOWHERE in the audit log (no metadata
+  relationship graph); the transparency page's completeness claim is
+  scoped accordingly. **M-G7** — the new-thread rate cap (10/day) lives
+  with the provisional governance config for the cohort to ratify.
+
+**How it lands.** Part 1: `0021_reports.sql` + post-detail Report + queue
+integration (four-lens review; manual apply gate). Part 2: this record +
+the spec. Part 3: `0022_messages.sql` (four-lens with the zero-read pin,
+purge-on-delete for all four tables, no-oracle refusals, privilege-
+determinism immutability; manual apply gate). Part 4: the UI (inbox,
+thread, doors, header dot, un-reserved strings, deletion copy). Part 5:
+Terms paragraph (review-gate branch) + refusal/walkthrough tests, push.
+
+---
+
 ## 2026-07-12 — Calendar (C1) approved to build; four C-G flags resolved; ends_at folded in
 
 **Decision.** Build the calendar layer per `docs/spec/calendar-c1-spec-v1.md`
