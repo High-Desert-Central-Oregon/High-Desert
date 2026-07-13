@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { buildIcs } from "@/lib/ics";
 
 /**
  * Add to calendar — bundle behavior (inner.html :936-941, addToCalendar
@@ -8,10 +9,10 @@ import { useState } from "react";
  * server state, works offline). The copy-details panel is the SECONDARY
  * fallback: nothing renders until the button is tapped; after a successful
  * download it appears collapsed (a details/summary the member can expand to
- * copy), and it auto-expands only when the download itself failed. The event
- * has no end time in the schema, so the VEVENT carries only DTSTART —
- * calendar apps treat it as a point/default-length event; nothing is
- * invented.
+ * copy), and it auto-expands only when the download itself failed. The VEVENT
+ * carries only DTSTART — calendar apps treat it as a point/default-length
+ * event; nothing is invented. Document assembly (RFC 5545 escaping + line
+ * folding) lives in lib/ics.ts, shared with the subscription-feed route.
  */
 export function AddToCalendar({
   eventId,
@@ -28,24 +29,19 @@ export function AddToCalendar({
 }) {
   const [state, setState] = useState<"idle" | "done" | "failed">("idle");
 
-  const stamp = (iso: string) =>
-    new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-
-  const ics = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Steppe//Exchange//EN",
-    "CALSCALE:GREGORIAN",
-    "BEGIN:VEVENT",
-    `UID:${eventId}@steppe.community`,
-    `DTSTAMP:${stamp(new Date().toISOString())}`,
-    `DTSTART:${stamp(startsAt)}`,
-    `SUMMARY:${title}`,
-    ...(location ? [`LOCATION:${location}`] : []),
-    `DESCRIPTION:${labels.description}`,
-    "END:VEVENT",
-    "END:VCALENDAR",
-  ].join("\r\n");
+  const ics = buildIcs({
+    prodId: "-//Steppe//Exchange//EN",
+    events: [
+      {
+        uid: `${eventId}@steppe.community`,
+        dtstamp: new Date().toISOString(),
+        dtstart: startsAt,
+        summary: title,
+        location,
+        description: labels.description,
+      },
+    ],
+  });
 
   const download = () => {
     try {
