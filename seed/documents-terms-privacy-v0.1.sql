@@ -15,6 +15,12 @@
 --   • Re-runnable: UPDATEs the existing 0.1 rows in place. When the final,
 --     lawyer-reviewed text is ready, publish it as a NEW version (e.g. '1.0')
 --     so members are asked to re-consent (a new document id = re-confirm).
+--   • FOR COUNSEL (Privacy §7, "Calendar links you create"): the
+--     stops-working list enumerates leave-group / close-account / remove.
+--     Consider a catch-all — e.g. "or when your membership standing
+--     changes" — so unverification, group archival, and future standing
+--     edges are absorbed without enumerating each (the system already
+--     behaves this way; migration 0020 re-checks standing on every serve).
 --
 -- Run AFTER schema.sql, against the same Supabase project.
 -- ============================================================================
@@ -156,6 +162,8 @@ We use your information for one purpose: to operate Steppe and its governance �
 ## 7 · Who we share with
 
 We do not sell or rent your data to anyone. We use a small number of service providers strictly to run the platform — currently our hosting and database provider (Supabase) and an email-delivery provider — under agreements that limit them to that purpose. We use no advertising networks. We disclose information to authorities only when legally required, and we will push back on requests that are overbroad.
+
+**Calendar links you create.** You can create a private calendar link so your own calendar app can read your Steppe calendar — your RSVPs and your groups' gatherings, or one group's schedule. A calendar link carries only event titles, times, and places — never names, messages, or who else is coming. Anyone who has the link can read that calendar, so treat it like a key: your account page shows when each link was last read, and you can replace or remove a link at any time. A link stops working the moment you leave the group it covers, close your account, or remove it. The last-read record exists so you can spot a link that shouldn't still be in use; it is visible only to you and is never used for anything else.
 
 ## 8 · Cookies & analytics
 
