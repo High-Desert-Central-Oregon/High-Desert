@@ -5,6 +5,13 @@ import { Masthead } from "@/components/broadsheet/masthead";
 import { SectionLabel } from "@/components/broadsheet/section-row";
 import { DateTileRow } from "@/components/broadsheet/date-tile-row";
 import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
+import { ViewToggle } from "@/components/broadsheet/view-toggle";
+import {
+  MonthView,
+  dayFromParam,
+  monthBoundsUtc,
+  monthFromParam,
+} from "@/components/broadsheet/month-view";
 import { VerifiedGate } from "@/components/verified-gate";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
@@ -38,7 +45,15 @@ type CalendarEvent = {
   location: string | null;
 };
 
-async function MyCalendarContent() {
+type SearchParams = { v?: string; m?: string; d?: string };
+
+const BASE = "/protected/account/calendar";
+
+async function MyCalendarContent({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
   const { locale, dict } = await getServerDictionary();
@@ -53,8 +68,18 @@ async function MyCalendarContent() {
       />
     );
 
+  const sp = await searchParams;
+  const isMonth = sp.v === "month";
+  const ref = monthFromParam(sp.m);
+  const selected = dayFromParam(sp.d, ref);
+
   const supabase = await createClient();
-  const nowIso = new Date().toISOString();
+
+  // Agenda looks forward from now; the month view covers the shown month
+  // (spec §4.2) — including its already-past days.
+  const bounds = isMonth
+    ? monthBoundsUtc(ref)
+    : { startIso: new Date().toISOString(), endIso: null };
 
   // The two membership sources (own rows only; both indexed lookups).
   const [{ data: memberships }, { data: rsvps }] = await Promise.all([
@@ -73,32 +98,31 @@ async function MyCalendarContent() {
     (rsvps ?? []).map((r) => [r.event_id as string, r.status as string]),
   );
 
+  // One window, two scopes: the same bounded query filtered to my groups or
+  // to my RSVP'd event ids.
   const eventCols = "id, title, starts_at, location";
+  const windowedScope = (kind: "group" | "rsvp") => {
+    let q = supabase
+      .from("events")
+      .select(eventCols)
+      .eq("status", "active")
+      .gte("starts_at", bounds.startIso)
+      .order("starts_at", { ascending: true })
+      .limit(isMonth ? 500 : 200);
+    if (bounds.endIso) q = q.lt("starts_at", bounds.endIso);
+    q =
+      kind === "group"
+        ? q.in("group_id", groupIds)
+        : q.in("id", [...rsvpStatus.keys()]);
+    return q.returns<CalendarEvent[]>().then((r) => r.data ?? []);
+  };
 
   const [groupEvents, rsvpEvents, hidden] = await Promise.all([
     groupIds.length
-      ? supabase
-          .from("events")
-          .select(eventCols)
-          .in("group_id", groupIds)
-          .eq("status", "active")
-          .gte("starts_at", nowIso)
-          .order("starts_at", { ascending: true })
-          .limit(200)
-          .returns<CalendarEvent[]>()
-          .then((r) => r.data ?? [])
+      ? windowedScope("group")
       : Promise.resolve([] as CalendarEvent[]),
     rsvpStatus.size
-      ? supabase
-          .from("events")
-          .select(eventCols)
-          .in("id", [...rsvpStatus.keys()])
-          .eq("status", "active")
-          .gte("starts_at", nowIso)
-          .order("starts_at", { ascending: true })
-          .limit(200)
-          .returns<CalendarEvent[]>()
-          .then((r) => r.data ?? [])
+      ? windowedScope("rsvp")
       : Promise.resolve([] as CalendarEvent[]),
     getHiddenIds(supabase, "event"),
   ]);
@@ -111,7 +135,7 @@ async function MyCalendarContent() {
   }
   const events = [...byId.values()]
     .sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at))
-    .slice(0, 200);
+    .slice(0, isMonth ? 500 : 200);
 
   // Group under mono month heads (Redmond's calendar, not the browser's).
   const monthOf = new Intl.DateTimeFormat(locale, {
@@ -146,8 +170,28 @@ async function MyCalendarContent() {
         voice={dict.calendar.voice}
         flush
       />
+      <ViewToggle
+        active={isMonth ? "month" : "agenda"}
+        agendaHref={BASE}
+        monthHref={`${BASE}?v=month`}
+        dict={dict}
+        className="-mt-1"
+      />
 
-      {events.length === 0 ? (
+      {isMonth ? (
+        <MonthView
+          events={events.map((e) => ({
+            ...e,
+            tag:
+              rsvpStatus.get(e.id) === "maybe" ? dict.calendar.maybeTag : null,
+          }))}
+          locale={locale}
+          dict={dict}
+          basePath={BASE}
+          month={ref}
+          selectedDay={selected}
+        />
+      ) : events.length === 0 ? (
         <QuietEmpty
           title={dict.calendar.emptyTitle}
           sub={dict.calendar.emptySub}
@@ -178,10 +222,14 @@ async function MyCalendarContent() {
   );
 }
 
-export default function MyCalendarPage() {
+export default function MyCalendarPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <MyCalendarContent />
+      <MyCalendarContent searchParams={searchParams} />
     </Suspense>
   );
 }

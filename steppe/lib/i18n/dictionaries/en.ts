@@ -239,6 +239,12 @@ export const en = {
     voice:
       "Your gatherings in one column — what you answered and where you belong.",
     maybeTag: "Maybe",
+    // Agenda | Month toggle + the month grid (spec §1.2–1.3).
+    segAgenda: "Agenda",
+    segMonth: "Month",
+    prevMonth: "Previous month",
+    nextMonth: "Next month",
+    hasEvents: "events scheduled",
     emptyTitle: "Nothing on your calendar yet",
     emptySub: "RSVP to a gathering, or join a group.",
     gateTitle: "Verify to see your calendar",

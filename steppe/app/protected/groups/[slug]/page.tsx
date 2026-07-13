@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { MarkerChip } from "@/components/broadsheet/chips";
 import { SectionLabel } from "@/components/broadsheet/section-row";
 import { DateTileRow } from "@/components/broadsheet/date-tile-row";
+import { ViewToggle } from "@/components/broadsheet/view-toggle";
+import {
+  MonthView,
+  dayFromParam,
+  monthBoundsUtc,
+  monthFromParam,
+} from "@/components/broadsheet/month-view";
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "../membership-control";
 import { LeaveGroupButton } from "../leave-group-button";
@@ -47,7 +54,15 @@ type RosterEntry = {
   status: GroupMemberRow["status"];
 };
 
-async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
+type SearchParams = { v?: string; m?: string; d?: string };
+
+async function GroupContent({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<SearchParams>;
+}) {
   const { slug } = await params;
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
@@ -159,16 +174,31 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
 
   // The group's upcoming events (0018 events.group_id) — RLS already scopes
   // members-only groups to active members; hidden events drop out (P7).
+  // ?v=month swaps the agenda slice for the month grid (calendar-c1-spec
+  // §1.2–1.3): same scope, the shown month's window instead of now-forward.
+  const sp = await searchParams;
+  const isMonthView = sp.v === "month";
+  const monthRef = monthFromParam(sp.m);
+  const selectedDay = dayFromParam(sp.d, monthRef);
+  const monthBounds = monthBoundsUtc(monthRef);
+
+  let upQuery = supabase
+    .from("events")
+    .select("id, title, starts_at, location")
+    .eq("group_id", dir.id)
+    .eq("status", "active")
+    .order("starts_at", { ascending: true });
+  upQuery = isMonthView
+    ? upQuery
+        .gte("starts_at", monthBounds.startIso)
+        .lt("starts_at", monthBounds.endIso)
+        .limit(500)
+    : upQuery.gte("starts_at", new Date().toISOString()).limit(10);
+
   const [{ data: upRows }, hiddenEvents] = await Promise.all([
-    supabase
-      .from("events")
-      .select("id, title, starts_at, location")
-      .eq("group_id", dir.id)
-      .eq("status", "active")
-      .gte("starts_at", new Date().toISOString())
-      .order("starts_at", { ascending: true })
-      .limit(10)
-      .returns<{ id: string; title: string; starts_at: string; location: string | null }[]>(),
+    upQuery.returns<
+      { id: string; title: string; starts_at: string; location: string | null }[]
+    >(),
     getHiddenIds(supabase, "event"),
   ]);
   const upcoming = (upRows ?? []).filter((e) => !hiddenEvents.has(e.id));
@@ -259,26 +289,49 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
       </section>
 
       {/* Upcoming — the group's calendar slice (spec §6.4/§7.2): date-tile
-          rows, soonest first. RLS scopes events to members for members-only
-          groups; an empty list renders nothing (no dead rows). */}
-      {upcoming.length > 0 && (
+          rows, soonest first, with the Agenda|Month toggle inline in the
+          section head (C1 §1.2). An empty agenda with no month view renders
+          nothing (no dead rows); the toggle appears with the content. */}
+      {(upcoming.length > 0 || isMonthView) && (
         <section className="flex flex-col gap-1">
-          <SectionLabel>{dict.groups.upcomingSection}</SectionLabel>
-          <ul className="flex flex-col border-t">
-            {upcoming.map((e) => (
-              <li key={e.id}>
-                <DateTileRow
-                  href={`/protected/events/${e.id}`}
-                  iso={e.starts_at}
-                  locale={locale}
-                  title={e.title}
-                  when={[formatRedmondDateTime(e.starts_at, locale), e.location]
-                    .filter(Boolean)
-                    .join(" · ")}
-                />
-              </li>
-            ))}
-          </ul>
+          <div className="flex items-baseline justify-between">
+            <SectionLabel>{dict.groups.upcomingSection}</SectionLabel>
+            <ViewToggle
+              active={isMonthView ? "month" : "agenda"}
+              agendaHref={`/protected/groups/${dir.slug}`}
+              monthHref={`/protected/groups/${dir.slug}?v=month`}
+              dict={dict}
+            />
+          </div>
+          {isMonthView ? (
+            <MonthView
+              events={upcoming}
+              locale={locale}
+              dict={dict}
+              basePath={`/protected/groups/${dir.slug}`}
+              month={monthRef}
+              selectedDay={selectedDay}
+            />
+          ) : (
+            <ul className="flex flex-col border-t">
+              {upcoming.map((e) => (
+                <li key={e.id}>
+                  <DateTileRow
+                    href={`/protected/events/${e.id}`}
+                    iso={e.starts_at}
+                    locale={locale}
+                    title={e.title}
+                    when={[
+                      formatRedmondDateTime(e.starts_at, locale),
+                      e.location,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
 
@@ -318,12 +371,14 @@ async function GroupContent({ params }: { params: Promise<{ slug: string }> }) {
 
 export default function GroupPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <GroupContent params={params} />
+      <GroupContent params={params} searchParams={searchParams} />
     </Suspense>
   );
 }

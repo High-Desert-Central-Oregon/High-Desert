@@ -239,6 +239,11 @@ export const es: Dictionary = {
     voice:
       "Tus encuentros en una columna — lo que respondiste y donde perteneces.",
     maybeTag: "Quizá",
+    segAgenda: "Agenda",
+    segMonth: "Mes",
+    prevMonth: "Mes anterior",
+    nextMonth: "Mes siguiente",
+    hasEvents: "eventos programados",
     emptyTitle: "Aún no hay nada en tu calendario",
     emptySub: "Confirma tu asistencia a un evento, o únete a un grupo.",
     gateTitle: "Verifícate para ver tu calendario",
