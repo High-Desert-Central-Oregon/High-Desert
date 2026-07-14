@@ -134,23 +134,31 @@ steps:
           echo "mirror URL: in-repo default (MIRROR_GIT_URL not injected)"
         fi
         canonical="${CI_COMMIT_SHA}"
+        if [ -z "$canonical" ]; then
+          echo "PROVENANCE FAIL: canonical (CI_COMMIT_SHA) is empty — cannot compare."
+          exit 1
+        fi
         echo "canonical (Codeberg) main HEAD: $canonical"
         mirror=""
         i=1
         while [ "$i" -le 6 ]; do
+          # Capture the mirror HEAD ONCE per attempt into $mirror; the value logged
+          # below and the value compared are the SAME variable (no buffering ambiguity).
           mirror=$(git ls-remote "$url" refs/heads/main | awk '{print $1}')
           echo "attempt $i — mirror (GitHub) main HEAD: ${mirror:-<none>}"
-          if [ "$mirror" = "$canonical" ]; then
-            echo "PROVENANCE OK: GitHub mirror == Codeberg main. Vercel will deploy canonical."
+          # Empty is NEVER a match: an absent mirror HEAD must fail the check, never
+          # green-light "empty == canonical". Require non-empty AND equal.
+          if [ -n "$mirror" ] && [ "$mirror" = "$canonical" ]; then
+            echo "PROVENANCE OK: GitHub mirror ($mirror) == Codeberg main ($canonical). Vercel will deploy canonical."
             exit 0
           fi
           i=$((i + 1))
           [ "$i" -le 6 ] && sleep 10
         done
         echo ""
-        echo "PROVENANCE MISMATCH: the GitHub mirror did not converge within ~60s."
+        echo "PROVENANCE MISMATCH: the GitHub mirror did not converge within ~60s (or stayed empty)."
         echo "  canonical=$canonical  mirror=${mirror:-<none>}"
-        echo "  A stuck/partial mirror means Vercel may deploy stale code."
+        echo "  A stuck/partial/empty mirror means Vercel may deploy stale code."
         echo "  Investigate the Codeberg -> GitHub push mirror (see docs/deploy-provenance.md)."
         exit 1
 

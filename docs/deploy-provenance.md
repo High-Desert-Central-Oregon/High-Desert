@@ -21,8 +21,9 @@ not depend on secret injection. It compares the mirror's `main` HEAD to the cano
 (`CI_COMMIT_SHA`), retrying for ~60s to tolerate normal async mirror lag:
 
 - **Converges** → `PROVENANCE OK` (Vercel will deploy canonical). Pipeline passes.
-- **Does not converge in ~60s** → the step **fails loudly** with both SHAs, so a stuck mirror
-  is visible in CI instead of shipping stale code unnoticed.
+- **Does not converge in ~60s, or the mirror HEAD is empty** → the step **fails loudly** with
+  both SHAs. Empty is never treated as a match (the compare requires a non-empty mirror SHA
+  equal to canonical), so a stuck/empty mirror is visible in CI, not shipped as stale code.
 
 ### Why the URL isn't a required secret
 
