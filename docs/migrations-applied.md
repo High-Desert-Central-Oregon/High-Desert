@@ -20,10 +20,11 @@ status question resolves by running that query against prod, never by recalling 
 
 ## Applied status (as of 2026-07-14)
 
-All migrations **0012–0022 are applied and live in production.** Status below was verified
+All migrations **0012–0023 are applied and live in production.** Status below was verified
 against prod with the probe query in the next section (owner-run, output confirmed 2026-07-14);
 `Applied on` uses each migration's introducing-commit date as the by-hand-apply proxy (owner may
-refine specific dates).
+refine specific dates). 0023 (profile visibility + perf indexes) was applied by hand at its
+stop-gate on 2026-07-14, after its four-lens review and a GREEN `seed/matrix-0023.sql` dry-run.
 
 | Migration | Introduced by | Applied on | Method | Status |
 |-----------|---------------|-----------|--------|--------|
@@ -38,6 +39,7 @@ refine specific dates).
 | 0020 calendar feeds + `events.ends_at` | `d241ff0` | 2026-07-12 | by hand, SQL editor | ✅ Applied |
 | 0021 reports intake | `96c2ee9` | 2026-07-13 | by hand, SQL editor | ✅ Applied |
 | 0022 member messages | `22370c2` | 2026-07-13 | by hand, SQL editor | ✅ Applied |
+| 0023 profile visibility (Y1) + 4 perf indexes | `978b239` | 2026-07-14 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -101,7 +103,16 @@ from (values
    exists (select 1 from information_schema.tables where table_name = 'threads')
      and exists (select 1 from information_schema.tables where table_name = 'messages')
      and exists (select 1 from information_schema.tables where table_name = 'thread_state')
-     and exists (select 1 from information_schema.tables where table_name = 'member_blocks'))
+     and exists (select 1 from information_schema.tables where table_name = 'member_blocks')),
+  ('0023 profile visibility + perf indexes',
+   'neighborhood_visibility col + pf_read owner-only + 4 perf indexes',
+   exists (select 1 from information_schema.columns
+           where table_name = 'profiles' and column_name = 'neighborhood_visibility')
+     and exists (select 1 from pg_policies where tablename = 'profiles'
+                 and policyname = 'pf_read' and qual not ilike '%is_moderator%')
+     and (select count(*) from pg_indexes where schemaname = 'public'
+          and indexname in ('events_group_created_idx', 'events_status_starts_idx',
+                            'moderation_actions_target_idx', 'thread_state_member_idx')) = 4)
 ) as m(migration, probe, present)
 order by m.migration;
 ```
