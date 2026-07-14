@@ -30,6 +30,13 @@ steps:
   # `b474598` defect class, where the sign-off was typed into the subject line
   # instead of applied by `git commit -s`, so it is NOT a trailer. Runs only on
   # main (the protected branch); feature branches are unaffected.
+  #
+  # SCOPE: the PUSHED RANGE only (CI_PREV_COMMIT_SHA..CI_COMMIT_SHA, which is
+  # exclusive of the old tip), or HEAD alone when the previous commit isn't
+  # available (new branch / shallow clone). It never re-audits landed history —
+  # so the pre-existing main HEAD `b474598` (subject-line sign-off) is the left
+  # endpoint of the range and is NOT re-checked on the first legitimate push.
+  # Do NOT change this to a full-history scan: that would trip on b474598.
   dco-signoff:
     image: alpine/git
     when:
@@ -91,6 +98,55 @@ steps:
         from_secret: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
     commands:
       - npm run build
+
+  # ---------------------------------------------------------------------------
+  # Deploy-provenance check (health-check H3). Vercel deploys off the GitHub
+  # MIRROR of this canonical Codeberg repo. If the Codeberg->GitHub push mirror
+  # is stuck or partial, Vercel would deploy STALE code — silently. This step,
+  # on push to main, compares the GitHub mirror's main HEAD to this canonical
+  # HEAD and FAILS if they don't converge within ~60s (a stuck mirror becomes
+  # loud, not silent). Normal async mirror lag is tolerated by the retry window.
+  #
+  # MIRROR_GIT_URL is referenced by name only (add it in Woodpecker -> Secrets,
+  # the GitHub mirror: https://github.com/High-Desert-Central-Oregon/High-Desert.git).
+  # If unset, the step soft-skips with instructions, so it never breaks CI early.
+  # See docs/deploy-provenance.md for the manual-fallback equivalent.
+  mirror-provenance:
+    image: alpine/git
+    when:
+      - event: push
+        branch: main
+    environment:
+      MIRROR_GIT_URL:
+        from_secret: MIRROR_GIT_URL
+    commands:
+      - |
+        set -eu
+        if [ -z "${MIRROR_GIT_URL:-}" ]; then
+          echo "MIRROR_GIT_URL secret not set — skipping deploy-provenance check."
+          echo "Set it in Woodpecker -> Secrets to the GitHub mirror URL to enable."
+          exit 0
+        fi
+        canonical="${CI_COMMIT_SHA}"
+        echo "canonical (Codeberg) main HEAD: $canonical"
+        mirror=""
+        i=1
+        while [ "$i" -le 6 ]; do
+          mirror=$(git ls-remote "$MIRROR_GIT_URL" refs/heads/main | awk '{print $1}')
+          echo "attempt $i — mirror (GitHub) main HEAD: ${mirror:-<none>}"
+          if [ "$mirror" = "$canonical" ]; then
+            echo "PROVENANCE OK: GitHub mirror == Codeberg main. Vercel will deploy canonical."
+            exit 0
+          fi
+          i=$((i + 1))
+          [ "$i" -le 6 ] && sleep 10
+        done
+        echo ""
+        echo "PROVENANCE MISMATCH: the GitHub mirror did not converge within ~60s."
+        echo "  canonical=$canonical  mirror=${mirror:-<none>}"
+        echo "  A stuck/partial mirror means Vercel may deploy stale code."
+        echo "  Investigate the Codeberg -> GitHub push mirror (see docs/deploy-provenance.md)."
+        exit 1
 
   # ===========================================================================
   # OPT-IN (DISABLED): trigger a Vercel deploy directly from Woodpecker.
