@@ -379,11 +379,11 @@
     "ballotCast": "Voto emitido",
     "votedH": "Voto registrado, y secreto.",
     "votedP": "Nadie puede ver cómo votaste. Los votos se ponderan por antigüedad, de 1× a 3× según los estatutos: cada miembro empieza en 1×, así que al inicio todos los votos valen lo mismo. El peso crece con la antigüedad de membresía y los miembros pueden modificar la escala.",
-    "youHandle": "@you · privado por defecto",
-    "username": "Nombre de usuario",
-    "usernameSub": "Cómo te encuentran los vecinos",
+    "youHandle": "Tu nombre · privado por defecto",
+    "username": "Nombre visible",
+    "usernameSub": "Cómo te conocen los vecinos",
     "alwaysShown": "Siempre visible",
-    "fieldName": "Nombre real",
+    "fieldName": "Nombre completo",
     "fieldNeighborhood": "Vecindario",
     "fieldEmail": "Correo electrónico",
     "fieldPhone": "Teléfono",
@@ -410,6 +410,6 @@
     "capYouK": "Tú",
     "capYouH": "Privado hasta que tú digas.",
     "capYouP": "Tu perfil empieza en privado. Mantén cada campo oculto o muéstralo a los miembros. Es campo por campo, y la decisión es tuya. Nunca te quitaremos eso.",
-    "capYouM": "El nombre de usuario siempre se muestra · todo lo demás es tu decisión"
+    "capYouM": "Tu nombre visible siempre se muestra · todo lo demás es tu decisión"
   }
 }

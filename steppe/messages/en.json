@@ -377,11 +377,11 @@
     "ballotCast": "Ballot cast",
     "votedH": "Ballot recorded, and secret.",
     "votedP": "No one can see how you voted. Ballots are tenure-weighted, 1×–3× per the bylaws: every member starts at 1×, so at launch all votes count equally. Weight accrues with membership tenure, and members can amend the schedule.",
-    "youHandle": "@you · private by default",
-    "username": "Username",
-    "usernameSub": "How neighbors find you",
+    "youHandle": "Your name · private by default",
+    "username": "Display name",
+    "usernameSub": "How neighbors know you",
     "alwaysShown": "Always shown",
-    "fieldName": "Real name",
+    "fieldName": "Full name",
     "fieldNeighborhood": "Neighborhood",
     "fieldEmail": "Email",
     "fieldPhone": "Phone",
@@ -408,6 +408,6 @@
     "capYouK": "You",
     "capYouH": "Private until you say so.",
     "capYouP": "Your profile starts private. Keep each field hidden, or show it to members. It's field by field, and it's your call. We will never take that from you.",
-    "capYouM": "Username always shown · everything else your choice"
+    "capYouM": "Your display name is always shown · everything else your choice"
   }
 }
