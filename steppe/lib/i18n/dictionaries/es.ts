@@ -46,6 +46,7 @@ export const es: Dictionary = {
     appealsLink: "Apelaciones",
     accountLink: "Tú",
     searchLabel: "Buscar",
+    messagesLabel: "Mensajes",
     confirmDiscard: "¿Descartar lo que escribiste?",
   },
 
@@ -230,6 +231,48 @@ export const es: Dictionary = {
     gateBody:
       "Los eventos del vecindario son para residentes verificados de Redmond. Verifica tu residencia para ver y crear encuentros.",
     gateCta: "Verifica tu residencia",
+  },
+
+  messages: {
+    title: "Mensajes",
+    dateline: "Vecinos verificados · Privado entre ustedes dos",
+    voice: "Los mensajes se quedan en Steppe — nunca por SMS o correo, y nadie más los ve.",
+    msgInside: "Los mensajes se quedan en Steppe",
+    composePrivacy:
+      "Tu contacto se queda en Steppe. Los vecinos te encuentran aquí — nunca por SMS o correo.",
+    rowSub: "Tus conversaciones",
+    emptyTitle: "Aún no hay mensajes",
+    emptySub: "Saluda a un vecino desde una de sus publicaciones.",
+    messageAuthor: "Mensaje a {name}",
+    composerHint: "Inicia una conversación sobre esta publicación.",
+    placeholder: "Escribe un mensaje…",
+    send: "Enviar",
+    starting: "Enviando…",
+    sent: "Mensaje enviado · se queda en Steppe",
+    error: "No pudimos enviarlo. Inténtalo de nuevo.",
+    reachError: "No se puede contactar a este vecino por ahora.",
+    reAbout: "Sobre: {title}",
+    reGone: "Sobre una publicación que ya no está",
+    replyPlaceholder: "Escribe un mensaje…",
+    sentTag: "Enviado",
+    formerMember: "Miembro anterior",
+    backToMessages: "← Mensajes",
+    menuMore: "Opciones de la conversación",
+    mute: "Silenciar esta conversación",
+    unmute: "Reactivar esta conversación",
+    muted: "Silenciado — no recibirás avisos",
+    leave: "Salir de la conversación",
+    block: "Bloquear vecino",
+    blockConfirm:
+      "¿Bloquear a este vecino? No podrá escribirte, y tú no le escribirás. No se le avisa.",
+    blockCta: "Bloquear",
+    reportThread: "Reportar a la moderación",
+    reportThreadConfirm:
+      "¿Enviar esta conversación a la moderación? Verán los mensajes que cites aquí — nada más.",
+    reportThreadLabel: "¿Qué debería saber la moderación?",
+    reportThreadCta: "Enviar reporte",
+    reportThreadSent: "Enviado a la moderación, en privado.",
+    cancel: "Cancelar",
   },
 
   calendar: {
@@ -654,9 +697,9 @@ export const es: Dictionary = {
     deleteBody:
       "Esto cierra tu cuenta de forma permanente y borra tu información personal. No se puede deshacer.",
     deleteKept:
-      "Se conserva, pero ya no vinculado a ti: tus votos anteriores y cualquier registro de moderación permanecen en el recuento permanente de la comunidad como «Miembro anterior», para no reescribir nunca resultados ya cerrados.",
+      "Se conserva, pero ya no vinculado a ti: tus votos anteriores, cualquier registro de moderación y los términos que aceptaste permanecen en el registro permanente de la comunidad como «Miembro anterior», para no reescribir nunca resultados ni acuerdos ya cerrados. Los mensajes que enviaste se quedan en las conversaciones de tus vecinos, ya sin tu nombre.",
     deleteErased:
-      "Se borra para siempre: tu perfil, tus confirmaciones de asistencia, los eventos que creaste, tu estado de verificación y tu vecindario.",
+      "Se borra para siempre: tu perfil, tus confirmaciones de asistencia, los eventos que creaste, tus enlaces de calendario, tus reportes, tu estado de verificación y tu vecindario.",
     deleteIrreversible:
       "No hay forma de deshacerlo ni de volver a iniciar sesión después.",
     deleteConfirmLabel: "Escribe {word} para confirmar",

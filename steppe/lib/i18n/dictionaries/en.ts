@@ -42,6 +42,7 @@ export const en = {
     appealsLink: "Appeals",
     accountLink: "You",
     searchLabel: "Search",
+    messagesLabel: "Messages",
     confirmDiscard: "Discard what you've typed?",
   },
 
@@ -227,6 +228,54 @@ export const en = {
     gateBody:
       "Neighborhood events are for verified Redmond residents. Verify your residency to see and create gatherings.",
     gateCta: "Verify your residency",
+  },
+
+  messages: {
+    // M1 (messages-m1-spec) — DMs, context-anchored, text-only. The bundle's
+    // reserved strings are un-reserved here: msgInside (the privacy line, in
+    // three homes), composePrivacy (the composer), the two Message buttons.
+    title: "Messages",
+    dateline: "Verified neighbors · Private to the two of you",
+    voice: "Messages stay inside Steppe — never SMS or email, never seen by anyone else.",
+    msgInside: "Messages stay inside Steppe",
+    composePrivacy:
+      "Your contact stays inside Steppe. Neighbors reach you here — never by SMS or email.",
+    rowSub: "Your conversations",
+    emptyTitle: "No messages yet",
+    emptySub: "Say hello to a neighbor from one of their posts.",
+    // The composer door on post detail.
+    messageAuthor: "Message {name}",
+    composerHint: "Start a conversation about this post.",
+    placeholder: "Write a message…",
+    send: "Send",
+    starting: "Sending…",
+    sent: "Message sent · stays inside Steppe",
+    error: "We couldn't send that. Please try again.",
+    reachError: "This neighbor can't be reached right now.",
+    // Thread view.
+    reAbout: "Re: {title}",
+    reGone: "About a post that's no longer here",
+    replyPlaceholder: "Write a message…",
+    sentTag: "Sent",
+    formerMember: "Former member",
+    backToMessages: "← Messages",
+    // Thread menu (bundle's four verbs, G-6 normalized — NO "notified" copy).
+    menuMore: "Conversation options",
+    mute: "Mute this conversation",
+    unmute: "Unmute this conversation",
+    muted: "Muted — you won't be notified",
+    leave: "Leave conversation",
+    block: "Block neighbor",
+    blockConfirm:
+      "Block this neighbor? They won't be able to message you, and you won't message them. They aren't told.",
+    blockCta: "Block",
+    reportThread: "Report to a moderator",
+    reportThreadConfirm:
+      "Send this conversation to a moderator? They'll see the messages you quote here — nothing else.",
+    reportThreadLabel: "What should a moderator know?",
+    reportThreadCta: "Send report",
+    reportThreadSent: "Sent to a moderator, privately.",
+    cancel: "Cancel",
   },
 
   calendar: {
@@ -658,9 +707,9 @@ export const en = {
     deleteBody:
       "This permanently closes your account and erases your personal information. It cannot be undone.",
     deleteKept:
-      "Kept, but no longer linked to you: your past votes and any moderation record stay in the community's permanent tally as “Former member,” so closed results are never rewritten.",
+      "Kept, but no longer linked to you: your past votes, any moderation record, and the terms you agreed to stay in the community's permanent record as “Former member,” so closed results and agreements are never rewritten. Messages you sent stay in your neighbors' conversations, no longer signed with your name.",
     deleteErased:
-      "Erased for good: your profile, your RSVPs, the events you created, your verification status, and your neighborhood.",
+      "Erased for good: your profile, your RSVPs, the events you created, your calendar links, your reports, your verification status, and your neighborhood.",
     deleteIrreversible:
       "There is no undo, and no way to sign back in afterward.",
     deleteConfirmLabel: "Type {word} to confirm",

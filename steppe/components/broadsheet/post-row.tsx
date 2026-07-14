@@ -18,17 +18,14 @@ export function Monogram({
   size = 44,
 }: {
   initials: string;
-  size?: 44 | 48;
+  size?: 32 | 44 | 48;
 }) {
+  const fontSize = size === 48 ? 15 : size === 32 ? 11 : 13;
   return (
     <span
       aria-hidden="true"
       className="flex shrink-0 items-center justify-center rounded-full bg-secondary font-mono font-semibold text-foreground"
-      style={{
-        width: size,
-        height: size,
-        fontSize: size === 48 ? 15 : 13,
-      }}
+      style={{ width: size, height: size, fontSize }}
     >
       {initials}
     </span>

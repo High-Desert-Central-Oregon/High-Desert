@@ -54,8 +54,14 @@ async function AccountView() {
     ...(!verified
       ? [{ href: "/protected/verify", label: dict.nav.verifyLink }]
       : []),
-    // My Calendar (calendar-c1-spec §1.1): the You-row grammar's optional sub
-    // line (bundle :733-743) says what fills it.
+    // Messages (messages-m1-spec §6 — a secondary inbox entry beside the
+    // header icon) and My Calendar (calendar-c1-spec §1.1): the You-row
+    // grammar's optional sub line (bundle :733-743) says what fills each.
+    {
+      href: "/protected/messages",
+      label: dict.messages.title,
+      sub: dict.messages.rowSub,
+    },
     {
       href: "/protected/account/calendar",
       label: dict.calendar.title,

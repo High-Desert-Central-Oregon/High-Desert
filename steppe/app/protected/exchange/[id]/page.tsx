@@ -9,6 +9,7 @@ import { RemovedBanner } from "../../moderation/removed-banner";
 import { AppealArea } from "../../moderation/appeal-area";
 import { ModerationControl } from "../../moderation/moderation-control";
 import { ReportCard } from "../../moderation/report-card";
+import { MessageComposer } from "../../messages/message-composer";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -36,7 +37,7 @@ type PostRowFull = {
   edited_at: string | null;
 };
 
-type SearchParams = { reported?: string; reportErr?: string };
+type SearchParams = { reported?: string; reportErr?: string; msgErr?: string };
 
 async function PostDetailContent({
   params,
@@ -177,7 +178,7 @@ async function PostDetailContent({
         </p>
       </article>
 
-      {/* Report confirmation — identical every time (no oracle). */}
+      {/* Report + message confirmations/errors — identical every time. */}
       {sp.reported === "1" && (
         <p role="status" className="text-sm font-medium text-foreground">
           {dict.moderation.reportSent}
@@ -188,16 +189,31 @@ async function PostDetailContent({
           {dict.moderation.reportError}
         </p>
       )}
+      {sp.msgErr === "1" && (
+        <p role="status" className="text-sm font-medium text-accent">
+          {dict.messages.reachError}
+        </p>
+      )}
 
-      {/* The member Report intake (0021 — the X1 §8 action-row debt paid).
-          Not shown on your own post; moderators use their own tools below. */}
+      {/* Message the author (spec §5 door 1) + the member Report intake (the
+          X1 §8 action-row debt paid) — neither on your own post; moderators
+          use their own tools below. */}
       {post.author_id !== profile.id && !isMod && (
-        <ReportCard
-          targetType="post"
-          targetId={post.id}
-          back={`/protected/exchange/${post.id}`}
-          dict={dict}
-        />
+        <div className="flex flex-col gap-4">
+          <MessageComposer
+            authorId={post.author_id}
+            authorName={authorName}
+            postId={post.id}
+            back={`/protected/exchange/${post.id}`}
+            dict={dict}
+          />
+          <ReportCard
+            targetType="post"
+            targetId={post.id}
+            back={`/protected/exchange/${post.id}`}
+            dict={dict}
+          />
+        </div>
       )}
 
       {/* Moderators: the existing legible remove flow — reason required,

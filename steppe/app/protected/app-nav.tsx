@@ -3,6 +3,7 @@ import { Wordmark } from "@/components/wordmark";
 import { HorizonBand } from "@/components/broadsheet/horizon-band";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SearchSlot } from "./search-slot";
+import { MessagesSlot } from "./messages-slot";
 import type { Locale } from "@/lib/i18n";
 import type { Destination } from "./nav-destinations";
 
@@ -25,11 +26,15 @@ export function AppNav({
   locale,
   wordmark,
   searchLabel,
+  messagesLabel,
+  hasUnread,
 }: {
   items: Destination[];
   locale: Locale;
   wordmark: string;
   searchLabel: string;
+  messagesLabel: string;
+  hasUnread: boolean;
 }) {
   const linkClass =
     "py-1 text-muted-foreground hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none";
@@ -67,6 +72,9 @@ export function AppNav({
               on member routes and SCOPE-AWARE: the Exchange searches the
               Exchange, everywhere else searches groups (?s=1, JS-optional). */}
           <SearchSlot label={searchLabel} />
+          {/* The messages slot (bundle :452-455) — ships with M1 (no dead
+              icons); the unread dot is server-computed per navigation. */}
+          <MessagesSlot label={messagesLabel} hasUnread={hasUnread} />
           <LanguageSwitcher current={locale} />
         </div>
       </div>

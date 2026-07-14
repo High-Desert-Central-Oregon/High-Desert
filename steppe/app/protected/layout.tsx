@@ -6,6 +6,8 @@ import { destinations } from "./nav-destinations";
 import { getCurrentUser } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { createClient } from "@/lib/supabase/server";
+import { getUnreadState } from "@/lib/messages";
 
 /**
  * Guards the signed-in area. Two gates, both server-enforced:
@@ -44,6 +46,15 @@ async function SkipLink() {
 
 async function NavBar() {
   const { locale, dict } = await getServerDictionary();
+  // Poll-on-nav unread signal (messages-m1-spec §6): recomputed each server
+  // navigation, RLS-scoped to the member, a boolean (never a count). A signed-
+  // out or unverified member simply has no threads → no dot.
+  let hasUnread = false;
+  const user = await getCurrentUser();
+  if (user) {
+    const supabase = await createClient();
+    hasUnread = await getUnreadState(supabase, user.id);
+  }
   // One shared destination source drives BOTH the md+ rail here and the <md
   // bottom TabBar below (preview-nav-spec §1/§5) — the two cannot drift. Tabs
   // are not verification-gated: the pages gate (spec §2). Neighborhood, Verify,
@@ -54,6 +65,8 @@ async function NavBar() {
       locale={locale}
       wordmark={dict.app.name}
       searchLabel={dict.nav.searchLabel}
+      messagesLabel={dict.nav.messagesLabel}
+      hasUnread={hasUnread}
     />
   );
 }
