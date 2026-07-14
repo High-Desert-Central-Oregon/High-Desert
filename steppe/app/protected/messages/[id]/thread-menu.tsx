@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import {
   blockNeighbor,
   leaveThread,
@@ -33,14 +33,43 @@ export function ThreadMenu({
   dict: Dictionary;
 }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const panelId = useId();
   const item =
     "block w-full px-[22px] py-[15px] text-left text-[15px] font-medium transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none";
+
+  // Escape closes and returns focus to the trigger; an outside click closes.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    };
+    const onDown = (e: PointerEvent) => {
+      const target = e.target as Node;
+      if (!panelRef.current?.contains(target) && !triggerRef.current?.contains(target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onDown);
+    };
+  }, [open]);
 
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         aria-label={dict.messages.menuMore}
+        aria-haspopup="menu"
+        aria-controls={panelId}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className="flex size-8 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
@@ -53,7 +82,11 @@ export function ThreadMenu({
       </button>
 
       {open && (
-        <div className="absolute inset-x-0 top-full z-10 border-b bg-card shadow-[0_16px_40px_-18px_rgba(42,46,44,.4)]">
+        <div
+          ref={panelRef}
+          id={panelId}
+          className="absolute inset-x-0 top-full z-10 border-b bg-card shadow-[0_16px_40px_-18px_rgba(42,46,44,.4)]"
+        >
           {/* Mute — one tap, reversible. */}
           <form action={toggleMute}>
             <input type="hidden" name="thread_id" value={threadId} />

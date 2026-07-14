@@ -17,7 +17,8 @@ import type { Destination } from "./nav-destinations";
  *     shared source as the bottom tab bar, so the two presentations cannot
  *     drift. Below md the bottom TabBar is the navigation; the old hamburger
  *     sheet and account dropdown are gone (account surfaces live under You).
- * No messages icon: M1 is not shipped, and the shell shows nothing it can't do.
+ * The messages slot ships with M1 (no dead icons); its unread dot is
+ * server-computed per navigation (poll-on-nav, lib/messages.ts).
  *
  * Server component — no client state left here; sign-out moved to the You page.
  */
@@ -27,6 +28,7 @@ export function AppNav({
   wordmark,
   searchLabel,
   messagesLabel,
+  unreadLabel,
   hasUnread,
 }: {
   items: Destination[];
@@ -34,6 +36,7 @@ export function AppNav({
   wordmark: string;
   searchLabel: string;
   messagesLabel: string;
+  unreadLabel: string;
   hasUnread: boolean;
 }) {
   const linkClass =
@@ -74,7 +77,11 @@ export function AppNav({
           <SearchSlot label={searchLabel} />
           {/* The messages slot (bundle :452-455) — ships with M1 (no dead
               icons); the unread dot is server-computed per navigation. */}
-          <MessagesSlot label={messagesLabel} hasUnread={hasUnread} />
+          <MessagesSlot
+            label={messagesLabel}
+            unreadLabel={unreadLabel}
+            hasUnread={hasUnread}
+          />
           <LanguageSwitcher current={locale} />
         </div>
       </div>

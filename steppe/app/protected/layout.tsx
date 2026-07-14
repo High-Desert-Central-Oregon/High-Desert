@@ -66,6 +66,7 @@ async function NavBar() {
       wordmark={dict.app.name}
       searchLabel={dict.nav.searchLabel}
       messagesLabel={dict.nav.messagesLabel}
+      unreadLabel={dict.messages.unread}
       hasUnread={hasUnread}
     />
   );

@@ -144,6 +144,9 @@ async function InboxContent() {
                 >
                   <Monogram initials={initialsFor(name)} size={44} />
                   <span className="min-w-0 flex-1">
+                    {/* Unread as TEXT for AT (not color/weight alone; WCAG
+                        1.4.1) — the dot below stays decorative. */}
+                    {isUnread && <span className="sr-only">{dict.messages.unread}. </span>}
                     <span className="flex items-center justify-between gap-2">
                       <span
                         className={`truncate text-[15px] text-foreground ${isUnread ? "font-bold" : "font-semibold"}`}

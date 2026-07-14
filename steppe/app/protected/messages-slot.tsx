@@ -10,15 +10,18 @@ import { IconSlot } from "@/components/broadsheet/chips";
  */
 export function MessagesSlot({
   label,
+  unreadLabel,
   hasUnread,
 }: {
   label: string;
+  /** Appended to the accessible name when unread, so the dot isn't color-only. */
+  unreadLabel: string;
   hasUnread: boolean;
 }) {
   return (
     <Link
       href="/protected/messages"
-      aria-label={label}
+      aria-label={hasUnread ? `${label} — ${unreadLabel}` : label}
       className="relative shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <IconSlot>
@@ -39,7 +42,7 @@ export function MessagesSlot({
       {hasUnread && (
         <span
           aria-hidden="true"
-          className="absolute -right-px -top-px size-[9px] rounded-full border-2 border-muted bg-accent"
+          className="absolute -right-px -top-px size-[9px] rounded-full border-2 border-background bg-accent"
         />
       )}
     </Link>

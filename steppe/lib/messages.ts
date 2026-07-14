@@ -51,6 +51,9 @@ export async function getUnreadState(
     seen.add(m.thread_id);
     const s = state.get(m.thread_id);
     if (!s || s.muted_at) continue;
+    // Left (archived) threads don't dot unless a NEW message arrived after I
+    // left — mirrors the inbox filter, per spec §3.4's "unleft" clause.
+    if (s.left_at && Date.parse(m.created_at) <= Date.parse(s.left_at)) continue;
     if (m.sender_id === uid) continue;
     if (!s.last_read_at || Date.parse(m.created_at) > Date.parse(s.last_read_at)) {
       return true;

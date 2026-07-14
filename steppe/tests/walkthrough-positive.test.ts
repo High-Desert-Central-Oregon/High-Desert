@@ -277,3 +277,89 @@ describe.skipIf(!dbUp)("Walkthrough C1: mint → fetch → rotate → leave → 
     });
   });
 });
+
+describe.skipIf(!dbUp)("Walkthrough M1: message → reply → block → report(excerpt) → moderator sees excerpt only", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  it("carries a conversation through its life, and the report shows only the quoted excerpt", async () => {
+    await h.inTxn(async (c) => {
+      const aida = "a11d0000-0000-0000-0000-00000000000a";
+      const ben = "be110000-0000-0000-0000-00000000000b";
+      const mod = "eec70000-0000-0000-0000-00000000000e";
+      await h.createMember(aida, "wt-aida@msg.test", { verified: true });
+      await h.createMember(ben, "wt-ben@msg.test", { verified: true });
+      await h.createMember(mod, "wt-mod@msg.test", { verified: true, role: "moderator" });
+      const everyone = (await c.query("select id from groups where slug='everyone'")).rows[0].id;
+      const post = (
+        await c.query(
+          "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'Free tomato starts', 'body') returning id",
+          [everyone, ben],
+        )
+      ).rows[0].id;
+
+      // 1 · aida starts a thread from ben's post; 2 · ben replies.
+      await h.actAs(aida);
+      const tid = (
+        await c.query("select public.start_thread($1, 'Are these still free?', $2) as id", [ben, post])
+      ).rows[0].id;
+      await h.actAs(ben);
+      await c.query("insert into messages (thread_id, sender_id, body) values ($1, $2, 'Yes — porch pickup.')", [tid, ben]);
+      await c.query("reset role");
+      const msgs = await c.query("select count(*)::int n from messages where thread_id=$1", [tid]);
+      expect(msgs.rows[0].n).toBe(2);
+
+      // 3 · aida reports the conversation with HER OWN quoted excerpt.
+      const excerpt = "aida: Are these still free? / ben: Yes — porch pickup.";
+      await h.actAs(aida);
+      const report = (
+        await c.query(
+          "insert into reports (reporter_id, target_type, target_id, body, quoted_excerpt) values ($1, 'message_thread', $2, 'This felt off', $3) returning id",
+          [aida, tid, excerpt],
+        )
+      ).rows[0].id;
+
+      // 4 · aida blocks ben — silent, symmetric. Sending is now frozen.
+      // (Savepoint: the refused insert aborts the txn; recover so the
+      // moderator reads below still run in the same inTxn.)
+      await c.query("insert into member_blocks (blocker_id, blocked_id) values ($1, $2)", [aida, ben]);
+      await c.query("savepoint sp_block");
+      let frozen = false;
+      try {
+        await c.query("insert into messages (thread_id, sender_id, body) values ($1, $2, 'more')", [tid, aida]);
+      } catch {
+        frozen = true;
+      }
+      await c.query("rollback to savepoint sp_block");
+      expect(frozen).toBe(true);
+      await c.query("reset role");
+
+      // 5 · the moderator sees the REPORT and its excerpt — but NOT the thread.
+      await h.actAs(mod);
+      const seen = (
+        await c.query("select quoted_excerpt from reports where id=$1", [report])
+      ).rows[0];
+      expect(seen.quoted_excerpt).toBe(excerpt);
+      // the zero-read pin holds: the moderator cannot open the thread itself.
+      expect((await c.query("select count(*)::int n from messages where thread_id=$1", [tid])).rows[0].n).toBe(0);
+      expect((await c.query("select count(*)::int n from threads where id=$1", [tid])).rows[0].n).toBe(0);
+      // 6 · resolve the report (moderator close-out; audited).
+      await c.query("select public.resolve_report($1, 'dismissed')", [report]);
+      await c.query("reset role");
+      const audited = await c.query(
+        "select count(*)::int n from audit_log where action='report.resolved' and entity_id=$1",
+        [report],
+      );
+      expect(audited.rows[0].n).toBe(1);
+    });
+  });
+});

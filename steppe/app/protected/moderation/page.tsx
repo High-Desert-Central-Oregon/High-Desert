@@ -20,6 +20,7 @@ type ReportRow = {
   target_type: string;
   target_id: string;
   body: string;
+  quoted_excerpt: string | null;
   created_at: string;
 };
 
@@ -109,7 +110,7 @@ async function AppealsContent({
   // Moderators see all open rows via rp_read; members never reach this page.
   const { data: reportsData } = await supabase
     .from("reports")
-    .select("id, reporter_id, target_type, target_id, body, created_at")
+    .select("id, reporter_id, target_type, target_id, body, quoted_excerpt, created_at")
     .is("resolved_at", null)
     .order("created_at", { ascending: true })
     .returns<ReportRow[]>();
@@ -135,10 +136,18 @@ async function AppealsContent({
     for (const e of rEvents ?? []) reportTargetTitles.set(e.id, e.title);
   }
 
+  // Message-thread reports have no readable target (the zero-read pin — a
+  // moderator never opens the thread); the quoted excerpt IS the evidence.
   const reportTargetHref = (r: ReportRow) =>
     r.target_type === "post"
       ? `/protected/exchange/${r.target_id}`
-      : `/protected/events/${r.target_id}`;
+      : r.target_type === "event"
+        ? `/protected/events/${r.target_id}`
+        : null;
+  const reportTargetLabel = (r: ReportRow) =>
+    r.target_type === "message_thread"
+      ? dict.moderation.reportOnThread
+      : (reportTargetTitles.get(r.target_id) ?? dict.moderation.reportTargetGone);
 
   return (
     <div lang={locale} className="flex flex-col gap-6">
@@ -179,13 +188,16 @@ async function AppealsContent({
               <li key={r.id} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
                 <div className="text-sm">
                   <p className="font-medium">
-                    <Link
-                      href={reportTargetHref(r)}
-                      className="underline-offset-2 hover:underline"
-                    >
-                      {reportTargetTitles.get(r.target_id) ??
-                        dict.moderation.reportTargetGone}
-                    </Link>
+                    {reportTargetHref(r) ? (
+                      <Link
+                        href={reportTargetHref(r)!}
+                        className="underline-offset-2 hover:underline"
+                      >
+                        {reportTargetLabel(r)}
+                      </Link>
+                    ) : (
+                      <span>{reportTargetLabel(r)}</span>
+                    )}
                   </p>
                   <p className="mt-1 text-muted-foreground">
                     {t(dict.moderation.reportBy, {
@@ -197,6 +209,18 @@ async function AppealsContent({
                 <div className="rounded-md bg-muted/50 p-3 text-sm">
                   <p className="whitespace-pre-wrap">{r.body}</p>
                 </div>
+                {/* The consent-based excerpt (§6.4): the reporter's own quoted
+                    view of the conversation — the only door message content
+                    has into moderation. The moderator reads THIS, never the
+                    thread. */}
+                {r.target_type === "message_thread" && r.quoted_excerpt && (
+                  <div className="rounded-md border-l-2 border-accent bg-muted/30 p-3 text-sm">
+                    <p className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                      {dict.moderation.reportExcerptLabel}
+                    </p>
+                    <p className="whitespace-pre-wrap">{r.quoted_excerpt}</p>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <form action={resolveReport}>
                     <input type="hidden" name="report_id" value={r.id} />

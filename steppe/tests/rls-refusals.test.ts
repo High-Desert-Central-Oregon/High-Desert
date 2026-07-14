@@ -482,3 +482,132 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
     });
   });
 });
+
+describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  // A refused write aborts the surrounding transaction; a savepoint lets us
+  // assert several refusals (and keep asserting after) inside one inTxn.
+  async function refuses(c: pg.Client, sql: string, params: unknown[] = []) {
+    await c.query("savepoint sp");
+    let threw = false;
+    try {
+      await c.query(sql, params);
+    } catch {
+      threw = true;
+    }
+    await c.query("rollback to savepoint sp");
+    expect(threw).toBe(true);
+  }
+
+  // Build a thread A↔B anchored on B's Everyone post; returns { threadId }.
+  async function makeThread(c: pg.Client, a: string, b: string) {
+    const everyone = (await c.query("select id from groups where slug='everyone'")).rows[0].id;
+    const post = (
+      await c.query(
+        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'msg ctx', 'body') returning id",
+        [everyone, b],
+      )
+    ).rows[0].id;
+    await h.actAs(a);
+    const tid = (
+      await c.query("select public.start_thread($1, 'hello', $2) as id", [b, post])
+    ).rows[0].id;
+    return tid as string;
+  }
+
+  it("structural: only verified members can start; anon/unverified refused", async () => {
+    await expect(
+      h.runAs(RANDO, "select public.start_thread(gen_random_uuid(), 'x', gen_random_uuid())"),
+    ).rejects.toThrow(/verified members/);
+  });
+
+  it("ZERO-READ PIN: a moderator reads NOTHING — no thread, message, or state", async () => {
+    await h.inTxn(async (c) => {
+      const a = "aa110000-0000-0000-0000-000000000001";
+      const b = "bb110000-0000-0000-0000-000000000001";
+      const mod = "cc110000-0000-0000-0000-000000000001";
+      await h.createMember(a, "m1-a@rls.test", { verified: true });
+      await h.createMember(b, "m1-b@rls.test", { verified: true });
+      await h.createMember(mod, "m1-mod@rls.test", { verified: true, role: "moderator" });
+      const tid = await makeThread(c, a, b);
+      await h.actAs(mod);
+      expect((await c.query("select count(*)::int n from threads where id=$1", [tid])).rows[0].n).toBe(0);
+      expect((await c.query("select count(*)::int n from messages where thread_id=$1", [tid])).rows[0].n).toBe(0);
+      expect((await c.query("select count(*)::int n from thread_state where thread_id=$1", [tid])).rows[0].n).toBe(0);
+    });
+  });
+
+  it("cross-thread: a verified non-participant sees and sends nothing", async () => {
+    await h.inTxn(async (c) => {
+      const a = "aa120000-0000-0000-0000-000000000001";
+      const b = "bb120000-0000-0000-0000-000000000001";
+      const out = "dd120000-0000-0000-0000-000000000001";
+      await h.createMember(a, "m1-a2@rls.test", { verified: true });
+      await h.createMember(b, "m1-b2@rls.test", { verified: true });
+      await h.createMember(out, "m1-out@rls.test", { verified: true });
+      const tid = await makeThread(c, a, b);
+      await h.actAs(out);
+      expect((await c.query("select count(*)::int n from messages where thread_id=$1", [tid])).rows[0].n).toBe(0);
+      await expect(
+        c.query("insert into messages (thread_id, sender_id, body) values ($1, $2, 'intrude')", [tid, out]),
+      ).rejects.toThrow(/row-level security|permission denied/);
+    });
+  });
+
+  it("immutable: participants cannot edit or delete messages, or re-anchor the thread", async () => {
+    await h.inTxn(async (c) => {
+      const a = "aa130000-0000-0000-0000-000000000001";
+      const b = "bb130000-0000-0000-0000-000000000001";
+      await h.createMember(a, "m1-a3@rls.test", { verified: true });
+      await h.createMember(b, "m1-b3@rls.test", { verified: true });
+      const tid = await makeThread(c, a, b);
+      // still acting as a (the participant)
+      await refuses(c, "update messages set body='rewritten' where thread_id=$1", [tid]);
+      await refuses(c, "delete from messages where thread_id=$1", [tid]);
+      await refuses(c, "update threads set about_post_id=null where id=$1", [tid]);
+    });
+  });
+
+  it("block is symmetric and silent: freezes both ways, invisible to the blocked", async () => {
+    await h.inTxn(async (c) => {
+      const a = "aa140000-0000-0000-0000-000000000001";
+      const b = "bb140000-0000-0000-0000-000000000001";
+      await h.createMember(a, "m1-a4@rls.test", { verified: true });
+      await h.createMember(b, "m1-b4@rls.test", { verified: true });
+      const tid = await makeThread(c, a, b);
+      // b blocks a
+      await h.actAs(b);
+      await c.query("insert into member_blocks (blocker_id, blocked_id) values ($1, $2)", [b, a]);
+      // blocker frozen too (symmetric)
+      await refuses(c, "insert into messages (thread_id, sender_id, body) values ($1, $2, 'x')", [tid, b]);
+      // blocked party is frozen AND cannot see the block row (silent)
+      await h.actAs(a);
+      await refuses(c, "insert into messages (thread_id, sender_id, body) values ($1, $2, 'x')", [tid, a]);
+      expect((await c.query("select count(*)::int n from member_blocks")).rows[0].n).toBe(0);
+    });
+  });
+
+  it("no cold DMs: a start with no post anchor is refused (context required)", async () => {
+    await h.inTxn(async (c) => {
+      const a = "aa150000-0000-0000-0000-000000000001";
+      const b = "bb150000-0000-0000-0000-000000000001";
+      await h.createMember(a, "m1-a5@rls.test", { verified: true });
+      await h.createMember(b, "m1-b5@rls.test", { verified: true });
+      await h.actAs(a);
+      await expect(
+        c.query("select public.start_thread($1, 'cold open')", [b]),
+      ).rejects.toThrow(/one of their posts/);
+    });
+  });
+});

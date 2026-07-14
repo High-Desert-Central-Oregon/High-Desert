@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { after } from "next/server";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { PageSkeleton } from "@/components/page-skeleton";
@@ -89,14 +90,17 @@ async function ThreadContent({
   const messages = msgs ?? [];
 
   // Mark read: stamp my cursor to the newest message (own-row update; the
-  // dot recomputes on the next navigation). A read-triggered write on a
-  // dynamic page — idempotent, never cached.
+  // dot recomputes on the next navigation). Deferred to after() so the write
+  // is OFF the render path (render stays pure — RSC contract) while still
+  // running in this request. Idempotent, never cached.
   if (messages.length > 0) {
-    await supabase
-      .from("thread_state")
-      .update({ last_read_at: new Date().toISOString() })
-      .eq("thread_id", id)
-      .eq("member_id", me);
+    after(async () => {
+      await supabase
+        .from("thread_state")
+        .update({ last_read_at: new Date().toISOString() })
+        .eq("thread_id", id)
+        .eq("member_id", me);
+    });
   }
   const { data: myState } = await supabase
     .from("thread_state")
@@ -129,7 +133,7 @@ async function ThreadContent({
       <div className="relative flex items-center gap-[10px] border-b bg-muted px-[14px] py-[9px]">
         <Link
           href="/protected/messages"
-          aria-label={dict.messages.backToMessages}
+          aria-label={dict.messages.backAria}
           className="shrink-0 text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -177,27 +181,33 @@ async function ThreadContent({
             {dict.messages.reachError}
           </p>
         )}
-        {messages.map((m) => {
-          const mine = m.sender_id === me;
-          return (
-            <div key={m.id} className={`my-[7px] flex ${mine ? "justify-end" : "justify-start"}`}>
-              <div
-                className={`max-w-[78%] px-[13px] py-[10px] text-[14.5px] leading-[1.45] ${
-                  mine
-                    ? "rounded-[14px_14px_4px_14px] bg-primary text-primary-foreground"
-                    : "rounded-[14px_14px_14px_4px] bg-muted text-foreground"
-                }`}
-              >
-                {m.body}
-                {mine && m.id === lastMine && (
-                  <span className="mt-1 block text-right font-mono text-[8px] font-medium uppercase tracking-[0.1em] text-primary-foreground/70">
-                    {dict.messages.sentTag}
-                  </span>
-                )}
-              </div>
-            </div>
-          );
-        })}
+        {/* role="log": a running conversation. Each message is a list item
+            with a programmatic sender label — mine/theirs is structure, not
+            just paint (WCAG 1.3.1 / 1.4.1). */}
+        <ul role="log" aria-label={dict.messages.conversation} className="flex flex-col">
+          {messages.map((m) => {
+            const mine = m.sender_id === me;
+            return (
+              <li key={m.id} className={`my-[7px] flex ${mine ? "justify-end" : "justify-start"}`}>
+                <div
+                  className={`max-w-[78%] px-[13px] py-[10px] text-[14.5px] leading-[1.45] ${
+                    mine
+                      ? "rounded-[14px_14px_4px_14px] bg-primary text-primary-foreground"
+                      : "rounded-[14px_14px_14px_4px] bg-muted text-foreground"
+                  }`}
+                >
+                  <span className="sr-only">{mine ? dict.messages.youPrefix : name}: </span>
+                  {m.body}
+                  {mine && m.id === lastMine && (
+                    <span className="mt-1 block text-right font-mono text-[8px] font-medium uppercase tracking-[0.1em] text-primary-foreground/70">
+                      {dict.messages.sentTag}
+                    </span>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </div>
 
       {/* Composer — a plain form (JS-optional); can_send is the gate. */}
