@@ -50,6 +50,11 @@ async function AccountView() {
   const dateline = [neighborhood, since].filter(Boolean).join(" · ");
 
   const rows: { href: string; label: string; sub?: string }[] = [
+    {
+      href: "/protected/account/profile",
+      label: dict.account.profileRow,
+      sub: dict.account.profileRowSub,
+    },
     { href: "/protected/neighborhoods", label: dict.nav.neighborhoodLink },
     ...(!verified
       ? [{ href: "/protected/verify", label: dict.nav.verifyLink }]

@@ -714,6 +714,30 @@ export const es: Dictionary = {
     deleteButton: "Eliminar mi cuenta",
     deleting: "Eliminando…",
     deleteError: "No pudimos eliminar tu cuenta. Inténtalo de nuevo.",
+    // Editor de perfil (Y1) — el nombre y la visibilidad por campo en "Tú".
+    profileRow: "Editar perfil",
+    profileRowSub: "Tu nombre y lo que ven los vecinos",
+    profileTitle: "Tu perfil",
+    profileIntro:
+      "Tu perfil es privado por defecto. Pon tu nombre y luego revela los campos uno a uno — a nadie, o a todos los miembros.",
+    nameLabel: "Nombre visible",
+    nameHelp:
+      "El nombre que ven los vecinos. No es tu nombre legal — elige el que quieras.",
+    nameSave: "Guardar nombre",
+    nameSaved: "Nombre guardado.",
+    nameRequired: "Escribe un nombre.",
+    nameTooLong: "Ese nombre es demasiado largo.",
+    profileSaveError: "No pudimos guardarlo. Inténtalo de nuevo.",
+    visibilityHeading: "Lo que pueden ver los vecinos",
+    visibilityIntro:
+      "Cada campo empieza oculto. Revélalo a todos los miembros, o guárdalo para ti — un campo a la vez.",
+    fieldNeighborhood: "Vecindario",
+    fieldNeighborhoodNone: "Sin definir",
+    visHidden: "Oculto",
+    visMembers: "Visible para miembros",
+    visStateHidden: "Oculto para otros miembros",
+    visStateMembers: "Visible para todos los miembros",
+    visSaved: "Guardado.",
   },
   notFound: {
     title: "No encontramos esa página",

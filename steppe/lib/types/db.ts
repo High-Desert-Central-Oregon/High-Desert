@@ -8,10 +8,15 @@
  */
 export type MemberRole = "member" | "moderator" | "admin";
 
+/** Per-field profile visibility (migration 0023). Two states, default hidden:
+ *  the whole app is behind auth, so "members" is the maximum ("no one" ↔ members). */
+export type FieldVisibility = "hidden" | "members";
+
 export type Profile = {
   id: string;
   display_name: string;
   neighborhood_id: string | null;
+  neighborhood_visibility: FieldVisibility;
   verified: boolean;
   role: MemberRole;
   tenure_start: string | null;

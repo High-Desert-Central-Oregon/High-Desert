@@ -29,7 +29,7 @@ export async function getMyProfile(): Promise<Profile | null> {
   const { data } = await supabase
     .from("profiles")
     .select(
-      "id, display_name, neighborhood_id, verified, role, tenure_start, locale, created_at",
+      "id, display_name, neighborhood_id, neighborhood_visibility, verified, role, tenure_start, locale, created_at",
     )
     .eq("id", userId)
     .maybeSingle<Profile>();

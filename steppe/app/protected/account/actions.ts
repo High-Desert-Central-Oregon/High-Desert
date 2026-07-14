@@ -1,11 +1,86 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentUser } from "@/lib/auth";
+import type { FieldVisibility } from "@/lib/types/db";
 
 export type DeleteState = { error: string } | null;
+
+export type ProfileState = { saved: true } | { error: string } | null;
+
+const MAX_NAME = 80;
+
+/**
+ * Save the signed-in member's display_name — the always-public handle (Y1/Y2:
+ * the one field that can't be hidden, so authorship stays attributable). Written
+ * through pf_update (own row only); the frozen-columns trigger keeps
+ * verified/role/tenure untouchable even here (invariant 2). The name is the
+ * member-chosen, non-legal handle — never their legal identity (invariant 1).
+ */
+export async function updateDisplayName(
+  _prev: ProfileState,
+  formData: FormData,
+): Promise<ProfileState> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "unauthenticated" };
+
+  const name = String(formData.get("display_name") ?? "").trim();
+  if (name.length === 0) return { error: "name-required" };
+  if (name.length > MAX_NAME) return { error: "name-too-long" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ display_name: name })
+    .eq("id", user.id);
+  if (error) return { error: "save-failed" };
+
+  revalidatePath("/protected/account");
+  revalidatePath("/protected/account/profile");
+  return { saved: true };
+}
+
+/**
+ * Set the visibility of ONE profile field — "reveal one at a time" (cDB). Each
+ * field is its own two-state control (Hidden ↔ Visible to members); there is
+ * deliberately no bulk "make everything visible" (the dark pattern cDB is
+ * written against). Default is 'hidden' — the promise. Written through pf_update
+ * (own row); trust columns stay frozen. Today the one hideable personal field is
+ * `neighborhood_visibility`; the field name is allow-listed so this action can
+ * never be steered at a non-visibility column.
+ */
+const VISIBILITY_FIELDS = ["neighborhood_visibility"] as const;
+type VisibilityField = (typeof VISIBILITY_FIELDS)[number];
+
+export async function setFieldVisibility(
+  _prev: ProfileState,
+  formData: FormData,
+): Promise<ProfileState> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "unauthenticated" };
+
+  const field = String(formData.get("field") ?? "");
+  const visibility = String(formData.get("visibility") ?? "");
+  if (!VISIBILITY_FIELDS.includes(field as VisibilityField)) {
+    return { error: "unknown-field" };
+  }
+  if (visibility !== "hidden" && visibility !== "members") {
+    return { error: "bad-visibility" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({ [field]: visibility as FieldVisibility })
+    .eq("id", user.id);
+  if (error) return { error: "save-failed" };
+
+  revalidatePath("/protected/account/profile");
+  return { saved: true };
+}
 
 /**
  * Delete the signed-in member's account: erase the person, never rewrite the
