@@ -48,11 +48,18 @@ steps:
         head="${CI_COMMIT_SHA}"
         prev="${CI_PREV_COMMIT_SHA:-}"
         zero="0000000000000000000000000000000000000000"
+        # --no-merges: exclude forge-generated merge commits. When a PR is merged
+        # via the Codeberg UI onto protected `main`, the merge commit is
+        # constructed by the forge, not authored by a human, so it carries no
+        # Signed-off-by trailer — and never can. DCO applies to AUTHORED work;
+        # every real commit on both parents still gets checked. Do NOT drop
+        # --no-merges to "tighten" this: it only re-introduces the failure where
+        # the whole pipeline (mirror-provenance included) skips on a clean merge.
         if [ -n "$prev" ] && [ "$prev" != "$zero" ] && git cat-file -e "$prev" 2>/dev/null; then
-          commits=$(git rev-list "$prev..$head")
+          commits=$(git rev-list --no-merges "$prev..$head")
         else
           echo "note: previous commit unavailable (new branch or shallow clone) — checking HEAD only"
-          commits=$(git rev-list -n 1 "$head")
+          commits=$(git rev-list --no-merges -n 1 "$head")
         fi
         fail=0
         for c in $commits; do
