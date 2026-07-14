@@ -24,6 +24,45 @@ when:
   - event: [push, pull_request]
 
 steps:
+  # ---------------------------------------------------------------------------
+  # DCO sign-off gate (health-check H1). Fails a push to `main` if any newly
+  # pushed commit lacks a real `Signed-off-by:` TRAILER. This catches the
+  # `b474598` defect class, where the sign-off was typed into the subject line
+  # instead of applied by `git commit -s`, so it is NOT a trailer. Runs only on
+  # main (the protected branch); feature branches are unaffected.
+  dco-signoff:
+    image: alpine/git
+    when:
+      - event: push
+        branch: main
+    commands:
+      - |
+        set -eu
+        head="${CI_COMMIT_SHA}"
+        prev="${CI_PREV_COMMIT_SHA:-}"
+        zero="0000000000000000000000000000000000000000"
+        if [ -n "$prev" ] && [ "$prev" != "$zero" ] && git cat-file -e "$prev" 2>/dev/null; then
+          commits=$(git rev-list "$prev..$head")
+        else
+          echo "note: previous commit unavailable (new branch or shallow clone) — checking HEAD only"
+          commits=$(git rev-list -n 1 "$head")
+        fi
+        fail=0
+        for c in $commits; do
+          so=$(git show -s --format='%(trailers:key=Signed-off-by,valueonly)' "$c")
+          if [ -z "$so" ]; then
+            echo "MISSING DCO sign-off: $c  $(git show -s --format='%s' "$c")"
+            fail=1
+          fi
+        done
+        if [ "$fail" -ne 0 ]; then
+          echo ""
+          echo "Every commit on main must carry a Signed-off-by TRAILER (use: git commit -s)."
+          echo "A sign-off typed into the subject line does NOT count."
+          exit 1
+        fi
+        echo "DCO OK: all pushed commits carry a Signed-off-by trailer."
+
   install:
     image: node:26
     directory: steppe

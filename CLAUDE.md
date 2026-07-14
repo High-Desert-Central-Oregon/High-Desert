@@ -88,6 +88,12 @@ undermine them:
 - **Never add Co-Authored-By lines or any AI attribution** to commit messages, PR
   descriptions, or git metadata. Commits carry the DCO sign-off (`git commit -s`) and
   nothing else. (Enforced by `.claude/settings.json` → `attribution`.)
+- **`main` is protected; land via branch, not direct push.** Feature work goes on a branch
+  and merges after review — no direct commits to `main`. The DCO sign-off must be a real
+  *trailer* from `git commit -s`, never typed into the subject line. Codeberg CI enforces this
+  on `main` (`.woodpecker/ci.yml` → `dco-signoff`): a push whose commits lack the trailer
+  fails — the defect class that let `b474598` through. See `docs/deploy-provenance.md` for how
+  the deploy mirror is checked.
 
 ## Build order (see SPEC.md §06)
 
