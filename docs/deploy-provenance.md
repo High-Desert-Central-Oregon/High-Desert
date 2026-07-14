@@ -15,28 +15,26 @@ notices, because the mirror is a server-side setting outside it.
 
 ## The automated check
 
-`.woodpecker/ci.yml` → **`mirror-provenance`** runs on every push to `main`. It reads the
-mirror URL from the `MIRROR_GIT_URL` secret and compares the mirror's `main` HEAD to the
-canonical HEAD (`CI_COMMIT_SHA`), retrying for ~60s to tolerate normal async mirror lag:
+`.woodpecker/ci.yml` → **`mirror-provenance`** runs on every push to `main`. The mirror URL
+is a **public** GitHub path, so it is **defaulted in-repo** — the check always runs and does
+not depend on secret injection. It compares the mirror's `main` HEAD to the canonical HEAD
+(`CI_COMMIT_SHA`), retrying for ~60s to tolerate normal async mirror lag:
 
 - **Converges** → `PROVENANCE OK` (Vercel will deploy canonical). Pipeline passes.
 - **Does not converge in ~60s** → the step **fails loudly** with both SHAs, so a stuck mirror
   is visible in CI instead of shipping stale code unnoticed.
-- **`MIRROR_GIT_URL` unset** → the step **soft-skips** with setup instructions, so it never
-  blocks CI before it's configured (the secret is referenced by name only, like
-  `VERCEL_DEPLOY_HOOK`).
 
-### One-time setup
+### Why the URL isn't a required secret
 
-In **Woodpecker → Secrets**, add:
+An earlier version read the URL from a `MIRROR_GIT_URL` secret and soft-skipped when it was
+empty. In **Woodpecker 3.x an image-scoped secret is only injected into plugin steps**, not
+plain `commands` steps like this one — so `from_secret` resolved to empty and the check
+silently skipped even with the secret set correctly in the UI. Since the mirror URL is a
+**public** repo path (not sensitive), it is now hardcoded as the default in the step; the
+`MIRROR_GIT_URL` env/secret remains an **optional override** if the mirror ever moves.
 
-| Secret | Value |
-|--------|-------|
-| `MIRROR_GIT_URL` | the public GitHub mirror URL: `https://github.com/High-Desert-Central-Oregon/High-Desert.git` |
-
-A public mirror needs no token for `git ls-remote`. (The canonical repo is Codeberg
-`steppe-community/steppe`; the GitHub **mirror** lives at the separate
-`High-Desert-Central-Oregon/High-Desert` path — don't conflate the two.)
+Canonical repo is Codeberg `steppe-community/steppe`; the GitHub **mirror** lives at the
+separate `High-Desert-Central-Oregon/High-Desert` path — don't conflate the two.
 
 ## Manual fallback (no CI, or an ad-hoc spot check)
 

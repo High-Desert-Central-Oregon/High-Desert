@@ -107,9 +107,10 @@ steps:
   # HEAD and FAILS if they don't converge within ~60s (a stuck mirror becomes
   # loud, not silent). Normal async mirror lag is tolerated by the retry window.
   #
-  # MIRROR_GIT_URL is referenced by name only (add it in Woodpecker -> Secrets,
-  # the GitHub mirror: https://github.com/High-Desert-Central-Oregon/High-Desert.git).
-  # If unset, the step soft-skips with instructions, so it never breaks CI early.
+  # The mirror is a PUBLIC repo, so its URL is defaulted in-repo (see the script) and
+  # the check always runs. MIRROR_GIT_URL is an OPTIONAL override secret; it is not
+  # required, because Woodpecker 3.x won't inject an image-scoped secret into this
+  # plain commands step anyway. github.com/High-Desert-Central-Oregon/High-Desert.git.
   # See docs/deploy-provenance.md for the manual-fallback equivalent.
   mirror-provenance:
     image: alpine/git
@@ -122,17 +123,22 @@ steps:
     commands:
       - |
         set -eu
-        if [ -z "${MIRROR_GIT_URL:-}" ]; then
-          echo "MIRROR_GIT_URL secret not set — skipping deploy-provenance check."
-          echo "Set it in Woodpecker -> Secrets to the GitHub mirror URL to enable."
-          exit 0
+        # The mirror URL is a PUBLIC GitHub path, not a secret — default it in-repo so
+        # the check never depends on secret injection (Woodpecker 3.x withholds
+        # image-scoped secrets from plain commands steps, which left this empty and the
+        # check soft-skipping). MIRROR_GIT_URL, if injected, overrides the default.
+        url="${MIRROR_GIT_URL:-https://github.com/High-Desert-Central-Oregon/High-Desert.git}"
+        if [ -n "${MIRROR_GIT_URL:-}" ]; then
+          echo "mirror URL: MIRROR_GIT_URL override (len ${#MIRROR_GIT_URL})"
+        else
+          echo "mirror URL: in-repo default (MIRROR_GIT_URL not injected)"
         fi
         canonical="${CI_COMMIT_SHA}"
         echo "canonical (Codeberg) main HEAD: $canonical"
         mirror=""
         i=1
         while [ "$i" -le 6 ]; do
-          mirror=$(git ls-remote "$MIRROR_GIT_URL" refs/heads/main | awk '{print $1}')
+          mirror=$(git ls-remote "$url" refs/heads/main | awk '{print $1}')
           echo "attempt $i — mirror (GitHub) main HEAD: ${mirror:-<none>}"
           if [ "$mirror" = "$canonical" ]; then
             echo "PROVENANCE OK: GitHub mirror == Codeberg main. Vercel will deploy canonical."
