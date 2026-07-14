@@ -77,6 +77,13 @@ undermine them:
 - **RLS-first.** Assume the client is hostile. Enforce access in the database; the UI is
   convenience, never the gate. Don't add an API route that bypasses RLS with the service key
   unless it's a deliberate server action that itself enforces the rule.
+- **Matrix/test-harness SQL never runs against production, under any framing.** The dry-run
+  matrices (`seed/matrix-*.sql`) and the test harness prove a migration on a **local,
+  prod-shaped** database — that local verification is the assurance. Migrations are applied
+  to prod **by hand** in the SQL editor, as the owner, at a stop-gate; the matrix may be
+  pasted there only because it wraps itself in a single rolled-back transaction and writes
+  nothing. Never point the harness, a seed, or a "just this once" script at the production
+  database.
 - **Plain language in the UI** (Pattern 22) — the member should never need an explanation.
 - **Never add Co-Authored-By lines or any AI attribution** to commit messages, PR
   descriptions, or git metadata. Commits carry the DCO sign-off (`git commit -s`) and
