@@ -516,6 +516,7 @@ export const es: Dictionary = {
     requestNote: "Dónde viven:",
     requestNoNote: "Sin nota.",
     memberSince: "Miembro desde {date}",
+    requestedOn: "Solicitado {date}",
     markResolved: "Marcar como resuelta",
     resolving: "Guardando…",
     resolveError: "No se pudo actualizar. Inténtalo de nuevo.",

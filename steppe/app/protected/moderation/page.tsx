@@ -89,7 +89,9 @@ async function AppealsContent({
     const proposalIds = [...actions.values()].filter((a) => a.target_type === "proposal").map((a) => a.target_id);
     const postIds = [...actions.values()].filter((a) => a.target_type === "post").map((a) => a.target_id);
     const [{ data: people }, { data: evs }, { data: props }, { data: pos }] = await Promise.all([
-      supabase.from("profiles").select("id, display_name").in("id", userIds),
+      // Cross-member name lookup goes through the owner-rights view: after 0023
+      // the base profiles table is owner-only (pf_read), moderators included.
+      supabase.from("public_profiles").select("id, display_name").in("id", userIds),
       eventIds.length
         ? supabase.from("events").select("id, title").in("id", eventIds)
         : Promise.resolve({ data: [] as { id: string; title: string }[] }),
@@ -123,7 +125,8 @@ async function AppealsContent({
     const rPostIds = reports.filter((r) => r.target_type === "post").map((r) => r.target_id);
     const rEventIds = reports.filter((r) => r.target_type === "event").map((r) => r.target_id);
     const [{ data: rPeople }, { data: rPosts }, { data: rEvents }] = await Promise.all([
-      supabase.from("profiles").select("id, display_name").in("id", reporterIds),
+      // Reporter names via the owner-rights view (0023: base profiles owner-only).
+      supabase.from("public_profiles").select("id, display_name").in("id", reporterIds),
       rPostIds.length
         ? supabase.from("posts").select("id, title").in("id", rPostIds)
         : Promise.resolve({ data: [] as { id: string; title: string }[] }),

@@ -63,10 +63,14 @@ async function ReviewContent() {
 
   const requestRows = requests ?? [];
 
-  // Resolve display names + join dates for everyone shown, in one query. Names
-  // are the only member-identifying thing in the queue — verification evidence
-  // stays behind on-demand signed URLs.
-  const profilesById = new Map<string, { name: string; joined: string }>();
+  // Resolve display names for everyone shown, in one query, THROUGH the
+  // public_profiles view — after migration 0023 the base profiles table is
+  // owner-only (pf_read), so cross-member reads (moderators included) go via
+  // the owner-rights view. Names are the only member-identifying thing here;
+  // verification evidence stays behind on-demand signed URLs. Join dates aren't
+  // exposed to moderators anymore (not a hideable field, just not in the view);
+  // the neighborhood-request row instead shows when the request was opened.
+  const namesById = new Map<string, string>();
   const userIds = [
     ...new Set([
       ...rows.map((r) => r.user_id),
@@ -75,11 +79,10 @@ async function ReviewContent() {
   ];
   if (userIds.length > 0) {
     const { data: people } = await supabase
-      .from("profiles")
-      .select("id, display_name, created_at")
+      .from("public_profiles")
+      .select("id, display_name")
       .in("id", userIds);
-    for (const p of people ?? [])
-      profilesById.set(p.id, { name: p.display_name, joined: p.created_at });
+    for (const p of people ?? []) namesById.set(p.id, p.display_name);
   }
 
   return (
@@ -103,7 +106,7 @@ async function ReviewContent() {
               <li key={row.id}>
                 <ReviewRow
                   id={row.id}
-                  applicantName={profilesById.get(row.user_id)?.name ?? "—"}
+                  applicantName={namesById.get(row.user_id) ?? "—"}
                   methodLabel={dict.verify.methods[row.method]}
                   hasEvidence={Boolean(row.evidence_path)}
                   submittedAt={formatRedmondDate(row.created_at, locale)}
@@ -133,15 +136,17 @@ async function ReviewContent() {
         ) : (
           <ul className="flex flex-col gap-3">
             {requestRows.map((r) => {
-              const joined = profilesById.get(r.user_id)?.joined;
               return (
                 <li key={r.id}>
                   <NeighborhoodRequestRow
                     id={r.id}
-                    memberName={profilesById.get(r.user_id)?.name ?? "—"}
+                    memberName={namesById.get(r.user_id) ?? "—"}
                     note={r.note}
-                    memberSince={t(dict.review.memberSince, {
-                      date: joined ? formatRedmondDate(joined, locale) : "—",
+                    // Moderators no longer read another member's join date (0023);
+                    // show when the help request was opened instead — the relevant,
+                    // available date for triage.
+                    memberSince={t(dict.review.requestedOn, {
+                      date: formatRedmondDate(r.created_at, locale),
                     })}
                     dict={dict}
                   />

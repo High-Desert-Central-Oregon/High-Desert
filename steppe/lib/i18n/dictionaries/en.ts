@@ -524,6 +524,7 @@ export const en = {
     requestNote: "Where they live:",
     requestNoNote: "No note left.",
     memberSince: "Member since {date}",
+    requestedOn: "Requested {date}",
     markResolved: "Mark resolved",
     resolving: "Saving…",
     resolveError: "Couldn't update that. Please try again.",
