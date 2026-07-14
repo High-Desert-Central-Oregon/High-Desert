@@ -611,3 +611,100 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
     });
   });
 });
+
+describe.skipIf(!dbUp)("Y1 profile-visibility refusals (0023, spec §6 lens 1 / G-Y1a)", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  it("a member cannot read another member's HIDDEN neighborhood (view NULLs it; base gives no row)", async () => {
+    await h.inTxn(async (c) => {
+      const owner = "f1f10000-0000-0000-0000-000000000001";
+      const other = "f2f20000-0000-0000-0000-000000000001";
+      await h.createMember(owner, "y1-owner@rls.test", { verified: true });
+      await h.createMember(other, "y1-other@rls.test", { verified: true });
+      // owner has an area; neighborhood_visibility defaults to 'hidden'
+      await c.query(
+        "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
+        [owner],
+      );
+      await h.actAs(other);
+      // through the owner-rights view: the row is present, the value withheld
+      const view = await c.query(
+        "select neighborhood_id from public_profiles where id=$1",
+        [owner],
+      );
+      expect(view.rows[0]?.neighborhood_id ?? null).toBeNull();
+      // through the base table: no row at all (pf_read is owner-only)
+      const base = await c.query(
+        "select count(*)::int as n from profiles where id=$1",
+        [owner],
+      );
+      expect(base.rows[0].n).toBe(0);
+    });
+  });
+
+  it("G-Y1a: a MODERATOR cannot read a HIDDEN neighborhood either — but keeps the verified/role carve-out", async () => {
+    await h.inTxn(async (c) => {
+      const owner = "f3f30000-0000-0000-0000-000000000001";
+      const mod = "f4f40000-0000-0000-0000-000000000001";
+      await h.createMember(owner, "y1a-owner@rls.test", { verified: true });
+      await h.createMember(mod, "y1a-mod@rls.test", {
+        verified: true,
+        role: "moderator",
+      });
+      await c.query(
+        "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
+        [owner],
+      );
+      await h.actAs(mod);
+      const view = await c.query(
+        "select neighborhood_id, verified, role from public_profiles where id=$1",
+        [owner],
+      );
+      expect(view.rows[0]?.neighborhood_id ?? null).toBeNull(); // hidden binds moderators too
+      expect(view.rows[0]?.verified).toBe(true); // G-Y1c: trust attribute stays visible
+      expect(view.rows[0]?.role).toBe("member"); // G-Y1c: role stays visible
+      const base = await c.query(
+        "select count(*)::int as n from profiles where id=$1",
+        [owner],
+      );
+      expect(base.rows[0].n).toBe(0); // moderator no longer reads the base row
+    });
+  });
+
+  it("walkthrough: revealing to members lets any member read it (positive control)", async () => {
+    await h.inTxn(async (c) => {
+      const owner = "f5f50000-0000-0000-0000-000000000001";
+      const other = "f6f60000-0000-0000-0000-000000000001";
+      await h.createMember(owner, "y1r-owner@rls.test", { verified: true });
+      await h.createMember(other, "y1r-other@rls.test", { verified: true });
+      await c.query(
+        "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
+        [owner],
+      );
+      // owner reveals their area to members (own-row write via pf_update)
+      await h.actAs(owner);
+      const upd = await c.query(
+        "update profiles set neighborhood_visibility='members' where id=$1",
+        [owner],
+      );
+      expect(upd.rowCount).toBe(1);
+      // another member now reads the value through the view
+      await h.actAs(other);
+      const view = await c.query(
+        "select neighborhood_id from public_profiles where id=$1",
+        [owner],
+      );
+      expect(view.rows[0]?.neighborhood_id ?? null).not.toBeNull();
+    });
+  });
+});
