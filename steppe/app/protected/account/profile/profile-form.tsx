@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -137,6 +137,15 @@ function VisibilityControl({
   const failed = !pending && state !== null && "error" in state;
   const shown: FieldVisibility = failed ? field.visibility : selected;
 
+  // Once an action SETTLES, snap `selected` back to the confirmed server value.
+  // The error path never revalidates (so it never remounts), which would leave
+  // `selected` holding the un-saved optimistic pick; success re-reads the new
+  // value. Reconciling here means `selected`, `shown`, the chip, and the text
+  // can never drift apart on a later render, and the radio's DOM state matches.
+  useEffect(() => {
+    if (state !== null && !pending) setSelected(field.visibility);
+  }, [state, pending, field.visibility]);
+
   const options: { value: FieldVisibility; label: string }[] = [
     { value: "hidden", label: a.visHidden },
     { value: "members", label: a.visMembers },
@@ -157,7 +166,14 @@ function VisibilityControl({
           {options.map((o) => (
             <label
               key={o.value}
-              className="cursor-pointer rounded-md border px-3 py-1.5 text-sm has-[:checked]:border-accent has-[:checked]:bg-accent/10 has-[:focus-visible]:ring-1 has-[:focus-visible]:ring-ring"
+              // Highlight is driven by React `shown` (the SAME source as the
+              // helper text below), NOT by the DOM radio's :checked pseudo — a
+              // controlled radio's DOM checked can desync from React, which let
+              // the highlight sit on the un-saved value while the text showed the
+              // confirmed one. Deriving both from `shown` makes that impossible.
+              className={`cursor-pointer rounded-md border px-3 py-1.5 text-sm has-[:focus-visible]:ring-1 has-[:focus-visible]:ring-ring ${
+                shown === o.value ? "border-accent bg-accent/10" : ""
+              }`}
             >
               <input
                 type="radio"
