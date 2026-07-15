@@ -49,7 +49,7 @@ export const en = {
   auth: {
     title: "Sign in to Steppe",
     subtitle:
-      "New here? Use the same form — we'll create your account. We email you a sign-in link that works once, so there's no password to remember or leak.",
+      "Steppe is invite-only right now. If your email was invited, this same form signs you in — and sets up your account the first time. We email a sign-in link that works once, so there's no password to remember or leak.",
     emailLabel: "Email address",
     emailPlaceholder: "you@example.com",
     submit: "Email me a sign-in link",

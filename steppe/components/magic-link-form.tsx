@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { requestSignInLink } from "@/app/auth/login/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,15 +16,16 @@ import { CheckCircle2 } from "lucide-react";
 import { t, type Dictionary, type Locale } from "@/lib/i18n";
 
 /**
- * Passwordless sign-in / join. We send a one-time secure link by email
- * (`signInWithOtp`), so there is no password to remember or leak (Stack:
- * "No passwords to leak"). The same form both signs in returning members and
- * creates new accounts — `shouldCreateUser` plus the database `handle_new_user`
- * trigger bootstraps the profile server-side (invariant 2). We pass the chosen
- * locale as sign-up metadata so the new profile starts in the right language.
+ * Passwordless sign-in / join. Submitting calls the `requestSignInLink` SERVER
+ * ACTION, which is INVITE-ONLY (migration 0024): only an email on the allowlist
+ * is sent a one-time link (and, if new, has its account created). The check runs
+ * server-side so a tampered client can't skip it, and the database backstop
+ * (`enforce_invited_signup`) refuses a non-allowlisted signup even against a
+ * direct GoTrue call. There is no password to remember or leak.
  *
- * After a successful request we show a neutral "check your email" state and do
- * not reveal whether the address already had an account.
+ * The action returns an identical neutral result for every well-formed address —
+ * invited or not — so we always show the same "check your email" state and never
+ * reveal whether an address is on the invite list (no enumeration oracle).
  */
 export function MagicLinkForm({
   dict,
@@ -44,19 +45,15 @@ export function MagicLinkForm({
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          // Land on the confirm route, which verifies the link and forwards on.
-          // The protected area then routes first-time members to the Terms gate.
-          emailRedirectTo: `${window.location.origin}/auth/confirm?next=/protected`,
-          shouldCreateUser: true,
-          data: { locale },
-        },
-      });
-      if (error) throw error;
-      setSent(true);
+      // Server action: the allowlist gate + OTP send happen server-side. The
+      // result is oracle-free — { ok: true } for any well-formed address whether
+      // or not it's invited; { ok: false } only for a malformed address.
+      const result = await requestSignInLink(email, locale);
+      if (result.ok) {
+        setSent(true);
+      } else {
+        setError(dict.auth.errorGeneric);
+      }
     } catch {
       setError(dict.auth.errorGeneric);
     } finally {

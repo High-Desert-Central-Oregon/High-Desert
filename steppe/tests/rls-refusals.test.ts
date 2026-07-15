@@ -708,3 +708,62 @@ describe.skipIf(!dbUp)("Y1 profile-visibility refusals (0023, spec §6 lens 1 / 
     });
   });
 });
+
+// Invite-only signup gate (migration 0024). The roster is moderator-only: no
+// member or anon may read "who is invited" (no enumeration oracle at the DB),
+// and no member may add themselves. The live auth.users signup-block keys on
+// session_user='supabase_auth_admin' and is proven out-of-band (a second
+// connection as the auth role) — a single owner-connection harness can't set
+// session_user, so it isn't asserted here.
+describe.skipIf(!dbUp)("Invite allowlist refusals (migration 0024)", () => {
+  let client: pg.Client;
+  let h: ReturnType<typeof impersonate>;
+
+  beforeAll(async () => {
+    client = makeClient();
+    await client.connect();
+    h = impersonate(client);
+  });
+  afterAll(async () => {
+    await client?.end();
+  });
+
+  it("INV-1: a plain member cannot read the invite roster", async () => {
+    await h.inTxn(async (c) => {
+      const uid = "1a1a0000-0000-0000-0000-000000000001";
+      await h.createMember(uid, "inv-reader@rls.test", { verified: true });
+      await c.query(
+        "insert into invited_emails(email, note) values ('secret-invite@rls.test','test') on conflict do nothing",
+      );
+      await h.actAs(uid);
+      const res = await c.query("select count(*)::int as n from invited_emails");
+      expect(res.rows[0].n).toBe(0); // RLS hides the whole roster from a member
+    });
+  });
+
+  it("INV-2: a plain member cannot add themselves to the roster", async () => {
+    await h.inTxn(async (c) => {
+      const uid = "1b1b0000-0000-0000-0000-000000000001";
+      await h.createMember(uid, "inv-writer@rls.test", { verified: true });
+      await h.actAs(uid);
+      await expect(
+        c.query("insert into invited_emails(email) values ('self-invite@rls.test')"),
+      ).rejects.toThrow(/row-level security|permission denied/i);
+    });
+  });
+
+  it("INV-3: a moderator CAN read the roster (positive control)", async () => {
+    await h.inTxn(async (c) => {
+      const mod = "1c1c0000-0000-0000-0000-000000000001";
+      await h.createMember(mod, "inv-mod@rls.test", { verified: true, role: "moderator" });
+      await c.query(
+        "insert into invited_emails(email, note) values ('mod-visible@rls.test','test') on conflict do nothing",
+      );
+      await h.actAs(mod);
+      const res = await c.query(
+        "select count(*)::int as n from invited_emails where email='mod-visible@rls.test'",
+      );
+      expect(res.rows[0].n).toBe(1);
+    });
+  });
+});
