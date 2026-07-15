@@ -53,7 +53,7 @@ export const es: Dictionary = {
   auth: {
     title: "Inicia sesión en Steppe",
     subtitle:
-      "¿Eres nuevo? Usa el mismo formulario: crearemos tu cuenta. Te enviamos por correo un enlace de acceso que funciona una sola vez, así no hay contraseña que recordar ni que se pueda filtrar.",
+      "Por ahora Steppe es solo por invitación. Si tu correo fue invitado, este mismo formulario te da acceso —y crea tu cuenta la primera vez—. Te enviamos un enlace de acceso que funciona una sola vez, así no hay contraseña que recordar ni que se pueda filtrar.",
     emailLabel: "Correo electrónico",
     emailPlaceholder: "tu@ejemplo.com",
     submit: "Envíenme un enlace para entrar",
