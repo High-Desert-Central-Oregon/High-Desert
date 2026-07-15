@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,10 +123,14 @@ function VisibilityControl({
   field: VisibilityFieldView;
   a: AccountDict;
 }) {
-  const [state, action, pending] = useActionState<ProfileState, FormData>(
-    setFieldVisibility,
-    null,
-  );
+  // The write runs inside an AWAITED transition (not useActionState's form
+  // dispatch). Awaiting the action keeps `pending` true across the write AND its
+  // revalidation round-trip, so React holds the CURRENT editor content during the
+  // re-suspend of the (connection()-dynamic) profile segment instead of dropping
+  // the whole editor to the PageSkeleton fallback. `setSelected` stays OUTSIDE the
+  // transition so the optimistic chip is instant (urgent), not deferred.
+  const [pending, startTransition] = useTransition();
+  const [result, setResult] = useState<ProfileState>(null);
   // Controlled so the shown state can't drift from the server after a toggle.
   const [selected, setSelected] = useState<FieldVisibility>(field.visibility);
 
@@ -134,7 +138,7 @@ function VisibilityControl({
   // the confirmed (server-read) value — never rest on the un-saved attempt (the
   // false-private mode). While pending we still show the optimistic pick for
   // immediate feedback; on success `selected` already equals what persisted.
-  const failed = !pending && state !== null && "error" in state;
+  const failed = !pending && result !== null && "error" in result;
   const shown: FieldVisibility = failed ? field.visibility : selected;
 
   // Once an action SETTLES, snap `selected` back to the confirmed server value.
@@ -143,24 +147,44 @@ function VisibilityControl({
   // value. Reconciling here means `selected`, `shown`, the chip, and the text
   // can never drift apart on a later render, and the radio's DOM state matches.
   useEffect(() => {
-    if (state !== null && !pending) setSelected(field.visibility);
-  }, [state, pending, field.visibility]);
+    if (result !== null && !pending) setSelected(field.visibility);
+  }, [result, pending, field.visibility]);
 
   const options: { value: FieldVisibility; label: string }[] = [
     { value: "hidden", label: a.visHidden },
     { value: "members", label: a.visMembers },
   ];
 
+  function toggle(next: FieldVisibility) {
+    if (next === selected || pending) return; // no redundant round-trips
+    setSelected(next); // urgent → the chip moves instantly (optimistic)
+    const fd = new FormData();
+    fd.set("field", field.field);
+    fd.set("visibility", next);
+    startTransition(async () => {
+      // Awaited inside the transition → `pending` spans the whole round-trip, so
+      // the editor holds its content while the fresh RSC (the reconcile source)
+      // streams in. Keep revalidatePath in the action: `field.visibility` above
+      // is what reconcile reads on settle.
+      setResult(await setFieldVisibility(null, fd));
+    });
+  }
+
   return (
-    <form action={action} className="flex flex-col gap-2">
-      <input type="hidden" name="field" value={field.field} />
+    <div className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-3">
         <span className="text-sm font-medium">{field.label}</span>
         <span className="text-xs text-muted-foreground">
           {field.value ?? a.fieldNeighborhoodNone}
         </span>
       </div>
-      <fieldset disabled={pending}>
+      {/* (c) subtle in-flight affordance: the row dims + is inert while saving,
+          so the round-trip reads as intentional, never as a stutter/blank. */}
+      <fieldset
+        disabled={pending}
+        aria-busy={pending}
+        className={`transition-opacity ${pending ? "opacity-60" : ""}`}
+      >
         <legend className="sr-only">{field.label}</legend>
         <div role="radiogroup" aria-label={field.label} className="flex gap-2">
           {options.map((o) => (
@@ -180,10 +204,7 @@ function VisibilityControl({
                 name="visibility"
                 value={o.value}
                 checked={shown === o.value}
-                onChange={(e) => {
-                  setSelected(o.value);
-                  e.currentTarget.form?.requestSubmit();
-                }}
+                onChange={() => toggle(o.value)}
                 className="sr-only"
               />
               {o.label}
@@ -202,6 +223,6 @@ function VisibilityControl({
           {shown === "members" ? a.visStateMembers : a.visStateHidden}
         </p>
       )}
-    </form>
+    </div>
   );
 }
