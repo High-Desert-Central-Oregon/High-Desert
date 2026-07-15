@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { redirect } from "next/navigation";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { Masthead } from "@/components/broadsheet/masthead";
@@ -15,6 +16,15 @@ import { ProfileForm } from "./profile-form";
  * account/actions.ts and go through pf_update (own row only).
  */
 async function ProfileEditor() {
+  // Force this segment to render per-request. Under cacheComponents the dynamic
+  // hole can be served from the prerendered render on the immediate post-action
+  // re-render (after setFieldVisibility → revalidatePath), so the remounted
+  // VisibilityControl would re-seed `selected` from the PRE-write value and the
+  // highlight would snap back — while the DB (correctly) holds the new value.
+  // connection() makes the profile read below execute against the committed row
+  // every time, so displayed state matches enforced state after a toggle.
+  await connection();
+
   const user = await getCurrentUser();
   if (!user) redirect("/auth/login");
   const { locale, dict } = await getServerDictionary();
