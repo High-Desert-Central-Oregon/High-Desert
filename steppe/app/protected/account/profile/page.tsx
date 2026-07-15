@@ -16,13 +16,19 @@ import { ProfileForm } from "./profile-form";
  * account/actions.ts and go through pf_update (own row only).
  */
 async function ProfileEditor() {
-  // Force this segment to render per-request. Under cacheComponents the dynamic
-  // hole can be served from the prerendered render on the immediate post-action
-  // re-render (after setFieldVisibility → revalidatePath), so the remounted
-  // VisibilityControl would re-seed `selected` from the PRE-write value and the
-  // highlight would snap back — while the DB (correctly) holds the new value.
-  // connection() makes the profile read below execute against the committed row
-  // every time, so displayed state matches enforced state after a toggle.
+  // LOAD-BEARING — required for the profile-visibility privacy invariant. Do NOT
+  // remove this line, and do NOT wrap the profile read below in `"use cache"`.
+  //
+  // It forces this segment to render PER-REQUEST so `getMyProfile()` reflects the
+  // COMMITTED row. Under cacheComponents the dynamic hole can otherwise be served
+  // from the prerendered render on the immediate post-action re-render (after
+  // setFieldVisibility → revalidatePath); the remounted VisibilityControl would
+  // then re-seed `selected` from the PRE-write value, so the chip would snap back
+  // while the DB (correctly) holds the new value — displayed state disagreeing
+  // with enforced state on a privacy control, in the false-private direction.
+  // With connection() the read runs against the committed row every time, so
+  // displayed state == enforced state after a toggle. (Regression traced to the
+  // stale-render finding; see the profile-visibility guards.)
   await connection();
 
   const user = await getCurrentUser();
