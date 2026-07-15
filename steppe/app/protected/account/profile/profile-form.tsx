@@ -130,6 +130,13 @@ function VisibilityControl({
   // Controlled so the shown state can't drift from the server after a toggle.
   const [selected, setSelected] = useState<FieldVisibility>(field.visibility);
 
+  // On a SETTLED error the write did not persist, so the chip must fall back to
+  // the confirmed (server-read) value — never rest on the un-saved attempt (the
+  // false-private mode). While pending we still show the optimistic pick for
+  // immediate feedback; on success `selected` already equals what persisted.
+  const failed = !pending && state !== null && "error" in state;
+  const shown: FieldVisibility = failed ? field.visibility : selected;
+
   const options: { value: FieldVisibility; label: string }[] = [
     { value: "hidden", label: a.visHidden },
     { value: "members", label: a.visMembers },
@@ -156,7 +163,7 @@ function VisibilityControl({
                 type="radio"
                 name="visibility"
                 value={o.value}
-                checked={selected === o.value}
+                checked={shown === o.value}
                 onChange={(e) => {
                   setSelected(o.value);
                   e.currentTarget.form?.requestSubmit();
@@ -168,13 +175,17 @@ function VisibilityControl({
           ))}
         </div>
       </fieldset>
-      <p role="status" className="text-xs text-muted-foreground">
-        {state && "error" in state
-          ? a.profileSaveError
-          : selected === "members"
-            ? a.visStateMembers
-            : a.visStateHidden}
-      </p>
+      {failed ? (
+        // Visible failure: the member must KNOW it didn't save (role=alert), and
+        // the chip above has already reverted to the confirmed value.
+        <p role="alert" className="text-xs text-accent">
+          {a.profileSaveError}
+        </p>
+      ) : (
+        <p role="status" className="text-xs text-muted-foreground">
+          {shown === "members" ? a.visStateMembers : a.visStateHidden}
+        </p>
+      )}
     </form>
   );
 }

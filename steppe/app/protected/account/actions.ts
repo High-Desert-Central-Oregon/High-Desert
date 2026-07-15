@@ -72,11 +72,28 @@ export async function setFieldVisibility(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase
+  // Verify the write PERSISTED — do not trust a no-error response. Read the
+  // written column back in the same statement. A 0-row UPDATE (e.g. RLS matched
+  // nothing because auth.uid() wasn't the row owner at write time) returns no
+  // rows, which `.single()` surfaces as a PGRST116 error rather than success.
+  const { data, error } = await supabase
     .from("profiles")
     .update({ [field]: visibility as FieldVisibility })
-    .eq("id", user.id);
-  if (error) return { error: "save-failed" };
+    .eq("id", user.id)
+    .select(field)
+    .single();
+
+  if (error) {
+    // PGRST116 = "no (or multiple) rows" from .single() — here, the UPDATE
+    // touched no row: the write silently did not persist. Distinct code so the
+    // separate auth-context track can key on it; genuine DB faults stay
+    // "save-failed".
+    return { error: error.code === "PGRST116" ? "not-persisted" : "save-failed" };
+  }
+  // Belt-and-suspenders: a row came back but the value isn't what we asked for.
+  if ((data as unknown as Record<string, string> | null)?.[field] !== visibility) {
+    return { error: "not-persisted" };
+  }
 
   revalidatePath("/protected/account/profile");
   return { saved: true };
