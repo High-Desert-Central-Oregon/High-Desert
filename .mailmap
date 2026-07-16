@@ -1,0 +1,19 @@
+# .mailmap — canonicalize commit-identity DISPLAY to a single identity.
+#
+# This is a DISPLAY-LAYER map only. It normalizes how git CLI tooling
+# (git log, blame, shortlog, and anything that honors mailmap) shows author
+# and committer identities. It does NOT rewrite commit objects, does NOT change
+# any commit SHA, and does NOT alter Signed-off-by trailers in commit messages.
+#
+# All of the identities below are Greg Chism (project founder). They accumulated
+# from an institutional email, a GitHub web-UI author identity, and the canonical
+# project email. Each maps to the single canonical identity:
+#
+#     Greg Chism <greg@steppe.community>
+#
+# Not mapped: `GitHub <noreply@github.com>` — that is GitHub's own committer
+# identity on the two web-UI "Initial commit" commits, not a personal identity,
+# so it is deliberately left untouched.
+
+Greg Chism <greg@steppe.community> <gchism@arizona.edu>
+Greg Chism <greg@steppe.community> Greg T. Chism <38962243+Gchism94@users.noreply.github.com>
