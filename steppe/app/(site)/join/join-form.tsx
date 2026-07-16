@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { isQrVariant, type QrVariant } from "@/lib/qr-variants";
 
 /**
  * Interest-signup form card for /join. POSTs to the real /api/interest endpoint
@@ -15,14 +16,12 @@ import { useTranslations } from "next-intl";
  */
 type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
 
-// QR A/B counter (first-party, zero-PII; see /api/qr). The printed pre-launch QR
-// codes carry ?utm_content=quiet|square. We count an aggregate scan on arrival and
-// an aggregate join on conversion — nothing identifying is ever sent.
-const isQrVariant = (v: string | null): v is "quiet" | "square" =>
-  v === "quiet" || v === "square";
+// QR counter (first-party, zero-PII; see /api/qr). Printed QR codes carry a known
+// ?utm_content variant. We count an aggregate scan on arrival and an aggregate join
+// on conversion — nothing identifying is ever sent.
 
 // Fire-and-forget: must never block render or surface an error to the member.
-function postQrCount(variant: "quiet" | "square", kind: "scan" | "join") {
+function postQrCount(variant: QrVariant, kind: "scan" | "join") {
   try {
     void fetch("/api/qr", {
       method: "POST",
@@ -41,7 +40,7 @@ export function JoinForm() {
   const [error, setError] = useState("");
 
   // QR scan count, on mount: when a printed QR lands here with
-  // ?utm_content=quiet|square, record ONE scan per scan-session (sessionStorage
+  // a known ?utm_content, record ONE scan per scan-session (sessionStorage
   // dedupes refreshes) and remember the variant for the conversion event below.
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -91,7 +90,7 @@ export function JoinForm() {
 
       if (res.ok && data.ok) {
         setStatus(data.duplicate ? "duplicate" : "success");
-        // QR A/B conversion — same session as the scan; aggregate only, and
+        // QR conversion — same session as the scan; aggregate only, and
         // wrapped so an analytics failure can never break the join.
         try {
           const variant = sessionStorage.getItem("qr_variant");

@@ -9,16 +9,15 @@ import { NextResponse } from "next/server";
  * page at full launch) without a reprint. Never change or remove a slug that has
  * been printed — repoint it.
  *
- * Mechanism (shared by all five):
+ * Mechanism (shared by all printed slugs):
  *   • TEMPORARY redirect (307) + Cache-Control: no-store — ON PURPOSE. A
  *     301/308/cacheable response would be pinned by browsers and QR scanners and
  *     fight us when a destination is repointed.
  *   • The destination is resolved against request.url, so the redirect stays on
  *     whatever host was hit (preserves www; no hardcoded origin).
- *   • No logging, no request metadata read. /q and /p carry utm_content because
- *     the /join page's first-party, zero-PII qr_counts A/B counter keys on it
- *     (quiet|square are the two printed business cards); the poster slugs
- *     (/d /e /c) deliberately carry no parameters at all.
+ *   • No logging, no request metadata read. Printed slugs carry utm_content because
+ *     the /join page's first-party, zero-PII qr_counts counter keys on it. The
+ *     labels are campaign/content names only; counts stay aggregate by day.
  *
  * Adding a slug: add it here, create the two-line app/<slug>/route.ts, and add
  * the path to the public allowlist in lib/supabase/proxy.ts (so it works even in
@@ -27,9 +26,10 @@ import { NextResponse } from "next/server";
 export const PRINT_SLUGS = {
   q: "/join?utm_source=qr&utm_medium=card&utm_content=quiet", // business card, "quiet"
   p: "/join?utm_source=qr&utm_medium=card&utm_content=square", // business card, "square"
-  d: "/join", // poster
-  e: "/join", // poster
-  c: "/join", // poster
+  d: "/join?utm_source=qr&utm_medium=poster&utm_content=poster_owned", // poster, "Owned by the people who live here."
+  e: "/join?utm_source=qr&utm_medium=poster&utm_content=poster_built", // poster, "Built here. Owned here."
+  c: "/join?utm_source=qr&utm_medium=poster&utm_content=poster_common", // poster, "Common ground."
+  s: "/join?utm_source=qr&utm_medium=seed-card&utm_content=seed_card", // compass seed card
 } as const;
 
 export type PrintSlug = keyof typeof PRINT_SLUGS;

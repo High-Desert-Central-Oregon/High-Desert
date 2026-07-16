@@ -23,6 +23,7 @@ export async function updateSession(request: NextRequest) {
     pathname === "/d" ||
     pathname === "/e" ||
     pathname === "/c" ||
+    pathname === "/s" ||
     pathname === "/contact";
   // Public endpoints reachable by anonymous visitors (the /join and /contact
   // forms post here; the landing hero polls /api/weather — a keyless, cached

@@ -16,7 +16,7 @@ Generated 2026-07-11. Companion to the Claude Code integration prompt.
 
 ## posters/ — production print files (live QRs, do not edit)
 
-1d board 11×17 no-flood v3 · 1e counter 11×17 no-flood v4 · 1c statement 18×24 +0.125" bleed v3 · print pack v4 (pages verified 11×17 / 11×17 / 18.25×24.25). QRs encode www.steppe.community/d /e /c and are decode-verified; the transparent posters print ink-direct on Cougar Natural.
+1d board 11×17 no-flood v3 · 1e counter 11×17 no-flood v4 · 1c statement 18×24 +0.125" bleed v3 · print pack v4 (pages verified 11×17 / 11×17 / 18.25×24.25). QRs encode www.steppe.community/d /e /c and are decode-verified; those slugs redirect to /join with first-party zero-PII Supabase variants poster_owned / poster_built / poster_common. The transparent posters print ink-direct on Cougar Natural.
 
 ## Placement tiers (enforced in the integration prompt)
 

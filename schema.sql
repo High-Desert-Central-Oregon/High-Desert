@@ -238,15 +238,22 @@ create table interest_signups (
   created_at timestamptz not null default now()
 );
 
--- QR A/B aggregate counter (migration 0015). First-party and zero-PII: four
--- rolling counters per day (variant {quiet,square} × kind {scan,join}) and
+-- QR aggregate counter (migrations 0015, 0025). First-party and zero-PII:
+-- rolling counters per day (print variant × kind {scan,join}) and
 -- NOTHING else — no IP, user-agent, cookie, or identifier. The privacy-by-
 -- architecture alternative to a third-party tracker (CLAUDE.md invariant 8; the
 -- live "no third-party trackers, no behavioral profiles" promise). RLS-enabled
 -- with NO policies (deny-by-default); only the service-role client writes it, via
 -- increment_qr_count() below (see section 7 + /api/qr).
 create table qr_counts (
-  variant text not null check (variant in ('quiet','square')),
+  variant text not null check (variant in (
+    'quiet',
+    'square',
+    'poster_owned',
+    'poster_built',
+    'poster_common',
+    'seed_card'
+  )),
   kind    text not null check (kind in ('scan','join')),
   day     date not null default current_date,
   count   integer not null default 0,
@@ -260,7 +267,14 @@ create table qr_counts (
 create or replace function public.increment_qr_count(p_variant text, p_kind text)
 returns void language plpgsql set search_path = public as $$
 begin
-  if p_variant not in ('quiet','square') or p_kind not in ('scan','join') then
+  if p_variant not in (
+    'quiet',
+    'square',
+    'poster_owned',
+    'poster_built',
+    'poster_common',
+    'seed_card'
+  ) or p_kind not in ('scan','join') then
     raise exception 'invalid qr counter';
   end if;
   insert into qr_counts (variant, kind, day, count)
@@ -1031,7 +1045,7 @@ alter table group_members      enable row level security;
 -- interest_signups stays default-DENY: RLS on, NO policies (see migration 0014).
 -- The pre-launch list is written only by the service role; never expose it.
 alter table interest_signups   enable row level security;
--- qr_counts stays default-DENY: RLS on, NO policies (see migration 0015). The
+-- qr_counts stays default-DENY: RLS on, NO policies (see migrations 0015, 0025). The
 -- aggregate counter is written only by the service role via increment_qr_count().
 alter table qr_counts          enable row level security;
 
@@ -1183,7 +1197,7 @@ grant select on categories, groups, group_members, groups_directory to authentic
 -- interest_signups (migration 0014): no anon/authenticated grant at all — the
 -- service role is the only writer/reader (it bypasses RLS).
 grant select, insert on interest_signups to service_role;
--- qr_counts (migration 0015): same posture — service role only. It writes through
+-- qr_counts (migrations 0015, 0025): same posture — service role only. It writes through
 -- increment_qr_count() (EXECUTE locked to service_role) and reads via SQL editor.
 grant select, insert, update on qr_counts to service_role;
 grant execute on function public.increment_qr_count(text, text) to service_role;
