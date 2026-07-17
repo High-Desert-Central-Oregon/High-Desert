@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { submitVerification } from "./actions";
+import { hasPendingVerification, submitVerification } from "./actions";
 import {
   ALL_METHODS,
   ALLOWED_EVIDENCE_TYPES,
@@ -33,6 +34,7 @@ export function VerifyForm({
   dict: Dictionary;
   uid: string;
 }) {
+  const router = useRouter();
   const [method, setMethod] = useState<VerificationMethod | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +61,15 @@ export function VerifyForm({
         }
         if (!isAllowedEvidenceType(file.type)) {
           setError(dict.verify.badType);
+          return;
+        }
+
+        // Verify-then-forget: never upload evidence that submitVerification would
+        // then refuse to record. If a request is already awaiting review, reveal
+        // that pending state and stop BEFORE touching storage — so a re-submit
+        // can't strand an orphaned object in the private bucket (audit O3).
+        if (await hasPendingVerification()) {
+          router.refresh();
           return;
         }
 
