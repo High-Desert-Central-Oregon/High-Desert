@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { NeighborhoodForm } from "./neighborhood-form";
@@ -13,6 +14,22 @@ export const metadata = {
 type NeighborhoodRow = { id: string; name: string };
 
 async function NeighborhoodContent() {
+  // LOAD-BEARING — keeps the picker's shown selection in sync with the committed
+  // row. Do NOT remove this line, and do NOT wrap the profile read below in
+  // `"use cache"`.
+  //
+  // It forces this segment to render PER-REQUEST so the `neighborhood_id` read
+  // reflects the COMMITTED row. Under cacheComponents the dynamic hole can
+  // otherwise be served from the prerendered render on the immediate post-action
+  // re-render (after setNeighborhood → revalidatePath); the remounted
+  // NeighborhoodForm would then re-seed `selected` from the PRE-write `currentId`,
+  // so the radio would snap back to the prior neighborhood while the DB (correctly)
+  // holds the new one — displayed state disagreeing with the saved value. With
+  // connection() the read runs against the committed row every time, so the shown
+  // selection matches what persisted. (Same stale-render class as the
+  // profile-visibility guards; see account/profile/page.tsx.)
+  await connection();
+
   const user = await getCurrentUser();
   if (!user) redirect("/auth/login");
 
