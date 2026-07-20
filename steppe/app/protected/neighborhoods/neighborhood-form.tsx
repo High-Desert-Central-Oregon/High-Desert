@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { setNeighborhood, type NeighborhoodState } from "./actions";
@@ -36,6 +36,14 @@ export function NeighborhoodForm({
   );
   // Track the selection so the note field can appear only for "none fits".
   const [selected, setSelected] = useState<string>(currentId ?? NONE);
+
+  // On a SETTLED error the write did not persist (incl. the read-back's
+  // "not-persisted"), so the selection must fall back to the committed value —
+  // never rest on the un-saved pick. Mirrors the visibility control's
+  // revert-on-error (profile-form.tsx); the error banner below is the role=alert.
+  useEffect(() => {
+    if (state && "error" in state) setSelected(currentId ?? NONE);
+  }, [state, currentId]);
 
   // "None fits" path: show confirmation card + a way back to the form.
   if (state && "saved" in state && state.cleared) {

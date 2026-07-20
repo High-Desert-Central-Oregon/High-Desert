@@ -39,12 +39,32 @@ export async function setNeighborhood(
   const neighborhoodId = isNone ? null : String(raw);
 
   const supabase = await createClient();
-  const { error } = await supabase
+  // Verify the write PERSISTED — mirror setFieldVisibility (account/actions.ts):
+  // don't trust a no-error response. Read the written column back in the same
+  // statement. A 0-row UPDATE (e.g. RLS matched nothing because auth.uid() wasn't
+  // the row owner at write time) returns no rows, which `.single()` surfaces as a
+  // PGRST116 error rather than success.
+  const { data, error } = await supabase
     .from("profiles")
     .update({ neighborhood_id: neighborhoodId })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .select("neighborhood_id")
+    .single();
 
-  if (error) return { error: "save-failed" };
+  if (error) {
+    // PGRST116 = "no (or multiple) rows" from .single() — here, the UPDATE
+    // touched no row: the write silently did not persist. Distinct code so the UI
+    // can key on it; genuine DB faults stay "save-failed".
+    return { error: error.code === "PGRST116" ? "not-persisted" : "save-failed" };
+  }
+  // Belt-and-suspenders: a row came back but the value isn't what we asked for
+  // (null == null holds for the "none" path, which clears the column).
+  if (
+    (data as { neighborhood_id: string | null } | null)?.neighborhood_id !==
+    neighborhoodId
+  ) {
+    return { error: "not-persisted" };
+  }
 
   if (isNone) {
     const note = String(formData.get("note") ?? "").trim();
