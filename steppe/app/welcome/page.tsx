@@ -8,7 +8,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { LogoutButton } from "@/components/logout-button";
 import { Lockup } from "@/components/wordmark";
 import { getCurrentUser } from "@/lib/auth";
-import { getConsentState } from "@/lib/onboarding";
+import { getConsentState, getCurrentDocuments } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
 
@@ -22,8 +22,14 @@ async function WelcomeContent() {
   if (!user) redirect("/auth/login");
 
   // If they've already agreed to the current documents, don't make them re-read.
-  const { currentDocs, hasConsentedAll } = await getConsentState();
+  // The consent check is body-free, so an already-consented member redirects
+  // without ever fetching the (heavy) document bodies — no fetch-then-discard
+  // (perf-audit-v2 F3).
+  const { hasConsentedAll } = await getConsentState();
   if (hasConsentedAll) redirect("/protected");
+
+  // Not consented yet: now fetch the document bodies to actually render the gate.
+  const currentDocs = await getCurrentDocuments();
 
   const { locale, dict } = await getServerDictionary();
 
