@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { siteOrigin } from "@/lib/site-url";
@@ -77,4 +78,62 @@ export async function requestSignInLink(
 
   // Identical for invited and not — no oracle.
   return { ok: true };
+}
+
+/**
+ * Verify a typed 6-digit email code — the code half of the OTP path. The SAME
+ * `signInWithOtp` send that delivers the magic link also mints this code (the
+ * email template surfaces it as {{ .Token }}); redeeming it here signs the
+ * member in WITHOUT ever leaving the page they're standing on. That is the
+ * whole point: tapping the emailed link from Gmail or Proton opens the email
+ * app's in-app webview, where the session cookies land uselessly (the member's
+ * real browser never sees them) and the verify file picker is dead. The typed
+ * code keeps the entire ceremony in the browser the member already has open.
+ *
+ * The session cookies are set on this action's response by the server client —
+ * the same mechanism the /auth/confirm link route uses — then we redirect into
+ * the app. Send-side posture is untouched: the invite gate and the
+ * enforce_invited_signup DB backstop still decide who ever RECEIVES a code;
+ * this only redeems one. A guess against a non-invited address fails exactly
+ * like a wrong code (no enumeration oracle).
+ *
+ * Error split (honest about what GoTrue can tell us): GoTrue does NOT
+ * distinguish a mistyped code from an expired one — both come back as
+ * `otp_expired`, because a wrong code is simply "not a currently-valid token".
+ * So: shape problems → "code-format" (checkable before any network);
+ * `otp_expired` → "code-expired" (copy says "didn't match or has expired —
+ * request a new one"); anything else → "code-failed".
+ */
+export type VerifyCodeResult =
+  | { ok: false; error: "code-format" | "code-expired" | "code-failed" }
+  | null;
+
+export async function verifyEmailCode(
+  emailRaw: string,
+  codeRaw: string,
+): Promise<VerifyCodeResult> {
+  const email = emailRaw.trim().toLowerCase();
+  // Be forgiving about how the code was typed ("123 456", "123-456"): keep the
+  // digits only, then require exactly six of them.
+  const code = codeRaw.replace(/\D/g, "");
+  if (!EMAIL_RE.test(email) || email.length > 320 || code.length !== 6) {
+    return { ok: false, error: "code-format" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.verifyOtp({
+    email,
+    token: code,
+    type: "email",
+  });
+  if (error) {
+    return {
+      ok: false,
+      error: error.code === "otp_expired" ? "code-expired" : "code-failed",
+    };
+  }
+
+  // Signed in — the cookies ride this response. Land in the app; the protected
+  // layout routes an unconsented first-timer on to /welcome as usual.
+  redirect("/protected");
 }

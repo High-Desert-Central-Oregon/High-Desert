@@ -53,14 +53,25 @@ export const es: Dictionary = {
   auth: {
     title: "Inicia sesión en Steppe",
     subtitle:
-      "Por ahora Steppe es solo por invitación. Si tu correo fue invitado, este mismo formulario te da acceso —y crea tu cuenta la primera vez—. Te enviamos un enlace de acceso que funciona una sola vez, así no hay contraseña que recordar ni que se pueda filtrar.",
+      "Por ahora Steppe es solo por invitación. Si tu correo fue invitado, este mismo formulario te da acceso —y crea tu cuenta la primera vez—. Te enviamos un código de 6 dígitos de un solo uso y un enlace de acceso, así no hay contraseña que recordar ni que se pueda filtrar.",
     emailLabel: "Correo electrónico",
     emailPlaceholder: "tu@ejemplo.com",
-    submit: "Envíenme un enlace para entrar",
+    submit: "Envíenme un código para entrar",
     submitting: "Enviando…",
     checkEmailTitle: "Revisa tu correo",
     checkEmailBody:
-      "Si esa dirección puede unirse, enviamos un enlace de acceso a {email}. Ábrelo en este dispositivo para continuar. El enlace funciona una sola vez y caduca pronto.",
+      "Si esa dirección puede unirse, enviamos un código de 6 dígitos a {email}. Escríbelo abajo — es la forma más fácil de entrar. El código y el enlace de ese correo funcionan una sola vez y caducan pronto.",
+    codeLabel: "Código de 6 dígitos",
+    codeVerify: "Entrar con el código",
+    codeVerifying: "Comprobando…",
+    codeInvalid:
+      "Eso no parece un código de 6 dígitos. Revisa el correo e inténtalo de nuevo.",
+    codeExpired:
+      "El código no coincide o ya caducó. Solicita uno nuevo e inténtalo otra vez.",
+    codeError: "No pudimos comprobar ese código. Inténtalo de nuevo.",
+    codeResend: "Envíenme un código nuevo",
+    codeResent: "Código nuevo enviado — revisa tu correo otra vez.",
+    orTapLink: "O toca el enlace de acceso en el mismo correo.",
     sendAnother: "Usar otro correo",
     errorGeneric:
       "No pudimos enviar el enlace. Revisa la dirección e inténtalo de nuevo.",

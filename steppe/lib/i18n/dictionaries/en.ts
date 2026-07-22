@@ -49,14 +49,24 @@ export const en = {
   auth: {
     title: "Sign in to Steppe",
     subtitle:
-      "Steppe is invite-only right now. If your email was invited, this same form signs you in — and sets up your account the first time. We email a sign-in link that works once, so there's no password to remember or leak.",
+      "Steppe is invite-only right now. If your email was invited, this same form signs you in — and sets up your account the first time. We email a one-time 6-digit code and a sign-in link, so there's no password to remember or leak.",
     emailLabel: "Email address",
     emailPlaceholder: "you@example.com",
-    submit: "Email me a sign-in link",
+    submit: "Email me a sign-in code",
     submitting: "Sending…",
     checkEmailTitle: "Check your email",
     checkEmailBody:
-      "If that address can join, we sent a sign-in link to {email}. Open it on this device to continue. The link works once and expires soon.",
+      "If that address can join, we emailed a 6-digit code to {email}. Enter it below — it's the easiest way in. The code and the link in that email each work once and expire soon.",
+    codeLabel: "6-digit code",
+    codeVerify: "Sign in with the code",
+    codeVerifying: "Checking…",
+    codeInvalid: "That doesn't look like a 6-digit code. Check the email and try again.",
+    codeExpired:
+      "That code didn't match or has expired. Request a new one and try again.",
+    codeError: "We couldn't check that code. Please try again.",
+    codeResend: "Email me a new code",
+    codeResent: "New code sent — check your email again.",
+    orTapLink: "Or tap the sign-in link in the same email.",
     sendAnother: "Use a different email",
     errorGeneric: "We couldn't send the link. Check the address and try again.",
     privacyNote:
