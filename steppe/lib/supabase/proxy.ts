@@ -43,6 +43,15 @@ export async function updateSession(request: NextRequest) {
   const isStaticAsset =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
+    // PWA install chain — both are static, carry no user data, and MUST load
+    // unauthenticated in every launch phase, or the auth/launch gate below would
+    // redirect them and installation would silently fail:
+    //   • /sw.js — the service worker script. The browser (re)fetches it to
+    //     register and to check for updates; a redirect here breaks the SW.
+    //   • /manifest.webmanifest — the web app manifest (app/manifest.ts). Chrome
+    //     must read it (name, icons, start_url) to offer install.
+    pathname === "/sw.js" ||
+    pathname === "/manifest.webmanifest" ||
     // The /preview embed (a self-contained app bundle under public/preview-app)
     // is part of the public marketing surface, so it must load even in the
     // prelaunch phase — otherwise the launch gate below redirects the iframe's

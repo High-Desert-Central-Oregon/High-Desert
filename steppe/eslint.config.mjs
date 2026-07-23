@@ -11,8 +11,10 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   // Never lint build output or deps — these are generated, not authored.
+  // public/sw.js is the compiled service worker (@serwist/next writes it at
+  // build time; app/sw.ts is the authored source and IS linted).
   {
-    ignores: [".next/**", "node_modules/**", "next-env.d.ts"],
+    ignores: [".next/**", "node_modules/**", "next-env.d.ts", "public/sw.js"],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
