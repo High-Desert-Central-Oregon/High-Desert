@@ -19,17 +19,40 @@ const OUT = dirname(fileURLToPath(import.meta.url));
 // See: https://supabase.com/docs/guides/auth/server-side/nextjs (email templates).
 const confirmURL = (type, next = "/protected") =>
   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=${type}&next=${next}`;
-const CODE = "{{ .Token }}"; // Supabase token for a numeric code (reauthentication)
+const CODE = "{{ .Token }}"; // Supabase's numeric one-time code (magic-link, reauthentication)
 
 // Each entry is a Supabase auth email type. Copy is plain Steppe voice.
+//
+// The magic-link email is CODE-FIRST and bilingual (EN·ES in one body):
+//   • The 6-digit {{ .Token }} is the hero. Typing it keeps sign-in in the
+//     browser the member already has open; tapping a link from Gmail/Proton
+//     instead opens the email app's in-app webview, where the session never
+//     reaches the member's real browser and the verify file picker is dead.
+//   • The link survives only as a short LABELED text link — no button, and the
+//     raw URL is never printed. A giant URL invites exactly the tap we're
+//     steering away from.
+//   • Bilingual body rather than a {{ if eq .Data.locale … }} conditional:
+//     Supabase has ONE template per auth type (no per-locale variants), the
+//     metadata locale is frozen at signup (it drifts from the member's current
+//     language), and quoted Go-template literals don't survive the shell's
+//     HTML escaper. Both languages, always, renders deterministically for
+//     every member.
 const templates = {
   "magic-link": {
-    heading: "Your sign-in link",
-    paragraphs: ["Tap the button below to sign in to Steppe. The link works once and expires soon."],
-    action: { url: confirmURL("magiclink"), label: "Sign in to Steppe" },
+    heading: "Your sign-in code",
+    subheading: "Tu código de acceso",
+    paragraphs: [
+      "Enter this code on the Steppe sign-in page — it's the easiest way in. It works once and expires soon.",
+      "Escribe este código en la página de acceso de Steppe — es la forma más fácil de entrar. Funciona una sola vez y caduca pronto.",
+    ],
+    code: CODE,
+    textLink: {
+      url: confirmURL("magiclink"),
+      label: "Or tap here to sign in · O toca aquí para entrar",
+    },
     securityNote:
-      "If you didn't try to sign in, you can ignore this email. Nothing will happen, and no one can sign in without this link.",
-    preheader: "Your one-time sign-in link for Steppe.",
+      "If you didn't try to sign in, you can ignore this email — no one can sign in with the code alone. · Si no intentaste iniciar sesión, puedes ignorar este correo — nadie puede entrar solo con el código.",
+    preheader: "{{ .Token }} is your Steppe sign-in code · tu código de acceso a Steppe",
   },
   "confirm-signup": {
     heading: "Confirm your email",

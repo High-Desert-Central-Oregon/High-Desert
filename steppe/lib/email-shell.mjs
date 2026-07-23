@@ -31,14 +31,21 @@ function esc(s) {
  * Render a full brand-styled HTML email.
  * @param {object} o
  * @param {string}   o.heading        H1 (Besley, sage-deep)
+ * @param {string}   [o.subheading]   serif line under the H1 (e.g. the Spanish
+ *                                    rendering of a bilingual heading)
  * @param {string[]} o.paragraphs     body paragraphs (plain text; escaped)
  * @param {{url:string,label:string}} [o.action]  a button + copy-paste fallback URL
- * @param {string}   [o.code]         a code to display prominently (e.g. reauth {{ .Token }})
+ * @param {string}   [o.code]         a code to display prominently (e.g. {{ .Token }})
+ * @param {{url:string,label:string}} [o.textLink] a DEMOTED text link — the label is
+ *                                    the whole visible text, the raw URL is never
+ *                                    printed. For code-first emails, where the link
+ *                                    is the fallback and nothing on screen should
+ *                                    invite an in-app-webview tap.
  * @param {string}   [o.securityNote] a reassuring "if this wasn't you…" line
  * @param {string}   [o.preheader]    inbox preview text (hidden in the body)
  * @returns {string} full HTML document
  */
-export function renderBrandEmail({ heading, paragraphs = [], action, code, securityNote, preheader = "" }) {
+export function renderBrandEmail({ heading, subheading, paragraphs = [], action, code, textLink, securityNote, preheader = "" }) {
   const body = paragraphs
     .map(
       (t, i) =>
@@ -68,6 +75,17 @@ export function renderBrandEmail({ heading, paragraphs = [], action, code, secur
         </td></tr>`
     : "";
 
+  const subBlock = subheading
+    ? `<p style="margin:0 0 12px 0; font-family:${SERIF}; font-style:italic; font-size:15px; line-height:1.4; color:${C.sage};">${esc(subheading)}</p>`
+    : "";
+
+  const textLinkBlock = textLink
+    ? `
+        <tr><td style="padding:12px 32px 4px 32px;">
+          <p style="margin:0; font-family:${SANS}; font-size:13.5px; line-height:1.6; color:${C.inkSoft};"><a href="${textLink.url}" style="color:${C.deep}; font-weight:600; text-decoration:underline;">${esc(textLink.label)}</a></p>
+        </td></tr>`
+    : "";
+
   const security = securityNote
     ? `<p style="margin:0 0 12px 0; font-family:${SANS}; font-size:12.5px; line-height:1.6; color:${C.inkSoft};">${esc(securityNote)}</p>`
     : "";
@@ -90,8 +108,8 @@ export function renderBrandEmail({ heading, paragraphs = [], action, code, secur
         </td></tr>
         <tr><td style="padding:14px 32px 4px 32px;">
           <h1 style="margin:0 0 12px 0; font-family:${SERIF}; font-weight:700; font-size:24px; line-height:1.2; color:${C.deep};">${esc(heading)}</h1>
-          ${body}
-        </td></tr>${actionBlock}${codeBlock}
+          ${subBlock}${body}
+        </td></tr>${actionBlock}${codeBlock}${textLinkBlock}
         <tr><td style="padding:20px 32px 0 32px;"><div style="height:1px; background:${C.sand}; line-height:1px;">&nbsp;</div></td></tr>
         <tr><td style="padding:16px 32px 28px 32px;">
           ${security}<img src="https://www.steppe.community/brand/steppe-strata-seal-512.png" alt="Steppe Strata Seal — Redmond, Oregon" width="96" height="96" style="display:block; width:96px; height:96px; margin:0 0 12px 0;"><p style="margin:0; font-family:${MONO}; font-size:11px; letter-spacing:.04em; color:${C.sage};">Steppe · Redmond, Oregon</p>
