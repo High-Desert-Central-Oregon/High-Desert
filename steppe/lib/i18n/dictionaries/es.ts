@@ -120,6 +120,16 @@ export const es: Dictionary = {
     changeCta: "Cambiar",
   },
 
+  install: {
+    eyebrow: "Añadir a la pantalla de inicio",
+    why: "Abre Steppe como una aplicación — sin descargas y sin tienda de aplicaciones.",
+    installCta: "Instalar",
+    // En palabras a propósito — nunca depender de un ícono de compartir dibujado.
+    iosHow: "Toca el botón Compartir y luego 'Añadir a pantalla de inicio'.",
+    dismiss: "Ahora no",
+    rowLabel: "Añadir a la pantalla de inicio",
+  },
+
   neighborhoods: {
     title: "Tu vecindario",
     intro:
