@@ -41,3 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*
+
+# serwist — the service worker is generated from app/sw.ts at build time
+# (@serwist/next → public/sw.js); the source of truth is app/sw.ts, not these.
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
