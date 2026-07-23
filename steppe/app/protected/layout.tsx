@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { InstallAffordance } from "@/components/install-affordance";
 import { AppNav } from "./app-nav";
 import { TabBar } from "./tab-bar";
 import { destinations } from "./nav-destinations";
@@ -42,6 +43,12 @@ async function SkipLink() {
       {dict.nav.skipToContent}
     </a>
   );
+}
+
+/** Server shim: fetch the dictionary once, hand it to the client affordance. */
+async function InstallBanner() {
+  const { locale, dict } = await getServerDictionary();
+  return <InstallAffordance locale={locale} dict={dict} />;
 }
 
 async function NavBar() {
@@ -93,6 +100,13 @@ export default function ProtectedLayout({
     <div className="flex min-h-svh flex-col items-center">
       <Suspense>
         <SkipLink />
+      </Suspense>
+
+      {/* Add-to-home-screen affordance — above the nav. Client-only logic that
+          renders nothing until a real install path exists; dismissible, and the
+          You-tab row remains the persistent door. */}
+      <Suspense>
+        <InstallBanner />
       </Suspense>
 
       <Suspense fallback={<div className="h-16 w-full border-b" />}>

@@ -12,6 +12,7 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
 import { DeleteAccount } from "./delete-account";
 import { SignOutButton } from "./sign-out-button";
+import { InstallRow } from "./install-row";
 
 /**
  * The YOU surface (preview-nav-spec §4, adopted): identity up top — the
@@ -112,6 +113,10 @@ async function AccountView() {
               </Link>
             </li>
           ))}
+          {/* Add to home screen — the persistent install door. Ignores the
+              banner's dismissal on purpose; renders nothing (no empty divider)
+              on devices with no install path. */}
+          <InstallRow dict={dict} />
         </ul>
       </nav>
 
