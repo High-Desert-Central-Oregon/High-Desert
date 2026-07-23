@@ -114,6 +114,16 @@ export const en = {
     changeCta: "Change",
   },
 
+  install: {
+    eyebrow: "Add to home screen",
+    why: "Open Steppe like an app — no download, no app store.",
+    installCta: "Install",
+    // Spelled in words on purpose — never depend on a rendered share glyph.
+    iosHow: "Tap the Share button, then Add to Home Screen.",
+    dismiss: "Not now",
+    rowLabel: "Add to home screen",
+  },
+
   neighborhoods: {
     title: "Your neighborhood",
     intro:
