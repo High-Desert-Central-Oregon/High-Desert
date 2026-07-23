@@ -17,7 +17,8 @@
 //     network. The member always gets the current server response, so a new
 //     deploy can never be shadowed by a stale cached shell.
 //   • It never touches auth/session traffic. Navigations to /auth, /protected,
-//     /api, /cal and the /c /d /e /p /q shortlinks are NOT matched, so the SW
+//     /welcome (the consent gate — session-bearing and server-redirected),
+//     /api, /cal and the /c /d /e /p /q /s shortlinks are NOT matched, so the SW
 //     never calls respondWith for them — they reach the network exactly as if
 //     no SW were installed. In particular the manifest's start_url '/protected'
 //     is excluded, so opening the installed app still hits the Next proxy
@@ -50,7 +51,7 @@ declare const self: ServiceWorkerGlobalScope;
 // server-redirected. These fall through to the browser's own networking, so
 // behaviour is byte-for-byte identical to having no SW installed. Keep this in
 // sync with the public/gated split in lib/supabase/proxy.ts.
-const NEVER_INTERCEPT = /^\/(auth|protected|api|cal|c|d|e|p|q)(?:\/|$)/;
+const NEVER_INTERCEPT = /^\/(auth|protected|welcome|api|cal|c|d|e|p|q|s)(?:\/|$)/;
 
 const serwist = new Serwist({
   // Empty precache (see __SW_MANIFEST note above). Present so @serwist/next has

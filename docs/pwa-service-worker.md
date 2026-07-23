@@ -45,9 +45,13 @@ So this SW is written to be *incapable* of those failures, not merely careful.
   cached shell. This single route is also what registers the `fetch` handler
   Chrome requires for installability.
 - **Never intercepts auth/session traffic.** Navigations matching
-  `^/(auth|protected|api|cal|c|d|e|p|q)(/|$)` are **not matched**, so the SW does
-  not call `respondWith` for them — they reach the network exactly as if no SW
-  were installed. This is verified below.
+  `^/(auth|protected|welcome|api|cal|c|d|e|p|q|s)(/|$)` are **not matched**, so the
+  SW does not call `respondWith` for them — they reach the network exactly as if
+  no SW were installed. This is verified below. (`/s` is the printed-QR slug
+  added after this SW was first cut; `/welcome` is the consent gate — both are
+  server-redirected, so they stay native like their siblings. Adding a route
+  prefix that redirects or carries session state? Add it to `NEVER_INTERCEPT`
+  in `app/sw.ts` and to this line.)
 - **Never touches Supabase.** `api.*.supabase.co` and the auth token refresh are
   cross-origin, so `sameOrigin` is false and they are never matched.
 
