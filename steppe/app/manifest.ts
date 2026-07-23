@@ -25,9 +25,19 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     background_color: '#EDE6D5',
     theme_color: '#36563D',
+    // The Steppe isomimo (gear-landscape) mark, generated from
+    // docs/brand/steppe-isomimo-transparent.png (3176x3856 source; never
+    // upscaled). Two purposes, deliberately different art:
+    //   • 'any' — the FULL mark, uncropped, transparent padding to square.
+    //     This is what the Android splash renders on background_color (bone).
+    //   • 'maskable' — the mark scaled so its bounding-box DIAGONAL fits the
+    //     inner 80% safe-zone circle, on opaque bone (#EDE6D5) to the edges:
+    //     Android crops maskable icons to a circle/squircle, so nothing may
+    //     sit outside the safe zone.
     icons: [
       { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
       { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icon-192-maskable.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
       { src: '/icon-512-maskable.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
   }
