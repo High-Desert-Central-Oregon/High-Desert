@@ -13,81 +13,34 @@
  * the ONLY submission path, which in turn is what makes its per-IP limit and
  * honeypot real rather than advisory.
  *
- * Callers only ever touch the four exported functions and their types.
+ * SERVER ONLY — it imports next/headers transitively. The types and the count
+ * arithmetic live in lib/pledge-shared.ts so the client panel can use them
+ * without dragging a database client into the browser bundle; everything there
+ * is re-exported here, so server callers still have a single import.
  */
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { siteOrigin } from "@/lib/site-url";
+import {
+  normalizeEmail,
+  normalizeSlug,
+  isEmailShaped,
+  pledgePath,
+  type NeighborhoodStatus,
+  type PledgeResult,
+} from "@/lib/pledge-shared";
 
-/** What the public page and the submit response both report. */
-export type NeighborhoodStatus = {
-  slug: string;
-  name: string;
-  /** Households needed before the neighborhood opens. */
-  threshold: number;
-  pledgeCount: number;
-  /**
-   * The neighborhood is actually live — a human recorded it (`opened_at`), NOT
-   * merely `pledgeCount >= threshold`. Crossing the threshold is arithmetic;
-   * opening a neighborhood is work someone does. Use `thresholdReached` for the
-   * in-between state.
-   */
-  isOpen: boolean;
-};
+export * from "@/lib/pledge-shared";
 
-export type PledgeResult = NeighborhoodStatus & {
-  /** True when this address was already on the list — no second layer, no second email. */
-  alreadyPledged: boolean;
-};
-
-/** Threshold met but not yet opened — "we got there, it starts shortly". */
-export function thresholdReached(s: {
-  pledgeCount: number;
-  threshold: number;
-}): boolean {
-  return s.pledgeCount >= s.threshold;
-}
-
-/** Households still needed. Never negative. */
-export function remaining(s: {
-  pledgeCount: number;
-  threshold: number;
-}): number {
-  return Math.max(s.threshold - s.pledgeCount, 0);
-}
-
-// Deliberately permissive: real addresses are stranger than most patterns
-// allow, and the cost of rejecting a valid one is a neighbor who does not
-// pledge. The database applies this same shape check independently — this copy
-// exists to produce a decent message, not to be the gate (submit_pledge is).
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MAX_EMAIL_LEN = 320;
-
-export function normalizeEmail(raw: unknown): string {
-  return typeof raw === "string" ? raw.trim().toLowerCase() : "";
-}
-
-export function isEmailShaped(email: string): boolean {
-  return email.length <= MAX_EMAIL_LEN && EMAIL_RE.test(email);
-}
-
-/** Slugs are lowercase and URL-safe; anything else cannot match a campaign. */
-export function normalizeSlug(raw: unknown): string {
-  return typeof raw === "string" ? raw.trim().toLowerCase() : "";
-}
-
-// --- the two URLs that appear in print and in email --------------------------
+// --- the two absolute URLs that appear in email ------------------------------
 // Built from siteOrigin() rather than hardcoded, so preview deploys are
 // self-referential. In production this resolves to the canonical origin, which
-// is what the printed steppe.community/n/<slug> redirects to.
-//
-// This path shape is load-bearing: it is printed on mailers, door hangers, and
-// yard signs, and a printed URL cannot be changed afterwards. Do not restructure
-// /n/<slug> without reprinting everything already in the field.
+// is what the printed steppe.community/n/<slug> redirects to. Server-side only:
+// siteOrigin() reads VERCEL_URL, which is not a NEXT_PUBLIC_ variable.
 
 /** The neighborhood's public page — what a pledger forwards to three doors. */
 export function pledgeShareUrl(slug: string): string {
-  return `${siteOrigin()}/n/${normalizeSlug(slug)}`;
+  return `${siteOrigin()}${pledgePath(slug)}`;
 }
 
 /**
@@ -96,7 +49,7 @@ export function pledgeShareUrl(slug: string): string {
  * the background and would otherwise unsubscribe people who never clicked.
  */
 export function pledgeRemovalUrl(slug: string, token: string): string {
-  return `${siteOrigin()}/n/${normalizeSlug(slug)}/leave?token=${encodeURIComponent(token)}`;
+  return `${siteOrigin()}${pledgePath(slug)}/leave?token=${encodeURIComponent(token)}`;
 }
 
 // --- per-IP rate limit -------------------------------------------------------

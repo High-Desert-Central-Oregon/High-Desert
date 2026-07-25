@@ -1,0 +1,398 @@
+/* Neighborhood pledge page (/n/[slug]) — scoped under .site-root .pledge.
+ * Shared chrome / tokens live in site-base.css + tokens.css; nothing here
+ * redefines a global.
+ *
+ * Mobile-first: single column, the count and the action above the fold on a
+ * phone, the strata column below them. It widens to two columns only at 760px.
+ * No webfonts beyond the ones the site already loads, no images, no JS for the
+ * visual — this page is opened at a mailbox on one bar of signal. */
+
+.site-root .pledge {
+  padding: clamp(28px, 5vw, 56px) 0 clamp(56px, 8vw, 96px);
+}
+.site-root .pledge-wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+.site-root .pledge-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 4vw, 44px);
+  align-items: center;
+}
+/* The column is visual support, so on a phone it follows the number and the
+   action rather than pushing them down the page. */
+.site-root .pledge-col {
+  order: 2;
+}
+.site-root .pledge-body {
+  order: 1;
+}
+@media (min-width: 760px) {
+  .site-root .pledge-grid {
+    grid-template-columns: minmax(190px, 260px) 1fr;
+    gap: clamp(40px, 5vw, 72px);
+    align-items: stretch;
+  }
+  .site-root .pledge-col {
+    order: 1;
+  }
+  .site-root .pledge-body {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+/* ---- the stratigraphic column ------------------------------------------- */
+/* Seven units, bedrock to rimrock, built from the Steppe palette rather than a
+   generic ramp: basalt at the base, juniper and sage through the middle, ochre
+   and rust at the rim. Light values; the dark-theme overrides follow. */
+.site-root .pledge {
+  --strata-1: #2b3033;
+  --strata-2: #2b4733;
+  --strata-3: #36563d;
+  --strata-4: #567048;
+  --strata-5: #8a7a3c;
+  --strata-6: #a8842f;
+  --strata-7: #a8542c;
+  --strata-sky-top: #bcd3de;
+  --strata-sky-bot: #dce7ea;
+}
+html[data-theme="dark"] .site-root .pledge {
+  --strata-1: #23282b;
+  --strata-2: #24402f;
+  --strata-3: #2f4c37;
+  --strata-4: #4a6240;
+  --strata-5: #7a6c36;
+  --strata-6: #96762a;
+  --strata-7: #a8542c;
+  --strata-sky-top: #33454e;
+  --strata-sky-bot: #3d5058;
+}
+
+.site-root .pledge .strata {
+  max-width: 260px;
+  margin: 0 auto;
+}
+.site-root .pledge .strata-sky {
+  position: relative;
+  height: clamp(260px, 46vw, 440px);
+  overflow: hidden;
+  border: 1px solid var(--basalt);
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    var(--strata-sky-top) 0%,
+    var(--strata-sky-bot) 100%
+  );
+}
+html[data-theme="dark"] .site-root .pledge .strata-sky {
+  border-color: var(--rule);
+}
+
+.site-root .pledge .strata-stack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.site-root .pledge .band {
+  width: 100%;
+  background: transparent;
+}
+.site-root .pledge .band-filled {
+  border-top: 1px solid rgba(0, 0, 0, 0.18);
+  /* Each layer rises into place once, staggered by the layer below it. The
+     count is the story, so the count is what animates. */
+  animation: pledge-settle 340ms ease-out both;
+}
+@keyframes pledge-settle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Honour the OS setting rather than detecting it in JS: no hook, no state, no
+   hydration mismatch, and it is correct before the first paint. */
+@media (prefers-reduced-motion: reduce) {
+  .site-root .pledge .band-filled {
+    animation: none;
+  }
+}
+
+/* the horizon: where the neighborhood opens */
+.site-root .pledge .strata-horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px;
+}
+.site-root .pledge .strata-horizon-rule {
+  flex: 1;
+  border-top: 1px dashed var(--basalt);
+  opacity: 0.55;
+}
+html[data-theme="dark"] .site-root .pledge .strata-horizon-rule {
+  border-top-color: var(--bone);
+  opacity: 0.5;
+}
+.site-root .pledge .strata-horizon-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--basalt);
+  opacity: 0.8;
+}
+html[data-theme="dark"] .site-root .pledge .strata-horizon-num {
+  color: var(--bone);
+}
+
+.site-root .pledge-legend {
+  margin: 10px 0 0;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---- the number and the copy -------------------------------------------- */
+.site-root .pledge-eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+.site-root .pledge-title {
+  margin: 10px 0 0;
+  font-size: clamp(34px, 6vw, 56px);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+.site-root .pledge-count {
+  margin: 18px 0 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.site-root .pledge-count-n {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: clamp(42px, 9vw, 64px);
+  line-height: 1;
+  color: var(--juniper);
+}
+html[data-theme="dark"] .site-root .pledge-count-n {
+  color: var(--sage);
+}
+.site-root .pledge-count-of {
+  font-size: 17px;
+  color: var(--text-muted);
+}
+.site-root .pledge-lead {
+  margin: 18px 0 0;
+  max-width: 46ch;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+/* ---- the action ---------------------------------------------------------- */
+.site-root .pledge-action {
+  margin-top: 26px;
+  max-width: 46ch;
+}
+.site-root .pledge-field {
+  display: block;
+}
+.site-root .pledge-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.site-root .pledge-input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+@media (min-width: 520px) {
+  .site-root .pledge-input-row {
+    flex-direction: row;
+  }
+}
+.site-root .pledge-input-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 14px;
+  font-family: var(--sans);
+  font-size: 16px; /* 16px stops iOS zooming the page on focus */
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.site-root .pledge-input-row input::placeholder {
+  color: var(--text-muted);
+}
+.site-root .pledge-input-row input[aria-invalid] {
+  border-color: var(--rust);
+}
+
+.site-root .pledge-submit {
+  display: inline-block;
+  padding: 13px 26px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--juniper);
+  border: 1px solid var(--juniper);
+  border-radius: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.site-root .pledge-submit:hover {
+  background: var(--juniper-deep);
+}
+.site-root .pledge-submit[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+.site-root .pledge-submit-link {
+  text-decoration: none;
+  text-align: center;
+}
+html[data-theme="dark"] .site-root .pledge-submit {
+  color: var(--bone);
+}
+
+.site-root .pledge-error {
+  margin: 10px 0 0;
+  font-size: 15px;
+  color: var(--rust);
+}
+.site-root .pledge-privacy {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* honeypot — off-screen rather than display:none, so bots that skip hidden
+   fields still fill it, while nobody sees or tabs into it */
+.site-root .pledge-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---- the confirmation ---------------------------------------------------- */
+.site-root .pledge-done {
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--juniper);
+  border-radius: 12px;
+}
+.site-root .pledge-done-kicker {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+.site-root .pledge-done-h {
+  margin: 8px 0 0;
+  font-family: var(--display);
+  font-size: 21px;
+  line-height: 1.25;
+}
+.site-root .pledge-done-p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.site-root .pledge-share {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+@media (min-width: 520px) {
+  .site-root .pledge-share {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+.site-root .pledge-share-url {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.site-root .pledge-copy {
+  padding: 12px 20px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--rust);
+  border: 1px solid var(--rust);
+  border-radius: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.site-root .pledge-copy[data-copied] {
+  color: var(--ink);
+  background: var(--sage);
+  border-color: var(--sage);
+}
+
+/* ---- the removal confirmation page (/n/[slug]/leave) --------------------- */
+.site-root .pledge-leave {
+  max-width: 52ch;
+}
+.site-root .pledge-leave .pledge-lead {
+  margin-top: 14px;
+}
+.site-root .pledge-leave-actions {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.site-root .pledge-leave-cancel {
+  font-size: 15px;
+  color: var(--text-muted);
+}
