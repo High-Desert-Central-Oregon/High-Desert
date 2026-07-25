@@ -52,46 +52,6 @@ export function pledgeRemovalUrl(slug: string, token: string): string {
   return `${siteOrigin()}${pledgePath(slug)}/leave?token=${encodeURIComponent(token)}`;
 }
 
-// --- per-IP rate limit -------------------------------------------------------
-// Best-effort and in-memory, per serverless instance, resetting on cold start —
-// the same shape as app/api/contact/route.ts, and deliberately no new dependency
-// (a durable limiter would need shared storage we do not run).
-//
-// It is honest about what it stops. The count is public and printed on signage,
-// so it is a target for inflation; this plus the (neighborhood, email) unique
-// constraint handles casual noise and a stuck submit button. Neither stops a
-// determined actor with many addresses and many IPs, and Steppe deliberately
-// does NOT answer that with CAPTCHA, a confirmation loop, or address
-// verification — at this scale those suppress genuine conversions far more than
-// abuse, and verifying an address at pledge time would defeat the mechanic
-// outright. The proportionate defence is pledge_activity(), which makes
-// anomalies visible after the fact.
-//
-// The window is more generous than the contact form's because the failure mode
-// here is a real neighbor turned away: several households behind one venue or
-// apartment NAT pledging in the same few minutes is exactly the good case. (The
-// /join route disabled its limiter entirely for that reason; a pledge count is
-// worth defending a little harder than a mailing list, so this one is on.)
-const WINDOW_MS = 10 * 60_000;
-const MAX_PER_WINDOW = 6;
-const hits = new Map<string, number[]>();
-
-export function rateLimited(key: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(key, recent);
-  return recent.length > MAX_PER_WINDOW;
-}
-
-/** First hop of X-Forwarded-For, or "unknown" — never used for anything but the limit. */
-export function clientIp(request: Request): string {
-  return (
-    (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
-    "unknown"
-  );
-}
-
 // --- reads -------------------------------------------------------------------
 
 type StatusRow = {

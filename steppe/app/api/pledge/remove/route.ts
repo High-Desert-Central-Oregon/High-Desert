@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { clientIp, rateLimited, removePledge } from "@/lib/pledge";
+import { removePledge } from "@/lib/pledge";
+import { clientIp, rateLimited } from "@/lib/rate-limit";
 
 /**
  * Remove a pledge (the confirmation page at /n/[slug]/leave posts here).

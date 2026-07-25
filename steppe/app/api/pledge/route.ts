@@ -1,8 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getTranslations } from "next-intl/server";
 import {
-  clientIp,
-  rateLimited,
   submitPledge,
   normalizeSlug,
   normalizeEmail,
@@ -11,6 +9,7 @@ import {
   pledgeRemovalUrl,
   type PledgeResult,
 } from "@/lib/pledge";
+import { clientIp, rateLimited } from "@/lib/rate-limit";
 import { sendPledgeConfirmation } from "@/lib/pledge-email";
 
 /**
