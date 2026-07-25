@@ -84,7 +84,9 @@ npm run dev
 **Building with Claude Code:** run `claude` in the repo root. It reads [`CLAUDE.md`](./CLAUDE.md)
 (the invariants and build order) and [`SPEC.md`](./SPEC.md) (what each feature is and how it's
 built). A good first prompt: *"Read CLAUDE.md and SPEC.md; start at Build Sequence Step 1–2, and
-respect every invariant in CLAUDE.md."*
+respect every invariant in CLAUDE.md."* How that AI assistance is bounded — the tool boundary, the
+human review gate, and the copyright posture — is documented in
+[`docs/decisions/ai-assisted-development.md`](./docs/decisions/ai-assisted-development.md).
 
 ## Repository layout
 
