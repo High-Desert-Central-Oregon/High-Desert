@@ -1,10 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
+import { getTranslations } from "next-intl/server";
 import {
   clientIp,
   rateLimited,
   submitPledge,
   normalizeSlug,
+  normalizeEmail,
+  getRemovalToken,
+  pledgeShareUrl,
+  pledgeRemovalUrl,
+  type PledgeResult,
 } from "@/lib/pledge";
+import { sendPledgeConfirmation } from "@/lib/pledge-email";
 
 /**
  * Neighborhood pledge submission (the /n/[slug] page posts here).
@@ -76,6 +83,14 @@ export async function POST(request: Request) {
   }
 
   const { result } = outcome;
+
+  // A NEW pledge gets exactly one confirmation. A repeat submission gets none —
+  // that address was already welcomed, and re-sending would make a stuck submit
+  // button look like Steppe mailing you twice.
+  if (!result.alreadyPledged) {
+    await queueConfirmation(slug, normalizeEmail(d.email), result);
+  }
+
   return NextResponse.json({
     ok: true,
     pledgeCount: result.pledgeCount,
@@ -83,4 +98,81 @@ export async function POST(request: Request) {
     isOpen: result.isOpen,
     alreadyPledged: result.alreadyPledged,
   });
+}
+
+/**
+ * Compose the confirmation now, send it after the response.
+ *
+ * The composition (translations, the removal token) happens inside the request
+ * so it can use the request's locale cookie; only the network call to Resend is
+ * deferred. `after()` is what makes "must not block the HTTP response" true
+ * without the send being killed — a bare un-awaited promise in a serverless
+ * function can be torn down the moment the response is returned, which would
+ * drop confirmations silently and only under load.
+ *
+ * Every failure path here is swallowed and logged. The pledge is already
+ * recorded and the neighbor has already seen their count go up; a mail problem
+ * must not retroactively turn that into an error.
+ */
+async function queueConfirmation(
+  slug: string,
+  email: string,
+  result: PledgeResult,
+) {
+  try {
+    const t = await getTranslations("pledgeEmail");
+    const token = await getRemovalToken(slug, email);
+    if (!token) {
+      console.error("[pledge] no removal token; confirmation not sent", { slug });
+      return;
+    }
+
+    const name = result.name;
+    const vars = {
+      neighborhood: name,
+      count: result.pledgeCount,
+      threshold: result.threshold,
+    };
+
+    const payload = {
+      to: email,
+      subject: t("subject", vars),
+      heading: t("heading"),
+      paragraphs: [
+        t("body1", vars),
+        t("body2", vars),
+        t("body3"),
+        // ⚑ FOUNDER CHECK BEFORE THE FIRST SEND: this line promises that a
+        // pledger can read what is already posted, free and without an account.
+        // Today there is no public read surface — /protected/* is behind auth
+        // and behind the LAUNCH_PHASE gate — so as written this claim is not yet
+        // true. It is momentum-pack copy and is shipped as written, but it must
+        // become true (or this string must change) before the first real send.
+        // Flagged in the hand-off; see messages/en.json → pledgeEmail.body4.
+        t("body4"),
+        // Signed with a personal name, then the role, then the standing claim.
+        // Three paragraphs rather than one string with newlines, because the
+        // HTML shell renders each paragraph in its own <p> and an embedded
+        // newline would collapse into "Greg Founding Director, Steppe".
+        t("signoff"),
+        t("signoffRole"),
+        t("tagline"),
+      ],
+      shareUrl: pledgeShareUrl(slug),
+      shareLabel: t("shareLabel"),
+      removeUrl: pledgeRemovalUrl(slug, token),
+      removeLabel: t("removeLabel"),
+      privacyNote: t("privacyNote"),
+    };
+
+    after(async () => {
+      const sent = await sendPledgeConfirmation(payload);
+      if (!sent.ok && sent.code === "send") {
+        console.error("[pledge] confirmation send failed", { slug });
+      }
+    });
+  } catch {
+    // Localization or token lookup failed. The pledge stands.
+    console.error("[pledge] could not compose confirmation", { slug });
+  }
 }

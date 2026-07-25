@@ -216,6 +216,20 @@
     "signoff": "— El equipo de Steppe",
     "place": "Redmond, Oregon"
   },
+  "pledgeEmail": {
+    "subject": "Eres la capa {count} en {neighborhood}",
+    "heading": "Ya estás dentro.",
+    "body1": "{neighborhood} va en {count} de {threshold}.",
+    "body2": "No pasa nada hasta que lleguemos a {threshold}: sin verificación, sin pago, sin cuenta. Cuando lleguemos, les escribo a ti y a todas las demás personas al mismo tiempo, y el vecindario empieza junto.",
+    "body3": "Si quieres que pase antes, lo más efectivo por mucho son tres puertas: las personas vecinas de cada lado y una de enfrente.",
+    "body4": "Mientras tanto puedes leer todo lo que ya se publicó, gratis y sin cuenta.",
+    "signoff": "Greg",
+    "signoffRole": "Director Fundador, Steppe",
+    "tagline": "Una organización sin fines de lucro de Redmond. Sin anuncios. Sin dueño. No se puede vender.",
+    "shareLabel": "Envía esto a tres puertas",
+    "removeLabel": "Quítate de la lista cuando quieras",
+    "privacyNote": "Nunca vendemos ni compartimos tu correo."
+  },
   "privacy": {
     "heroEyebrow": "Privacidad",
     "heroTitle": "No tenemos <em>nada que ganar</em> con tus datos.",

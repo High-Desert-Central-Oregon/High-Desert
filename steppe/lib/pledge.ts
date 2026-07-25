@@ -17,6 +17,7 @@
  */
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { siteOrigin } from "@/lib/site-url";
 
 /** What the public page and the submit response both report. */
 export type NeighborhoodStatus = {
@@ -73,6 +74,29 @@ export function isEmailShaped(email: string): boolean {
 /** Slugs are lowercase and URL-safe; anything else cannot match a campaign. */
 export function normalizeSlug(raw: unknown): string {
   return typeof raw === "string" ? raw.trim().toLowerCase() : "";
+}
+
+// --- the two URLs that appear in print and in email --------------------------
+// Built from siteOrigin() rather than hardcoded, so preview deploys are
+// self-referential. In production this resolves to the canonical origin, which
+// is what the printed steppe.community/n/<slug> redirects to.
+//
+// This path shape is load-bearing: it is printed on mailers, door hangers, and
+// yard signs, and a printed URL cannot be changed afterwards. Do not restructure
+// /n/<slug> without reprinting everything already in the field.
+
+/** The neighborhood's public page — what a pledger forwards to three doors. */
+export function pledgeShareUrl(slug: string): string {
+  return `${siteOrigin()}/n/${normalizeSlug(slug)}`;
+}
+
+/**
+ * The token-bearing removal link. Points at a confirmation PAGE, never at an
+ * endpoint that deletes on GET — mail scanners and link previewers fetch URLs in
+ * the background and would otherwise unsubscribe people who never clicked.
+ */
+export function pledgeRemovalUrl(slug: string, token: string): string {
+  return `${siteOrigin()}/n/${normalizeSlug(slug)}/leave?token=${encodeURIComponent(token)}`;
 }
 
 // --- per-IP rate limit -------------------------------------------------------

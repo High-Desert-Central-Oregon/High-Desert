@@ -214,6 +214,20 @@
     "signoff": "— The Steppe team",
     "place": "Redmond, Oregon"
   },
+  "pledgeEmail": {
+    "subject": "You're layer {count} in {neighborhood}",
+    "heading": "You're in.",
+    "body1": "{neighborhood} is now at {count} of {threshold}.",
+    "body2": "Nothing happens until we hit {threshold} — no verification, no payment, no account. When we get there I'll email you and everyone else at once, and the neighborhood starts together.",
+    "body3": "If you want it to happen sooner, the fastest thing by a wide margin is three doors: the neighbors on either side of you, and one across the street.",
+    "body4": "In the meantime you can read everything that's already posted, free, without an account.",
+    "signoff": "Greg",
+    "signoffRole": "Founding Director, Steppe",
+    "tagline": "A Redmond nonprofit. No ads. No owner. Cannot be sold.",
+    "shareLabel": "Send this to three doors",
+    "removeLabel": "Remove yourself any time",
+    "privacyNote": "We never sell or share your address."
+  },
   "privacy": {
     "heroEyebrow": "Privacy",
     "heroTitle": "We have <em>nothing to gain</em> from your data.",
