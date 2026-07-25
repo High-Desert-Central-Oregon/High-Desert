@@ -49,6 +49,17 @@ steps:
         head="${CI_COMMIT_SHA}"
         prev="${CI_PREV_COMMIT_SHA:-}"
         zero="0000000000000000000000000000000000000000"
+        # HARDENING: a shallow/partial CI clone can leave $prev — and a merge's
+        # authored parents — unfetched, which forces the degraded HEAD-only
+        # fallback below and leaves authored commits BEHIND a merge unchecked
+        # (only HEAD is seen). Deepen to full history so the proper RANGE path
+        # runs on every event and inspects every authored commit — the point of
+        # the gate. Guarded on an actual shallow clone: --unshallow errors on a
+        # complete one, and --deepen is the fallback if --unshallow is refused.
+        if [ -f "$(git rev-parse --git-dir)/shallow" ]; then
+          echo "note: shallow clone — deepening to full history so the range check sees every authored commit"
+          git fetch -q --unshallow || git fetch -q --deepen=2147483647 || true
+        fi
         # --no-merges: exclude forge-generated merge commits. When a PR is merged
         # via the Codeberg UI onto protected `main`, the merge commit is
         # constructed by the forge, not authored by a human, so it carries no
