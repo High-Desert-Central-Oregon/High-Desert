@@ -24,7 +24,14 @@ export async function updateSession(request: NextRequest) {
     pathname === "/e" ||
     pathname === "/c" ||
     pathname === "/s" ||
-    pathname === "/contact";
+    pathname === "/contact" ||
+    // Neighborhood pledge pages (migration 0026). These are the destination of
+    // every printed QR code, mailer, and yard sign, so they must be readable by
+    // someone with no account — and must stay reachable while LAUNCH_PHASE is
+    // still "prelaunch", since the whole point is that they run BEFORE the
+    // member app opens in that neighborhood. Prefix match: /n/<slug> and the
+    // /n/<slug>/leave removal-confirmation page.
+    pathname.startsWith("/n/");
   // Public endpoints reachable by anonymous visitors (the /join and /contact
   // forms post here; the landing hero polls /api/weather — a keyless, cached
   // public-data proxy that sends no user data upstream); each enforces its own
@@ -34,6 +41,12 @@ export async function updateSession(request: NextRequest) {
     pathname === "/api/contact" ||
     pathname === "/api/qr" ||
     pathname === "/api/weather" ||
+    // Pledge submission + removal. Public by necessity (the pledger has no
+    // account and never will before the neighborhood opens); each enforces its
+    // own rules server-side, and the underlying RPCs are service_role-only so
+    // this route is the only door.
+    pathname === "/api/pledge" ||
+    pathname === "/api/pledge/remove" ||
     // Calendar subscription feeds (C1 §6.1): polled by calendar apps with no
     // cookies or headers — the 256-bit bearer token in the path is the whole
     // credential, enforced by the service_role-only RPC behind the route.
