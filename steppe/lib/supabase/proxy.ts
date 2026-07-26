@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
+import { isCampaignSlug } from "../campaign-slugs";
 
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -73,6 +74,27 @@ export async function updateSession(request: NextRequest) {
     /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname);
 
   if (isPublicMarketing || isPublicApi || isStaticAsset) {
+    // Unknown neighborhood slugs get a REAL 404 here, because this is the last
+    // place that can still set one. Under cacheComponents the page cannot: every
+    // uncached read must sit behind <Suspense>, so Next commits a 200 and
+    // flushes a shell before any in-page slug check runs, leaving notFound()
+    // able to change only the body. Both segment configs that would express
+    // "this param does not exist" (`dynamic`, `dynamicParams`) are rejected
+    // outright by cacheComponents, and generateStaticParams without
+    // dynamicParams still renders unknown params on demand.
+    //
+    // Only the campaign page itself is gated. /n/<slug>/leave is deliberately
+    // left open: someone holding a removal token for a campaign that has since
+    // closed must still be able to remove themselves, and a 404 there would
+    // trap their address in a list they asked to leave.
+    const n = pathname.startsWith("/n/") ? pathname.split("/") : null;
+    if (n && n.length === 3 && n[2]) {
+      // null means "could not determine" — fail open (see lib/campaign-slugs).
+      const known = await isCampaignSlug(n[2]);
+      if (known === false) {
+        return NextResponse.rewrite(new URL("/n-not-found", request.url), { status: 404 });
+      }
+    }
     return NextResponse.next({ request });
   }
 

@@ -278,8 +278,14 @@ describe.skipIf(!dbUp)("pledges — isolation and behaviour (owner connection)",
       const removed = await c.query("select public.remove_pledge($1) as ok", [t[0].token]);
       expect(removed.rows[0].ok).toBe(true);
 
+      // Scoped to this case's own fixtures. Asserting over the whole table
+      // would make the test depend on the database being empty, which is a
+      // property of whoever ran something last, not of the code under test.
       const { rows } = await c.query(
-        "select email_normalized from pledges order by email_normalized",
+        `select p.email_normalized from pledges p
+           join neighborhoods n on n.id = p.neighborhood_id
+          where n.slug in ('t-rm', 't-rm-other')
+          order by p.email_normalized`,
       );
       expect(rows.map((r) => r.email_normalized)).toEqual([
         "bystander@x.com",
@@ -310,7 +316,11 @@ describe.skipIf(!dbUp)("pledges — isolation and behaviour (owner connection)",
       expect(bogus.rows[0].ok).toBe(false);
       const nul = await c.query("select public.remove_pledge(null) as ok");
       expect(nul.rows[0].ok).toBe(false);
-      const { rows } = await c.query("select count(*)::int as n from pledges");
+      const { rows } = await c.query(
+        `select count(*)::int as n from pledges p
+           join neighborhoods n on n.id = p.neighborhood_id
+          where n.slug = 't-badtoken'`,
+      );
       expect(rows[0].n).toBe(1);
     });
   });
@@ -378,16 +388,27 @@ describe.skipIf(!dbUp)("pledges — isolation and behaviour (owner connection)",
         [stale, fresh, opened],
       );
 
+      // The purge is global by design, so both assertions are scoped to this
+      // case's own fixtures. Asserting over the whole table would make the test
+      // depend on the database being empty — a property of whoever ran
+      // something last, not of the code under test.
+      const mine = ["t-stale", "t-fresh", "t-opened"];
       const { rows: purged } = await c.query("select * from public.close_stale_pledge_campaigns()");
       // BOTH of the stale campaign's addresses go, including the recent one:
       // the commitment is "all pledge records for that neighborhood".
-      expect(purged.map((r) => r.email_normalized).sort()).toEqual([
-        "old@x.com",
-        "recent@x.com",
-      ]);
+      expect(
+        purged
+          .filter((r) => mine.includes(r.slug))
+          .map((r) => r.email_normalized)
+          .sort(),
+      ).toEqual(["old@x.com", "recent@x.com"]);
 
       const { rows: left } = await c.query(
-        "select email_normalized from pledges order by email_normalized",
+        `select p.email_normalized from pledges p
+           join neighborhoods n on n.id = p.neighborhood_id
+          where n.slug = any($1)
+          order by p.email_normalized`,
+        [mine],
       );
       expect(left.map((r) => r.email_normalized)).toEqual(["fresh@x.com", "opened@x.com"]);
     });

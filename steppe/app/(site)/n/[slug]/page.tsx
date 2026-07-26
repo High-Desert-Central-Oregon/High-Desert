@@ -18,28 +18,26 @@
 //     matters because the whole point is that these pages run BEFORE the member
 //     app opens in that neighborhood.
 //
-//  3. An unknown slug must not render an empty pledge card. notFound() sends
-//     the visitor to the branded 404, and a neighborhood with no campaign 404s
-//     identically to one that does not exist — Steppe publishes no browsable
-//     directory of neighborhoods it has no presence in.
+//  3. An unknown slug must return a REAL 404 status, not 200 with apologetic
+//     content — and that is NOT enforced here. It cannot be. Under
+//     cacheComponents every uncached read must sit behind <Suspense>, so the
+//     (site) layout's boundary makes Next commit a 200 and flush a shell before
+//     this component ever runs the lookup; notFound() below can then change the
+//     body but not the status. Both segment configs that would express "this
+//     param does not exist" — `dynamic` and `dynamicParams` — are rejected
+//     outright by cacheComponents, and generateStaticParams without
+//     dynamicParams still renders unknown params on demand (all three verified,
+//     not assumed).
 //
-//     ⚑ KNOWN LIMITATION, NEEDS A DECISION. The 404 PAGE renders, but the HTTP
-//     STATUS is 200. cacheComponents (next.config) requires every uncached read
-//     to sit behind <Suspense>; the (site) layout provides that boundary, so
-//     Next commits a 200 and flushes a shell before this component ever runs the
-//     slug lookup. `export const dynamic = "force-dynamic"` is rejected outright
-//     under cacheComponents, and moving the segment out of (site) to control the
-//     boundary was tried and fails the same rule from its own layout. Two ways
-//     to get a true 404, both with a real cost:
-//       (a) resolve the slug in the proxy (lib/supabase/proxy.ts) and rewrite
-//           unknown ones — the proxy CAN set a status, but it adds a database
-//           round-trip to the QR-scan critical path unless the campaign-slug
-//           list is cached with a TTL;
-//       (b) mark the status read `use cache` with a short cacheLife — that makes
-//           the page prerenderable so notFound() can set the status, at the cost
-//           of the count being a few seconds stale.
-//     Neither is free, and which one is right depends on how much a true 404 is
-//     worth against freshness. Flagged rather than chosen.
+//     The gate therefore lives in lib/supabase/proxy.ts, the last layer that
+//     can still set a status. notFound() is kept here as the backstop for the
+//     case the proxy deliberately allows through: it fails OPEN when the slug
+//     lookup is unavailable, so a database blip degrades to the old soft 404
+//     rather than 404-ing live neighborhoods.
+//
+//     A neighborhood with no campaign is refused identically to one that does
+//     not exist. Steppe publishes no browsable directory of neighborhoods it
+//     has no presence in.
 //
 // Structure and copy follow the visual prototype (steppe-neighborhood-pledge-v1
 // .jsx), rebuilt on the real design tokens and this project's conventions
