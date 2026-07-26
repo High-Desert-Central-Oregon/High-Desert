@@ -20,10 +20,12 @@ status question resolves by running that query against prod, never by recalling 
 
 ## Applied status (as of 2026-07-26)
 
-All migrations **0012–0026 are applied and live in production.** Status below was verified
-against prod with the probe query in the next section (owner-run, output confirmed 2026-07-14 for
-0012–0023; re-run 2026-07-26 for 0026); `Applied on` uses each migration's introducing-commit date
-as the by-hand-apply proxy (owner may refine specific dates). 0023 (profile visibility + perf
+All migrations **0012–0026 are applied and live in production**, and every one of them now has a
+row below. Status was verified against prod with the probe query in the next section (owner-run,
+output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
+fifteen rows including the newly recorded 0024, 0025 and 0026). For 0012–0023, `Applied on` uses
+each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
+dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
 GREEN `seed/matrix-0023.sql` dry-run. 0026 (neighborhood pledge campaigns) was applied by hand at
 its stop-gate on 2026-07-26, after a GREEN `seed/matrix-0026.sql` dry-run, and verified against
@@ -33,11 +35,13 @@ prod by read-only catalog introspection: all eight functions present and pinning
 `removal_token` unique index present, `neighborhoods.threshold` nullable with all 35 seeded rows
 and the `profiles` FK intact, and **no new ERROR-level security advisors**.
 
-> ⚠️ **0024 and 0025 are applied in prod but have no rows below.** The 2026-07-26 probe confirms
-> `invited_emails` + `enforce_invited_signup()` and the `increment_qr_count()` print variants are
-> live. They are omitted rather than invented because their by-hand apply dates aren't recorded
-> anywhere this file can cite — the owner should add both rows with the real dates. Until then,
-> read the absence of a row as "not yet recorded", **not** as "not applied".
+> **0024 and 0025 carry no apply date, on purpose.** Both were applied by hand and both are
+> confirmed live by the probe below (re-run 2026-07-26), but the day each was applied was never
+> written down, and nothing in the catalog records when DDL ran. The date is therefore left as
+> `not recorded` rather than back-filled from the commit date the way 0012–0023 were: that proxy
+> was applied to those rows knowingly and in bulk, and quietly extending it here would turn a
+> guess into a citation in the one file whose whole purpose is being true. An honest gap is
+> auditable; a plausible date is not. If you remember either date, replace the cell.
 
 | Migration | Introduced by | Applied on | Method | Status |
 |-----------|---------------|-----------|--------|--------|
@@ -53,11 +57,18 @@ and the `profiles` FK intact, and **no new ERROR-level security advisors**.
 | 0021 reports intake | `96c2ee9` | 2026-07-13 | by hand, SQL editor | ✅ Applied |
 | 0022 member messages | `22370c2` | 2026-07-13 | by hand, SQL editor | ✅ Applied |
 | 0023 profile visibility (Y1) + 4 perf indexes | `978b239` | 2026-07-14 | by hand, SQL editor | ✅ Applied |
+| 0024 invite-only signup allowlist + `auth.users` gate | `b2a584b` | not recorded | by hand, SQL editor | ✅ Applied |
+| 0025 qr print variants (posters + seed card) | `22b754d` ⚠️ | not recorded | by hand, SQL editor | ✅ Applied |
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
 post authors can appeal a removed post — no P7 gap), verified by the probe below.
+
+⚠️ 0025 is the same anti-pattern: it landed inside `22b754d`, a feature commit carrying the QR
+print variants, the join-form wiring, and the poster PDFs alongside the migration. It **is**
+applied, verified by the probe below. (0024 by contrast is a clean migration-only commit, and
+0026 was squashed to one — both follow convention #1.)
 
 ## Canonical apply-status probe (READ-ONLY)
 
@@ -127,6 +138,40 @@ from (values
      and (select count(*) from pg_indexes where schemaname = 'public'
           and indexname in ('events_group_created_idx', 'events_status_starts_idx',
                             'moderation_actions_target_idx', 'thread_state_member_idx')) = 4),
+  -- 0024's signature is the GATE, not the table. A half-apply that created
+  -- invited_emails but missed the auth.users trigger would leave signups fully
+  -- open while looking applied, so the trigger's presence ON auth.users is
+  -- checked directly — as is the session_user test inside the function, since
+  -- keying on current_user instead would mean the gate never fires at all.
+  ('0024 invite-only signup allowlist',
+   'invited_emails (RLS, no anon read) + normalize trigger + enforce_invited_signup() on auth.users keying on session_user',
+   exists (select 1 from information_schema.tables
+           where table_schema = 'public' and table_name = 'invited_emails')
+     and (select c.relrowsecurity from pg_class c
+           join pg_namespace n on n.oid = c.relnamespace
+          where n.nspname = 'public' and c.relname = 'invited_emails')
+     and not has_table_privilege('anon', 'public.invited_emails', 'SELECT')
+     and exists (select 1 from pg_trigger where tgname = 'trg_normalize_invited_email')
+     and exists (select 1 from pg_trigger t
+                   join pg_class c on c.oid = t.tgrelid
+                   join pg_namespace ns on ns.oid = c.relnamespace
+                  where t.tgname = 'trg_enforce_invited_signup'
+                    and ns.nspname = 'auth' and c.relname = 'users')
+     and exists (select 1 from pg_proc where proname = 'enforce_invited_signup'
+                 and pg_get_functiondef(oid) ilike '%session_user%')),
+  -- 0025 changed the variant allowlist in TWO independent places — the check
+  -- constraint and the function body — which can drift apart, so both are
+  -- probed. EXECUTE is checked too: the counter must stay service_role-only,
+  -- and dropping/recreating the function would silently restore PUBLIC execute.
+  ('0025 qr print variants',
+   'increment_qr_count() + qr_counts_variant_check both know the print variants; EXECUTE service_role-only',
+   exists (select 1 from pg_proc where proname = 'increment_qr_count'
+           and pg_get_functiondef(oid) ilike '%seed_card%'
+           and pg_get_functiondef(oid) ilike '%poster_owned%')
+     and exists (select 1 from pg_constraint where conname = 'qr_counts_variant_check'
+                 and pg_get_constraintdef(oid) ilike '%seed_card%')
+     and not has_function_privilege('public', 'public.increment_qr_count(text,text)', 'EXECUTE')
+     and has_function_privilege('service_role', 'public.increment_qr_count(text,text)', 'EXECUTE')),
   -- 0026 checks CORRECTNESS as well as presence, the way 0023 does. A half-applied
   -- 0026 — table created but the grants not revoked — would leave pre-member email
   -- addresses reachable by every client role, so "the table exists" is not a
