@@ -18,13 +18,26 @@ status question resolves by running that query against prod, never by recalling 
    stop-gate** — per CLAUDE.md. The dry-run matrices (`seed/matrix-*.sql`) prove them on a
    local, prod-shaped DB first; **matrix/test SQL never runs against prod.**
 
-## Applied status (as of 2026-07-14)
+## Applied status (as of 2026-07-26)
 
-All migrations **0012–0023 are applied and live in production.** Status below was verified
-against prod with the probe query in the next section (owner-run, output confirmed 2026-07-14);
-`Applied on` uses each migration's introducing-commit date as the by-hand-apply proxy (owner may
-refine specific dates). 0023 (profile visibility + perf indexes) was applied by hand at its
-stop-gate on 2026-07-14, after its four-lens review and a GREEN `seed/matrix-0023.sql` dry-run.
+All migrations **0012–0026 are applied and live in production.** Status below was verified
+against prod with the probe query in the next section (owner-run, output confirmed 2026-07-14 for
+0012–0023; re-run 2026-07-26 for 0026); `Applied on` uses each migration's introducing-commit date
+as the by-hand-apply proxy (owner may refine specific dates). 0023 (profile visibility + perf
+indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
+GREEN `seed/matrix-0023.sql` dry-run. 0026 (neighborhood pledge campaigns) was applied by hand at
+its stop-gate on 2026-07-26, after a GREEN `seed/matrix-0026.sql` dry-run, and verified against
+prod by read-only catalog introspection: all eight functions present and pinning
+`search_path = public, pg_temp`, the default `EXECUTE TO PUBLIC` revoked on every one of them,
+`pledges` deny-by-default at both layers (RLS on, zero policies, no client grants), the
+`removal_token` unique index present, `neighborhoods.threshold` nullable with all 35 seeded rows
+and the `profiles` FK intact, and **no new ERROR-level security advisors**.
+
+> ⚠️ **0024 and 0025 are applied in prod but have no rows below.** The 2026-07-26 probe confirms
+> `invited_emails` + `enforce_invited_signup()` and the `increment_qr_count()` print variants are
+> live. They are omitted rather than invented because their by-hand apply dates aren't recorded
+> anywhere this file can cite — the owner should add both rows with the real dates. Until then,
+> read the absence of a row as "not yet recorded", **not** as "not applied".
 
 | Migration | Introduced by | Applied on | Method | Status |
 |-----------|---------------|-----------|--------|--------|
@@ -40,6 +53,7 @@ stop-gate on 2026-07-14, after its four-lens review and a GREEN `seed/matrix-002
 | 0021 reports intake | `96c2ee9` | 2026-07-13 | by hand, SQL editor | ✅ Applied |
 | 0022 member messages | `22370c2` | 2026-07-13 | by hand, SQL editor | ✅ Applied |
 | 0023 profile visibility (Y1) + 4 perf indexes | `978b239` | 2026-07-14 | by hand, SQL editor | ✅ Applied |
+| 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -112,7 +126,25 @@ from (values
                  and policyname = 'pf_read' and qual not ilike '%is_moderator%')
      and (select count(*) from pg_indexes where schemaname = 'public'
           and indexname in ('events_group_created_idx', 'events_status_starts_idx',
-                            'moderation_actions_target_idx', 'thread_state_member_idx')) = 4)
+                            'moderation_actions_target_idx', 'thread_state_member_idx')) = 4),
+  -- 0026 checks CORRECTNESS as well as presence, the way 0023 does. A half-applied
+  -- 0026 — table created but the grants not revoked — would leave pre-member email
+  -- addresses reachable by every client role, so "the table exists" is not a
+  -- sufficient signature for this one.
+  ('0026 neighborhood pledge campaigns',
+   'table pledges (RLS, no policies, no client grants) + neighborhoods.threshold + 6 pledge fns',
+   exists (select 1 from information_schema.tables where table_name = 'pledges')
+     and exists (select 1 from information_schema.columns
+                 where table_name = 'neighborhoods' and column_name = 'threshold')
+     and (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+          where n.nspname = 'public'
+            and p.proname in ('neighborhood_status', 'submit_pledge', 'pledge_removal_token',
+                              'remove_pledge', 'pledge_activity',
+                              'close_stale_pledge_campaigns')) = 6
+     and (select count(*) from pg_policies where tablename = 'pledges') = 0
+     and not exists (select 1 from information_schema.role_table_grants
+                     where table_name = 'pledges'
+                       and grantee in ('anon', 'authenticated', 'service_role')))
 ) as m(migration, probe, present)
 order by m.migration;
 ```
