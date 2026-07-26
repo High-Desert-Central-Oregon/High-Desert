@@ -141,14 +141,14 @@ async function queueConfirmation(
         t("body1", vars),
         t("body2", vars),
         t("body3"),
-        // ⚑ FOUNDER CHECK BEFORE THE FIRST SEND: this line promises that a
-        // pledger can read what is already posted, free and without an account.
-        // Today there is no public read surface — /protected/* is behind auth
-        // and behind the LAUNCH_PHASE gate — so as written this claim is not yet
-        // true. It is momentum-pack copy and is shipped as written, but it must
-        // become true (or this string must change) before the first real send.
-        // Flagged in the hand-off; see messages/en.json → pledgeEmail.body4.
-        t("body4"),
+        // body4 describes what a pledger actually gets between pledging and the
+        // neighborhood opening: a live count, and nothing else. It deliberately
+        // makes no promise about reading posted content — /protected/* is behind
+        // auth and behind the LAUNCH_PHASE gate, so there is no public read
+        // surface to promise. If one ever ships, this string is where a read
+        // promise may be reinstated, and not before: the promise follows the
+        // capability, never the reverse.
+        t("body4", vars),
         // Signed with a personal name, then the role, then the standing claim.
         // Three paragraphs rather than one string with newlines, because the
         // HTML shell renders each paragraph in its own <p> and an embedded

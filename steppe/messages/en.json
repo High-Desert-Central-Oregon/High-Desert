@@ -220,7 +220,7 @@
     "body1": "{neighborhood} is now at {count} of {threshold}.",
     "body2": "Nothing happens until we hit {threshold} — no verification, no payment, no account. When we get there I'll email you and everyone else at once, and the neighborhood starts together.",
     "body3": "If you want it to happen sooner, the fastest thing by a wide margin is three doors: the neighbors on either side of you, and one across the street.",
-    "body4": "In the meantime you can read everything that's already posted, free, without an account.",
+    "body4": "Until then there's nothing to log into — just the count, and it moves every time another neighbor adds themselves. The link below always shows where {neighborhood} stands.",
     "signoff": "Greg",
     "signoffRole": "Founding Director, Steppe",
     "tagline": "A Redmond nonprofit. No ads. No owner. Cannot be sold.",
