@@ -69,12 +69,20 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
     >();
   if (!group) notFound();
 
-  // Roster (gm_read returns all rows to an active member) + names.
-  const { data: roster } = await supabase
-    .from("group_members")
-    .select("user_id, role, status")
-    .eq("group_id", dir.id)
-    .returns<RosterRow[]>();
+  // Roster (gm_read returns all rows to an active member) and the settings
+  // category list are independent — fetch together (perf-audit-v1 finding #7).
+  const [{ data: roster }, { data: cats }] = await Promise.all([
+    supabase
+      .from("group_members")
+      .select("user_id, role, status")
+      .eq("group_id", dir.id)
+      .returns<RosterRow[]>(),
+    supabase
+      .from("categories")
+      .select("id, name")
+      .order("name", { ascending: true })
+      .returns<Pick<Category, "id" | "name">[]>(),
+  ]);
   const rosterRows = roster ?? [];
   const memberIds = rosterRows.map((r) => r.user_id);
 
@@ -109,12 +117,6 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
         (a.role === "maintainer" ? 0 : 1) - (b.role === "maintainer" ? 0 : 1) ||
         a.name.localeCompare(b.name),
     );
-
-  const { data: cats } = await supabase
-    .from("categories")
-    .select("id, name")
-    .order("name", { ascending: true })
-    .returns<Pick<Category, "id" | "name">[]>();
 
   return (
     <div lang={locale} className="flex flex-col gap-10">
