@@ -97,6 +97,47 @@ export async function addMember(groupId: string, userId: string, slug: string) {
   return callMemberRpc("add_member", groupId, userId, slug);
 }
 
+/**
+ * Search verified members to add to a group — the bounded replacement for
+ * prefetching every verified profile into an "add member" dropdown
+ * (perf-audit-v1 finding #6). Reads only `public_profiles` (already readable by
+ * any verified member — no new exposure) with an `ilike` on the name, capped at
+ * 20 rows, and drops anyone already in the group. Returns [] until the caller
+ * types a couple of characters, so a maintainer never pulls the whole
+ * membership just to open the picker.
+ */
+export async function searchGroupCandidates(
+  groupId: string,
+  query: string,
+): Promise<{ id: string; name: string }[]> {
+  if (!(await requireVerified())) return [];
+  const q = query.trim();
+  if (!groupId || q.length < 2) return [];
+  const pat = q.replace(/[%_\\]/g, ""); // strip ilike wildcards — literal search
+  if (pat.length < 2) return [];
+
+  const supabase = await createClient();
+  // Current members (any status) to exclude — gm_read returns the roster to an
+  // active member; a non-member simply excludes nothing (RLS returns no rows).
+  const { data: roster } = await supabase
+    .from("group_members")
+    .select("user_id")
+    .eq("group_id", groupId);
+  const memberIds = new Set((roster ?? []).map((r) => r.user_id));
+
+  const { data: people } = await supabase
+    .from("public_profiles")
+    .select("id, display_name")
+    .eq("verified", true)
+    .ilike("display_name", `%${pat}%`)
+    .order("display_name", { ascending: true })
+    .limit(20);
+
+  return (people ?? [])
+    .filter((p) => !memberIds.has(p.id))
+    .map((p) => ({ id: p.id, name: p.display_name }));
+}
+
 export async function setMemberRole(
   groupId: string,
   userId: string,

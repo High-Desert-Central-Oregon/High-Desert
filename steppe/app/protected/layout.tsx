@@ -7,7 +7,6 @@ import { destinations } from "./nav-destinations";
 import { getCurrentUser } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
-import { createClient } from "@/lib/supabase/server";
 import { getUnreadState } from "@/lib/messages";
 
 /**
@@ -59,8 +58,9 @@ async function NavBar() {
   let hasUnread = false;
   const user = await getCurrentUser();
   if (user) {
-    const supabase = await createClient();
-    hasUnread = await getUnreadState(supabase, user.id);
+    // Shares its reads with the inbox page via a request-cached substrate, so
+    // /messages doesn't run them twice (perf-audit-v1 finding #5).
+    hasUnread = await getUnreadState(user.id);
   }
   // One shared destination source drives BOTH the md+ rail here and the <md
   // bottom TabBar below (preview-nav-spec §1/§5) — the two cannot drift. Tabs
