@@ -5,9 +5,10 @@ import {
   normalizeSlug,
   normalizeEmail,
   getRemovalToken,
+  getNeighborhoodStatus,
   pledgeShareUrl,
   pledgeRemovalUrl,
-  type PledgeResult,
+  type PledgeOutcome,
 } from "@/lib/pledge";
 import { clientIp, rateLimited } from "@/lib/rate-limit";
 import { sendPledgeConfirmation } from "@/lib/pledge-email";
@@ -116,7 +117,7 @@ export async function POST(request: Request) {
 async function queueConfirmation(
   slug: string,
   email: string,
-  result: PledgeResult,
+  result: PledgeOutcome,
 ) {
   try {
     const t = await getTranslations("pledgeEmail");
@@ -126,9 +127,19 @@ async function queueConfirmation(
       return;
     }
 
-    const name = result.name;
+    // The neighborhood's display name is NOT in the submission result —
+    // submit_pledge() returns four public facts and deliberately no name — so it
+    // is read here. Getting this wrong is what shipped an email reading "is now
+    // at 1 of 20." with the name silently missing, because next-intl drops an
+    // absent variable rather than complaining.
+    const status = await getNeighborhoodStatus(slug);
+    if (!status) {
+      console.error("[pledge] no neighborhood status; confirmation not sent", { slug });
+      return;
+    }
+
     const vars = {
-      neighborhood: name,
+      neighborhood: status.name,
       count: result.pledgeCount,
       threshold: result.threshold,
     };

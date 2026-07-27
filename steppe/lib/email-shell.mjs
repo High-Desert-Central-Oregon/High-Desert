@@ -53,6 +53,13 @@ export function renderBrandEmail({ heading, subheading, paragraphs = [], action,
     )
     .join("");
 
+  // The button, and nothing under it. There used to be a "Button not working?
+  // Paste this link into your browser:" block printing the raw URL — it was
+  // visually loud, it wrapped badly on a phone, and for the pledge confirmation
+  // it was the thing that made an ugly deployment hostname unmissable. The
+  // destination is still reachable: this is a real <a href>, so a client that
+  // strips styling still renders a working link with its label, and the
+  // plain-text part of every multipart send spells the URL out in full.
   const actionBlock = action
     ? `
         <tr><td style="padding:20px 32px 6px 32px;">
@@ -61,10 +68,6 @@ export function renderBrandEmail({ heading, subheading, paragraphs = [], action,
               <a href="${action.url}" style="display:inline-block; padding:13px 28px; font-family:${SANS}; font-size:15px; font-weight:600; color:${C.paper}; text-decoration:none; border-radius:9px;">${esc(action.label)}</a>
             </td>
           </tr></table>
-        </td></tr>
-        <tr><td style="padding:10px 32px 4px 32px;">
-          <p style="margin:0 0 4px 0; font-family:${SANS}; font-size:12.5px; line-height:1.5; color:${C.inkSoft};">Button not working? Paste this link into your browser:</p>
-          <p style="margin:0; font-family:${MONO}; font-size:11.5px; line-height:1.5; color:${C.sage}; word-break:break-all;">${action.url}</p>
         </td></tr>`
     : "";
 

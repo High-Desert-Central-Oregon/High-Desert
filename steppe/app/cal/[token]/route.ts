@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildIcs, type IcsEvent } from "@/lib/ics";
-import { siteOrigin } from "@/lib/site-url";
+import { durableOrigin } from "@/lib/site-url";
 
 /**
  * Calendar subscription feed (calendar-c1-spec §6) — the public GET calendar
@@ -57,7 +57,9 @@ export async function GET(
     return new NextResponse(null, { status: 404 });
   }
 
-  const origin = siteOrigin();
+  // durableOrigin(): these URLs are written into subscribers' calendar apps and
+  // re-read for as long as the feed lives, so they must not name a deployment.
+  const origin = durableOrigin();
   const events = ((data.events ?? []) as FeedEvent[]).map(
     (e): IcsEvent => ({
       uid: `${e.id}@steppe.community`,

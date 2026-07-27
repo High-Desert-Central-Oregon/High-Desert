@@ -20,27 +20,25 @@
  */
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { siteOrigin } from "@/lib/site-url";
+import { durableOrigin } from "@/lib/site-url";
 import {
   normalizeEmail,
   normalizeSlug,
   isEmailShaped,
   pledgePath,
   type NeighborhoodStatus,
-  type PledgeResult,
 } from "@/lib/pledge-shared";
 
 export * from "@/lib/pledge-shared";
 
 // --- the two absolute URLs that appear in email ------------------------------
-// Built from siteOrigin() rather than hardcoded, so preview deploys are
-// self-referential. In production this resolves to the canonical origin, which
-// is what the printed steppe.community/n/<slug> redirects to. Server-side only:
-// siteOrigin() reads VERCEL_URL, which is not a NEXT_PUBLIC_ variable.
+// durableOrigin(), never siteOrigin(): these are copied, forwarded, and clicked
+// months later. siteOrigin() falls back to this deployment's own hostname, which
+// is how a confirmation email shipped with an expiring *.vercel.app link in it.
 
 /** The neighborhood's public page — what a pledger forwards to three doors. */
 export function pledgeShareUrl(slug: string): string {
-  return `${siteOrigin()}${pledgePath(slug)}`;
+  return `${durableOrigin()}${pledgePath(slug)}`;
 }
 
 /**
@@ -49,7 +47,7 @@ export function pledgeShareUrl(slug: string): string {
  * the background and would otherwise unsubscribe people who never clicked.
  */
 export function pledgeRemovalUrl(slug: string, token: string): string {
-  return `${siteOrigin()}${pledgePath(slug)}/leave?token=${encodeURIComponent(token)}`;
+  return `${durableOrigin()}${pledgePath(slug)}/leave?token=${encodeURIComponent(token)}`;
 }
 
 // --- reads -------------------------------------------------------------------
@@ -95,8 +93,32 @@ export async function getNeighborhoodStatus(
 
 // --- writes ------------------------------------------------------------------
 
+/**
+ * EXACTLY what submit_pledge() returns — four columns, no slug and no name.
+ * That narrowness is deliberate (the function hands back public facts and
+ * nothing else), so this type has to say so. It previously reused the wider
+ * status row, which asserted a `name` the database never sends: the cast
+ * compiled, `name` was undefined at runtime, and the confirmation email went
+ * out reading "is now at 1 of 20." with the neighborhood silently missing.
+ * Keep this shape in step with the SQL and that class of bug cannot compile.
+ */
+type SubmitRow = {
+  pledge_count: number;
+  threshold: number;
+  is_open: boolean;
+  already_pledged: boolean;
+};
+
+/** The four facts a submission reports back. Deliberately no slug, no name. */
+export type PledgeOutcome = {
+  pledgeCount: number;
+  threshold: number;
+  isOpen: boolean;
+  alreadyPledged: boolean;
+};
+
 export type SubmitOutcome =
-  | { ok: true; result: PledgeResult }
+  | { ok: true; result: PledgeOutcome }
   | { ok: false; reason: "invalid_email" | "unknown_neighborhood" | "error" };
 
 /**
@@ -105,7 +127,9 @@ export type SubmitOutcome =
  * inflate the number or re-send the confirmation.
  *
  * Never returns the row, the id, or the removal token — the database function's
- * return type is the contract, so none of those can ride along by accident.
+ * return type is the contract, so none of those can ride along by accident. A
+ * caller that needs the neighborhood's display name must ask for it separately
+ * (getNeighborhoodStatus); it is not in this result.
  */
 export async function submitPledge(
   slug: string,
@@ -125,7 +149,7 @@ export async function submitPledge(
       p_slug: normalizeSlug(slug),
       p_email: normalizedEmail,
     })
-    .maybeSingle<StatusRow & { already_pledged: boolean }>();
+    .maybeSingle<SubmitRow>();
 
   if (error) {
     // no_data_found is how submit_pledge reports "no campaign here" — an unknown
@@ -143,7 +167,13 @@ export async function submitPledge(
 
   return {
     ok: true,
-    result: { ...toStatus(data), alreadyPledged: data.already_pledged },
+    result: {
+      // count(*) is bigint; supabase-js may hand it back as a string.
+      pledgeCount: Number(data.pledge_count),
+      threshold: data.threshold,
+      isOpen: data.is_open,
+      alreadyPledged: data.already_pledged,
+    },
   };
 }
 

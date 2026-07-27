@@ -18,7 +18,7 @@ import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { getHiddenIds } from "@/lib/moderation";
-import { siteOrigin } from "@/lib/site-url";
+import { durableOrigin } from "@/lib/site-url";
 import { t, type Dictionary } from "@/lib/i18n";
 import { mintPersonalFeed, removeFeed, rotateFeed } from "./actions";
 
@@ -285,7 +285,9 @@ function ConnectSection({
   dict: Dictionary;
   showError: boolean;
 }) {
-  const origin = siteOrigin();
+  // durableOrigin(): the member pastes this into a calendar app, where it has to
+  // keep resolving long after this deployment is gone.
+  const origin = durableOrigin();
   const hasPersonal = feeds.some((f) => f.group_id === null);
   const summaryClass =
     "cursor-pointer font-mono text-[11px] font-semibold uppercase tracking-[0.1em] focus-visible:outline-none focus-visible:underline";

@@ -128,18 +128,35 @@ html[data-theme="dark"] .site-root .pledge .strata-sky {
   }
 }
 
-/* the horizon: where the neighborhood opens */
+/* the horizon: where the neighborhood opens.
+ *
+ * The marker sits at `bottom: (threshold / slots) * 100%`, and while a
+ * neighborhood is still forming slots EQUALS threshold — so that resolves to
+ * `bottom: 100%` and the line lands exactly on the container's top edge. That
+ * is geometrically right (filling the column IS reaching the goal), but it used
+ * to clip the label: the marker had height, so its whole box sat ABOVE the top
+ * edge and overflow:hidden ate it. The threshold number was invisible in every
+ * forming state, which is every state that matters.
+ *
+ * Fixed with a zero-height marker whose children are laid out from the line
+ * DOWNWARD (align-items: flex-start). The dashed rule still renders exactly on
+ * the threshold, because a 0-height box's border-top is the line; the number now
+ * hangs just beneath it, inside the column, at any position the marker can take. */
 .site-root .pledge .strata-horizon {
   position: absolute;
   left: 0;
   right: 0;
+  height: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   padding: 0 6px;
 }
 .site-root .pledge .strata-horizon-rule {
   flex: 1;
+  /* min-width:0 so the rule yields space to the number instead of squeezing it
+     against the right edge on a narrow column. */
+  min-width: 0;
   border-top: 1px dashed var(--basalt);
   opacity: 0.55;
 }
@@ -148,9 +165,19 @@ html[data-theme="dark"] .site-root .pledge .strata-horizon-rule {
   opacity: 0.5;
 }
 .site-root .pledge .strata-horizon-num {
+  /* Never shrink and never wrap: this is the goal, and a clipped or broken
+     goal number is worse than no column at all. */
+  flex: 0 0 auto;
+  white-space: nowrap;
+  /* Clear the rule by a hair so the digits don't sit on the dashes. */
+  padding-top: 3px;
   font-family: var(--mono);
   font-size: 10px;
+  line-height: 1;
   letter-spacing: 0.12em;
+  /* letter-spacing adds trailing space AFTER the final digit, which pushes it
+     toward the edge; pull that back so the number sits inside the padding. */
+  margin-right: -0.12em;
   color: var(--basalt);
   opacity: 0.8;
 }
