@@ -20,7 +20,7 @@
  */
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { siteOrigin } from "@/lib/site-url";
+import { durableOrigin } from "@/lib/site-url";
 import {
   normalizeEmail,
   normalizeSlug,
@@ -32,14 +32,13 @@ import {
 export * from "@/lib/pledge-shared";
 
 // --- the two absolute URLs that appear in email ------------------------------
-// Built from siteOrigin() rather than hardcoded, so preview deploys are
-// self-referential. In production this resolves to the canonical origin, which
-// is what the printed steppe.community/n/<slug> redirects to. Server-side only:
-// siteOrigin() reads VERCEL_URL, which is not a NEXT_PUBLIC_ variable.
+// durableOrigin(), never siteOrigin(): these are copied, forwarded, and clicked
+// months later. siteOrigin() falls back to this deployment's own hostname, which
+// is how a confirmation email shipped with an expiring *.vercel.app link in it.
 
 /** The neighborhood's public page — what a pledger forwards to three doors. */
 export function pledgeShareUrl(slug: string): string {
-  return `${siteOrigin()}${pledgePath(slug)}`;
+  return `${durableOrigin()}${pledgePath(slug)}`;
 }
 
 /**
@@ -48,7 +47,7 @@ export function pledgeShareUrl(slug: string): string {
  * the background and would otherwise unsubscribe people who never clicked.
  */
 export function pledgeRemovalUrl(slug: string, token: string): string {
-  return `${siteOrigin()}${pledgePath(slug)}/leave?token=${encodeURIComponent(token)}`;
+  return `${durableOrigin()}${pledgePath(slug)}/leave?token=${encodeURIComponent(token)}`;
 }
 
 // --- reads -------------------------------------------------------------------
