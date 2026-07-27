@@ -11,22 +11,13 @@ import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { t } from "@/lib/i18n";
+import {
+  getInboxSubstrate,
+  type InboxMessage,
+  type InboxState,
+} from "@/lib/messages";
 
 export const metadata = { title: "Messages · Steppe" };
-
-type Thread = {
-  id: string;
-  member_a: string;
-  member_b: string;
-  about_post_id: string | null;
-};
-type State = {
-  thread_id: string;
-  last_read_at: string | null;
-  muted_at: string | null;
-  left_at: string | null;
-};
-type Msg = { thread_id: string; sender_id: string; body: string; created_at: string };
 
 /**
  * The inbox (messages-m1-spec §1.2): a privacy strip (the msgInside line, on
@@ -53,28 +44,22 @@ async function InboxContent() {
 
   const supabase = await createClient();
   const me = profile.id;
-  const [{ data: threads }, { data: states }, { data: msgs }] = await Promise.all([
-    supabase.from("threads").select("id, member_a, member_b, about_post_id").returns<Thread[]>(),
-    supabase
-      .from("thread_state")
-      .select("thread_id, last_read_at, muted_at, left_at")
-      .returns<State[]>(),
-    supabase
-      .from("messages")
-      .select("thread_id, sender_id, body, created_at")
-      .order("created_at", { ascending: false })
-      .limit(400)
-      .returns<Msg[]>(),
-  ]);
+  // The inbox and the layout's every-navigation unread dot share ONE set of
+  // reads per request (perf-audit-v1 finding #5): getInboxSubstrate is React-
+  // cache()d on my id, so landing on /messages doesn't re-run threads +
+  // thread_state + messages that the nav already ran. Messages are scoped to my
+  // threads inside the substrate — O(my messages), not O(all messages)
+  // (finding #4).
+  const { threads, states, messages: msgs } = await getInboxSubstrate(me);
 
   // Newest message per thread (desc order → first seen).
-  const last = new Map<string, Msg>();
-  for (const m of msgs ?? []) if (!last.has(m.thread_id)) last.set(m.thread_id, m);
-  const state = new Map((states ?? []).map((s) => [s.thread_id, s]));
+  const last = new Map<string, InboxMessage>();
+  for (const m of msgs) if (!last.has(m.thread_id)) last.set(m.thread_id, m);
+  const state = new Map(states.map((s) => [s.thread_id, s]));
 
   // Resolve counterpart names + anchor titles.
-  const others = (threads ?? []).map((th) => (th.member_a === me ? th.member_b : th.member_a));
-  const postIds = (threads ?? []).flatMap((th) => (th.about_post_id ? [th.about_post_id] : []));
+  const others = threads.map((th) => (th.member_a === me ? th.member_b : th.member_a));
+  const postIds = threads.flatMap((th) => (th.about_post_id ? [th.about_post_id] : []));
   const [{ data: people }, { data: posts }] = await Promise.all([
     others.length
       ? supabase.from("public_profiles").select("id, display_name").in("id", others)
@@ -88,7 +73,7 @@ async function InboxContent() {
 
   // Build rows: hide archived threads with no activity since I left; newest
   // conversation first.
-  const rows = (threads ?? [])
+  const rows = threads
     .map((th) => {
       const lm = last.get(th.id);
       const st = state.get(th.id);
@@ -101,7 +86,7 @@ async function InboxContent() {
     })
     .sort((a, b) => Date.parse(b.lm!.created_at) - Date.parse(a.lm!.created_at));
 
-  const unread = (lm: Msg, st?: State) =>
+  const unread = (lm: InboxMessage, st?: InboxState) =>
     !!lm &&
     lm.sender_id !== me &&
     !st?.muted_at &&
