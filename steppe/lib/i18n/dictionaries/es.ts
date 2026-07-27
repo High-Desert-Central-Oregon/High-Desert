@@ -438,9 +438,11 @@ export const es: Dictionary = {
     addTitle: "Añadir un miembro",
     addIntro:
       "Añade directamente a un miembro verificado — útil para grupos por invitación.",
-    addEmpty: "Todos los verificados ya están en este grupo.",
-    addSelectLabel: "Miembro para añadir",
-    addSelectPlaceholder: "Elige un miembro…",
+    addEmpty: "Ningún miembro verificado coincide con ese nombre.",
+    addSearchHint: "Busca por nombre para añadir un miembro verificado.",
+    addSearching: "Buscando…",
+    addSelectLabel: "Busca miembros verificados para añadir",
+    addSelectPlaceholder: "Busca miembros por nombre…",
     addButton: "Añadir",
     lastMaintainerError:
       "Un grupo necesita al menos un responsable. Añade otro antes de este cambio.",

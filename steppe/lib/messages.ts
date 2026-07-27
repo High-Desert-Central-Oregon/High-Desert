@@ -1,4 +1,5 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { cache } from "react";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * Messaging read helpers (messages-m1-spec §3.4). Everything is RLS-scoped to
@@ -7,44 +8,85 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * dot recomputes on each server navigation; no realtime, no client state.
  */
 
-type StateRow = {
+export type InboxThread = {
+  id: string;
+  member_a: string;
+  member_b: string;
+  about_post_id: string | null;
+};
+export type InboxState = {
   thread_id: string;
   last_read_at: string | null;
   muted_at: string | null;
   left_at: string | null;
 };
-
-type MsgRow = {
+export type InboxMessage = {
   thread_id: string;
   sender_id: string;
+  body: string;
   created_at: string;
 };
 
 /**
- * True iff any unmuted thread has a message newer than my read cursor that
- * isn't mine. Two RLS-scoped reads + a JS pass — cheap at cohort scale, and
- * the dot is a boolean (never a count; :1518).
+ * The messaging substrate — my threads, my per-thread state, and the recent
+ * messages in those threads — fetched ONCE per request. Both the every-
+ * navigation unread dot (getUnreadState, in the layout) and the inbox page
+ * derive from this, so landing on /messages no longer runs threads +
+ * thread_state + messages twice (perf-audit-v1 finding #5): React `cache()`
+ * keys on my uid, so the two callers in a single render share one set of reads.
+ *
+ * Messages are scoped to MY threads (`.in(thread_id, …)`) so they ride
+ * `messages_thread_idx` instead of scanning the whole messages table — the cost
+ * is O(my messages), not O(all platform messages) (finding #4). Threads are the
+ * authoritative membership list; the unread pass below still ignores any thread
+ * I hold no state row for, so the boolean is unchanged.
  */
-export async function getUnreadState(
-  supabase: SupabaseClient,
+export const getInboxSubstrate = cache(async function getInboxSubstrate(
   uid: string,
-): Promise<boolean> {
-  const [{ data: states }, { data: msgs }] = await Promise.all([
+): Promise<{
+  threads: InboxThread[];
+  states: InboxState[];
+  messages: InboxMessage[];
+}> {
+  const supabase = await createClient();
+  const [{ data: threads }, { data: states }] = await Promise.all([
+    supabase
+      .from("threads")
+      .select("id, member_a, member_b, about_post_id")
+      .returns<InboxThread[]>(),
     supabase
       .from("thread_state")
       .select("thread_id, last_read_at, muted_at, left_at")
-      .returns<StateRow[]>(),
-    supabase
-      .from("messages")
-      .select("thread_id, sender_id, created_at")
-      .order("created_at", { ascending: false })
-      .limit(300)
-      .returns<MsgRow[]>(),
+      .returns<InboxState[]>(),
   ]);
+  const threadRows = threads ?? [];
+  const threadIds = threadRows.map((t) => t.id);
+  const { data: msgs } = threadIds.length
+    ? await supabase
+        .from("messages")
+        .select("thread_id, sender_id, body, created_at")
+        .in("thread_id", threadIds)
+        .order("created_at", { ascending: false })
+        .limit(400)
+        .returns<InboxMessage[]>()
+    : { data: [] as InboxMessage[] };
+  // `uid` is part of the cache key (and asserts the reads were RLS-scoped to the
+  // caller we think they were); it is not otherwise used here.
+  void uid;
+  return { threads: threadRows, states: states ?? [], messages: msgs ?? [] };
+});
 
-  const state = new Map((states ?? []).map((s) => [s.thread_id, s]));
+/**
+ * True iff any unmuted thread has a message newer than my read cursor that
+ * isn't mine — the boolean the unread dot shows (never a count; :1518). Derived
+ * from the shared substrate, so it costs nothing beyond the substrate's reads
+ * (which the inbox reuses on /messages).
+ */
+export async function getUnreadState(uid: string): Promise<boolean> {
+  const { states, messages } = await getInboxSubstrate(uid);
+  const state = new Map(states.map((s) => [s.thread_id, s]));
   const seen = new Set<string>();
-  for (const m of msgs ?? []) {
+  for (const m of messages) {
     // The newest message per thread decides that thread (desc order → first
     // seen is newest); later (older) rows for the same thread don't matter.
     if (seen.has(m.thread_id)) continue;

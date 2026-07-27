@@ -65,26 +65,35 @@ async function ThreadContent({
   if (!thread) notFound();
 
   const otherId = thread.member_a === me ? thread.member_b : thread.member_a;
-  const [{ data: msgs }, { data: other }, post] = await Promise.all([
-    supabase
-      .from("messages")
-      .select("id, sender_id, body, created_at")
-      .eq("thread_id", id)
-      .order("created_at", { ascending: true })
-      .returns<Msg[]>(),
-    supabase
-      .from("public_profiles")
-      .select("display_name")
-      .eq("id", otherId)
-      .maybeSingle<{ display_name: string }>(),
-    thread.about_post_id
-      ? supabase
-          .from("posts")
-          .select("id, title")
-          .eq("id", thread.about_post_id)
-          .maybeSingle<{ id: string; title: string }>()
-      : Promise.resolve({ data: null }),
-  ]);
+  // messages, counterpart name, the anchor post, and my own thread_state (muted)
+  // are independent — one round-trip, not four (perf-audit-v1 finding #7).
+  const [{ data: msgs }, { data: other }, post, { data: myState }] =
+    await Promise.all([
+      supabase
+        .from("messages")
+        .select("id, sender_id, body, created_at")
+        .eq("thread_id", id)
+        .order("created_at", { ascending: true })
+        .returns<Msg[]>(),
+      supabase
+        .from("public_profiles")
+        .select("display_name")
+        .eq("id", otherId)
+        .maybeSingle<{ display_name: string }>(),
+      thread.about_post_id
+        ? supabase
+            .from("posts")
+            .select("id, title")
+            .eq("id", thread.about_post_id)
+            .maybeSingle<{ id: string; title: string }>()
+        : Promise.resolve({ data: null }),
+      supabase
+        .from("thread_state")
+        .select("muted_at")
+        .eq("thread_id", id)
+        .eq("member_id", me)
+        .maybeSingle<{ muted_at: string | null }>(),
+    ]);
 
   const name = other?.display_name ?? dict.messages.formerMember;
   const messages = msgs ?? [];
@@ -102,12 +111,6 @@ async function ThreadContent({
         .eq("member_id", me);
     });
   }
-  const { data: myState } = await supabase
-    .from("thread_state")
-    .select("muted_at")
-    .eq("thread_id", id)
-    .eq("member_id", me)
-    .maybeSingle<{ muted_at: string | null }>();
 
   const ctx = thread.about_post_id
     ? post?.data
