@@ -76,18 +76,20 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
     .eq("group_id", dir.id)
     .returns<RosterRow[]>();
   const rosterRows = roster ?? [];
-  const memberIds = new Set(rosterRows.map((r) => r.user_id));
+  const memberIds = rosterRows.map((r) => r.user_id);
 
-  // Verified members not already in the group → candidates for "add member"
-  // (the locked/invite path). public_profiles is readable by any verified member.
-  const { data: verifiedPeople } = await supabase
-    .from("public_profiles")
-    .select("id, display_name, verified")
-    .eq("verified", true)
-    .returns<{ id: string; display_name: string; verified: boolean }[]>();
+  // Resolve names for THIS group's roster only (bounded to group size) — not the
+  // whole verified membership. The "add member" picker is search-scoped instead
+  // of prefetched (perf-audit-v1 finding #6; searchGroupCandidates).
+  const { data: memberPeople } = memberIds.length
+    ? await supabase
+        .from("public_profiles")
+        .select("id, display_name")
+        .in("id", memberIds)
+    : { data: [] as { id: string; display_name: string }[] };
 
   const nameById = new Map(
-    (verifiedPeople ?? []).map((p) => [p.id, p.display_name]),
+    (memberPeople ?? []).map((p) => [p.id, p.display_name]),
   );
 
   const pending = rosterRows
@@ -107,11 +109,6 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
         (a.role === "maintainer" ? 0 : 1) - (b.role === "maintainer" ? 0 : 1) ||
         a.name.localeCompare(b.name),
     );
-
-  const candidates = (verifiedPeople ?? [])
-    .filter((p) => !memberIds.has(p.id))
-    .map((p) => ({ id: p.id, name: p.display_name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
 
   const { data: cats } = await supabase
     .from("categories")
@@ -156,7 +153,6 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
           slug={slug}
           pending={pending}
           active={active}
-          candidates={candidates}
           myUserId={profile.id}
           dict={dict}
         />
