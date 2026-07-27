@@ -29,11 +29,6 @@ export type NeighborhoodStatus = {
   isOpen: boolean;
 };
 
-export type PledgeResult = NeighborhoodStatus & {
-  /** True when this address was already on the list — no second layer, no second email. */
-  alreadyPledged: boolean;
-};
-
 type Counted = { pledgeCount: number; threshold: number };
 
 /** Threshold met but not yet opened — "we got there, it starts shortly". */

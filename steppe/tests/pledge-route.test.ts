@@ -16,6 +16,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 const mocks = vi.hoisted(() => ({
   submitPledge: vi.fn(),
   getRemovalToken: vi.fn(async () => "3f2b1a44-0026-4c0a-9f11-8a7d6e5c4b3a"),
+  getNeighborhoodStatus: vi.fn(),
   removePledge: vi.fn(async () => true),
   sendPledgeConfirmation: vi.fn(async () => ({ ok: true as const })),
   afterCallbacks: [] as Array<() => unknown>,
@@ -33,6 +34,7 @@ vi.mock("@/lib/pledge", async () => {
     ...shared,
     submitPledge: mocks.submitPledge,
     getRemovalToken: mocks.getRemovalToken,
+    getNeighborhoodStatus: mocks.getNeighborhoodStatus,
     removePledge: mocks.removePledge,
     pledgeShareUrl: (slug: string) => `https://www.steppe.community/n/${slug}`,
     pledgeRemovalUrl: (slug: string, token: string) =>
@@ -103,6 +105,10 @@ beforeEach(() => {
   mocks.afterCallbacks.length = 0;
   mocks.submitPledge.mockResolvedValue(ok(15));
   mocks.getRemovalToken.mockResolvedValue(TOKEN);
+  // The route resolves the display name here — submit_pledge() does not return it.
+  mocks.getNeighborhoodStatus.mockResolvedValue({
+    slug: "canyon-rim", name: "Canyon Rim", threshold: 20, pledgeCount: 15, isOpen: false,
+  });
   mocks.removePledge.mockResolvedValue(true);
   mocks.sendPledgeConfirmation.mockResolvedValue({ ok: true });
 });
