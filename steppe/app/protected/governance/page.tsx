@@ -103,14 +103,16 @@ async function GovernanceContent() {
   }
 
   const supabase = await createClient();
-  const { data: proposals } = await supabase
-    .from("proposals")
-    .select("id, title, kind, status, opens_at, closes_at")
-    .returns<ListItem[]>();
-
-  // Hidden (moderator-removed) proposals drop out of the listing; their detail
-  // page still shows the legible removed state (P7).
-  const hidden = await getHiddenIds(supabase, "proposal");
+  // The proposals list and the hidden-id set are independent — fetch together
+  // (perf-audit-v1 finding #7). Hidden (moderator-removed) proposals drop out of
+  // the listing; their detail page still shows the legible removed state (P7).
+  const [{ data: proposals }, hidden] = await Promise.all([
+    supabase
+      .from("proposals")
+      .select("id, title, kind, status, opens_at, closes_at")
+      .returns<ListItem[]>(),
+    getHiddenIds(supabase, "proposal"),
+  ]);
   const all = (proposals ?? []).filter((p) => !hidden.has(p.id));
   const now = Date.now();
   const withState = all.map((p) => ({

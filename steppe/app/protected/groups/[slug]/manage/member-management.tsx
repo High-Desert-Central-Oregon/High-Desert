@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,6 +9,7 @@ import {
   removeMember,
   setMemberRole,
   addMember,
+  searchGroupCandidates,
   type MemberActionState,
 } from "./actions";
 import type { Dictionary } from "@/lib/i18n";
@@ -29,7 +30,6 @@ export function MemberManagement({
   slug,
   pending,
   active,
-  candidates,
   myUserId,
   dict,
 }: {
@@ -37,13 +37,32 @@ export function MemberManagement({
   slug: string;
   pending: PendingMember[];
   active: ActiveMember[];
-  candidates: Candidate[];
   myUserId: string;
   dict: Dictionary;
 }) {
   const [isPending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [addUser, setAddUser] = useState("");
+
+  // Add-member picker: search-scoped, not prefetched (perf-audit-v1 #6). The
+  // query runs a bounded server search (≤20 verified non-members) 250ms after
+  // typing stops, so opening the picker never pulls the whole membership.
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<Candidate[]>([]);
+  const [searching, startSearch] = useTransition();
+
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) {
+      setResults([]);
+      return;
+    }
+    const id = setTimeout(() => {
+      startSearch(async () => {
+        setResults(await searchGroupCandidates(groupId, q));
+      });
+    }, 250);
+    return () => clearTimeout(id);
+  }, [query, groupId]);
 
   const run = (fn: () => Promise<MemberActionState>) => {
     setError(null);
@@ -177,46 +196,49 @@ export function MemberManagement({
         )}
       </section>
 
-      {/* Add member (for invite-only / locked groups) */}
+      {/* Add member (for invite-only / locked groups) — search-scoped so opening
+          the picker never pulls the whole verified membership (perf-audit-v1 #6). */}
       <section className="flex flex-col gap-3">
         <header className="flex flex-col gap-1">
           <h3 className="font-medium">{dict.groups.addTitle}</h3>
           <p className="text-sm text-muted-foreground">{dict.groups.addIntro}</p>
         </header>
-        {candidates.length === 0 ? (
+        <label htmlFor="add-search" className="sr-only">
+          {dict.groups.addSelectLabel}
+        </label>
+        <input
+          id="add-search"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={dict.groups.addSelectPlaceholder}
+          autoComplete="off"
+          className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+        {query.trim().length < 2 ? (
+          <p className="text-sm text-muted-foreground">{dict.groups.addSearchHint}</p>
+        ) : results.length === 0 ? (
           <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-            {dict.groups.addEmpty}
+            {searching ? dict.groups.addSearching : dict.groups.addEmpty}
           </p>
         ) : (
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <label htmlFor="add-member" className="sr-only">
-              {dict.groups.addSelectLabel}
-            </label>
-            <select
-              id="add-member"
-              value={addUser}
-              onChange={(e) => setAddUser(e.target.value)}
-              className="h-9 flex-1 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            >
-              <option value="">{dict.groups.addSelectPlaceholder}</option>
-              {candidates.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-            <Button
-              disabled={isPending || addUser === ""}
-              onClick={() => {
-                const u = addUser;
-                if (!u) return;
-                setAddUser("");
-                run(() => addMember(groupId, u, slug));
-              }}
-            >
-              {dict.groups.addButton}
-            </Button>
-          </div>
+          <ul className="flex flex-col gap-2">
+            {results.map((c) => (
+              <li
+                key={c.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-card p-3 text-sm"
+              >
+                <span className="font-medium">{c.name}</span>
+                <Button
+                  size="sm"
+                  disabled={isPending}
+                  onClick={() => run(() => addMember(groupId, c.id, slug))}
+                >
+                  {dict.groups.addButton}
+                </Button>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </div>

@@ -160,16 +160,6 @@ async function GroupContent({
     }
   }
 
-  const category = dir.category_id
-    ? (
-        await supabase
-          .from("categories")
-          .select("name, slug")
-          .eq("id", dir.category_id)
-          .maybeSingle<Pick<Category, "name" | "slug">>()
-      ).data ?? null
-    : null;
-
   const showCount = isPublic || isActiveMember;
   const description = full?.description ?? null;
 
@@ -196,13 +186,23 @@ async function GroupContent({
         .limit(500)
     : upQuery.gte("starts_at", new Date().toISOString()).limit(10);
 
-  const [{ data: upRows }, hiddenEvents] = await Promise.all([
+  // Upcoming events, the hidden-id set, and the group's category are all
+  // independent — one round-trip, not sequential (perf-audit-v1 finding #7).
+  const [{ data: upRows }, hiddenEvents, categoryRes] = await Promise.all([
     upQuery.returns<
       { id: string; title: string; starts_at: string; location: string | null }[]
     >(),
     getHiddenIds(supabase, "event"),
+    dir.category_id
+      ? supabase
+          .from("categories")
+          .select("name, slug")
+          .eq("id", dir.category_id)
+          .maybeSingle<Pick<Category, "name" | "slug">>()
+      : Promise.resolve({ data: null }),
   ]);
   const upcoming = (upRows ?? []).filter((e) => !hiddenEvents.has(e.id));
+  const category = categoryRes.data ?? null;
 
   return (
     <div lang={locale} className="flex flex-col gap-8">

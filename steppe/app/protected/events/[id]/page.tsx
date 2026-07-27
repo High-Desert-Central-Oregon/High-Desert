@@ -130,8 +130,11 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
     );
   }
 
-  // Neighborhood name + host name, resolved in parallel.
-  const [{ data: nb }, { data: host }] = await Promise.all([
+  // Neighborhood, host, and the RSVP rows all depend only on `event` — resolve
+  // them in one round-trip (perf-audit-v1 finding #7). RSVP *names* still follow
+  // (they need the user ids from these rows). RSVPs are oldest-first
+  // (chronological — invariant 7); verified members can read them (rs_read).
+  const [{ data: nb }, { data: host }, { data: rsvpData }] = await Promise.all([
     event.neighborhood_id
       ? supabase
           .from("neighborhoods")
@@ -144,18 +147,15 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
       .select("display_name")
       .eq("id", event.creator_id)
       .maybeSingle<{ display_name: string }>(),
+    supabase
+      .from("event_rsvps")
+      .select("user_id, status, bringing")
+      .eq("event_id", event.id)
+      .order("created_at", { ascending: true })
+      .returns<RsvpRow[]>(),
   ]);
 
   const neighborhoodLabel = nb?.name ?? dict.events.allRedmond;
-
-  // RSVPs for this event, oldest first (chronological — invariant 7). Verified
-  // members can read them (rs_read); names are resolved in a second query.
-  const { data: rsvpData } = await supabase
-    .from("event_rsvps")
-    .select("user_id, status, bringing")
-    .eq("event_id", event.id)
-    .order("created_at", { ascending: true })
-    .returns<RsvpRow[]>();
 
   const rsvps = rsvpData ?? [];
   const rsvpNames = new Map<string, string>();
