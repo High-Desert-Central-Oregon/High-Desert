@@ -16,11 +16,10 @@ not prototyped in chat.
 
 ## Context
 
-Steppe is built with AI assistance, primarily Anthropic's Claude. That is not a
-secret to be managed; it is a practice to be documented, because Steppe's whole
-proposition is verifiable trust rather than asserted trust. A community that is
-asked to govern its own infrastructure is owed a plain account of how that
-infrastructure is made.
+Steppe is built with AI assistance, primarily Anthropic's Claude. This record
+documents that practice, because Steppe's whole proposition is verifiable trust
+rather than asserted trust. A community that is asked to govern its own
+infrastructure is owed a plain account of how that infrastructure is made.
 
 The immediate prompt is **Codeberg's Terms of Use (§7, July 2026)**, which surface
 two concerns about AI-generated contributions: **copyright clarity** — whether the
@@ -30,7 +29,7 @@ harmful or malicious code**. This ADR answers both. But it is written for Steppe
 host; if the canonical repository ever leaves Codeberg, the reasons to keep this
 record intact do not.
 
-The intended copyright posture, stated plainly and then qualified below: AI-assisted
+The intended copyright posture, qualified below: AI-assisted
 output is treated as **Steppe's work product**, licensed outbound under
 **AGPL-3.0-or-later** on the project's inbound=outbound terms, with the **DCO
 sign-off** on each commit asserting the contributor's right to submit it. The legal
@@ -95,7 +94,7 @@ Every unit of AI-assisted work passes the same gate, whatever tool drafted it:
   `next.config.ts` does not configure to ignore build errors. Codeberg CI runs
   install → lint → test → build on every push and pull request.
 
-On sign-off coverage, stated honestly rather than aspirationally: the DCO trailer is
+On sign-off coverage: the DCO trailer is
 the enforced convention — a per-clone `git commit -s` hook plus a CI gate on `main`
 that fails any pushed non-merge commit lacking a real `Signed-off-by` **trailer**.
 Historical coverage is **not** 100%: about **96.1%** of all commits and **98.1%** of
@@ -134,7 +133,7 @@ reciprocity may attach and adds the AGPL's own.
 
 Commits carry the DCO sign-off and nothing else; they do **not** carry
 `Co-Authored-By` or any AI-attribution trailer (enforced by
-`.claude/settings.json`). This is a deliberate, principled choice, not an omission.
+`.claude/settings.json`). This is a choice, not an omission.
 
 The DCO trailer records two things — the **right to submit** and **human
 accountability** for the content. It does not record **tooling provenance**, and it
@@ -143,8 +142,7 @@ precision Steppe cannot honestly claim: work moves fluidly between human editing
 agent drafting within a single logical change, and a binary "AI touched this" tag on
 each commit would assert a clean line that does not exist. Rather than stamp every
 commit with a claim we cannot stand behind, Steppe makes the disclosure **once, at
-the level where it is true** — this ADR. The practice is documented here, in full,
-as the honest and durable record of how the code is made.
+the level where it is true** — this ADR.
 
 ### 6. Harmful-code safeguards
 
@@ -168,7 +166,7 @@ does not:
 - **Invariant regressions** — the Vitest suites, including RLS-refusal and positive
   walkthrough tests, run against a local prod-shaped database.
 
-**Not caught (stated honestly):**
+**Not caught:**
 - **CI does not run the database-backed RLS suites.** Supabase secrets are
   intentionally withheld from the CI `test` step, so the impersonated RLS-refusal
   and anon-key suites **self-skip** there; only the hermetic route suite runs in CI.
@@ -194,12 +192,12 @@ This ADR does not claim more than the practice delivers.
   automatically; that work is human and fallible.
 - It does not claim continuous enforcement of the database-backed invariants — those
   are proven locally, not in CI (above).
-- It does not claim 100% DCO coverage; the honest figures and their gaps are in
+- It does not claim 100% DCO coverage; the figures and their gaps are in
   Decision 2.
 - It does not settle the output-rights legal question on which the copyright posture
   depends (below).
 
-The residual risk is real and named: an AI-drafted change that is syntactically
+The residual risk: an AI-drafted change that is syntactically
 clean, type-correct, lint-clean, and does not trip an existing test can still carry a
 logic or security defect, and would rest entirely on human review to catch. The
 safeguards narrow that surface; they do not eliminate it.
@@ -213,7 +211,7 @@ maintained by one person. **How Steppe uses AI is a member-governable matter** �
 touches the platform's trust proposition directly. This ADR should be **ratified,
 amended, or replaced by member vote** once governance is live, through the same
 proposal-and-vote process the platform runs for any other consequential decision.
-Until then it is the working policy, adopted in good faith and documented in full so
+Until then it is the working policy, documented so
 that the members who inherit it can see exactly what they are ratifying.
 
 ---
@@ -241,5 +239,5 @@ that the members who inherit it can see exactly what they are ratifying.
   boundary and the auditable-core rule; the human review gate and named merge
   conditions; the AGPL-3.0-or-later output posture with the Anthropic-terms reliance
   moved to counsel-pending; the reciprocity and no-AI-attribution-trailer
-  conventions; and the harmful-code safeguards with an honest account of what CI does
+  conventions; and the harmful-code safeguards with an account of what CI does
   and does not catch. Founder-era; ratifiable by member vote once governance is live.
