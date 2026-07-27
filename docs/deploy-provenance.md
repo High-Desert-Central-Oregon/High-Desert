@@ -21,7 +21,7 @@ not depend on secret injection. It compares the mirror's `main` HEAD to the cano
 (`CI_COMMIT_SHA`), retrying for ~60s to tolerate normal async mirror lag:
 
 - **Converges** → `PROVENANCE OK` (Vercel will deploy canonical). Pipeline passes.
-- **Does not converge in ~60s, or the mirror HEAD is empty** → the step **fails loudly** with
+- **Does not converge in ~60s, or the mirror HEAD is empty** → the step fails loudly with
   both SHAs. Empty is never treated as a match (the compare requires a non-empty mirror SHA
   equal to canonical), so a stuck/empty mirror is visible in CI, not shipped as stale code.
 
@@ -57,6 +57,6 @@ match before trusting the next production deploy.
 
 ## When to check
 
-- **After any push to `main`** (the CI step does this automatically).
-- **Before relying on a production deploy** during launch week — a quick manual check closes the
+- After any push to `main` (the CI step does this automatically).
+- Before relying on a production deploy during launch week — a quick manual check closes the
   gap between "I pushed" and "Vercel actually has it."

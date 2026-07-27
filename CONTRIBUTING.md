@@ -7,12 +7,12 @@ including the intern pipeline. So contributions are held to two standards: they 
 
 ## Read these first
 
-- **`CLAUDE.md`** — the ten non-negotiable invariants (verify-then-forget, server-set vote
+- `CLAUDE.md` — the ten non-negotiable invariants (verify-then-forget, server-set vote
   weight, secret ballots, human-in-the-loop, append-only record, no ranking, no ads,
   accessible-by-default, …), the build order, and the explicit **do-not-build** list. A change
   that violates an invariant will not be merged — if a task seems to require one, open an issue
   and flag it rather than working around it.
-- **`SPEC.md`** — what each feature is and how it's meant to be built.
+- `SPEC.md` — what each feature is and how it's meant to be built.
 
 ## How contributions are licensed (inbound = outbound)
 
@@ -90,8 +90,8 @@ By signing off, you certify the statement below.
   person doesn't carry it. Design it twice before committing.
 - **Accessible by default.** Semantic HTML, keyboard paths, real contrast, captions, and
   English + Spanish strings — from the first screen, not a later pass.
-- **Plain language** in everything a member reads.
-- **Per-file license header** (below) on new source files.
+- Plain language in everything a member reads.
+- A per-file license header (below) on new source files.
 
 ## Reporting security or privacy issues
 
