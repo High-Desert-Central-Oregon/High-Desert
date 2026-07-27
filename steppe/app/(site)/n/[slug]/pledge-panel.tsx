@@ -10,6 +10,7 @@ import {
   pledgePath,
   type NeighborhoodStatus,
 } from "@/lib/pledge-shared";
+import { CANONICAL_ORIGIN } from "@/lib/site-url";
 import { StrataColumn } from "./strata-column";
 
 /**
@@ -42,10 +43,15 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
   const { threshold, name, slug, isOpen } = status;
   const left = remaining({ pledgeCount: count, threshold });
   const reached = thresholdReached({ pledgeCount: count, threshold });
-  // Shown without a scheme, the way it is printed on the mailer and the yard
-  // sign, so the page and the paper read as the same address. The path comes
-  // from the shared helper so there is one definition of the printed shape.
-  const shareUrl = `steppe.community${pledgePath(slug)}`;
+  // One value, two presentations: what gets copied, and the same thing shown
+  // without its scheme. Derived rather than written twice, because the display
+  // string and the clipboard string drifting apart is exactly the bug this
+  // replaces — the page showed a bare-domain address while the confirmation
+  // email sent the www one, so the same link reached a member as two different
+  // strings. CANONICAL_ORIGIN is also what the printed poster QRs encode
+  // (docs/brand/brand-kit-MANIFEST.md), so page, paper, and email now agree.
+  const shareHref = `${CANONICAL_ORIGIN}${pledgePath(slug)}`;
+  const shareUrl = shareHref.replace(/^https:\/\//, "");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -89,7 +95,7 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(`https://${shareUrl}`);
+      await navigator.clipboard.writeText(shareHref);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {

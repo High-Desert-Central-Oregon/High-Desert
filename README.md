@@ -125,7 +125,7 @@ The design is meant to be **adopted, adapted, or refused** by other communities 
 own terms, by the Confederated Tribes of Warm Springs. The AGPL keeps any fork open; the patterns
 (CC BY-SA 4.0) travel with their reasoning intact. You may run and modify the code freely, but you
 may not operate it *as* "Steppe" — see [`NOTICE`](./NOTICE). If you'd like to run your own
-instance, [get in touch](https://steppe.community/contact).
+instance, [get in touch](https://www.steppe.community/contact).
 
 ## License
 
