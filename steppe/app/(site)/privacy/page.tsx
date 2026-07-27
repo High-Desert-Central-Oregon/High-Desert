@@ -3,6 +3,7 @@
 // active catalog ("privacy" namespace). The formal policy at /legal/privacy stays
 // English-only and governs (see the legalGoverns note by the policy link).
 import { getTranslations } from "next-intl/server";
+import { CANONICAL_ORIGIN } from "@/lib/site-url";
 import "./privacy.css";
 import { Hero } from "../_components/hero";
 
@@ -203,8 +204,15 @@ export default async function PrivacyPage() {
             <p>{t("closeP")}</p>
             <p className="legal">
               {t("fullPolicy")}{" "}
-              <a href="https://steppe.community/legal/privacy" target="_blank" rel="noopener noreferrer">
-                steppe.community/legal/privacy
+              {/* Href and visible text both derived from CANONICAL_ORIGIN, so
+                  the link a member reads and the link they land on cannot
+                  disagree — and both match the www form used in email. */}
+              <a
+                href={`${CANONICAL_ORIGIN}/legal/privacy`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {CANONICAL_ORIGIN.replace(/^https:\/\//, "")}/legal/privacy
               </a>
               <br />
               {t("questions")} <a href="/contact">{t("contactUs")}</a>
