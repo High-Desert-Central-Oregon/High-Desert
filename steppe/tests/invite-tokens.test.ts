@@ -295,6 +295,88 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
       { proname: "redeem_invite", cfg: "search_path=public, pg_temp" },
     ]);
   });
+
+  // ---- 5. the neighborhood reference (G-INV-6) ---------------------------
+  //
+  // Two tests, and only the second one proves anything. The catalog test says
+  // the column is shaped right; the behavioral test closes a campaign the
+  // hardest way available — deleting the neighborhood row — and checks the
+  // token and its redemption record are both still standing afterwards. A
+  // printed invite card outlives the campaign it was minted for, so a closed
+  // campaign taking invite history with it would be a data-loss bug that no
+  // amount of column-shape checking would catch.
+
+  it("neighborhood_id is nullable and its delete rule is SET NULL", async () => {
+    const { rows } = await owner.query(
+      `select c.is_nullable,
+              (select con.confdeltype from pg_constraint con
+                where con.conrelid = 'public.invite_tokens'::regclass
+                  and con.contype = 'f'
+                  and con.confrelid = 'public.neighborhoods'::regclass) as delrule
+         from information_schema.columns c
+        where c.table_schema='public' and c.table_name='invite_tokens'
+          and c.column_name='neighborhood_id'`,
+    );
+    expect(rows).toHaveLength(1);
+    // NULL is a meaning here — the general-purpose token — not an omission.
+    expect(rows[0].is_nullable).toBe("YES");
+    // 'n' = SET NULL. 'c' would be CASCADE (destroys history), 'r' RESTRICT
+    // (invite history vetoes a geography edit), 'a' NO ACTION.
+    expect(rows[0].delrule).toBe("n");
+  });
+
+  it("deleting the neighborhood reverts the token to general-purpose and keeps the history", async () => {
+    await h.inTxn(async (c) => {
+      const { rows: nb } = await c.query(
+        `insert into neighborhoods (slug, name, description)
+         values ($1, 'ZZ Invite Test', 'test only — rolled back') returning id`,
+        [`${TAG}-hood`],
+      );
+      const hood = nb[0].id as string;
+
+      const { rows: t } = await c.query(
+        `insert into invite_tokens (max_uses, expires_at, neighborhood_id, label)
+         values (5, now() + interval '30 days', $1, $2) returning id, token`,
+        [hood, `${TAG}-hood-token`],
+      );
+      const tokenId = t[0].id as string;
+
+      const { rows: r } = await c.query(
+        `select public.redeem_invite($1,$2) as ok`,
+        [t[0].token, `hood@${TAG}.test`],
+      );
+      expect(r[0].ok).toBe(true);
+
+      await c.query(`delete from neighborhoods where id = $1`, [hood]);
+
+      const { rows: after } = await c.query(
+        `select (select count(*)::int from invite_tokens where id=$1) as tokens,
+                (select neighborhood_id from invite_tokens where id=$1) as hood,
+                (select count(*)::int from invite_redemptions where token_id=$1) as redemptions,
+                (select count(*)::int from invited_emails where email=$2) as allow_rows`,
+        [tokenId, `hood@${TAG}.test`],
+      );
+      expect(after[0]).toEqual({
+        tokens: 1,        // not cascade-deleted
+        hood: null,       // reverted to general-purpose
+        redemptions: 1,   // the invite graph survived the campaign
+        allow_rows: 1,    // and so did the allowlist row it wrote
+      });
+    });
+  });
+
+  it("no function in 0027 reads neighborhood_id — routing is Phase 4", async () => {
+    const { rows } = await owner.query(
+      `select p.proname, pg_get_functiondef(p.oid) as src
+         from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+        where n.nspname='public' and p.proname in ('redeem_invite','purge_stale_invites')`,
+    );
+    for (const row of rows) {
+      expect(row.src, `${row.proname} must not read neighborhood_id`).not.toContain(
+        "neighborhood_id",
+      );
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------

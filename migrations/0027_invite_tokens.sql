@@ -68,6 +68,17 @@
 --            campaign rule (docs/decisions/neighborhood-pledge-campaigns.md):
 --            they hold an email address in the hope of a conversion that may
 --            never come, which is the same class of data for the same reason.
+--   G-INV-6  invite_tokens.neighborhood_id is NULLABLE with ON DELETE SET NULL.
+--            NULL is not a missing value — it is the general-purpose token
+--            (counter cards, press), which is the majority case. A set value
+--            means the token was minted for one neighborhood and prefills the
+--            pledge landing. SET NULL rather than CASCADE because a closed
+--            campaign must not destroy invite history, and rather than
+--            RESTRICT because invite history must not veto a geography edit:
+--            the failure mode of losing the reference is a token that reverts
+--            to general-purpose, which is a state the schema already models.
+--            The column is the reference only — the routing it enables is
+--            Phase 4, and no function in this migration reads it.
 --
 -- STUDIO-SAFE: pure SQL, no psql meta-commands. Prove first with
 -- seed/matrix-0027.sql (one rolled-back transaction, writes nothing), then apply
@@ -88,7 +99,7 @@
 -- names which surface it covers.
 --
 --   ('0027 invite tokens',
---    'tables + fns + moderator-only RLS + NOTHING reachable by anon + no profiles.invited_by',
+--    'tables + fns + moderator-only RLS + NOTHING reachable by anon + nullable SET NULL neighborhood_id + no profiles.invited_by',
 --    exists (select 1 from information_schema.tables
 --             where table_schema='public' and table_name='invite_tokens')
 --      and exists (select 1 from information_schema.tables
@@ -107,6 +118,18 @@
 --      and not has_function_privilege('anon','public.purge_stale_invites(interval)','EXECUTE')
 --      and not has_function_privilege('public','public.redeem_invite(text,text)','EXECUTE')
 --      and not has_function_privilege('public','public.purge_stale_invites(interval)','EXECUTE')
+--      -- (iii) the neighborhood reference exists, is nullable, and its delete
+--      --       rule is SET NULL ('n'). The delete rule is asserted, not assumed:
+--      --       the column existing says nothing about whether deleting a
+--      --       neighborhood would take its tokens with it (G-INV-6).
+--      and exists (select 1 from information_schema.columns
+--                   where table_schema='public' and table_name='invite_tokens'
+--                     and column_name='neighborhood_id' and is_nullable='YES')
+--      and exists (select 1 from pg_constraint c
+--                   where c.conrelid = 'public.invite_tokens'::regclass
+--                     and c.contype = 'f'
+--                     and c.confrelid = 'public.neighborhoods'::regclass
+--                     and c.confdeltype = 'n')
 --      -- the invite graph did not escape its subsystem (G-INV-2)
 --      and not exists (select 1 from information_schema.columns
 --                       where table_name='profiles' and column_name='invited_by'))
@@ -123,8 +146,20 @@ create table if not exists public.invite_tokens (
   created_by  uuid references auth.users(id) on delete set null,
   revoked_at  timestamptz,
   label       text,
-  created_at  timestamptz not null default now()
+  created_at  timestamptz not null default now(),
+  -- G-INV-6. Nullable, and SET NULL on delete — see the column comment below.
+  neighborhood_id uuid references public.neighborhoods(id) on delete set null
 );
+
+-- The column is in the CREATE above for a fresh apply, and repeated here as an
+-- idempotent ALTER because `create table if not exists` adds nothing to a table
+-- that already exists. An earlier revision of this file (branch commits 9899c0c
+-- and 893a4de) had no neighborhood_id; anyone who applied that revision gets the
+-- column from this statement rather than a silently-missing one. Same reason 0026
+-- extends `neighborhoods` by ALTER.
+alter table public.invite_tokens
+  add column if not exists neighborhood_id uuid references public.neighborhoods(id)
+  on delete set null;
 
 comment on table public.invite_tokens is
   'Bearer invite tokens with a use cap (0027). A moderator mints one; anyone '
@@ -157,6 +192,35 @@ comment on column public.invite_tokens.revoked_at is
   'Stamped to stop further redemptions. Does NOT retract allowlist rows already '
   'written — a revocation cascade is prerequisite work for member-minted tokens '
   'and is deliberately not built here (ADR §5).';
+comment on column public.invite_tokens.neighborhood_id is
+  'NULL = general-purpose token (counter cards, press). Set = minted for one '
+  'neighborhood, and prefills the pledge landing at /n/<slug>. ON DELETE SET '
+  'NULL: a token can never be orphaned and can never be cascade-deleted — '
+  'losing the geography degrades the token to general-purpose, it does not '
+  'destroy invite history (0027, G-INV-6). Routing behavior is Phase 4.';
+
+-- WHY neighborhoods.id AND NOT THE SLUG. 0026 deliberately did not create a
+-- campaign table — it ALTERed `neighborhoods` with nullable `threshold` and
+-- `opened_at`, so the campaign IS the neighborhood row and there is no campaign
+-- id to reference (0026, "WHY THIS EXTENDS `neighborhoods`"). That leaves two
+-- referenceable columns, and only one survives the lifecycle:
+--   · Closing a campaign is `threshold = null` (or the stalled-campaign purge in
+--     close_stale_pledge_campaigns), and reopening is setting `threshold` again.
+--     NEITHER touches the neighborhood row, so an id reference is untouched by a
+--     close/reopen cycle — which is precisely the case a token must survive,
+--     since a printed card outlives the campaign it was minted for.
+--   · `slug` is unique-not-null and so is FK-able, but it is mutable text. A
+--     token pointing at a slug would break the moment a slug were corrected,
+--     and it would store the same string that is already printed on the card —
+--     duplicating the one value 0026 keeps in a single namespace on purpose.
+-- The id is immutable, opaque, and the same key `profiles.neighborhood_id` and
+-- `pledges.neighborhood_id` already use. Resolving id → slug for the prefill is
+-- a join the pledge landing already performs.
+
+-- Indexed because the mint surface lists tokens by neighborhood, and because
+-- ON DELETE SET NULL must scan this column on every neighborhood delete.
+create index if not exists invite_tokens_neighborhood_idx
+  on public.invite_tokens (neighborhood_id) where neighborhood_id is not null;
 
 -- 2 · the redemptions -------------------------------------------------------
 --     MINIMUM VIABLE RECORD. Four columns, each load-bearing:

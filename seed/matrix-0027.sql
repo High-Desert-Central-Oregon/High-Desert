@@ -312,6 +312,64 @@ do $$ begin
 exception when undefined_table or invalid_schema_name then null;   -- pg_cron absent: fine
 end $$;
 
+-- == 13  the neighborhood reference: nullable, SET NULL, and inert (G-INV-6) ==
+--        13a/13b are catalog assertions; 13c is the one that matters, because a
+--        column existing says nothing about what happens when the campaign it
+--        points at goes away. It closes a neighborhood the hard way — deleting
+--        the row — and checks the token and its redemption are both still there.
+do $$ declare v_nb uuid; v_tok uuid; n int; begin
+  -- 13a nullable: NULL is a meaning (general-purpose token), not an omission
+  if not exists (select 1 from information_schema.columns
+                  where table_schema='public' and table_name='invite_tokens'
+                    and column_name='neighborhood_id' and is_nullable='YES') then
+    raise exception 'MATRIX FAIL 13a: invite_tokens.neighborhood_id missing or NOT NULL — a general-purpose token has no neighborhood'; end if;
+
+  -- 13b the delete rule is SET NULL, not CASCADE and not RESTRICT
+  if not exists (select 1 from pg_constraint c
+                  where c.conrelid = 'public.invite_tokens'::regclass
+                    and c.contype = 'f'
+                    and c.confrelid = 'public.neighborhoods'::regclass
+                    and c.confdeltype = 'n') then
+    raise exception 'MATRIX FAIL 13b: the neighborhood FK delete rule is not SET NULL — a closed campaign could destroy invite history'; end if;
+
+  -- 13c behavioral: the campaign disappears, the token and its history do not
+  insert into public.neighborhoods (slug, name, description)
+  values ('mx0027-campaign', 'MX0027 Campaign', 'matrix only — rolled back')
+  returning id into v_nb;
+
+  insert into public.invite_tokens (max_uses, expires_at, neighborhood_id, label)
+  values (5, now() + interval '30 days', v_nb, 'matrix 13c')
+  returning id into v_tok;
+
+  insert into public.invite_redemptions (token_id, email_normalized)
+  values (v_tok, 'thirteen-c@mx0027.test');
+
+  delete from public.neighborhoods where id = v_nb;
+
+  select count(*) into n from public.invite_tokens where id = v_tok;
+  if n <> 1 then
+    raise exception 'MATRIX FAIL 13c: deleting the neighborhood deleted the token — invite history is not allowed to cascade'; end if;
+
+  if (select neighborhood_id from public.invite_tokens where id = v_tok) is not null then
+    raise exception 'MATRIX FAIL 13d: the token still points at a deleted neighborhood — it should have reverted to general-purpose'; end if;
+
+  select count(*) into n from public.invite_redemptions where token_id = v_tok;
+  if n <> 1 then
+    raise exception 'MATRIX FAIL 13e: the redemption record went with the neighborhood (% rows left)', n; end if;
+end $$;
+
+-- 13f the column is a reference and nothing more. Routing is Phase 4, so no
+--     function in this migration may read it — if one starts to, the "inert
+--     column" claim in G-INV-6 has quietly stopped being true.
+do $$ declare f text; begin
+  foreach f in array array['public.redeem_invite(text,text)',
+                           'public.purge_stale_invites(interval)']
+  loop
+    if pg_get_functiondef(f::regprocedure) ilike '%neighborhood_id%' then
+      raise exception 'MATRIX FAIL 13f: % reads neighborhood_id — 0027 stores the reference, Phase 4 routes on it', f; end if;
+  end loop;
+end $$;
+
 select 'MATRIX 0027 GREEN — all cases passed (concurrency proven out-of-band; see report)' as verdict;
 
 rollback;

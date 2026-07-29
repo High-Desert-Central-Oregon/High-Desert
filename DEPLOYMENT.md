@@ -90,7 +90,13 @@ psql "$DATABASE_URL" -f schema.sql
 
 # Or, with the Supabase CLI against a linked project:
 supabase db push        # apply migrations to the remote project
-supabase db reset        # local: rebuild from schema.sql + migrations + seeds
+
+# Local rebuild — use the script, not a bare `supabase db reset`. Because there
+# is no supabase/migrations/ and no supabase/seed.sql, a bare reset leaves an
+# empty database; the script resets, applies schema.sql, applies every migration
+# after 0015 in order, and reloads seed/dry-run-accounts.sql last so the test
+# suite is green afterwards. It refuses to run against a non-loopback host.
+./scripts/reset-local.sh
 ```
 
 For an existing database, apply only the new migration(s) in order, e.g.:
