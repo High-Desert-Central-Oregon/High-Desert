@@ -18,12 +18,13 @@ status question resolves by running that query against prod, never by recalling 
    stop-gate** — per CLAUDE.md. The dry-run matrices (`seed/matrix-*.sql`) prove them on a
    local, prod-shaped DB first; **matrix/test SQL never runs against prod.**
 
-## Applied status (as of 2026-07-26)
+## Applied status (as of 2026-07-29)
 
-All migrations **0012–0026 are applied and live in production**, and every one of them now has a
+All migrations **0012–0027 are applied and live in production**, and every one of them now has a
 row below. Status was verified against prod with the probe query in the next section (owner-run,
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
-fifteen rows including the newly recorded 0024, 0025 and 0026). For 0012–0023, `Applied on` uses
+fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
+returned `APPLIED` for all sixteen rows including the newly recorded 0027). For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -33,7 +34,26 @@ prod by read-only catalog introspection: all eight functions present and pinning
 `search_path = public, pg_temp`, the default `EXECUTE TO PUBLIC` revoked on every one of them,
 `pledges` deny-by-default at both layers (RLS on, zero policies, no client grants), the
 `removal_token` unique index present, `neighborhoods.threshold` nullable with all 35 seeded rows
-and the `profiles` FK intact, and **no new ERROR-level security advisors**.
+and the `profiles` FK intact, and **no new ERROR-level security advisors**. 0027 (invite tokens —
+bearer, capped) was applied by hand at its stop-gate on 2026-07-29, after a GREEN
+`seed/matrix-0027.sql` dry-run, and verified against prod by the probe tuple below: both tables
+(`invite_tokens`, `invite_redemptions`) and both functions (`redeem_invite`,
+`purge_stale_invites`) present, exactly **2** policies across the two tables and both
+moderator-only, and **nothing reachable by `anon`** — with the table privileges and the function
+privileges asserted **separately**, because they live in different catalogs
+(`information_schema.role_table_grants` vs `has_function_privilege`) and a single clause covering
+"no anon grant" was true and false at the same time in an earlier draft. The `PUBLIC` default
+`EXECUTE` is confirmed revoked on both functions. `invite_tokens.neighborhood_id` is nullable with
+its delete rule asserted rather than assumed — `pg_constraint.confdeltype = 'n'` (SET NULL), since
+the column existing says nothing about whether deleting a neighborhood would take its tokens with
+it. `profiles.invited_by` is confirmed absent: the invite graph stayed inside its subsystem. The
+regression criterion held — `enforce_invited_signup()` was confirmed **byte-identical in
+production after the apply**, `sha256(pg_get_functiondef(...))` =
+`8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e`, unchanged from the pre-build
+baseline: the write path to the allowlist was added without touching the gate that reads it. The
+applied file was `migrations/0027_invite_tokens.sql` at SHA-256
+`26451c0b8194cb764589f8556f4d3fc2bd7c3f557c18344ae616083ed96a2d7a`, recorded so this ledger says
+**which bytes** were applied and not merely which number.
 
 > **0024 and 0025 carry no apply date, on purpose.** Both were applied by hand and both are
 > confirmed live by the probe below (re-run 2026-07-26), but the day each was applied was never
@@ -60,6 +80,7 @@ and the `profiles` FK intact, and **no new ERROR-level security advisors**.
 | 0024 invite-only signup allowlist + `auth.users` gate | `b2a584b` | not recorded | by hand, SQL editor | ✅ Applied |
 | 0025 qr print variants (posters + seed card) | `22b754d` ⚠️ | not recorded | by hand, SQL editor | ✅ Applied |
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
+| 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -189,7 +210,50 @@ from (values
      and (select count(*) from pg_policies where tablename = 'pledges') = 0
      and not exists (select 1 from information_schema.role_table_grants
                      where table_name = 'pledges'
-                       and grantee in ('anon', 'authenticated', 'service_role')))
+                       and grantee in ('anon', 'authenticated', 'service_role'))),
+  -- 0027's two anon assertions are SEPARATE on purpose. An earlier draft of this
+  -- clause checked only `information_schema.role_table_grants ... grantee='anon'`
+  -- and reported APPLIED while anon held EXECUTE on redeem_invite — table grants
+  -- and function grants live in different catalogs, so one clause covering "no
+  -- anon grant" could be true and false at the same time and still pass. Table
+  -- privileges and function privileges are now asserted independently, and each
+  -- names which surface it covers. Kept character-identical to the header of
+  -- migrations/0027_invite_tokens.sql, which is the applied file.
+  ('0027 invite tokens',
+   'tables + fns + moderator-only RLS + NOTHING reachable by anon + nullable SET NULL neighborhood_id + no profiles.invited_by',
+   exists (select 1 from information_schema.tables
+            where table_schema='public' and table_name='invite_tokens')
+     and exists (select 1 from information_schema.tables
+                  where table_schema='public' and table_name='invite_redemptions')
+     and exists (select 1 from pg_proc where proname='redeem_invite')
+     and exists (select 1 from pg_proc where proname='purge_stale_invites')
+     and (select count(*) from pg_policies
+           where tablename in ('invite_tokens','invite_redemptions')) = 2
+     -- (i) no anon DML on either table
+     and not exists (select 1 from information_schema.role_table_grants
+                      where table_schema='public'
+                        and table_name in ('invite_tokens','invite_redemptions')
+                        and grantee='anon')
+     -- (ii) no anon EXECUTE on either function, and no PUBLIC default either
+     and not has_function_privilege('anon','public.redeem_invite(text,text)','EXECUTE')
+     and not has_function_privilege('anon','public.purge_stale_invites(interval)','EXECUTE')
+     and not has_function_privilege('public','public.redeem_invite(text,text)','EXECUTE')
+     and not has_function_privilege('public','public.purge_stale_invites(interval)','EXECUTE')
+     -- (iii) the neighborhood reference exists, is nullable, and its delete
+     --       rule is SET NULL ('n'). The delete rule is asserted, not assumed:
+     --       the column existing says nothing about whether deleting a
+     --       neighborhood would take its tokens with it (G-INV-6).
+     and exists (select 1 from information_schema.columns
+                  where table_schema='public' and table_name='invite_tokens'
+                    and column_name='neighborhood_id' and is_nullable='YES')
+     and exists (select 1 from pg_constraint c
+                  where c.conrelid = 'public.invite_tokens'::regclass
+                    and c.contype = 'f'
+                    and c.confrelid = 'public.neighborhoods'::regclass
+                    and c.confdeltype = 'n')
+     -- the invite graph did not escape its subsystem (G-INV-2)
+     and not exists (select 1 from information_schema.columns
+                      where table_name='profiles' and column_name='invited_by'))
 ) as m(migration, probe, present)
 order by m.migration;
 ```
