@@ -246,18 +246,41 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
     }
   });
 
-  it("only redeem_invite is reachable by anon; the purge is not", async () => {
+  it("nothing in 0027 is reachable by anon; service_role reaches both functions", async () => {
+    // INVERTED from an earlier revision, which asserted redeem_anon: true on the
+    // reasoning that the redeemer has no session. That conflated an anonymous
+    // person with an anonymous database role — the redeem route is server-side
+    // and holds the service key. Kept as a guard rather than deleted, because
+    // the grant it now forbids was once deliberate.
     const { rows } = await owner.query(`
       select has_function_privilege('anon','public.redeem_invite(text,text)','EXECUTE') as redeem_anon,
              has_function_privilege('public','public.redeem_invite(text,text)','EXECUTE') as redeem_public,
+             has_function_privilege('service_role','public.redeem_invite(text,text)','EXECUTE') as redeem_svc,
              has_function_privilege('anon','public.purge_stale_invites(interval)','EXECUTE') as purge_anon,
+             has_function_privilege('public','public.purge_stale_invites(interval)','EXECUTE') as purge_public,
              has_function_privilege('service_role','public.purge_stale_invites(interval)','EXECUTE') as purge_svc`);
     expect(rows[0]).toEqual({
-      redeem_anon: true,       // intentional (G-INV-4): the redeemer has no session
-      redeem_public: false,    // default EXECUTE-to-PUBLIC revoked
+      redeem_anon: false,   // reversed — see the GRANT-site note in 0027
+      redeem_public: false, // default EXECUTE-to-PUBLIC revoked
+      redeem_svc: true,     // the route handler's role, and the only door
       purge_anon: false,
+      purge_public: false,
       purge_svc: true,
     });
+  });
+
+  it("no anon TABLE privilege either — asserted apart from the function grants", async () => {
+    // Two catalogs, two assertions. A single "no anon grant" check covering both
+    // is an invariant that can be true and false at once, and one did pass while
+    // anon held EXECUTE on redeem_invite.
+    const { rows } = await owner.query(
+      `select coalesce(string_agg(distinct grantee||':'||privilege_type, ', '), '') as g
+         from information_schema.role_table_grants
+        where table_schema='public'
+          and table_name in ('invite_tokens','invite_redemptions')
+          and grantee = 'anon'`,
+    );
+    expect(rows[0].g).toBe("");
   });
 
   it("both new functions pin search_path including pg_temp", async () => {
@@ -529,14 +552,22 @@ describe.skipIf(!(url && anonKey))("0027 invite tables via the anon API", () => 
     }
   });
 
-  it("anon CAN call redeem_invite — recorded, because the route limit rides on it", async () => {
-    // G-INV-4 grants this deliberately, and the consequence is that a rate limit
-    // at the route handler is advisory. Asserted so the grant is a decision in
-    // the test record rather than an accident someone finds later.
+  it("anon CANNOT call redeem_invite through the public API", async () => {
+    // The end-to-end form of the reversal: not just "the catalog says no grant",
+    // but PostgREST actually refusing the call with the publishable key. This is
+    // the surface that mattered — a printed token is meant to be photographed,
+    // and an exposed RPC would let a holder burn a 25-use cap on garbage
+    // addresses before a real neighbor arrived.
     const { error } = await supa.rpc("redeem_invite", {
       p_token: "deadbeefdeadbeefdeadbeefdeadbeef",
       p_email: `probe@${TAG}.test`,
     });
-    expect(error).toBeNull();
+    expect(error).toBeTruthy();
+    expect(error?.message ?? "").toMatch(/permission denied/i);
+  });
+
+  it("anon cannot reach purge_stale_invites either", async () => {
+    const { error } = await supa.rpc("purge_stale_invites", {});
+    expect(error).toBeTruthy();
   });
 });

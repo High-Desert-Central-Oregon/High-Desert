@@ -48,12 +48,22 @@
 --            of the string at rest is not one of them, and pretending otherwise
 --            by hashing it would break reprinting while protecting nothing that
 --            the cap does not already bound.
---   G-INV-4  redeem_invite() is granted to ANON. The redeemer has no session and
---            no account yet, so the write cannot be authorised as them. This is
---            the only function in this migration that anon can reach.
---            ⚑ Consequence, stated so it is not discovered later: because anon
---            can call it directly through PostgREST, a rate limit applied at the
---            route handler is advisory, not binding. See the note at the GRANT.
+--   G-INV-4  ANON GETS NOTHING. redeem_invite() is granted to service_role only,
+--            and so is purge_stale_invites(). No object in this migration is
+--            reachable by anon — not the tables, not the functions.
+--            This reverses an earlier decision in this build to grant anon
+--            EXECUTE on redeem_invite, on the reasoning that "the redeemer has
+--            no session". That conflated two different things: an anonymous
+--            PERSON does not imply an anonymous DATABASE ROLE. The redeem route
+--            is server-side and holds the service key already — the same shape
+--            requestSignInLink() uses for its allowlist read.
+--            What the anon grant actually bought was exposure: PostgREST hands
+--            the RPC to anyone holding the public anon key, and a printed token
+--            is meant to be photographed. A holder could script garbage
+--            addresses against a 25-use token and exhaust the cap before a
+--            single real neighbor arrived. The cap is a blast-radius dial, not
+--            an abuse budget, and a rate limit that can be walked around is not
+--            a rate limit. ADR §4 stands unamended.
 --   G-INV-5  Redemption records inherit the 180-day bound from the stalled-
 --            campaign rule (docs/decisions/neighborhood-pledge-campaigns.md):
 --            they hold an email address in the hope of a conversion that may
@@ -64,6 +74,43 @@
 -- BY HAND in the Supabase SQL editor as owner at the stop-gate — verify the
 -- project-ref first. Record it in docs/migrations-applied.md once applied.
 -- Safe to re-run.
+--
+-- ----------------------------------------------------------------------------
+-- CANONICAL APPLY-STATUS PROBE for docs/migrations-applied.md. Paste this clause
+-- into the ledger's probe query at the stop-gate.
+--
+-- The two anon assertions are SEPARATE on purpose. An earlier draft of this
+-- probe checked only `information_schema.role_table_grants ... grantee='anon'`
+-- and reported APPLIED while anon held EXECUTE on redeem_invite — table grants
+-- and function grants live in different catalogs, so one clause covering "no
+-- anon grant" could be true and false at the same time and still pass. Table
+-- privileges and function privileges are now asserted independently, and each
+-- names which surface it covers.
+--
+--   ('0027 invite tokens',
+--    'tables + fns + moderator-only RLS + NOTHING reachable by anon + no profiles.invited_by',
+--    exists (select 1 from information_schema.tables
+--             where table_schema='public' and table_name='invite_tokens')
+--      and exists (select 1 from information_schema.tables
+--                   where table_schema='public' and table_name='invite_redemptions')
+--      and exists (select 1 from pg_proc where proname='redeem_invite')
+--      and exists (select 1 from pg_proc where proname='purge_stale_invites')
+--      and (select count(*) from pg_policies
+--            where tablename in ('invite_tokens','invite_redemptions')) = 2
+--      -- (i) no anon DML on either table
+--      and not exists (select 1 from information_schema.role_table_grants
+--                       where table_schema='public'
+--                         and table_name in ('invite_tokens','invite_redemptions')
+--                         and grantee='anon')
+--      -- (ii) no anon EXECUTE on either function, and no PUBLIC default either
+--      and not has_function_privilege('anon','public.redeem_invite(text,text)','EXECUTE')
+--      and not has_function_privilege('anon','public.purge_stale_invites(interval)','EXECUTE')
+--      and not has_function_privilege('public','public.redeem_invite(text,text)','EXECUTE')
+--      and not has_function_privilege('public','public.purge_stale_invites(interval)','EXECUTE')
+--      -- the invite graph did not escape its subsystem (G-INV-2)
+--      and not exists (select 1 from information_schema.columns
+--                       where table_name='profiles' and column_name='invited_by'))
+-- ----------------------------------------------------------------------------
 -- ============================================================================
 
 -- 1 · the tokens ------------------------------------------------------------
@@ -288,19 +335,27 @@ comment on function public.redeem_invite(text, text) is
 -- Explicit grants only. The default EXECUTE-to-PUBLIC that every function is
 -- created with is revoked first, then handed back deliberately.
 --
--- ANON IS INTENTIONAL (G-INV-4): the person redeeming has no session and no
--- account, so the write cannot be authorised as them.
--- ⚑ CONSEQUENCE: PostgREST therefore exposes this as a public RPC, so any rate
---   limit applied at the route handler can be bypassed by calling the function
---   directly. The token's 128 bits make guessing infeasible and the cap bounds
---   what a valid token can do, but unbounded failed-lookup traffic is not
---   bounded by anything in this migration. If that becomes a problem the fix is
---   to revoke anon and route through service_role, which makes the route the
---   only door — the posture calendar_feed_payload() and submit_pledge() already
---   use. Recorded here rather than discovered later.
+-- SERVICE_ROLE ONLY. NOT anon — and the reasoning matters, because an earlier
+-- revision of this file did grant anon and the argument for it sounded right:
+-- "the person redeeming has no session, so the write cannot be authorised as
+-- them." That conflates an anonymous PERSON with an anonymous DATABASE ROLE. The
+-- redeem route runs on the server and already holds the service key, exactly as
+-- requestSignInLink() does for its allowlist read. Nothing about the redeemer
+-- being logged out requires the database to trust the public key.
+--
+-- What the anon grant cost: PostgREST exposes the RPC to anyone holding the
+-- publishable key, and a printed token is meant to be photographed and passed
+-- around. A holder could point a script at a 25-use token with garbage
+-- addresses and exhaust the cap before one real neighbor redeemed. The cap
+-- bounds how far a leaked token reaches; it is not an allowance for abuse. And a
+-- rate limit at the route means nothing if the route can be stepped around.
+--
+-- With service_role only, the route handler is the sole door and its rate limit
+-- binds — the posture calendar_feed_payload() and submit_pledge() already use.
+-- ADR §4 stands unamended.
 revoke all on function public.redeem_invite(text, text)
   from public, anon, authenticated, service_role;
-grant execute on function public.redeem_invite(text, text) to anon, service_role;
+grant execute on function public.redeem_invite(text, text) to service_role;
 
 -- 6 · retention -------------------------------------------------------------
 --     The 180-day bound from the stalled-campaign rule, applied to the same

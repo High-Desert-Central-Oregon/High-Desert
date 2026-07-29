@@ -97,12 +97,38 @@ do $$ declare g text; begin
   if not (select relrowsecurity from pg_class where relname='invite_redemptions') then
     raise exception 'MATRIX FAIL 2b: RLS off on invite_redemptions'; end if;
 
+  -- (i) TABLE privileges. Deliberately separate from the function check in 2d:
+  --     table grants and function grants live in different catalogs, and a single
+  --     "no anon grant" clause covering both is an invariant that can be true and
+  --     false at once. An earlier draft of this file checked only this half and
+  --     passed while anon held EXECUTE on redeem_invite.
   select string_agg(distinct grantee||':'||privilege_type, ', ') into g
     from information_schema.role_table_grants
    where table_schema='public' and table_name in ('invite_tokens','invite_redemptions')
      and grantee = 'anon';
   if g is not null then
-    raise exception 'MATRIX FAIL 2c: anon holds grants on the invite tables (%)', g; end if;
+    raise exception 'MATRIX FAIL 2c: anon holds TABLE grants on the invite tables (%)', g; end if;
+end $$;
+
+-- == 2d  FUNCTION privileges: nothing in 0027 is anon-reachable ===============
+--       The guard against reintroducing the reversed grant (G-INV-4). Every
+--       function this migration creates is named explicitly, so adding one
+--       without deciding its grants fails here rather than shipping open.
+do $$ declare f text; begin
+  foreach f in array array['public.redeem_invite(text,text)',
+                           'public.purge_stale_invites(interval)'] loop
+    if has_function_privilege('anon', f, 'EXECUTE') then
+      raise exception 'MATRIX FAIL 2d: anon can EXECUTE % — G-INV-4 says anon gets nothing. '
+                      'The redeem route is server-side and holds service_role; an anonymous '
+                      'person does not imply an anonymous database role.', f; end if;
+    if has_function_privilege('public', f, 'EXECUTE') then
+      raise exception 'MATRIX FAIL 2e: % still carries the default EXECUTE to PUBLIC', f; end if;
+  end loop;
+
+  -- And the positive half: the one role that MUST reach redemption still can,
+  -- so 2d cannot pass by the function being unreachable to everyone.
+  if not has_function_privilege('service_role','public.redeem_invite(text,text)','EXECUTE') then
+    raise exception 'MATRIX FAIL 2f: service_role cannot execute redeem_invite — redemption is impossible'; end if;
 end $$;
 
 -- fixture for the read-path attacks and the redemption cases
@@ -145,13 +171,19 @@ reset role;
 do $$ begin
   if has_function_privilege('public','public.redeem_invite(text,text)','EXECUTE') then
     raise exception 'MATRIX FAIL 5a: redeem_invite still grants EXECUTE to PUBLIC'; end if;
-  -- anon is INTENTIONAL (G-INV-4): the redeemer has no session.
-  if not has_function_privilege('anon','public.redeem_invite(text,text)','EXECUTE') then
-    raise exception 'MATRIX FAIL 5b: anon cannot execute redeem_invite — redemption would be impossible'; end if;
+  -- INVERTED from an earlier revision of this file, which asserted anon COULD
+  -- execute this. Kept as a guard rather than deleted, because the grant it
+  -- forbids was once deliberately present and the argument for it was plausible.
+  if has_function_privilege('anon','public.redeem_invite(text,text)','EXECUTE') then
+    raise exception 'MATRIX FAIL 5b: anon can execute redeem_invite — the grant was reversed; '
+                    'exposing the RPC lets a token holder script garbage addresses and exhaust '
+                    'the cap before a real redeemer arrives'; end if;
+  if not has_function_privilege('service_role','public.redeem_invite(text,text)','EXECUTE') then
+    raise exception 'MATRIX FAIL 5c: service_role lost EXECUTE on redeem_invite'; end if;
   if has_function_privilege('anon','public.purge_stale_invites(interval)','EXECUTE') then
-    raise exception 'MATRIX FAIL 5c: anon can execute the purge'; end if;
+    raise exception 'MATRIX FAIL 5d: anon can execute the purge'; end if;
   if has_function_privilege('public','public.purge_stale_invites(interval)','EXECUTE') then
-    raise exception 'MATRIX FAIL 5d: purge still grants EXECUTE to PUBLIC'; end if;
+    raise exception 'MATRIX FAIL 5e: purge still grants EXECUTE to PUBLIC'; end if;
 end $$;
 
 -- == 6  search_path pinned WITH pg_temp on both new functions ==================
