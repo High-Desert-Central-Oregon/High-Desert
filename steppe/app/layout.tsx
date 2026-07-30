@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Besley, Schibsted_Grotesk, Martian_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { siteOrigin } from "@/lib/site-url";
 // ONE brand type system across the whole app: Besley / Schibsted Grotesk /
 // Martian Mono are loaded once below (next/font, no external CDN) and drive both
@@ -86,6 +87,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
