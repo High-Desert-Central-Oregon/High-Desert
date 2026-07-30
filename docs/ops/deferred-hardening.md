@@ -152,3 +152,30 @@ putting a capped, expiring token in front of a yard sign would be the wrong inst
 `neighborhood_id` is redesignated **mint-time provenance** — which audience a batch of cards
 was printed for — rather than a routing input. Full reasoning in
 `docs/decisions/invite-tokens.md` §9 (v1.2).
+
+---
+
+## 6. Founder notification when a campaign reaches its threshold
+
+**Trigger condition — build it when more than one campaign is running concurrently.**
+Not before. With a single campaign, "notice it by running the review read" is adequate and
+adds no moving parts. With several, that becomes "remember to look at several things", and a
+neighborhood sitting at threshold for two weeks because nobody checked is a real cost — the
+count is public, and stale-at-threshold is visible to exactly the people waiting on it.
+
+**What.** Nothing tells the founder that a campaign crossed its threshold. It is found by
+running `docs/ops/campaign-review.md`.
+
+**Shape when built.** `close_stale_pledge_campaigns()`'s shape: a function invoked
+deliberately that returns what it found, **not** a cron job. The reason is the one that keeps
+opening manual — a scheduled notification is one step from a scheduled opening, and the whole
+point of this subsystem is that a person stands between the arithmetic and the act. It should
+carry what makes the review fast: the count and the arrival distribution, so the mail is the
+read rather than a prompt to go do the read.
+
+**Also needed.** A recipient. There is no pledge-side inbox today; `CONTACT_TO` is the
+contact form's and should not be reused, or a change to contact routing would silently
+redirect campaign alerts. A separate `PLEDGE_NOTIFY_TO` is the smaller surprise.
+
+**Sources.** `docs/decisions/neighborhood-pledge-campaigns.md` § *Deferred, not rejected*
+(v1.1); `docs/ops/campaign-review.md`.
