@@ -179,3 +179,100 @@ redirect campaign alerts. A separate `PLEDGE_NOTIFY_TO` is the smaller surprise.
 
 **Sources.** `docs/decisions/neighborhood-pledge-campaigns.md` § *Deferred, not rejected*
 (v1.1); `docs/ops/campaign-review.md`.
+
+---
+
+## 7. `/api/interest` has an inert limiter, and two routes bypass `clientIp`
+
+**What.** `interestRateLimited()` in `steppe/app/api/interest/route.ts` is a stub:
+
+```ts
+function interestRateLimited(_ip: string): boolean {
+  return false; // not implemented — no enforcement yet; every request passes.
+}
+```
+
+The call site reads exactly like the enforced limiters on `/api/pledge` and
+`/api/invite/redeem` — `if (interestRateLimited(ip)) { ...429... }` — so a public write
+endpoint **reads as rate-limited and is not**. The stub is honestly commented in place; the
+problem is that the call site is indistinguishable from a real one at a glance, which is how
+an inert control survives a review.
+
+Separately, `/api/interest` and `/api/contact` each read `x-forwarded-for` **inline** rather
+than through `clientIp()`:
+
+```ts
+const ip = (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+```
+
+That is the same expression `lib/rate-limit.ts` exports, copied. It works, but the
+no-IP-persistence property is documented on `clientIp()` — *"Used ONLY as a rate-limit key —
+never stored, never logged, never associated with an address"* — and these two copies inherit
+the behaviour without inheriting the statement. Both are currently key-only, verified; the
+gap is that nothing keeps them that way.
+
+**Why this is lower stakes than the pledge endpoint.** Nothing *trips* off interest signups.
+There is no threshold, no campaign that opens, and no published count — the number is not
+printed on a yard sign and is not a promise to anybody. Inflating the list produces **noise in
+a list a person reads**, not a falsely-opened neighborhood. That is a different class of
+failure from `/api/pledge`, where the count is the mechanic and appears on physical mail.
+
+**But it is not consequence-free, and the honest version matters.** The route calls
+`sendInterestConfirmation()`, so every *novel* address costs one Resend send. The
+on-conflict dedup bounds **repeats**, not **novelty**: a script cycling distinct addresses
+spends real send quota and, worse, sender reputation — which is shared with the transactional
+mail the member app depends on.
+
+**Conditions that raise its priority** (either one):
+
+1. **A count from `interest_signups` is ever published or used to make a decision** — a
+   landing-page number, a funder deck, a go/no-go on a neighborhood. At that moment
+   inflation stops being noise and starts being a false claim, and it inherits the pledge
+   endpoint's stakes.
+2. **Novel-address volume appears in Resend metrics** — bounce rate climbing, or sends
+   outpacing plausible human signups. That is the signal that the quota and the reputation
+   are being spent, and it arrives before any count is published.
+
+**Shape when built.** The stub's own comment names the two options: a generous per-IP window
+using `clientIp()` (the `/api/contact` pattern), or a global send circuit-breaker capping
+total sends per minute across the instance. The second addresses the reputation risk that a
+per-IP limit does not. Whichever is chosen, route the two inline `x-forwarded-for` reads
+through `clientIp()` so the documented property covers them.
+
+**Sources.** `steppe/app/api/interest/route.ts`; `steppe/app/api/contact/route.ts`;
+`steppe/lib/rate-limit.ts`; `docs/decisions/neighborhood-pledge-campaigns.md` § *Rate
+limiting* (v1.1).
+
+---
+
+## 8. The prod column comment on `invite_tokens.neighborhood_id` describes withdrawn work
+
+**What.** The live comment in production still reads:
+
+> NULL = general-purpose token (counter cards, press). Set = minted for one neighborhood,
+> and **prefills the pledge landing at `/n/<slug>`**. ON DELETE SET NULL: … (0027, G-INV-6).
+> **Routing behavior is Phase 4.**
+
+Both bolded claims are withdrawn. `docs/decisions/invite-tokens.md` §9 (v1.2) records that the
+pledge landing was withdrawn rather than deferred — pledging never required an account, so
+routing a redeemed member to a pledge page answered a question nobody had — and redesignates
+the column as **mint-time provenance**: which audience a batch of cards was printed for, read
+by nothing else. There is no Phase 4 routing and there will not be.
+
+**Why it matters even though the ADR supersedes it.** The database is the surface consulted
+first. Someone opening the SQL editor and running `\d+ invite_tokens` — or reading the column
+in the Supabase dashboard — gets the withdrawn design stated as current fact, with no pointer
+to the record that overrides it. A comment is documentation that ships *inside* the artifact
+it describes, which is exactly why a stale one outranks a correct file nobody opened.
+
+**Why it was not fixed in place.** Migration 0027 is applied to production. The file is not
+editable after apply, and a `COMMENT ON COLUMN` is DDL, so correcting it is a migration.
+
+**How it must be done.** Fold into the `search_path` sweep (item 1) — that migration already
+touches this subsystem and already carries before/after hashes. Reword to state provenance
+only, and cite ADR §9 so the next reader lands on the record rather than re-deriving it. The
+column itself does not change: still nullable, still `ON DELETE SET NULL`, still read by no
+function. Only the sentence describing it is wrong.
+
+**Sources.** `docs/decisions/invite-tokens.md` §9 (v1.2);
+`migrations/0027_invite_tokens.sql` lines 75, 197, 218.
