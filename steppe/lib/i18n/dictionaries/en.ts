@@ -40,10 +40,83 @@ export const en = {
     governanceLink: "Govern",
     exchangeLink: "Exchange",
     appealsLink: "Appeals",
+    invitesLink: "Invitations",
     accountLink: "You",
     searchLabel: "Search",
     messagesLabel: "Messages",
     confirmDiscard: "Discard what you've typed?",
+  },
+
+  // Redeeming an invitation (/invite and /invite/<token>, migration 0027).
+  // Every token failure shares ONE sentence on purpose: unknown, expired,
+  // exhausted, and revoked are indistinguishable in the copy because they are
+  // indistinguishable in the database's answer. Naming which one it was would
+  // let a holder of a photographed card read the state of a campaign they were
+  // never given.
+  invite: {
+    title: "Redeem your invitation",
+    subtitle:
+      "Enter the code from your card and the email address you want to use. We'll email you a one-time code to finish signing in.",
+    tokenLabel: "Invitation code",
+    tokenHint: "32 characters, from the card or the link you were sent.",
+    emailLabel: "Email address",
+    submit: "Redeem and email me a code",
+    submitting: "Checking…",
+    errorRefused:
+      "That invitation can't be used. Check the code, or ask whoever gave it to you.",
+    errorRateLimited:
+      "Too many tries from this connection just now. Please wait a little while.",
+    errorSendFailed:
+      "Your invitation worked, but we couldn't email the sign-in code. Try signing in with this address.",
+    errorNetwork: "We couldn't reach Steppe. Check your connection and try again.",
+    privacyNote:
+      "We use your email only to sign you in. No ads, no trackers, and nothing sold — ever.",
+    alreadyMember: "Already have an account?",
+    signInLink: "Sign in",
+  },
+
+  // Minting and revoking invitations (/protected/invites). Moderator-only.
+  invites: {
+    title: "Invitations",
+    lead:
+      "An invitation is one code that lets a set number of people put their address on the list. Print it on a card, hand it out, and revoke it when the batch is done.",
+    mintTitle: "Make a new invitation",
+    capLabel: "How many people",
+    capHint: "The most this code can admit. Also what it costs you if the card is photographed.",
+    daysLabel: "Days until it expires",
+    daysHint: "Every invitation expires. Pick a date you'd be comfortable seeing on paper.",
+    labelLabel: "What is this for?",
+    labelPlaceholder: "Counter cards, Fred Meyer",
+    placeLabel: "Neighborhood (optional)",
+    placeNone: "Anywhere — general purpose",
+    placeHint: "Leave this alone for counter cards and press. Pick a neighborhood and the pledge page fills itself in.",
+    mint: "Make the invitation",
+    minting: "Making…",
+    mintedTitle: "Made. Here's the link to print:",
+    mintedCode: "Code: {code}",
+    mintInvalid: "Check the number of people and the number of days.",
+    mintForbidden: "Only moderators can make invitations.",
+    mintFailed: "We couldn't make that invitation. Please try again.",
+    copyUrl: "Copy link",
+    copied: "Copied",
+    listTitle: "Invitations so far",
+    empty: "No invitations yet.",
+    unlabeled: "Untitled invitation",
+    generalPurpose: "General purpose",
+    rowUses: "{used} of {cap} used",
+    rowExpires: "expires {date}",
+    stateLive: "Live",
+    stateRevoked: "Revoked",
+    stateExpired: "Expired",
+    stateExhausted: "All used",
+    revoke: "Revoke",
+    revokeConfirm: "Revoke this invitation? Nobody else will be able to use the code.",
+    revokeNotRetroactive:
+      "People who already used it keep their place on the list, and anyone who already made an account keeps it. Revoking closes the door; it doesn't undo what came through it.",
+    revokeConfirmButton: "Yes, revoke it",
+    revoking: "Revoking…",
+    revokeFailed: "We couldn't revoke that invitation. Please try again.",
+    cancel: "Keep it",
   },
 
   auth: {

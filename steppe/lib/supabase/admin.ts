@@ -4,8 +4,9 @@ import { createClient } from "@supabase/supabase-js";
  * Service-role ("secret key") Supabase client that BYPASSES Row-Level Security.
  *
  * Use ONLY inside a server action that has itself already verified the caller's
- * authority, and ONLY for an operation RLS cannot express. In this build that is
- * exactly three things:
+ * authority, and ONLY for an operation RLS cannot express — or, in the last two
+ * cases below, for a caller who has no session for RLS to act on at all. In this
+ * build that is exactly five things:
  *   1. deleting a member's verification-evidence object from storage when a
  *      moderator decides — the DB drops the pointer, this client drops the file,
  *      together completing "verify, then forget" (CLAUDE.md invariant 1). There
@@ -19,6 +20,16 @@ import { createClient } from "@supabase/supabase-js";
  *      the bearer token is the credential, and authorization lives in the
  *      service_role-only calendar_feed_payload() RPC (migration 0020), which
  *      re-derives the owner's standing on every serve.
+ *   4. reading the invite allowlist in `requestSignInLink` — the roster is
+ *      moderator-only and the person signing in is not yet anyone, so the check
+ *      has to run above RLS. It fails CLOSED: a misconfigured client treats the
+ *      address as not invited.
+ *   5. redeeming an invite token (lib/invite.ts → app/api/invite/redeem) — the
+ *      redeemer is anonymous by definition, so there is no session to authorise
+ *      the allowlist write as. `redeem_invite()` is granted to service_role alone
+ *      (migration 0027) precisely so this route is the only door and its rate
+ *      limit binds. MINTING is deliberately NOT here: a moderator has a session,
+ *      so minting runs under RLS through the ordinary client.
  *
  * Never import this into client code, and never expose the secret key
  * (`SUPABASE_SERVICE_ROLE_KEY` is server-only — not `NEXT_PUBLIC_*`).
