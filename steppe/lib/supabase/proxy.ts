@@ -32,7 +32,19 @@ export async function updateSession(request: NextRequest) {
     // still "prelaunch", since the whole point is that they run BEFORE the
     // member app opens in that neighborhood. Prefix match: /n/<slug> and the
     // /n/<slug>/leave removal-confirmation page.
-    pathname.startsWith("/n/");
+    pathname.startsWith("/n/") ||
+    // Invite redemption (migration 0027). Someone holding a printed card has no
+    // account yet — that is the entire premise — so this must be readable with
+    // no session, and it must stay reachable while LAUNCH_PHASE is still
+    // "prelaunch", since the founding cohort is invited BEFORE the member app
+    // opens. Covers /invite (typed code) and /invite/<token> (scanned).
+    //
+    // Reaching this page is not the same as getting in: the page renders
+    // identically for a valid and an invalid token, and the only thing that
+    // writes to the allowlist is the rate-limited POST below. The signup gate
+    // itself (enforce_invited_signup) is untouched by any of this.
+    pathname === "/invite" ||
+    pathname.startsWith("/invite/");
   // Public endpoints reachable by anonymous visitors (the /join and /contact
   // forms post here; the landing hero polls /api/weather — a keyless, cached
   // public-data proxy that sends no user data upstream); each enforces its own
@@ -48,6 +60,12 @@ export async function updateSession(request: NextRequest) {
     // this route is the only door.
     pathname === "/api/pledge" ||
     pathname === "/api/pledge/remove" ||
+    // Invite redemption. Public by necessity (the holder of a card has no
+    // account and cannot get one until this writes their address to the
+    // allowlist), and the ONLY door to redeem_invite() — which is granted to
+    // service_role alone (0027), so the rate limit in the handler is the real
+    // limit and not one a direct RPC call can step around.
+    pathname === "/api/invite/redeem" ||
     // Calendar subscription feeds (C1 §6.1): polled by calendar apps with no
     // cookies or headers — the 256-bit bearer token in the path is the whole
     // credential, enforced by the service_role-only RPC behind the route.

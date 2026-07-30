@@ -365,6 +365,97 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
     });
   });
 
+  // ---- 6. the mint path (Phase 4) actually works under RLS ---------------
+  //
+  // The mint UI inserts through the ORDINARY authenticated client, not the
+  // service role (ADR §4), so the `invite_tokens_manage` policy is what decides
+  // whether minting is possible at all. A policy that refused a moderator's
+  // insert would ship a mint button that cannot mint — and every other test here
+  // runs as the owner, which bypasses RLS entirely and would never notice.
+
+  it("a moderator can mint a token through RLS, and gets the generated string back", async () => {
+    await h.inTxn(async (c) => {
+      const mod = "3c3c3c3c-0027-4000-8000-00000000d0d1";
+      await h.createMember(mod, `mod@${TAG}.test`, {
+        verified: true,
+        role: "moderator",
+        tenure: "2024-01-01",
+      });
+      await h.actAs(mod);
+
+      const { rows } = await c.query(
+        `insert into invite_tokens (max_uses, expires_at, label, created_by)
+         values (25, now() + interval '60 days', $1, $2::uuid)
+         returning token, uses_count, neighborhood_id`,
+        [`${TAG}-mint`, mod],
+      );
+      expect(rows).toHaveLength(1);
+      // The string comes from the database default, never from the app.
+      expect(rows[0].token).toMatch(/^[0-9a-f]{32}$/);
+      expect(rows[0].uses_count).toBe(0);
+      // Unset neighborhood = general-purpose token, the common case (G-INV-6).
+      expect(rows[0].neighborhood_id).toBeNull();
+    });
+  });
+
+  it("a moderator can revoke, and revoking is idempotent", async () => {
+    await h.inTxn(async (c) => {
+      await h.createMember(
+        "3c3c3c3c-0027-4000-8000-00000000d0d2",
+        `mod2@${TAG}.test`,
+        { verified: true, role: "moderator", tenure: "2024-01-01" },
+      );
+      await h.actAs("3c3c3c3c-0027-4000-8000-00000000d0d2");
+
+      const { rows: t } = await c.query(
+        `insert into invite_tokens (max_uses, expires_at, label)
+         values (5, now() + interval '7 days', $1) returning id`,
+        [`${TAG}-revoke`],
+      );
+      const id = t[0].id as string;
+
+      // The action's exact shape: set revoked_at only where it is still null.
+      const first = await c.query(
+        `update invite_tokens set revoked_at = now() where id=$1 and revoked_at is null returning revoked_at`,
+        [id],
+      );
+      expect(first.rowCount).toBe(1);
+      const stamped = first.rows[0].revoked_at;
+
+      const second = await c.query(
+        `update invite_tokens set revoked_at = now() where id=$1 and revoked_at is null returning revoked_at`,
+        [id],
+      );
+      // A double-click must not rewrite the moment the decision was made.
+      expect(second.rowCount).toBe(0);
+      const { rows: after } = await c.query(
+        `select revoked_at from invite_tokens where id=$1`,
+        [id],
+      );
+      expect(after[0].revoked_at).toEqual(stamped);
+    });
+  });
+
+  it("a plain member cannot mint — the mint path is RLS-gated, not UI-gated", async () => {
+    await h.inTxn(async (c) => {
+      await h.createMember(
+        "3c3c3c3c-0027-4000-8000-00000000ee01",
+        `plain@${TAG}.test`,
+        { verified: true, role: "member", tenure: "2024-01-01" },
+      );
+      await h.actAs("3c3c3c3c-0027-4000-8000-00000000ee01");
+
+      // Hiding the button is not the control. The policy is.
+      await expect(
+        c.query(
+          `insert into invite_tokens (max_uses, expires_at, label)
+           values (25, now() + interval '60 days', $1)`,
+          [`${TAG}-should-fail`],
+        ),
+      ).rejects.toThrow(/row-level security/i);
+    });
+  });
+
   it("no function in 0027 reads neighborhood_id — routing is Phase 4", async () => {
     const { rows } = await owner.query(
       `select p.proname, pg_get_functiondef(p.oid) as src

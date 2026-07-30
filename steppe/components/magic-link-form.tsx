@@ -36,12 +36,31 @@ import { t, type Dictionary, type Locale } from "@/lib/i18n";
 export function MagicLinkForm({
   dict,
   locale,
+  initialEmail = "",
+  startSent = false,
 }: {
   dict: Dictionary;
   locale: Locale;
+  /**
+   * Pre-fill the address. Used by the invite redemption flow (/invite), which has
+   * already collected and verified an email in order to redeem the token — asking
+   * for it a second time would be asking the member to prove something they just
+   * proved.
+   */
+  initialEmail?: string;
+  /**
+   * Mount straight into the code-entry state, for a caller that has ALREADY had
+   * the code sent. /invite redeems the token and then calls `requestSignInLink`
+   * itself, so by the time this renders the email is on its way; showing the
+   * address field again would invite a second, pointless send.
+   *
+   * Everything downstream — verify, resend, "use a different email" — is the
+   * unchanged shared machinery. This prop moves the starting point, not the path.
+   */
+  startSent?: boolean;
 }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+  const [email, setEmail] = useState(initialEmail);
+  const [sent, setSent] = useState(startSent);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [code, setCode] = useState("");

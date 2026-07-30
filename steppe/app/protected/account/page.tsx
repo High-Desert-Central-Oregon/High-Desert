@@ -77,6 +77,7 @@ async function AccountView() {
       ? [
           { href: "/protected/review", label: dict.nav.reviewLink },
           { href: "/protected/moderation", label: dict.nav.appealsLink },
+          { href: "/protected/invites", label: dict.nav.invitesLink },
         ]
       : []),
   ];

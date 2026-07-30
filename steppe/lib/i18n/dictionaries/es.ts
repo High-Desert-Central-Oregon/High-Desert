@@ -44,10 +44,84 @@ export const es: Dictionary = {
     governanceLink: "Gobernanza",
     exchangeLink: "Intercambio",
     appealsLink: "Apelaciones",
+    invitesLink: "Invitaciones",
     accountLink: "Tú",
     searchLabel: "Buscar",
     messagesLabel: "Mensajes",
     confirmDiscard: "¿Descartar lo que escribiste?",
+  },
+
+  // Canjear una invitación (/invite y /invite/<token>, migración 0027).
+  // Todos los fallos del código comparten UNA sola frase a propósito: no
+  // existe, caducado, agotado y revocado son indistinguibles en el texto
+  // porque lo son en la respuesta de la base de datos.
+  // ⚠ Traducción pendiente de revisión por un hablante nativo — no
+  // autocertificada (nota vigente del proyecto).
+  invite: {
+    title: "Canjea tu invitación",
+    subtitle:
+      "Escribe el código de tu tarjeta y el correo que quieras usar. Te enviaremos un código de un solo uso para terminar de entrar.",
+    tokenLabel: "Código de invitación",
+    tokenHint: "32 caracteres, de la tarjeta o del enlace que recibiste.",
+    emailLabel: "Correo electrónico",
+    submit: "Canjear y enviarme un código",
+    submitting: "Comprobando…",
+    errorRefused:
+      "Esa invitación no se puede usar. Revisa el código o pregúntale a quien te lo dio.",
+    errorRateLimited:
+      "Demasiados intentos desde esta conexión por ahora. Espera un momento.",
+    errorSendFailed:
+      "Tu invitación funcionó, pero no pudimos enviar el código de acceso. Intenta iniciar sesión con este correo.",
+    errorNetwork: "No pudimos conectar con Steppe. Revisa tu conexión e inténtalo de nuevo.",
+    privacyNote:
+      "Usamos tu correo solo para que inicies sesión. Sin anuncios, sin rastreadores y sin vender nada — nunca.",
+    alreadyMember: "¿Ya tienes cuenta?",
+    signInLink: "Iniciar sesión",
+  },
+
+  // Crear y revocar invitaciones (/protected/invites). Solo moderadores.
+  // ⚠ Traducción pendiente de revisión por un hablante nativo.
+  invites: {
+    title: "Invitaciones",
+    lead:
+      "Una invitación es un código que permite a un número determinado de personas poner su correo en la lista. Imprímelo en una tarjeta, repártelo y revócalo cuando termine la tanda.",
+    mintTitle: "Crear una invitación",
+    capLabel: "Cuántas personas",
+    capHint: "El máximo que este código puede admitir. También lo que te cuesta si alguien fotografía la tarjeta.",
+    daysLabel: "Días hasta que caduque",
+    daysHint: "Toda invitación caduca. Elige una fecha con la que estés cómodo viéndola impresa.",
+    labelLabel: "¿Para qué es?",
+    labelPlaceholder: "Tarjetas de mostrador, Fred Meyer",
+    placeLabel: "Vecindario (opcional)",
+    placeNone: "Cualquier lugar — uso general",
+    placeHint: "Déjalo así para tarjetas de mostrador y prensa. Elige un vecindario y la página de compromisos se rellena sola.",
+    mint: "Crear la invitación",
+    minting: "Creando…",
+    mintedTitle: "Lista. Este es el enlace para imprimir:",
+    mintedCode: "Código: {code}",
+    mintInvalid: "Revisa el número de personas y el número de días.",
+    mintForbidden: "Solo los moderadores pueden crear invitaciones.",
+    mintFailed: "No pudimos crear esa invitación. Inténtalo de nuevo.",
+    copyUrl: "Copiar enlace",
+    copied: "Copiado",
+    listTitle: "Invitaciones hasta ahora",
+    empty: "Todavía no hay invitaciones.",
+    unlabeled: "Invitación sin título",
+    generalPurpose: "Uso general",
+    rowUses: "{used} de {cap} usadas",
+    rowExpires: "caduca el {date}",
+    stateLive: "Activa",
+    stateRevoked: "Revocada",
+    stateExpired: "Caducada",
+    stateExhausted: "Agotada",
+    revoke: "Revocar",
+    revokeConfirm: "¿Revocar esta invitación? Nadie más podrá usar el código.",
+    revokeNotRetroactive:
+      "Quienes ya la usaron conservan su lugar en la lista, y quien ya creó una cuenta la conserva. Revocar cierra la puerta; no deshace lo que ya pasó por ella.",
+    revokeConfirmButton: "Sí, revocarla",
+    revoking: "Revocando…",
+    revokeFailed: "No pudimos revocar esa invitación. Inténtalo de nuevo.",
+    cancel: "Conservarla",
   },
 
   auth: {
