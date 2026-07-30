@@ -1,5 +1,5 @@
 -- ============================================================================
--- Migration 0028 — view grants + restore owner rights on two views — MANUAL APPLY
+-- Migration 0028 — view grants + restore owner rights on three views — MANUAL APPLY
 -- ----------------------------------------------------------------------------
 -- WHAT HAPPENED. A Supabase advisor remediation was applied from the DASHBOARD,
 -- outside the migration record. It set `security_invoker = on` on all four
@@ -9,7 +9,7 @@
 -- local matrices passed, and the drift was found by accident while auditing an
 -- unrelated grant.
 --
--- Two of those four views are DESIGNED to run with owner rights. Flipping them
+-- THREE of those four views are DESIGNED to run with owner rights. Flipping them
 -- to invoker rights did not harden them; it broke them, silently, in production:
 --
 --   public_profiles   — the single cross-member read path (0023). Under invoker
@@ -30,6 +30,16 @@
 --                         invoker rights (prod)→ ballots 1, revealed f, all NULL
 --                       A member reading results today sees a tally of one.
 --
+--   groups_directory  — the group directory (0013, built owner-rights on purpose
+--                       and labelled so: "mirrors public_profiles ... ALL GROUPS
+--                       to any verified member"). Under invoker rights `grp_read`
+--                       applies, so a members_only group the member has not joined
+--                       disappears from the directory entirely — which also makes
+--                       `join_policy = 'request'` unreachable, because you cannot
+--                       ask to join a group you cannot see. Measured locally:
+--                         owner rights (repo)  → 3 of 3 groups, descriptions gated
+--                         invoker rights (prod)→ 2 of 3, the unjoined one gone
+--
 -- THE COUPLING THAT MAKES OWNER RIGHTS SAFE. An owner-rights view reads past
 -- base-table RLS by design. That is only acceptable because the view's own
 -- projection is the access boundary — public_profiles' per-viewer CASE, and
@@ -49,7 +59,7 @@
 --   · every table from 0001/0013/0014/0015/schema.sql that carries no REVOKE.
 --   · service_role's blanket table privileges everywhere.
 -- Those are bounded by RLS and by PostgREST exposing no TRUNCATE verb. This
--- migration touches VIEWS ONLY, because two of them are actively broken.
+-- migration touches VIEWS ONLY, because three of them are actively broken.
 --
 -- G-flags:
 --   G-VW-1  REVOKE precedes every GRANT, and the grant that remains is named per
@@ -63,13 +73,24 @@
 --           authenticated, so invoker rights change nothing for the intended
 --           audience, and they close the owner-rights hole that the anon grant
 --           would otherwise have opened on a transparency log.
---   G-VW-4  groups_directory is NOT touched. Its `WHERE is_verified()` plus the
---           per-row description CASE reads like the same owner-rights pattern as
---           public_profiles, but there were no fixtures to prove it either way,
---           and changing a view's semantics on a hunch inside a revoke migration
---           is exactly the mistake this migration exists to correct. The
---           repo-vs-prod divergence on that one view is recorded as an open
---           question in docs/ops/deferred-hardening.md rather than guessed at.
+--   G-VW-4  groups_directory IS restored to owner rights — resolved by test, not
+--           by assumption. An earlier revision of this file left it alone as an
+--           open question. Seeding a public group the member had not joined, a
+--           members_only group they had not joined, and a members_only group they
+--           had, and reading the view as that member:
+--             owner rights (repo) → 3 rows; members_only descriptions NULL
+--             invoker rights (prod)→ 2 rows; the unjoined members_only group is GONE
+--           That is a break, and 0013 says so in the migration that created the
+--           view: "Directory view (OWNER-RIGHTS; mirrors public_profiles) —
+--           limited, directory-safe columns for ALL GROUPS to any verified
+--           member ... description ONLY for public groups; members_only
+--           descriptions/rosters stay gated (G8)." The app repeats it: the browse
+--           page comment reads "every group by name + category, members_only ones
+--           with their description gated to null."
+--           The consequence is concrete: `join_policy = 'request'` exists so a
+--           member can ASK to join a members_only group. Under invoker rights that
+--           group is invisible, so the request path is unreachable — the policy
+--           value becomes undiscoverable rather than merely restricted.
 --
 -- STUDIO-SAFE: pure SQL, no psql meta-commands. Prove first with
 -- seed/matrix-0028.sql (one rolled-back transaction, writes nothing), then apply
@@ -86,7 +107,7 @@
 -- wrong — which is precisely how this drift survived.
 --
 --   ('0028 view grants + owner rights',
---    'anon holds nothing on the four views; public_profiles and proposal_results back to owner rights',
+--    'anon holds nothing on the four views; the three owner-rights views restored; content_moderation pinned invoker',
 --    -- (i) no anon privilege of any kind on any of the four views
 --    not exists (select 1 from information_schema.role_table_grants
 --                 where table_schema='public'
@@ -100,12 +121,12 @@
 --                                            'content_moderation','groups_directory')
 --                         and grantee='authenticated'
 --                         and privilege_type <> 'SELECT')
---    -- (iii) the two owner-rights views are owner-rights again. `security_invoker=off`
+--    -- (iii) the three owner-rights views are owner-rights again. `security_invoker=off`
 --    --       and an ABSENT reloption are both owner rights; assert NOT-on rather
 --    --       than equality, or a future Postgres default flips this silently.
 --      and not exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
 --                       where n.nspname='public'
---                         and c.relname in ('public_profiles','proposal_results')
+--                         and c.relname in ('public_profiles','proposal_results','groups_directory')
 --                         and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')
 --    -- (iv) content_moderation stays invoker-rights, deliberately (G-VW-3)
 --      and exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
@@ -151,7 +172,7 @@ grant select on public.content_moderation to authenticated;
 -- `WHERE is_verified()` and its description CASE decide what each row shows.
 grant select on public.groups_directory to authenticated;
 
--- 3 · RESTORE OWNER RIGHTS ON THE TWO VIEWS THAT DEPEND ON THEM ---------------
+-- 3 · RESTORE OWNER RIGHTS ON THE THREE VIEWS THAT DEPEND ON THEM -------------
 --     ONLY safe because section 1 ran first. An owner-rights view reads past
 --     base-table RLS; the access boundary moves into the view's own projection.
 --     With `anon` revoked, the only reader is an authenticated member, and what
@@ -171,8 +192,16 @@ grant select on public.groups_directory to authenticated;
 --     Restoring 0023's explicit setting rather than dropping the reloption: an
 --     absent option means owner rights TODAY, and being explicit survives a
 --     future default change and documents the intent at the object.
+--       groups_directory — its `WHERE is_verified()` gate plus the per-row
+--                          description CASE (G8): every group is LISTED to a
+--                          verified member, and only members_only descriptions
+--                          and rosters are withheld. Base-table `grp_read` is not
+--                          the boundary here either; if it were, a members_only
+--                          group would vanish from the directory and its
+--                          `join_policy = 'request'` could never be exercised.
 alter view public.public_profiles  set (security_invoker = false);
 alter view public.proposal_results set (security_invoker = false);
+alter view public.groups_directory set (security_invoker = false);
 
 -- 4 · PIN THE ONE THAT SHOULD STAY AS THE ADVISOR LEFT IT (G-VW-3) ------------
 --     Not a change — content_moderation is already invoker-rights in production.
@@ -183,16 +212,18 @@ alter view public.proposal_results set (security_invoker = false);
 --     it yields zero rows rather than the whole log.
 alter view public.content_moderation set (security_invoker = on);
 
--- groups_directory: deliberately NOT altered. See G-VW-4 — repo and prod
--- disagree on this one view, and resolving it needs a product decision about
--- whether the directory lists non-public groups to verified members. Recorded
--- in docs/ops/deferred-hardening.md; not guessed at here.
-
 comment on view public.public_profiles is
   'Cross-member read path. OWNER RIGHTS (security_invoker=false, 0023, restored '
   'by 0028): reads past the owner-only pf_read so members can see each other. '
   'The per-viewer CASE is the access boundary. Safe ONLY while anon holds no '
   'privilege on this view — revoke before ever changing the invoker setting.';
+
+comment on view public.groups_directory is
+  'Group directory. OWNER RIGHTS (security_invoker=false, restored by 0028): '
+  '0013 built it owner-rights deliberately so ALL groups are listed to any '
+  'verified member, with members_only descriptions and rosters withheld by the '
+  'per-row CASE (G8). Under invoker rights an unjoined members_only group '
+  'disappears entirely, which also makes join_policy=''request'' unreachable.';
 
 comment on view public.proposal_results is
   'Governance results (invariant 4). OWNER RIGHTS (security_invoker=false, '

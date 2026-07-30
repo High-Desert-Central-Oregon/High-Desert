@@ -40,6 +40,13 @@ update public.profiles set neighborhood_visibility = 'hidden'
 update public.profiles set neighborhood_id = (select id from public.neighborhoods order by slug limit 1)
  where id::text like 'cccccccc-0028-4000-8000-%';
 
+insert into public.groups (id, slug, name, description, visibility, join_policy)
+values ('cccccccc-0028-4000-8000-0000000000aa','mx28-public','MX28 Public','pub desc','public','open'),
+       ('cccccccc-0028-4000-8000-0000000000bb','mx28-private','MX28 Private','priv desc','members_only','request'),
+       ('cccccccc-0028-4000-8000-0000000000cc','mx28-joined','MX28 Joined','joined desc','members_only','request');
+insert into public.group_members (group_id, user_id, role, status)
+values ('cccccccc-0028-4000-8000-0000000000cc','cccccccc-0028-4000-8000-000000000001','member','active');
+
 insert into public.proposals (id, title, kind, status, opens_at, closes_at)
 values ('cccccccc-0028-4000-8000-00000000dead','MX0028 probe','minor','open',
         now() - interval '10 days', now() + interval '1 day');
@@ -96,7 +103,7 @@ end $$;
 
 -- == 2  reloptions: owner rights restored, content_moderation pinned ==========
 do $$ declare v text; begin
-  foreach v in array array['public_profiles','proposal_results'] loop
+  foreach v in array array['public_profiles','proposal_results','groups_directory'] loop
     if (select coalesce(array_to_string(c.reloptions,','),'')
           from pg_class c join pg_namespace n on n.oid=c.relnamespace
          where n.nspname='public' and c.relname=v) ilike '%security_invoker=on%' then
@@ -186,6 +193,51 @@ do $$ declare hidden uuid; shown uuid; begin
     raise exception 'MATRIX FAIL 5c: pf_read mentions is_moderator — 0023 narrowed it to owner-only and 0028 must not have widened it';
   end if;
   reset role;
+end $$;
+
+-- == 6  groups_directory lists ALL groups to a verified member (0013, G8) ======
+--       0013 built this view owner-rights on purpose: "ALL GROUPS to any
+--       verified member ... description ONLY for public groups". Under invoker
+--       rights grp_read applies and an unjoined members_only group vanishes,
+--       taking its join_policy='request' path with it. Both directions asserted,
+--       so neither half can pass vacuously.
+do $$ declare n int; d text; broke boolean := false; begin
+  perform set_config('request.jwt.claims',
+    json_build_object('sub','cccccccc-0028-4000-8000-000000000001','role','authenticated')::text, true);
+  set local role authenticated;
+
+  select count(*) into n from public.groups_directory where slug like 'mx28-%';
+  if n <> 3 then
+    reset role;
+    raise exception 'MATRIX FAIL 6a: a verified member sees % of 3 groups in the directory — an unjoined members_only group has vanished and its join_policy=request is unreachable', n;
+  end if;
+
+  -- ...but the members_only DESCRIPTION must still be withheld (G8).
+  select description into d from public.groups_directory where slug = 'mx28-private';
+  if d is not null then
+    reset role;
+    raise exception 'MATRIX FAIL 6b: a members_only description leaked into the directory — listing the group is not the same as opening it';
+  end if;
+  select description into d from public.groups_directory where slug = 'mx28-public';
+  if d is null then
+    reset role;
+    raise exception 'MATRIX FAIL 6c: a PUBLIC group description is withheld — the CASE is over-gating';
+  end if;
+  reset role;
+
+  -- the mirror image: flipping invoker on must hide the unjoined members_only group
+  alter view public.groups_directory set (security_invoker = on);
+  perform set_config('request.jwt.claims',
+    json_build_object('sub','cccccccc-0028-4000-8000-000000000001','role','authenticated')::text, true);
+  set local role authenticated;
+  select count(*) into n from public.groups_directory where slug like 'mx28-%';
+  reset role;
+  if n = 2 then broke := true; end if;
+  alter view public.groups_directory set (security_invoker = false);
+
+  if not broke then
+    raise exception 'MATRIX FAIL 6d: invoker rights did NOT hide the unjoined members_only group (saw % rows) — case 6a proves nothing', n;
+  end if;
 end $$;
 
 select 'MATRIX 0028 GREEN — all cases passed' as verdict;

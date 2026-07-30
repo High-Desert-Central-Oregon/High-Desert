@@ -116,7 +116,7 @@ describe.skipIf(!dbUp)("0028 view owner-rights", () => {
     await owner?.end();
   });
 
-  it("the two owner-rights views are not invoker-rights, and content_moderation is", async () => {
+  it("the three owner-rights views are not invoker-rights, and content_moderation is", async () => {
     const { rows } = await owner.query(
       `select c.relname, coalesce(array_to_string(c.reloptions,','),'') as opts
          from pg_class c join pg_namespace n on n.oid=c.relnamespace
@@ -127,6 +127,10 @@ describe.skipIf(!dbUp)("0028 view owner-rights", () => {
     // assert NOT-on rather than equality to a literal.
     expect(opt.public_profiles).not.toMatch(/security_invoker=on/);
     expect(opt.proposal_results).not.toMatch(/security_invoker=on/);
+    // 0013 built the directory owner-rights on purpose ("ALL GROUPS to any
+    // verified member"); under invoker rights an unjoined members_only group
+    // vanishes and its join_policy='request' becomes unreachable.
+    expect(opt.groups_directory).not.toMatch(/security_invoker=on/);
     expect(opt.content_moderation).toMatch(/security_invoker=on/);
   });
 

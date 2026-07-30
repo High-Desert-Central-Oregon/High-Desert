@@ -320,27 +320,39 @@ mutation-checked both ways.
 
 ---
 
-## 10. `groups_directory` — repo and prod disagree, and the answer is a product decision
+## ~~10. `groups_directory` — repo and prod disagree~~ — CLOSED, resolved by test
 
-**Open question, deliberately not resolved by 0028.**
+**Closed 2026-07-30. It was not a product decision after all — it was a question with a
+recorded answer and a testable one, and both agreed.** Kept struck through rather than
+deleted, per this file's own rule.
 
-The repo leaves `groups_directory` with no `security_invoker` reloption, which means **owner
-rights**. Prod has it at `security_invoker = on` from the same dashboard remediation. 0028
-does **not** touch it, because the two settings are genuinely different products and there
-were no fixtures to decide between them:
+The open question was whether a `members_only` group the member has not joined should be
+*listed with details withheld* (owner rights, the repo state) or *invisible* (invoker rights,
+the prod state). Resolved the same way `proposal_results` was: fixtures and a side-by-side
+read, as a verified member who had joined one of three seeded groups.
 
-- **Owner rights (repo):** the view's own `WHERE is_verified()` and its description `CASE`
-  are the access boundary — a verified member sees *every* group listed, with the description
-  withheld for non-public ones. That is the same "list it, withhold the details" pattern
-  `public_profiles` uses, which is why it plausibly wants owner rights.
-- **Invoker rights (prod):** `grp_read` also applies, so a member sees only public groups
-  plus their own. Non-public groups vanish from the directory entirely.
+| Group | Owner rights (repo) | Invoker rights (prod) |
+|---|---|---|
+| public, not joined | listed, description shown | listed, description shown |
+| **members_only, not joined** | **listed, description NULL** | **ABSENT** |
+| members_only, joined | listed, description NULL | listed, description NULL |
 
-**The question for a person, not a migration:** should a private group be *listed* (name and
-slug visible, description withheld) or *invisible* to non-members? Changing a view's semantics
-on a hunch inside a revoke migration is the exact mistake 0028 exists to correct, so it is
-recorded rather than guessed.
+**Invoker rights hide a group a member is supposed to be able to discover.** Migration 0013
+says so in the comment above the view it creates: *"Directory view (**owner-rights**; mirrors
+public_profiles) — limited, directory-safe columns for **ALL GROUPS** to any verified member
+... description ONLY for public groups; members_only descriptions/rosters stay gated (G8)."*
+The app repeats it — `app/protected/groups/page.tsx`: *"every group by name + category,
+members_only ones with their description gated to null"* — and `lib/types/db.ts` calls the
+row type *"every group to any verified member"*.
 
-Whichever way it goes, 0028 has already revoked `anon` on this view, so nothing is exposed
-while the question is open. Once decided, pin it explicitly with a comment at the object, and
-add the assertion to the 0028 probe tuple.
+The consequence is concrete rather than aesthetic: `join_policy = 'request'` exists so a
+member can **ask** to join a members_only group. Under invoker rights that group is invisible,
+so the request path is unreachable — the policy value stops being restricted and starts being
+undiscoverable.
+
+**Resolution:** migration 0028 was edited in place (still unapplied) to add
+`alter view public.groups_directory set (security_invoker = false)`, with G-VW-4 rewritten to
+record that this was *tested*, not inherited. matrix-0028 case 6 asserts all three groups are
+listed AND that the members_only description stays NULL, and case 6d flips the setting to
+prove the assertion can fail — mutation-checked: at `invoker=on` it reports *"a verified
+member sees 2 of 3 groups"*. The 0028 probe tuple now covers all three owner-rights views.

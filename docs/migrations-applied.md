@@ -112,7 +112,7 @@ applied file was `migrations/0027_invite_tokens.sql` at SHA-256
 | 0025 qr print variants (posters + seed card) | `22b754d` ⚠️ | not recorded | by hand, SQL editor | ✅ Applied |
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 | 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
-| 0028 view grants + owner rights (`public_profiles`, `proposal_results`) | _this branch_ | — | by hand, SQL editor | ⏳ **Not yet applied** |
+| 0028 view grants + owner rights (`public_profiles`, `proposal_results`, `groups_directory`) | _this branch_ | — | by hand, SQL editor | ⏳ **Not yet applied** |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -300,7 +300,7 @@ from (values
   -- checking only one could report APPLIED while the other half was wrong —
   -- which is exactly how the advisor drift survived unnoticed.
   ('0028 view grants + owner rights',
-   'anon holds nothing on the four views; public_profiles and proposal_results back to owner rights',
+   'anon holds nothing on the four views; the three owner-rights views restored; content_moderation pinned invoker',
    not exists (select 1 from information_schema.role_table_grants
                 where table_schema='public'
                   and table_name in ('public_profiles','proposal_results',
@@ -314,7 +314,7 @@ from (values
                         and privilege_type <> 'SELECT')
      and not exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
                       where n.nspname='public'
-                        and c.relname in ('public_profiles','proposal_results')
+                        and c.relname in ('public_profiles','proposal_results','groups_directory')
                         and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')
      and exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
                   where n.nspname='public' and c.relname='content_moderation'
