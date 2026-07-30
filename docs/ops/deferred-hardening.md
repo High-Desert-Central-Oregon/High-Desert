@@ -356,3 +356,55 @@ record that this was *tested*, not inherited. matrix-0028 case 6 asserts all thr
 listed AND that the members_only description stays NULL, and case 6d flips the setting to
 prove the assertion can fail — mutation-checked: at `invoker=on` it reports *"a verified
 member sees 2 of 3 groups"*. The 0028 probe tuple now covers all three owner-rights views.
+
+---
+
+## 11. Continuous mirror-equality monitoring (scheduled, not push-triggered)
+
+**What.** `mirror-provenance` in `.woodpecker/ci.yml` compares GitHub mirror `main` to
+`CI_COMMIT_SHA` and requires exact equality. The comparison is correct — an *ahead* mirror
+fails it just as a *behind* one does. The gap is the **trigger**: it runs
+`when: event: push, branch: main` **on Codeberg**, so it can only observe the mirror at the
+instant canonical moves. Anything written to the mirror *between* canonical pushes is invisible
+to it, indefinitely.
+
+That is not hypothetical. On 2026-07-30 a Vercel bot committed to the mirror six minutes after
+the last canonical push, a PR was merged there, and Vercel deployed it to production. No
+Codeberg push occurred, so the check never ran, and a third-party analytics beacon served every
+page for roughly two hours before a manual audit found it
+(`docs/ops/incident-2026-07-30-mirror-analytics-beacon.md`).
+
+**Shape when built.** A scheduled job — Woodpecker cron, or any timer that can reach both
+remotes — doing the one comparison the push-time gate already does:
+
+```sh
+canonical=$(git ls-remote <codeberg> refs/heads/main | awk '{print $1}')
+mirror=$(git ls-remote <github>   refs/heads/main | awk '{print $1}')
+[ -n "$canonical" ] && [ -n "$mirror" ] && [ "$canonical" = "$mirror" ]
+```
+
+Three properties the push-time version does not need and this one does:
+
+1. **It must distinguish ahead from behind.** "Behind" is usually benign lag; "ahead" is always
+   an incident, because it means something authored on the mirror. Report which.
+2. **It must reach a human.** Pipeline #218 already failed on `mirror-provenance` once and the
+   failure was not acted on. A scheduled check that only turns a build red reproduces that
+   failure mode exactly — it needs a notification path, not just a status.
+3. **Empty is never equal.** Same rule the existing check already encodes.
+
+**Trigger condition — build it when either holds:**
+
+1. **The mirror remains writable by any non-mirroring identity.** While the Vercel GitHub App
+   holds `contents: write` and `pull_requests: write` on the mirror and `main` there carries no
+   branch protection, mirror-side writes are not merely possible but demonstrated — twice in one
+   evening. Monitoring is the only detection that exists until that write path is closed.
+2. **Anything other than a person merging on Codeberg can move production.** Deploy provenance
+   depends on the mirror equalling canonical; if nothing watches that equality continuously,
+   production can diverge from the source of truth without any signal.
+
+If the write path is fully closed — the app reduced to read-only, or mirror `main` protected
+against every identity except the push mirror — this drops in priority to a cheap
+belt-and-braces check rather than the primary detection.
+
+**Sources.** `docs/ops/incident-2026-07-30-mirror-analytics-beacon.md`;
+`.woodpecker/ci.yml` → `mirror-provenance`; `docs/deploy-provenance.md`.
