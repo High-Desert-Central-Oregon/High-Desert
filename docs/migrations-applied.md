@@ -49,13 +49,14 @@ status question resolves by running that query against prod, never by recalling 
    sanctioned read path for governance results, invariant 4). Nothing in the migration record
    noticed for either. Migration 0028 restores both and pins the intent at the object.
 
-## Applied status (as of 2026-07-29)
+## Applied status (as of 2026-07-30)
 
-All migrations **0012–0027 are applied and live in production**, and every one of them now has a
+All migrations **0012–0028 are applied and live in production**, and every one of them now has a
 row below. Status was verified against prod with the probe query in the next section (owner-run,
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
 fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
-returned `APPLIED` for all sixteen rows including the newly recorded 0027). **0028 is written but NOT applied** — the probe below therefore has seventeen tuples and is expected to report `MISSING` for 0028 until it is applied at its stop-gate. For 0012–0023, `Applied on` uses
+returned `APPLIED` for all sixteen rows including the newly recorded 0027; re-run again 2026-07-30,
+which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028). For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -84,7 +85,57 @@ production after the apply**, `sha256(pg_get_functiondef(...))` =
 baseline: the write path to the allowlist was added without touching the gate that reads it. The
 applied file was `migrations/0027_invite_tokens.sql` at SHA-256
 `26451c0b8194cb764589f8556f4d3fc2bd7c3f557c18344ae616083ed96a2d7a`, recorded so this ledger says
-**which bytes** were applied and not merely which number.
+**which bytes** were applied and not merely which number. 0028 (view grants + owner rights) was
+applied by hand at its stop-gate on 2026-07-30, after a GREEN `seed/matrix-0028.sql` dry-run, and
+verified against prod by the probe tuple below plus direct catalog reads: all four public views
+(`public_profiles`, `proposal_results`, `content_moderation`, `groups_directory`) hold **no `anon`
+or `PUBLIC` privilege of any kind** and grant `authenticated` **exactly `SELECT`**;
+`public_profiles`, `proposal_results` and `groups_directory` are back to **owner rights**
+(`security_invoker=false`), and `content_moderation` is **pinned to invoker rights** deliberately
+(G-VW-3). The gate hash is unchanged at
+`8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e` — 0028 touches no function. The
+applied file was `migrations/0028_view_grants_and_invoker.sql` at SHA-256
+`f693601cb1667c9722b54bea82f459e6403e259854f8f0c07898e8c7b0cd16ad`.
+
+**`service_role` still holds full DML on all four views**, inherited from the permissive default
+ACL. That is **not** introduced by 0028 — it is deliberately out of scope (G-VW-2: narrowing the
+secret key is a sweep-wide decision, not something to smuggle into a four-view fix) — and it is
+latent, because `service_role` already bypasses RLS by design. It is tracked in
+`docs/ops/deferred-hardening.md`.
+
+**What 0028 fixed, all of it live in production at the time.** A dashboard-applied advisor
+remediation had set `security_invoker = on` on all four views. `public_profiles` consequently
+returned a member **only their own row**, across the nine call sites that read it for other
+members' names. `proposal_results` tallied **only the reader's own ballot** — on invariant 4's
+sole sanctioned results path, since `votes` has no read policy — though it was never exercised,
+because prod held zero proposals. `groups_directory` **hid `members_only` groups entirely**, which
+also made `join_policy = 'request'` unreachable: you cannot ask to join a group you cannot see.
+
+**Three of the four views diverged, and all three divergences were live breaks.** The fourth,
+`content_moderation`, was harmless only by accident — `mod_read` is `using (true)` for
+authenticated, so invoker rights changed nothing for its audience. **One out-of-band dashboard
+action produced three distinct regressions that no local test could detect**, and the ledger went
+on reporting every row `APPLIED` throughout. That is the evidence for convention 6.
+
+**What is verified in prod, and what is not — stated apart, because two of the three fixes cannot
+be exercised there yet.**
+
+- **Verified:** the member cross-read. An impersonated `authenticated` role (`current_user =
+  authenticated`) saw **3 rows through `public_profiles`** while the *same caller in the same
+  transaction* saw **1 row through the `profiles` base table**. The base-table count is the
+  control: it proves RLS was genuinely engaged for that caller and that the view read past it.
+  Under `security_invoker=on` the view would have returned 1. This was a SQL-level impersonation,
+  **not** an app-level check by a signed-in member.
+- **NOT verified — the tally.** Prod holds **zero proposals and zero votes**, so
+  `proposal_results` returns no rows and the aggregate-past-`vt_select` behaviour cannot be
+  observed. Nothing here should be read as that path having passed in prod.
+- **NOT verified — the groups listing.** Prod holds 2 groups and **zero `members_only` groups**,
+  so the specific break 0028 fixed — an unjoined `members_only` group vanishing from the
+  directory — has nothing to manifest against. The listing being non-empty is not evidence.
+
+Both unverified mechanisms are covered locally by `steppe/tests/view-invoker-rights.test.ts` and
+`seed/matrix-0028.sql`, each of which asserts the working state **and** flips `security_invoker`
+to prove the assertion can fail.
 
 > **0024 and 0025 carry no apply date, on purpose.** Both were applied by hand and both are
 > confirmed live by the probe below (re-run 2026-07-26), but the day each was applied was never
@@ -112,7 +163,7 @@ applied file was `migrations/0027_invite_tokens.sql` at SHA-256
 | 0025 qr print variants (posters + seed card) | `22b754d` ⚠️ | not recorded | by hand, SQL editor | ✅ Applied |
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 | 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
-| 0028 view grants + owner rights (`public_profiles`, `proposal_results`, `groups_directory`) | _this branch_ | — | by hand, SQL editor | ⏳ **Not yet applied** |
+| 0028 view grants + owner rights | `91f9a91` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
