@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-07-29
-**Version:** 1.1
+**Version:** 1.2
 **Author:** Greg Chism, Founding Executive Director
 
 ## Changelog
@@ -11,6 +11,7 @@
 |---|---|---|
 | 1.0 | 2026-07-29 | Initial record. Bearer-with-cap tokens, redemption as an allowlist writer, invite-graph placement and retention, admin-minted now. |
 | 1.1 | 2026-07-29 | Amended after building the routes and UI. §4 corrected on where `created_by` is set. Added §7 (rate limiting, and a reversal of the build brief), §8 (the redemption GET is inert), and a note on what the verification caught. |
+| 1.2 | 2026-07-29 | §9 added: the pledge landing is **withdrawn**, not deferred. Pledging never required an account, so routing new members to a pledge page answered a question nobody had. `neighborhood_id` is redesignated mint-time provenance rather than a routing input. The 1.1 open item is closed. |
 
 ---
 
@@ -287,6 +288,66 @@ could have. That is the right trade: the mistyped-code case is recoverable in pl
 field stays editable and the same neutral sentence explains it — and the enumeration case
 is not recoverable at all.
 
+### 9. The pledge landing is withdrawn
+
+*Added in 1.2. This replaces the 1.1 open item, which is closed.*
+
+Version 1.1 recorded "where a redeemed member lands" as unfinished work and described how
+to wire it. **It is withdrawn instead.** Not deferred, not descoped for later — the feature
+answered a question nobody had, and an audit before writing any of it is what established
+that.
+
+**Pledging never required an account.** Three independent things make that true, and all
+three were verified rather than assumed:
+
+- `/n/<slug>` is on the proxy's public allowlist (`pathname.startsWith("/n/")`), ahead of
+  both the auth redirect and the `LAUNCH_PHASE` gate, so it is served before any session is
+  looked for.
+- `submit_pledge(text, text)` is granted to `service_role` alone, with `EXECUTE` revoked
+  from `PUBLIC`, `anon` and `authenticated` — the same shape as `redeem_invite()`. The app
+  calls it through the admin client from `/api/pledge`, a route that imports no auth module
+  at all. `neighborhood_status(text)` is separately granted to `anon` so the count renders
+  without a session.
+- The page offers an anonymous visitor the actual pledge form — an email field, an "Add me"
+  button, the live count, the privacy note — with no sign-in branch anywhere in it. The one
+  place `/n/<slug>` mentions signing in is the `isOpen` state, which appears only *after* a
+  neighborhood has opened and points at verification, which is a different act.
+
+An anonymous request with no cookies and no `Authorization` header submits a pledge and it
+is recorded. That is the design working, not a hole.
+
+**So the landing solved nothing.** A person reached by a printed QR code pledges on the
+spot, months before any account exists. By the time they hold an account, they are past the
+pledge stage — the campaign has hit its threshold and opened, and what an opened
+neighborhood asks of a new member is verification, not a pledge. Routing a freshly created
+account to a pledge page would send someone backwards through their own funnel.
+
+**The two populations were conflated in the Phase 4 brief**, and naming them separately is
+the correction:
+
+| | Pledgers | Cohort members |
+|---|---|---|
+| Have an account | No, and will not until the neighborhood opens | Yes — creating one is the point |
+| Reached by | Printed QR, mailer, yard sign | An invite card or link |
+| Lands on | `/n/<slug>` **directly** | `/invite`, then the ordinary sign-in |
+| The ask | An email address, nothing else | Read-and-confirm, then verification |
+
+The neighborhood QR already points at `/n/<slug>` directly. It does not route through an
+invite token and has no reason to: adding a token to that path would put a cap and an expiry
+on a yard sign whose entire purpose is to be scanned by as many strangers as possible.
+**Invite tokens serve account creation for the cohort. They are not a pledge on-ramp.**
+
+**`invite_tokens.neighborhood_id` stays, redesignated.** It is **mint-time provenance** —
+which audience a batch of cards was printed for — not a routing input. That is a real use:
+it is what lets a moderator read the token list and tell the Maplewood door-knock batch from
+the counter cards, and it is what a later question like "how did the batch we printed for
+Maplewood do" would be answered from. It is written at mint, displayed in the token list,
+and read by nothing else, which is now the intended end state rather than an unfinished one.
+
+The forward reference in migration 0027's `G-INV-6` — "the routing it enables is Phase 4" —
+is **superseded by this record**. That file is applied to production and is not editable;
+this section is where the correction lives.
+
 ---
 
 ## What the verification caught
@@ -371,15 +432,9 @@ Gained:
   should be told. The pledge-campaign purge has the same unresolved half.
 - **Minter visibility after member-minting.** Whether a member who mints a token may see
   who redeemed it, which is a social-graph exposure question rather than a technical one.
-- **Where a redeemed member lands.** *Added in 1.1.* `invite_tokens.neighborhood_id` is
-  stored, displayed on the mint surface, and read by nothing else: sign-in after redemption
-  goes to `/protected` unconditionally, exactly as it does from `/auth/login`, for a token
-  minted for a neighborhood and a general-purpose one alike. The column is a reference
-  without a consumer. Wiring it is not a schema question — the recommended shape is to
-  derive the destination **server-side** from the invite graph (address → redemption →
-  token → neighborhood) rather than carrying a `next` parameter through the OTP flow,
-  because a client-supplied redirect on the sign-in path is an open-redirect surface and
-  this one does not need to exist.
+- ~~**Where a redeemed member lands.**~~ *Opened in 1.1, **closed in 1.2** — see §9. Not
+  resolved by building it: withdrawn, because pledging never needed an account and the
+  destination answered a question nobody had.*
 
 ---
 

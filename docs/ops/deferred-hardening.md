@@ -130,26 +130,25 @@ budget.
 
 ---
 
-## 5. The invite landing destination is unwired
+## ~~5. The invite landing destination is unwired~~ — CLOSED, withdrawn
 
-**What.** `invite_tokens.neighborhood_id` (migration 0027, G-INV-6) is written by the mint
-surface and displayed in the token list. **Nothing else reads it.** After redeeming, a
-member signs in through the ordinary path and lands on `/protected` unconditionally —
-identically for a token minted for a neighborhood and for a general-purpose one. The column
-is a reference without a consumer, and the migration's own comment ("the routing it enables
-is Phase 4") describes work that was not built.
+**Not deferred. Withdrawn**, 2026-07-29, and kept here with a line through it because an
+item that silently disappears is indistinguishable from an item forgotten — which is the
+rule stated at the top of this file.
 
-**How it should be done.** Derive the destination **server-side** from the invite graph —
-address → `invite_redemptions` → `invite_tokens.neighborhood_id` → `neighborhoods.slug` —
-rather than carrying a `next` parameter through the OTP flow. A client-supplied redirect on
-the sign-in path is an open-redirect surface (`/auth/confirm` already has to defend against
-one), and this destination does not need to come from the client at all. The read is
-moderator-only under RLS, so it needs the service role or a definer function; if the latter,
-it belongs with the `search_path` sweep rather than as a migration of its own.
+The item asked for `invite_tokens.neighborhood_id` to route a redeemed member to that
+neighborhood's pledge campaign after sign-in. A read-only audit before building it
+established that **pledging never required an account**: `/n/<slug>` is on the public
+allowlist ahead of both the auth redirect and the launch gate, `submit_pledge` is
+service_role-only and called from `/api/pledge`, a route that imports no auth module, and
+the page renders a working pledge form to an anonymous visitor. An anonymous request with
+no cookies submits a pledge and it is recorded.
 
-**Verify with.** A token with `neighborhood_id` set lands on that neighborhood's campaign
-page; a token with NULL lands on the general destination; neither reaches
-`/protected/verify`.
+So the destination answered a question nobody had. A pledger acts months before any account
+exists; by the time someone holds an account, the campaign has opened and the ask is
+verification, not a pledge. The neighborhood QR points at `/n/<slug>` directly and should —
+putting a capped, expiring token in front of a yard sign would be the wrong instrument.
 
-**Sources.** `docs/decisions/invite-tokens.md` § *Open / counsel items*;
-`migrations/0027_invite_tokens.sql` G-INV-6.
+`neighborhood_id` is redesignated **mint-time provenance** — which audience a batch of cards
+was printed for — rather than a routing input. Full reasoning in
+`docs/decisions/invite-tokens.md` §9 (v1.2).
