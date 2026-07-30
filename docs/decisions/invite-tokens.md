@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-07-29
-**Version:** 1.0
+**Version:** 1.1
 **Author:** Greg Chism, Founding Executive Director
 
 ## Changelog
@@ -10,6 +10,7 @@
 | Version | Date | Change |
 |---|---|---|
 | 1.0 | 2026-07-29 | Initial record. Bearer-with-cap tokens, redemption as an allowlist writer, invite-graph placement and retention, admin-minted now. |
+| 1.1 | 2026-07-29 | Amended after building the routes and UI. §4 corrected on where `created_by` is set. Added §7 (rate limiting, and a reversal of the build brief), §8 (the redemption GET is inert), and a note on what the verification caught. |
 
 ---
 
@@ -148,9 +149,23 @@ authenticated client. The `invited_manage` policy already grants moderators full
 involved in minting, so the mint path is subject to the same row-level rules as every
 other moderator action and is legible in the same way.
 
-`created_by` is taken from `auth.uid()` inside the database, never from the request. A
-client cannot mint a token attributed to someone else, because it never supplies the
-attribution.
+`created_by` is set by the mint server action from the caller's own session, never from
+the request body. A client cannot mint a token attributed to someone else, because it
+never supplies the attribution.
+
+> **Corrected in 1.1.** Version 1.0 said the value was taken from `auth.uid()` *inside the
+> database*. That was aspirational rather than descriptive: migration 0027 ships
+> `invite_tokens.created_by` with no default and no trigger, so nothing in the database
+> supplies it and a direct insert that omitted it would simply store NULL. The property
+> that matters is unchanged either way — the attribution is server-set and a client cannot
+> choose it — but the record should say where the value actually comes from, because "the
+> database guarantees it" and "the one write path happens to do it" are different
+> assurances and only one of them survives a second write path being added.
+>
+> Moving it into the database as `default auth.uid()` is deferred to the `search_path`
+> sweep migration (see *Known deviation* below and `docs/ops/deferred-hardening.md`),
+> which is already the migration that revisits definer-function hygiene. 0027 is applied
+> to production and is not editable.
 
 Service-role is confined to `redeem_invite()`. It has to be: the person redeeming is
 anonymous and has no session, so the write cannot be authorised as them. That function is
@@ -207,6 +222,104 @@ telling the person is the other half, SQL can only do the first, and a scheduled
 delete-without-notice is worse than not running it. Whether an expiring unused invitation
 warrants a notice is an open item below.
 
+### 7. The redemption route is rate-limited per connection, not per token
+
+*Added in 1.1, after building the route.*
+
+The build brief for the routes specified a limiter keyed on the token. **That was
+reversed, deliberately.** The limiter is keyed on the connection alone
+(`invite:<ip>`), at five attempts per ten-minute window.
+
+Keying per token defeats the purpose. The attack a limiter can plausibly answer here is
+enumeration — someone guessing token strings — and a per-token key hands that attacker a
+fresh budget for every guess they make. The budget would scale with the number of wrong
+answers tried, which is exactly backwards. Keying on the connection means a run of wrong
+guesses from one place costs that place its allowance, whoever the guesses were addressed
+to.
+
+**What this therefore does not bound, stated plainly.** A person holding a legitimately
+distributed token can still exhaust its cap. Nothing in the limiter stops them: they
+would be making valid requests, from however many connections they like, against a code
+they were given. The cap is a blast-radius dial — it says how far one card can reach — and
+it is not an abuse budget. If a card is handed to someone who abuses it, the answer is
+revocation and a reprint, not a rate limit.
+
+**And what the limiter itself is.** It is the in-memory limiter already used by the
+pledge and contact routes: a `Map` in the module scope of a serverless function. On Fluid
+Compute that means **per-instance**, not global. It resets on every cold start, and
+concurrent instances each hold their own count, so the effective ceiling in production is
+some multiple of five rather than five — higher than the local six observed while testing,
+and not a number the platform can state. It handles casual noise, a double-tapped button,
+and a naive script from one address. It does not stop a determined actor with many IPs and
+is not pretending to.
+
+**The additive follow-up** is a per-token failed-attempt counter in the database, which is
+the only place a count can be authoritative across instances: a token accumulating failed
+redemptions past a threshold stops being redeemable until a moderator looks at it. That
+bounds enumeration against a *specific* token in a way an in-memory per-instance map
+cannot, and it composes with the connection limiter rather than replacing it. Recorded in
+`docs/ops/deferred-hardening.md`.
+
+**No IP address is persisted in either design.** The current limiter uses the first hop of
+`X-Forwarded-For` as a `Map` key held in memory and never written anywhere; the proposed
+counter is keyed on the token and stores no client identifier at all. A limiter that
+logged addresses to enforce itself would be building the behavioural record this platform
+exists not to keep.
+
+### 8. The redemption page does not validate on GET
+
+*Added in 1.1.*
+
+`/invite/<token>` renders identically whether the token is real, expired, revoked,
+exhausted, or invented. It performs no lookup. A malformed token is dropped from the field
+rather than checked.
+
+This is the same no-oracle rule as §2, applied one layer out. A token is meant to be
+printed and photographed, so its URL will end up in more hands than the card did. If the
+page validated on GET, that URL would become an enumeration oracle readable by anyone
+with a browser and no email address at all — probe a code, read the answer off the page,
+repeat, and learn the state of campaigns you were never given. Requiring a POST with a
+supplied address means the only party who ever learns a token's state is someone acting on
+an invitation, and it puts every such answer behind the limiter in §7.
+
+The cost is that a person who mistypes a code learns it is wrong one step later than they
+could have. That is the right trade: the mistyped-code case is recoverable in place — the
+field stays editable and the same neutral sentence explains it — and the enumeration case
+is not recoverable at all.
+
+---
+
+## What the verification caught
+
+*Added in 1.1.*
+
+Recorded because the pattern has now repeated four times in this subsystem, and it is
+always the same shape: **the test was the thing that was wrong, and it was passing.**
+
+- **The concurrency test passed against a deliberately non-atomic implementation.**
+  Committing one transaction immediately after issuing the other's query let the second
+  statement reach the server after the first had committed, so they never overlapped. Fixed
+  with a `pg_stat_activity` polling barrier that waits until a backend is genuinely blocked.
+- **The apply-status probe reported `APPLIED` while `anon` held `EXECUTE`.** It checked
+  `information_schema.role_table_grants` only; table privileges and function privileges
+  live in different catalogs, so one clause covering "no anon grant" was true and false at
+  the same time. Split into two independently-named assertions.
+- **A spent limiter budget made the revoked-token test prove nothing.** Walking the live
+  route, the revoked-token case returned `429 rate_limited` rather than the refusal it was
+  written to check — earlier curls had used the window. It was reported as passing on a
+  first read of the output. Re-run against a fresh instance, it returned `400 refused` with
+  nothing written, which is the actual result.
+- **A test grepped the route's own comment.** An assertion that the redeem route never
+  reaches for the auth actions matched the sentence in the route explaining that the
+  *client* calls them next. It failed on the documentation, not the behaviour. Rewritten to
+  strip comments and assert the import list.
+
+The common lesson is that a green assertion is evidence only if it has been watched to
+fail. Every invariant claim in this subsystem is now paired with a mutation that breaks
+the thing it guards — a CASCADE delete rule, an `anon` grant, a check-then-act
+implementation — and the assertion is only trusted once that mutation has been seen to
+trip it.
+
 ---
 
 ## Known deviation, recorded and not fixed here
@@ -223,7 +336,8 @@ changes want separate commits and separate verification.
 
 Follow-up: a sweep pinning `public, pg_temp` on every SECURITY DEFINER function created
 before 0026 — around forty-four functions, of which this is one. It should be its own
-migration, with the hash of each affected body recorded before and after.
+migration, with the hash of each affected body recorded before and after. Tracked, with
+the other deferred items this build accumulated, in `docs/ops/deferred-hardening.md`.
 
 ---
 
@@ -257,6 +371,15 @@ Gained:
   should be told. The pledge-campaign purge has the same unresolved half.
 - **Minter visibility after member-minting.** Whether a member who mints a token may see
   who redeemed it, which is a social-graph exposure question rather than a technical one.
+- **Where a redeemed member lands.** *Added in 1.1.* `invite_tokens.neighborhood_id` is
+  stored, displayed on the mint surface, and read by nothing else: sign-in after redemption
+  goes to `/protected` unconditionally, exactly as it does from `/auth/login`, for a token
+  minted for a neighborhood and a general-purpose one alike. The column is a reference
+  without a consumer. Wiring it is not a schema question — the recommended shape is to
+  derive the destination **server-side** from the invite graph (address → redemption →
+  token → neighborhood) rather than carrying a `next` parameter through the OTP flow,
+  because a client-supplied redirect on the sign-in path is an open-redirect surface and
+  this one does not need to exist.
 
 ---
 
