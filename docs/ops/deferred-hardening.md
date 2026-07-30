@@ -276,3 +276,71 @@ function. Only the sentence describing it is wrong.
 
 **Sources.** `docs/decisions/invite-tokens.md` §9 (v1.2);
 `migrations/0027_invite_tokens.sql` lines 75, 197, 218.
+
+---
+
+## 9. STANDING RULE — advisor remediations are migrations, never dashboard clicks
+
+**Not a deferred item. A rule, recorded here because this file is where the next person
+looks before touching the database.** Also in `docs/migrations-applied.md` (convention 6).
+
+**The rule.** Supabase's advisor panel is a *reporting* surface. Its one-click fixes are DDL
+that lands outside the migration record, where nothing reviews it, nothing tests it, and the
+ledger goes on reporting `APPLIED` for a state that no longer matches the repo. If an advisor
+is right, the fix is a migration that cites it. If it is wrong, the reason goes in a decision
+record. Neither outcome is a button.
+
+**The instance that produced this rule (2026-07-30).** The `security_definer_view` advisor's
+remediation was applied from the dashboard. It set `security_invoker = on` on **all four**
+public views and — because a view drop/create re-applies the project's default privileges —
+handed `anon` **all seven** privileges on each.
+
+Two of those views are owner-rights **by design**, so the "fix" did not harden them. It broke
+them, silently, in production:
+
+- **`public_profiles`** — the single cross-member read path (0023, whose comment says it
+  reads past the narrowed `pf_read` *on purpose*). Under invoker rights the caller's own
+  `pf_read` (`id = auth.uid()`) applies, so a member sees **only themselves**. Measured in
+  prod: 1 row visible of 3 members, against nine call sites that read it for other members'
+  names.
+- **`proposal_results`** — the only sanctioned read path for governance results
+  (invariant 4: `votes` has no read policy). Under invoker rights the caller's `vt_select`
+  applies *inside the aggregate*, so the tally counts one ballot — the reader's. Measured on
+  a prod-shaped local DB with six ballots: owner rights → `ballots 6, revealed t`; invoker
+  rights → `ballots 1, revealed f`.
+
+**What made it survive.** Nothing in the repo could see it. The ledger's 0023 tuple asserted
+the column and the policy but not the reloption; the local matrices run against a database
+whose default ACLs are narrower than prod's; and the advisor stopped firing once remediated,
+so the panel showed green too. It was found by accident while auditing an unrelated grant.
+
+Migration 0028 restores both views, revokes the anon grant that made owner rights dangerous,
+and amends the 0023 tuple so the same drift reports `MISSING` instead of `APPLIED` —
+mutation-checked both ways.
+
+---
+
+## 10. `groups_directory` — repo and prod disagree, and the answer is a product decision
+
+**Open question, deliberately not resolved by 0028.**
+
+The repo leaves `groups_directory` with no `security_invoker` reloption, which means **owner
+rights**. Prod has it at `security_invoker = on` from the same dashboard remediation. 0028
+does **not** touch it, because the two settings are genuinely different products and there
+were no fixtures to decide between them:
+
+- **Owner rights (repo):** the view's own `WHERE is_verified()` and its description `CASE`
+  are the access boundary — a verified member sees *every* group listed, with the description
+  withheld for non-public ones. That is the same "list it, withhold the details" pattern
+  `public_profiles` uses, which is why it plausibly wants owner rights.
+- **Invoker rights (prod):** `grp_read` also applies, so a member sees only public groups
+  plus their own. Non-public groups vanish from the directory entirely.
+
+**The question for a person, not a migration:** should a private group be *listed* (name and
+slug visible, description withheld) or *invisible* to non-members? Changing a view's semantics
+on a hunch inside a revoke migration is the exact mistake 0028 exists to correct, so it is
+recorded rather than guessed.
+
+Whichever way it goes, 0028 has already revoked `anon` on this view, so nothing is exposed
+while the question is open. Once decided, pin it explicitly with a comment at the object, and
+add the assertion to the 0028 probe tuple.

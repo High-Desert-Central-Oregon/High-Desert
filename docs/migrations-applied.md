@@ -17,6 +17,37 @@ status question resolves by running that query against prod, never by recalling 
 4. Migrations are applied to prod **by hand in the Supabase SQL editor, as the owner, at a
    stop-gate** — per CLAUDE.md. The dry-run matrices (`seed/matrix-*.sql`) prove them on a
    local, prod-shaped DB first; **matrix/test SQL never runs against prod.**
+5. **Grants, privileges, and object definitions are READ FROM PROD at the stop-gate — never
+   inferred from a local pass.** A local matrix proves *logic*; it cannot prove *privilege*.
+   The two environments apply different default ACLs: tables created under `supabase_admin`'s
+   defaults receive `arwdDxtm` (**all**, DML included), while under `postgres`'s defaults they
+   receive `Dxtm` (TRUNCATE/REFERENCES/TRIGGER/MAINTAIN, **no DML**). Local uses the
+   restrictive set; prod uses the permissive one. Every explicit `GRANT` in a migration is
+   therefore *additive on top of a default we did not choose*, and only an explicit `REVOKE`
+   narrows anything.
+
+   **The proof that this is not theoretical.** `seed/matrix-0025.sql` case 5e asserts
+   `has_table_privilege('anon','public.qr_counts','insert')` is false. Locally it **is**
+   false, so the case passes. In prod `anon` **holds** INSERT, so the same case would fail.
+   The assertion is correct; the substrate is not representative. No local suite can detect
+   prod's wider grants by construction, and a green matrix must never be read as evidence
+   about privileges.
+6. **Supabase advisor remediations are applied as MIGRATIONS, never from the dashboard.**
+   The advisor panel is a *reporting* surface. Its one-click fixes are DDL that lands outside
+   the migration record, where nothing reviews it, nothing tests it, and the ledger keeps
+   reporting `APPLIED` for a state that no longer matches the repo. If an advisor is right,
+   the fix is a migration citing the advisor; if it is wrong, the reason goes in a decision
+   record. Neither outcome is a button.
+
+   **Recorded instance (2026-07-30).** The `security_definer_view` advisor's remediation was
+   applied from the dashboard. It set `security_invoker = on` on **all four** public views and,
+   because a view drop/create re-applies the project's default privileges, handed `anon`
+   **all seven** privileges on each. Two of those views are owner-rights **by design**, so the
+   change did not harden them — it broke them silently: `public_profiles` began returning a
+   member only their own row (the single cross-member read path, nine call sites), and
+   `proposal_results` began returning each reader a tally of their own single ballot (the only
+   sanctioned read path for governance results, invariant 4). Nothing in the migration record
+   noticed for either. Migration 0028 restores both and pins the intent at the object.
 
 ## Applied status (as of 2026-07-29)
 
@@ -24,7 +55,7 @@ All migrations **0012–0027 are applied and live in production**, and every one
 row below. Status was verified against prod with the probe query in the next section (owner-run,
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
 fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
-returned `APPLIED` for all sixteen rows including the newly recorded 0027). For 0012–0023, `Applied on` uses
+returned `APPLIED` for all sixteen rows including the newly recorded 0027). **0028 is written but NOT applied** — the probe below therefore has seventeen tuples and is expected to report `MISSING` for 0028 until it is applied at its stop-gate. For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -81,6 +112,7 @@ applied file was `migrations/0027_invite_tokens.sql` at SHA-256
 | 0025 qr print variants (posters + seed card) | `22b754d` ⚠️ | not recorded | by hand, SQL editor | ✅ Applied |
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 | 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
+| 0028 view grants + owner rights (`public_profiles`, `proposal_results`) | _this branch_ | — | by hand, SQL editor | ⏳ **Not yet applied** |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -150,15 +182,24 @@ from (values
      and exists (select 1 from information_schema.tables where table_name = 'messages')
      and exists (select 1 from information_schema.tables where table_name = 'thread_state')
      and exists (select 1 from information_schema.tables where table_name = 'member_blocks')),
+  -- 0023 also asserts public_profiles is OWNER-RIGHTS. Added after a dashboard
+  -- advisor remediation flipped it to security_invoker=on in prod while this
+  -- probe still reported APPLIED — the view is the single cross-member read path
+  -- and under invoker rights it silently returns a member only their own row.
+  -- An ABSENT reloption and security_invoker=off are both owner rights, so the
+  -- assertion is NOT-on rather than equality to a literal.
   ('0023 profile visibility + perf indexes',
-   'neighborhood_visibility col + pf_read owner-only + 4 perf indexes',
+   'neighborhood_visibility col + pf_read owner-only + 4 perf indexes + public_profiles owner-rights',
    exists (select 1 from information_schema.columns
            where table_name = 'profiles' and column_name = 'neighborhood_visibility')
      and exists (select 1 from pg_policies where tablename = 'profiles'
                  and policyname = 'pf_read' and qual not ilike '%is_moderator%')
      and (select count(*) from pg_indexes where schemaname = 'public'
           and indexname in ('events_group_created_idx', 'events_status_starts_idx',
-                            'moderation_actions_target_idx', 'thread_state_member_idx')) = 4),
+                            'moderation_actions_target_idx', 'thread_state_member_idx')) = 4
+     and not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                     where n.nspname = 'public' and c.relname = 'public_profiles'
+                       and coalesce(array_to_string(c.reloptions, ','), '') ilike '%security_invoker=on%')),
   -- 0024's signature is the GATE, not the table. A half-apply that created
   -- invited_emails but missed the auth.users trigger would leave signups fully
   -- open while looking applied, so the trigger's presence ON auth.users is
@@ -253,7 +294,31 @@ from (values
                     and c.confdeltype = 'n')
      -- the invite graph did not escape its subsystem (G-INV-2)
      and not exists (select 1 from information_schema.columns
-                      where table_name='profiles' and column_name='invited_by'))
+                      where table_name='profiles' and column_name='invited_by')),
+  -- 0028 covers BOTH catalogs on purpose. Privileges live in
+  -- information_schema.role_table_grants; reloptions live in pg_class. A probe
+  -- checking only one could report APPLIED while the other half was wrong —
+  -- which is exactly how the advisor drift survived unnoticed.
+  ('0028 view grants + owner rights',
+   'anon holds nothing on the four views; public_profiles and proposal_results back to owner rights',
+   not exists (select 1 from information_schema.role_table_grants
+                where table_schema='public'
+                  and table_name in ('public_profiles','proposal_results',
+                                     'content_moderation','groups_directory')
+                  and grantee in ('anon','PUBLIC'))
+     and not exists (select 1 from information_schema.role_table_grants
+                      where table_schema='public'
+                        and table_name in ('public_profiles','proposal_results',
+                                           'content_moderation','groups_directory')
+                        and grantee='authenticated'
+                        and privilege_type <> 'SELECT')
+     and not exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+                      where n.nspname='public'
+                        and c.relname in ('public_profiles','proposal_results')
+                        and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')
+     and exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+                  where n.nspname='public' and c.relname='content_moderation'
+                    and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%'))
 ) as m(migration, probe, present)
 order by m.migration;
 ```
