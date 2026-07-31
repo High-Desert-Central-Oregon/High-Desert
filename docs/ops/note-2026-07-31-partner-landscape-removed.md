@@ -91,33 +91,42 @@ Every file was verified byte-identical in `~/dev/steppe-private/` before removal
 **absent** there beforehand (the private `counsel-packet/` held five different files, the
 complement rather than a backup), so they were copied out and hash-checked first.
 
-## The COI register — removed from HEAD, rewrite prepared and pending
+## The COI register — reviewed and RETAINED
 
-*Updated 2026-07-31.*
+*Updated 2026-07-31, superseding the paragraph previously in this section.*
 
-`docs/governance/steppe-coi-register-v2.md` and its dated PDF are now removed from HEAD. A
-byte-identical copy of each was verified in `~/dev/steppe-private/governance/` first — both were
-**absent** there beforehand (the private folder held the COI *disclosure packet*, a different
-document), so they were copied out and hash-checked before `git rm` ran.
+`docs/governance/steppe-coi-register-v2.md` and its dated PDF are **tracked, present, and staying
+that way.** An earlier pass of this cleanup removed them from HEAD and prepared a history
+rewrite. Both are **cancelled**; the removal has been reverted and the files restored
+byte-identical.
 
-This is the one document in this cleanup that is **not** the author's alone to decide about. It
-contains third-party personal data: a named director, and relationship, spouse, family and
-financial-interest fields. Removing it from HEAD is the part that could be done unilaterally
-because it only reduces discoverability and takes nothing away from anyone.
+**Why the reversal.** The register records **public facts about people who have agreed to public
+association with Steppe** in the ways it describes. It is not third-party personal data published
+without consent. And a conflict-of-interest register that nobody can read discloses nothing —
+publication is what makes a disclosure log a disclosure. **The categorical phrasing of the
+original rule was the defect, not the file.**
 
-**A history rewrite has been prepared but NOT executed.** The work exists — an audit of every
-path and commit that has ever held register content, a local `filter-repo` rewrite on a clone, a
-rescue bundle, the old→new commit map, and a patch remapping every SHA reference the rewrite
-would invalidate. None of it has been pushed, and `origin` is untouched.
+The rule in `CLAUDE.md` now turns on **consent** and on **proportionality** — nothing beyond the
+granularity the disclosure actually requires — rather than on the presence of governance data.
+Note also the distinction the earlier pass blurred: a *draft governing instrument* stays out
+because a reader cannot tell it from the ratified thing; a *disclosure log* is not a draft.
 
-**It waits on a conversation with the named director**, for a reason that is not procedural. A
-rewrite cannot unpublish — the content has been public on two forges since 2026-07-09, and any
-clone, fork or archive taken since still holds it. What a rewrite can do is stop the canonical
-repository from continuing to serve it, which is worth doing but is a smaller claim than it
-appears. The person whose family and financial relationships are in that file is entitled to know
-that it was published, for how long, and what can and cannot now be undone — before a decision is
-made on their behalf that might be presented to them afterwards as though it had solved the
-problem.
+**A history rewrite was considered and declined**, on top of the reasons already recorded above
+for the partner landscape:
 
-The register's content also appeared in `counsel-packet/07-coi-register.md`, removed from HEAD in
-the previous commit. Both remain in history; the rewrite audit treats them as one problem.
+- It would **invalidate every commit SHA this repository cites about itself** — the ledger's
+  *Introduced by* column, ADR citations, migration headers, and the 2026-07-30 incident timeline.
+  An audit of the tracked docs found **53 SHA references across 8 files**, of which **27 distinct
+  commits** would have been renamed, because the earliest affected commit is `d0718f2`
+  (2026-06-27) and a rewrite renames it and every descendant.
+- It requires **forge-admin garbage collection on both sides** — Codeberg and the GitHub mirror —
+  to drop the unreferenced objects. Without that the old commits stay fetchable by SHA on both
+  hosts, so the rewrite would look complete while changing nothing about reachability.
+- And it **still would not unpublish.** The content has been public since 2026-07-09.
+
+**What was never at risk, and is worth stating so nobody re-derives it under pressure:** the
+recorded **file SHA-256 values** (migration applied-file hashes) and the **`enforce_invited_signup`
+gate hash** are *content* hashes — of file bytes and of `pg_get_functiondef()` output. They are
+independent of commit identity and survive any rewrite untouched. Only *commit* SHAs were ever
+in question.
+

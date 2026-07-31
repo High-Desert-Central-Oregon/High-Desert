@@ -24,7 +24,8 @@ budget, and community-norms work — i.e., the sources the assembled counsel pac
 governing rule for this folder is now `CLAUDE.md` → **Do NOT publish**, which excludes from the
 repo entirely:
 
-- real-person governance or conflict data (relationships, spouse, family, financial interest),
+- **third-party personal data — *unless the person has agreed to that association*.** This is a
+  consent rule, not a categorical ban. See the note below on the COI register, which stays.
 - dollar figures, compensation, and operating budgets,
 - pre-counsel drafts of legal instruments,
 - non-public funder or partner posture.
@@ -33,11 +34,29 @@ Material in those categories belongs in **`~/dev/steppe-private/`**, in whatever
 convenient — the `.md` / `.docx` / `.pdf` question is a formatting preference and was never the
 important one.
 
+### The COI register stays here, deliberately
+
+`steppe-coi-register-v2.md` and its dated PDF are **tracked, published, and meant to be.** The
+register records facts about people who have **consented to public association with Steppe** in
+the ways it describes. It is not third-party data published without consent, and a
+conflict-of-interest register that nobody can read discloses nothing — publishing it is the
+transparency posture working.
+
+An earlier pass of this cleanup briefly removed it, on a reading of the rule that was
+categorical rather than consent-based. **The categorical phrasing was the defect, not the file.**
+The rule now turns on consent and on proportionality — no granularity beyond what the disclosure
+requires — and the register satisfies both.
+
+Note the distinction that pass blurred: a **draft governing instrument** stays out because a
+reader cannot tell it from the ratified thing. A **disclosure log** is not a draft, and does not
+carry that problem.
+
 **What that does not do.** `.gitignore` does not untrack anything already tracked, and removing
 a file from HEAD does not unpublish it — the content remains in history on both public forges.
-Files already published here are a **per-document decision**, not a cleanup, and are being
-handled separately. The Contents table below still lists documents in that state; its presence
-here is a record of what was published, not an endorsement of publishing it.
+Files already published here are a **per-document decision**, not a cleanup, and were handled
+individually — some moved to `steppe-private/`, the COI register reviewed and **retained**. The
+Contents table below lists what this folder has held; where an entry is no longer tracked, the
+table is a record of what was published rather than a claim about what is here now.
 
 **Still appropriate for this folder**, and unaffected: community-facing norms and process drafts
 that are meant to be read by members — ballot drafts, the moderation policy draft — where

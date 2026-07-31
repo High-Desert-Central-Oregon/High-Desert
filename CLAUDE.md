@@ -139,11 +139,20 @@ consequences follow, and both are counter-intuitive enough to be worth stating o
 So the only reliable control is **not adding it in the first place.** Everything below goes to
 `~/dev/steppe-private/` instead — never into this repo, not even briefly.
 
-1. **Real-person governance or conflict data** — relationships, spouse, family, employer,
-   financial interest, recusals, anything naming an individual in a conflict-of-interest or
-   board-governance posture. This is **third-party personal data. It is not the author's to
-   publish**, whatever the author's own transparency preferences are. A director who agreed to
-   serve did not thereby agree to have their household's financial relationships indexed.
+1. **Third-party personal data — unless the person has agreed to that association.** This is a
+   **consent** rule, not a categorical ban, and the difference matters. A conflict-of-interest
+   register naming board members **who have consented to public association with Steppe** is
+   publishable, and arguably *should* be public: **a disclosure log nobody can read discloses
+   nothing.** Publishing it is the transparency posture working, not a lapse in it.
+
+   What stays out is personal detail about someone who **has not** agreed to its publication, and
+   **any granularity beyond what the disclosure actually requires** — a recusal is disclosed by
+   naming who recuses from what; it is not disclosed any better by publishing a household's
+   finances. Consent to be named as a director is not consent to arbitrary depth.
+
+   **A draft governing instrument stays out because a reader cannot tell it from the ratified
+   thing; a disclosure log is not a draft and does not carry that problem** — it is a record of
+   what is true now, not a proposal about what might become true.
 2. **Dollar figures, compensation, and operating budgets** — salary bands, stipends, reasonable-
    compensation analysis, line-item budgets, runway. Publishing a number invites its
    misreading, and comp figures are personal data about whoever receives them.
