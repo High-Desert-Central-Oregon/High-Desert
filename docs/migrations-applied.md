@@ -56,7 +56,7 @@ row below. Status was verified against prod with the probe query in the next sec
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
 fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
 returned `APPLIED` for all sixteen rows including the newly recorded 0027; re-run again 2026-07-30,
-which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028). For 0012–0023, `Applied on` uses
+which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028). **0029 is written but NOT applied** — the probe below therefore has **eighteen** tuples and is expected to report `MISSING` for 0029 until it is applied at its stop-gate. For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -85,15 +85,28 @@ production after the apply**, `sha256(pg_get_functiondef(...))` =
 baseline: the write path to the allowlist was added without touching the gate that reads it. The
 applied file was `migrations/0027_invite_tokens.sql` at SHA-256
 `26451c0b8194cb764589f8556f4d3fc2bd7c3f557c18344ae616083ed96a2d7a`, recorded so this ledger says
-**which bytes** were applied and not merely which number. 0028 (view grants + owner rights) was
+**which bytes** were applied and not merely which number.
+
+> **Two after-the-fact notes on 0027, both from migration 0029.** (1) That gate hash is now
+> **historical** — 0029 pinned the function's `search_path` and the baseline rotated to
+> `4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07`. 0027 left the `search_path` alone on
+> purpose, because byte-identity *was* its regression criterion. (2) 0027's header was
+> **annotated** in the 0029 commit to mark the old value superseded, so the file no longer
+> matches the applied SHA-256 above. The edit is **comment-only** — verified by stripping all
+> `--` comments from both versions and diffing: identical, 34 executable statements on each
+> side. The applied bytes remain `26451c0b…`; the file is now
+> `5623dcf5db6da89d15904f3cd75f6233c5c473309e054c7cab91cb9578e648fb`. The SQL that ran is unchanged. 0028 (view grants + owner rights) was
 applied by hand at its stop-gate on 2026-07-30, after a GREEN `seed/matrix-0028.sql` dry-run, and
 verified against prod by the probe tuple below plus direct catalog reads: all four public views
 (`public_profiles`, `proposal_results`, `content_moderation`, `groups_directory`) hold **no `anon`
 or `PUBLIC` privilege of any kind** and grant `authenticated` **exactly `SELECT`**;
 `public_profiles`, `proposal_results` and `groups_directory` are back to **owner rights**
 (`security_invoker=false`), and `content_moderation` is **pinned to invoker rights** deliberately
-(G-VW-3). The gate hash is unchanged at
-`8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e` — 0028 touches no function. The
+(G-VW-3). The gate hash was unchanged at
+`8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e` — 0028 touches no function.
+*(That value is now historical: migration 0029 pinned the gate's `search_path` and rotated the
+baseline to `4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07`. It was correct for 0028,
+which is the point of recording it here.)* The
 applied file was `migrations/0028_view_grants_and_invoker.sql` at SHA-256
 `f693601cb1667c9722b54bea82f459e6403e259854f8f0c07898e8c7b0cd16ad`.
 
@@ -164,6 +177,7 @@ to prove the assertion can fail.
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 | 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
 | 0028 view grants + owner rights | `91f9a91` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
+| 0029 search_path sweep + created_by default | _this branch_ | — | by hand, SQL editor | ⏳ **Not yet applied** |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -369,7 +383,29 @@ from (values
                         and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')
      and exists (select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
                   where n.nspname='public' and c.relname='content_moderation'
-                    and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%'))
+                    and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')),
+  -- 0029 asserts the standard over ALL functions rather than a list, so a
+  -- function added later without it fails here. Only the GATE's body hash is
+  -- pinned: the sweep rotated all 47, and pinning 46 more would be 46 ways for
+  -- a maintenance edit to fail a check for no security reason.
+  ('0029 search_path sweep + created_by default',
+   'all 57 public functions pinned to (public, pg_temp); gate baseline rotated; neighborhood_id comment corrected; created_by defaults to auth.uid()',
+   not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                where n.nspname = 'public' and p.prokind = 'f'
+                  and coalesce(array_to_string(p.proconfig, ','), '')
+                      is distinct from 'search_path=public, pg_temp')
+     and exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+                  where n.nspname = 'public' and p.proname = 'enforce_invited_signup'
+                    and encode(sha256(pg_get_functiondef(p.oid)::bytea),'hex')
+                        = '4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07')
+     and exists (select 1 from information_schema.columns
+                  where table_schema = 'public' and table_name = 'invite_tokens'
+                    and column_name = 'created_by'
+                    and column_default ilike '%auth.uid()%')
+     and (select col_description('public.invite_tokens'::regclass, ordinal_position)
+            from information_schema.columns
+           where table_schema='public' and table_name='invite_tokens'
+             and column_name='neighborhood_id') not ilike '%pledge landing%')
 ) as m(migration, probe, present)
 order by m.migration;
 ```

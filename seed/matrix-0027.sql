@@ -282,7 +282,11 @@ do $$ declare src text; sha text; begin
   select encode(sha256(pg_get_functiondef(p.oid)::bytea),'hex') into sha
     from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.proname='enforce_invited_signup';
-  if sha <> '8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e' then
+  -- Baseline ROTATED by migration 0029 (search_path sweep). The pre-0029 value
+  -- was 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e
+  -- — historical now. 0027 deliberately did not pin this function's search_path
+  -- because byte-identity of the gate WAS 0027's regression criterion.
+  if sha <> '4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07' then
     raise exception 'MATRIX FAIL 11a: enforce_invited_signup changed (sha %) — 0027 must not touch the gate', sha; end if;
 
   src := pg_get_functiondef('public.enforce_invited_signup()'::regprocedure);
