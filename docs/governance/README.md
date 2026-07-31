@@ -4,16 +4,63 @@ This folder holds the **source documents** behind Steppe's nonprofit governance,
 budget, and community-norms work — i.e., the sources the assembled counsel packet
 (`/counsel-packet`) is built from. Reorganized here 2026-07-08.
 
-## Source model (correction)
+## Source model — CORRECTED 2026-07-31
 
-Earlier notes said the governance `.docx` were *gitignored*. That is **wrong** — `.gitignore` only
-ignores Word lock files (`~$*.docx`); the real `.docx` are tracked. Going forward:
+> ### ⚠ The instruction previously in this section was wrong, and is kept here struck through
+> ### rather than deleted, because someone may have followed it.
+>
+> It read: *"**Markdown (`.md`) is the tracked source-of-truth** and what to edit for legible
+> diffs. **`.docx` are the editable / signature copies** … Superseded originals live in
+> `superseded/`."* It also corrected an *earlier* note by asserting that the `.docx` were tracked
+> and only Word lock files were ignored.
+>
+> **What was wrong with it:** it reasoned only about *diffability* — which format is nicer to
+> review — and never asked the prior question of **whether this material belongs in a public
+> repository at all.** Read as written, it instructs a contributor to keep governance,
+> conflict-of-interest and budget material tracked, in Markdown, forever. That is the opposite
+> of the convention now recorded in `CLAUDE.md` → *Do NOT publish*.
 
-- **Markdown (`.md`) is the tracked source-of-truth** and what to edit for legible diffs.
-- **`.docx` are the editable / signature copies**, regenerated from the markdown (via `pandoc`).
-  When you edit a `.md` here, regenerate its `.docx` (`pandoc file.md -o file.docx`) or hand-edit the
-  Word copy and keep the two in sync.
-- Superseded originals live in `superseded/`.
+**This repository is public on two forges — Codeberg canonical and the GitHub mirror.** The
+governing rule for this folder is now `CLAUDE.md` → **Do NOT publish**, which excludes from the
+repo entirely:
+
+- **third-party personal data — *unless the person has agreed to that association*.** This is a
+  consent rule, not a categorical ban. See the note below on the COI register, which stays.
+- dollar figures, compensation, and operating budgets,
+- pre-counsel drafts of legal instruments,
+- non-public funder or partner posture.
+
+Material in those categories belongs in **`~/dev/steppe-private/`**, in whatever format is
+convenient — the `.md` / `.docx` / `.pdf` question is a formatting preference and was never the
+important one.
+
+### The COI register stays here, deliberately
+
+`steppe-coi-register-v2.md` and its dated PDF are **tracked, published, and meant to be.** The
+register records facts about people who have **consented to public association with Steppe** in
+the ways it describes. It is not third-party data published without consent, and a
+conflict-of-interest register that nobody can read discloses nothing — publishing it is the
+transparency posture working.
+
+An earlier pass of this cleanup briefly removed it, on a reading of the rule that was
+categorical rather than consent-based. **The categorical phrasing was the defect, not the file.**
+The rule now turns on consent and on proportionality — no granularity beyond what the disclosure
+requires — and the register satisfies both.
+
+Note the distinction that pass blurred: a **draft governing instrument** stays out because a
+reader cannot tell it from the ratified thing. A **disclosure log** is not a draft, and does not
+carry that problem.
+
+**What that does not do.** `.gitignore` does not untrack anything already tracked, and removing
+a file from HEAD does not unpublish it — the content remains in history on both public forges.
+Files already published here are a **per-document decision**, not a cleanup, and were handled
+individually — some moved to `steppe-private/`, the COI register reviewed and **retained**. The
+Contents table below lists what this folder has held; where an entry is no longer tracked, the
+table is a record of what was published rather than a claim about what is here now.
+
+**Still appropriate for this folder**, and unaffected: community-facing norms and process drafts
+that are meant to be read by members — ballot drafts, the moderation policy draft — where
+publication is the point.
 
 ## Contents
 
