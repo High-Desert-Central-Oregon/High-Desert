@@ -91,15 +91,33 @@ Every file was verified byte-identical in `~/dev/steppe-private/` before removal
 **absent** there beforehand (the private `counsel-packet/` held five different files, the
 complement rather than a backup), so they were copied out and hash-checked first.
 
-## Still open, deliberately
+## The COI register — removed from HEAD, rewrite prepared and pending
 
-The **conflict-of-interest register** at `docs/governance/steppe-coi-register-v2.md` is **not**
-touched. It contains third-party personal data — a named director, and relationship, spouse,
-family and financial-interest fields — which makes it a decision involving someone other than
-the author, not a repository-hygiene call. Handling it is pending, separately, and should include
-whether the person named is told.
+*Updated 2026-07-31.*
 
-Note that the register's *content* also appeared in `counsel-packet/07-coi-register.md`, which
-this commit removes from HEAD. That does not resolve the register question: both copies remain in
-history, and the decision that matters is about the person named, not about which paths currently
-hold the file.
+`docs/governance/steppe-coi-register-v2.md` and its dated PDF are now removed from HEAD. A
+byte-identical copy of each was verified in `~/dev/steppe-private/governance/` first — both were
+**absent** there beforehand (the private folder held the COI *disclosure packet*, a different
+document), so they were copied out and hash-checked before `git rm` ran.
+
+This is the one document in this cleanup that is **not** the author's alone to decide about. It
+contains third-party personal data: a named director, and relationship, spouse, family and
+financial-interest fields. Removing it from HEAD is the part that could be done unilaterally
+because it only reduces discoverability and takes nothing away from anyone.
+
+**A history rewrite has been prepared but NOT executed.** The work exists — an audit of every
+path and commit that has ever held register content, a local `filter-repo` rewrite on a clone, a
+rescue bundle, the old→new commit map, and a patch remapping every SHA reference the rewrite
+would invalidate. None of it has been pushed, and `origin` is untouched.
+
+**It waits on a conversation with the named director**, for a reason that is not procedural. A
+rewrite cannot unpublish — the content has been public on two forges since 2026-07-09, and any
+clone, fork or archive taken since still holds it. What a rewrite can do is stop the canonical
+repository from continuing to serve it, which is worth doing but is a smaller claim than it
+appears. The person whose family and financial relationships are in that file is entitled to know
+that it was published, for how long, and what can and cannot now be undone — before a decision is
+made on their behalf that might be presented to them afterwards as though it had solved the
+problem.
+
+The register's content also appeared in `counsel-packet/07-coi-register.md`, removed from HEAD in
+the previous commit. Both remain in history; the rewrite audit treats them as one problem.
