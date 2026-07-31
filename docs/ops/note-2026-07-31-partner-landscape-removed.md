@@ -56,10 +56,50 @@ about itself and still leaves the content readable. The first is better.
 instructed the opposite. Neither is retroactive. Both are the control that would have prevented
 this, applied at the only point where it works — before the commit.
 
+## `counsel-packet/` was removed too — why drafts specifically
+
+*Added 2026-07-31, same branch.*
+
+The whole of `counsel-packet/` (19 tracked files: charter and bylaws, consent/membership
+agreement, Schedule of Defaults, operating budget, COI register, the rendered Terms and Privacy
+surfaces, and the assembled 415 KB PDF) has been removed from HEAD on the same reasoning, plus
+one specific to it.
+
+**These are pre-counsel DRAFTS of governing instruments.** Publishing a draft does not serve
+transparency — it degrades it. A reader encountering `05-governance-charter-and-bylaws.md` in a
+public repository has no way to tell, from the document, that it has not been through Oregon
+counsel, has not been ratified by the founding cohort, and is not what governs Steppe. They will
+reasonably take it for *the* governance. Every later divergence between the draft and the adopted
+instrument then reads as a change of position rather than as the ordinary difference between a
+draft and a decision.
+
+That is worse than publishing nothing, because it manufactures a false record that is hard to
+correct — the draft is already indexed, quoted, and forked by the time the real instrument exists.
+
+**Publication becomes an affirmative act, not a default.** The rule going forward, recorded in
+`CLAUDE.md` → *Do NOT publish*: ratified governance documents **may** be published deliberately,
+once counsel has reviewed them and the cohort has adopted them, and publishing them then is a
+positive good — a member-governed organization should show its members what governs them. Drafts
+are never published by default, and reaching that state is what earns publication.
+
+**And, again: removal from HEAD does not unpublish.** All 19 files were public on Codeberg
+canonical and the GitHub mirror from 2026-07-08 onward, and remain in the history of both, in
+every clone and fork taken since, and inside the assembled PDF. The same rewrite reasoning above
+applies unchanged.
+
+Every file was verified byte-identical in `~/dev/steppe-private/` before removal — all 19 were
+**absent** there beforehand (the private `counsel-packet/` held five different files, the
+complement rather than a backup), so they were copied out and hash-checked first.
+
 ## Still open, deliberately
 
-The conflict-of-interest register and the assembled counsel packet are **not** touched here. The
-register contains third-party personal data — a named director, and relationship, spouse, family
-and financial-interest fields — which makes it a decision involving someone other than the
-author, not a repository-hygiene call. Handling it is pending, separately, and should include
+The **conflict-of-interest register** at `docs/governance/steppe-coi-register-v2.md` is **not**
+touched. It contains third-party personal data — a named director, and relationship, spouse,
+family and financial-interest fields — which makes it a decision involving someone other than
+the author, not a repository-hygiene call. Handling it is pending, separately, and should include
 whether the person named is told.
+
+Note that the register's *content* also appeared in `counsel-packet/07-coi-register.md`, which
+this commit removes from HEAD. That does not resolve the register question: both copies remain in
+history, and the decision that matters is about the person named, not about which paths currently
+hold the file.

@@ -168,6 +168,25 @@ in `steppe-private/` regardless of how briefly it appears. When the two are hard
 the question to ask is whether the person is named as someone *doing engineering work* or as
 someone *whose relationships are being disclosed*.
 
+### The positive rule: ratified governance may be published; drafts never by default
+
+This is not a rule against transparency — it is a rule about *when* a document is true.
+
+**Ratified governance documents may be published deliberately**, and should be. Once counsel has
+reviewed an instrument and the cohort has adopted it, publishing it is a positive good: a
+member-governed organization ought to show its members what governs them, in public, where it
+cannot be quietly changed. Reaching that state is what earns publication.
+
+**Drafts are never published by default.** A reader who finds a charter draft in a public
+repository has no way to tell from the document that it is not yet what governs Steppe. They will
+reasonably take it for the governance — and every later difference between the draft and the
+adopted instrument then reads as a change of position rather than as the ordinary distance
+between a draft and a decision. That is worse than publishing nothing, because it manufactures a
+false record that is hard to correct once indexed, quoted and forked.
+
+So publication is an **affirmative act at the end of a process**, not the default state of a file
+that happens to live in the repo.
+
 ### If something already published turns out to be in these categories
 
 Treat it as a decision, not a cleanup. Removing it from HEAD is cheap and changes nothing about
