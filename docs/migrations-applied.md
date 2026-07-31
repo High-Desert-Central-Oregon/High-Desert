@@ -48,15 +48,34 @@ status question resolves by running that query against prod, never by recalling 
    `proposal_results` began returning each reader a tally of their own single ballot (the only
    sanctioned read path for governance results, invariant 4). Nothing in the migration record
    noticed for either. Migration 0028 restores both and pins the intent at the object.
+7. **An applied migration file may gain COMMENT-ONLY annotations after the fact. Its executable
+   statements are immutable once applied.** A migration that has run in prod is a record of what
+   ran, and rewriting its SQL would make the ledger lie about the database. But a header can go
+   stale — a hash it cites gets superseded, a forward reference describes work that was later
+   withdrawn — and a reader who checks prod against a stale header concludes something is wrong
+   when nothing is. Annotating the header keeps it honest; editing its statements would not.
+
+   **When the file and the applied bytes diverge, the ledger records BOTH**, so the audit trail
+   stays true about the difference rather than quietly picking one. The divergence must be shown
+   to be comment-only, not asserted: strip every `--` comment from each version and diff the
+   remainder.
+
+   **Worked example — 0027.** Its header was annotated in the 0029 commit to mark the old gate
+   hash superseded. The applied bytes remain
+   `26451c0b8194cb764589f8556f4d3fc2bd7c3f557c18344ae616083ed96a2d7a`; the file is now
+   `5623dcf5db6da89d15904f3cd75f6233c5c473309e054c7cab91cb9578e648fb`. Comment-stripped, the two
+   are identical — 34 executable statements on each side. The SQL that ran is unchanged.
 
 ## Applied status (as of 2026-07-30)
 
-All migrations **0012–0028 are applied and live in production**, and every one of them now has a
+All migrations **0012–0029 are applied and live in production**, and every one of them now has a
 row below. Status was verified against prod with the probe query in the next section (owner-run,
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
 fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
 returned `APPLIED` for all sixteen rows including the newly recorded 0027; re-run again 2026-07-30,
-which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028). **0029 is written but NOT applied** — the probe below therefore has **eighteen** tuples and is expected to report `MISSING` for 0029 until it is applied at its stop-gate. For 0012–0023, `Applied on` uses
+which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028; re-run again
+2026-07-30, which returned `APPLIED` for all **eighteen** rows including the newly recorded 0029).
+For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -108,7 +127,55 @@ or `PUBLIC` privilege of any kind** and grant `authenticated` **exactly `SELECT`
 baseline to `4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07`. It was correct for 0028,
 which is the point of recording it here.)* The
 applied file was `migrations/0028_view_grants_and_invoker.sql` at SHA-256
-`f693601cb1667c9722b54bea82f459e6403e259854f8f0c07898e8c7b0cd16ad`.
+`f693601cb1667c9722b54bea82f459e6403e259854f8f0c07898e8c7b0cd16ad`. 0029 (search_path sweep +
+`created_by` default) was applied by hand at its stop-gate on 2026-07-30, after a GREEN
+`seed/matrix-0029.sql` dry-run, and verified against prod by direct catalog reads: **all 57**
+functions in `public` carry `search_path = public, pg_temp` — the 47 swept by this migration plus
+the 10 already at the standard 0026 established — with **zero** non-conforming;
+`invite_tokens.created_by` defaults to `auth.uid()`; and the `neighborhood_id` comment states
+**mint-time provenance** per `docs/decisions/invite-tokens.md` §9, replacing text that described
+the withdrawn pledge landing. The applied file was `migrations/0029_search_path_sweep.sql` at
+SHA-256 `991b13b09aac8531239e24039c41945b6e9e7180d1baf7a4e6c84aab68777328`.
+
+**The gate baseline rotated, and it was deliberate — not drift.** 0029 pinned
+`enforce_invited_signup`'s `search_path`, and `ALTER FUNCTION … SET` changes what
+`pg_get_functiondef()` emits, so the hash moved:
+
+```
+8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e   <-- historical (0027's criterion)
+4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07   <-- current, confirmed in prod
+```
+
+0027 deliberately did **not** fix that `search_path`, because byte-identity of the gate *was* that
+build's regression criterion: hardening it inside the build whose entire claim was that the gate
+had not been touched would have destroyed the check that proved it. The two changes wanted
+separate commits and separate verification, and they got them.
+
+The rotation was propagated in one commit. **Live checks** — `seed/matrix-0027.sql` and
+`steppe/tests/invite-tokens.test.ts` — now assert the new value. **Historical records** — 0027's
+header, the ADR, the two ledger paragraphs above, and `deferred-hardening.md` item 1 — keep the
+old value **annotated as superseded rather than overwritten**, because rewriting them would
+falsify what those builds actually verified.
+
+**The gate was exercised in production, both directions, through the application layer.** A
+sign-in code requested for **an address not on the allowlist** produced **no `auth.users` row** —
+the gate fired under the genuine `session_user`. And a sign-in for an allowlisted address
+**succeeded**: the positive control, which is what rules out the refusal passing merely because
+signup was broken. One direction without the other proves nothing, which is why both are recorded.
+
+**That verification can only be done through the app or the local suite — never from the SQL
+editor**, and the reason is structural rather than a matter of effort. `enforce_invited_signup()`
+keys on `session_user = 'supabase_auth_admin'`, and an owner SQL session cannot become that role:
+`SET ROLE` does not change `session_user` in any case, and in this project the owner is refused
+the role outright (`ERROR 42501: permission denied to set role "supabase_auth_admin"`, confirmed).
+The application path reaches GoTrue, which *is* the real `supabase_auth_admin` connection, so it
+tests the predicate as it actually fires; the local suite opens such a connection directly and
+pairs its refusal with the same kind of positive control.
+
+So the two instruments answer different questions, and it is worth keeping them apart: **prod's
+catalog confirms the function's *definition*** — the hash above and its `search_path` — while
+**its *behaviour* needs an instrument that can present the right `session_user`**. Both were
+used, and both agree.
 
 **`service_role` still holds full DML on all four views**, inherited from the permissive default
 ACL. That is **not** introduced by 0028 — it is deliberately out of scope (G-VW-2: narrowing the
@@ -177,7 +244,7 @@ to prove the assertion can fail.
 | 0026 neighborhood pledge campaigns | `71ad6d0` | 2026-07-26 | by hand, SQL editor | ✅ Applied |
 | 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
 | 0028 view grants + owner rights | `91f9a91` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
-| 0029 search_path sweep + created_by default | _this branch_ | — | by hand, SQL editor | ⏳ **Not yet applied** |
+| 0029 search_path sweep + created_by default | `2421762` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
