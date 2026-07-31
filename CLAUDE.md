@@ -124,6 +124,87 @@ Exchange is listings-only — no on-platform transactions, ever, in the prototyp
 payments marketplace, visitor posting/voting, multi-community expansion, youth (under-18)
 accounts. If a task seems to require one of these, stop and ask.
 
+## Do NOT publish (this repo is public, on two forges)
+
+**The load-bearing fact:** Codeberg canonical **and** the GitHub mirror are both **public**.
+Anything committed here is world-readable the moment it lands, and it stays readable. Two
+consequences follow, and both are counter-intuitive enough to be worth stating outright:
+
+- **`.gitignore` does not untrack anything already tracked.** Adding a path to `.gitignore`
+  stops *future* additions and does nothing about a file already in the index. It is not a
+  remediation.
+- **Deleting a file from HEAD does not unpublish it.** The content stays in history on both
+  forges, and on any clone or fork taken meanwhile.
+
+So the only reliable control is **not adding it in the first place.** Everything below goes to
+`~/dev/steppe-private/` instead — never into this repo, not even briefly.
+
+1. **Third-party personal data — unless the person has agreed to that association.** This is a
+   **consent** rule, not a categorical ban, and the difference matters. A conflict-of-interest
+   register naming board members **who have consented to public association with Steppe** is
+   publishable, and arguably *should* be public: **a disclosure log nobody can read discloses
+   nothing.** Publishing it is the transparency posture working, not a lapse in it.
+
+   What stays out is personal detail about someone who **has not** agreed to its publication, and
+   **any granularity beyond what the disclosure actually requires** — a recusal is disclosed by
+   naming who recuses from what; it is not disclosed any better by publishing a household's
+   finances. Consent to be named as a director is not consent to arbitrary depth.
+
+   **A draft governing instrument stays out because a reader cannot tell it from the ratified
+   thing; a disclosure log is not a draft and does not carry that problem** — it is a record of
+   what is true now, not a proposal about what might become true.
+2. **Dollar figures, compensation, and operating budgets** — salary bands, stipends, reasonable-
+   compensation analysis, line-item budgets, runway. Publishing a number invites its
+   misreading, and comp figures are personal data about whoever receives them.
+3. **Pre-counsel drafts of legal instruments** — articles, bylaws, charters, policies (COI,
+   whistleblower, retention, compensation), membership agreements, schedules of defaults. A
+   draft that has not been through Oregon counsel can be quoted against Steppe as if it were
+   settled, and a member cannot tell a draft from an adopted instrument by looking.
+4. **Non-public funder or partner posture** — funder shortlists, sequencing, negotiating
+   position, and **any assessment of an organization Steppe intends to approach**. A candid
+   strengths-and-weaknesses read of a named local nonprofit is fair internally and corrosive
+   in public; the organizations named did not consent to being evaluated in the open.
+
+### The counter-rule: naming a person is not the test
+
+ADRs, decision records, and commit messages **may name collaborators in a technical context** —
+who wrote a migration, who reviewed a spec, who found a bug. That is ordinary attribution and
+should continue.
+
+**The test is the framing, not the presence of a name.** "Greg applied 0027 at the stop-gate" is
+technical. "Director X's spouse holds an interest in Y" is governance-and-conflict, and belongs
+in `steppe-private/` regardless of how briefly it appears. When the two are hard to separate,
+the question to ask is whether the person is named as someone *doing engineering work* or as
+someone *whose relationships are being disclosed*.
+
+### The positive rule: ratified governance may be published; drafts never by default
+
+This is not a rule against transparency — it is a rule about *when* a document is true.
+
+**Ratified governance documents may be published deliberately**, and should be. Once counsel has
+reviewed an instrument and the cohort has adopted it, publishing it is a positive good: a
+member-governed organization ought to show its members what governs them, in public, where it
+cannot be quietly changed. Reaching that state is what earns publication.
+
+**Drafts are never published by default.** A reader who finds a charter draft in a public
+repository has no way to tell from the document that it is not yet what governs Steppe. They will
+reasonably take it for the governance — and every later difference between the draft and the
+adopted instrument then reads as a change of position rather than as the ordinary distance
+between a draft and a decision. That is worse than publishing nothing, because it manufactures a
+false record that is hard to correct once indexed, quoted and forked.
+
+So publication is an **affirmative act at the end of a process**, not the default state of a file
+that happens to live in the repo.
+
+### If something already published turns out to be in these categories
+
+Treat it as a decision, not a cleanup. Removing it from HEAD is cheap and changes nothing about
+exposure; a history rewrite invalidates every SHA this repo cites in its own ledger, ADRs, and
+migration headers — and still does not unpublish, because the forks and clones already exist.
+Where the data concerns a third party, that person's interest outranks the tidiness of the repo,
+and the honest options are to accept publication deliberately or to notify them. Say which was
+chosen, in writing.
+
 ## Key files
 
 - `schema.sql` — the database: tables, RLS, triggers, the `proposal_results` view, seeds
