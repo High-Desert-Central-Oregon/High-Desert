@@ -433,39 +433,60 @@ belt-and-braces check rather than the primary detection.
 
 ---
 
-## 12. Scheduled `security_invoker` check on the four public views
+## 12. STANDING EXCEPTION — the `security_definer_view` advisor is wrong about these four views
 
-**What.** Nothing detects an out-of-band change to the views' `reloptions`. It has happened
-**twice** — 2026-07-30 and 2026-07-31 — and both times a member-facing break ran in production
-until a person noticed by accident
-(`docs/ops/note-2026-07-31-view-invoker-recurrence.md`). The advisor will keep suggesting the
-change indefinitely, and no suppression mechanism exists, so recurrence is the default.
+**Not a deferred item, and no longer a proposed detection control.** The detection belongs to
+`docs/migrations-applied.md` **convention 8**: the apply-status probe already asserts every one of
+these reloptions, in the 0023, 0028 and 0030 tuples, and only ever lacked a *schedule*. Building a
+second monitor here would have duplicated a check that already existed. What was missing is not a
+query — it is a **recorded decision, sitting where the advisor's suggestion is encountered**, so the
+next person to open that panel can tell a finding from a settled question.
 
-**The check** is one query with an expected result of zero rows:
+**The exception.** These are the correct settings. Do not change them from a dashboard, and do not
+change them in a migration without reading `migrations/0030_view_owner_rights_restore.sql` first.
 
-```sql
-select c.relname, array_to_string(c.reloptions, ',') as reloptions
-  from pg_class c join pg_namespace n on n.oid = c.relnamespace
- where n.nspname = 'public' and c.relkind = 'v'
-   and ( (c.relname in ('public_profiles','proposal_results','groups_directory')
-          and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')
-      or (c.relname = 'content_moderation'
-          and coalesce(array_to_string(c.reloptions,','),'') not ilike '%security_invoker=on%') );
-```
+| View | Correct setting | Why |
+|---|---|---|
+| `public_profiles` | **owner rights** (`security_invoker=false`) | 0023 narrowed `pf_read` to `id = auth.uid()` **on purpose**, precisely because this view carries the cross-member read. The per-viewer `CASE` on `auth.uid()` is the access boundary. Under invoker rights a member sees **only themselves**, across nine call sites. |
+| `proposal_results` | **owner rights** (`security_invoker=false`) | `votes` has no read policy at all (invariant 4 — ballots are secret) and `vt_select` restricts a member to their own row. Under invoker rights that predicate applies **inside the aggregate** and the community tally collapses to the reader's own ballot. The view emits aggregates only, gated on `now() > closes_at` and `ballots >= 5`. |
+| `groups_directory` | **owner rights** (`security_invoker=false`) | 0013 built it owner-rights and labelled it *"ALL GROUPS to any verified member"*. Under invoker rights an unjoined `members_only` group vanishes, which also makes `join_policy = 'request'` unreachable — you cannot ask to join a group you cannot see. |
+| `content_moderation` | **invoker rights** (`security_invoker=on`) | Pinned *on* deliberately by 0028. `mod_read` is `using (true)` for authenticated, so invoker rights change nothing for its audience, and they close the owner-rights hole an anon grant would otherwise open on a transparency log. **The advisor is right about this one.** |
 
-**Three properties it needs**, learned from the two reverts and from pipeline #218:
+**⚠ The coupling that makes three of these safe.** Owner rights are correct **only** because `anon`
+holds nothing on these views. An owner-rights view reads past base-table RLS by design; what stops
+that being an exposure is that `authenticated` is the sole role that can reach it. Restore
+`anon SELECT` on any of the three and this posture becomes an exposure. **Revoke before restoring
+owner rights, always.**
 
-1. **Scheduled, not push-triggered.** Both reverts happened with no push to Codeberg, so a
-   push-time gate cannot see them — the same structural blindness as item 11.
-2. **It must reach a person.** #218 failed on `mirror-provenance` and the failure was not acted
-   on. A check that only reddens a build reproduces the failure it is meant to catch.
-3. **It must assert `content_moderation` in the OTHER direction** — pinned *on*. A check that
-   only looks for `=on` would call a correct view broken and train people to ignore it.
+**The negative result: Supabase offers no per-object lint suppression.** Checked against the
+advisor documentation, including the lint's own page
+(`database-advisors?lint=0010_security_definer_view`). It documents the rule, its rationale, and
+**exactly one** "How to Resolve" — set `security_invoker=on`. There is no ignore list, no
+acknowledgement flag, and no false-positive path anywhere in the advisor guides. If Supabase adds
+one, applying it here is the cheapest possible close of this item.
 
-**Trigger condition — build it now, alongside item 11.** Both are "assert an invariant on a
-schedule and notify a human", neither is expressible as a push-time gate, and the marginal cost
-of the second once the first exists is a few lines. Waiting means the third revert is found the
-same way as the first two.
+**So the advisor will flag these three indefinitely, and on these views it is structurally
+incapable of being right.** Its stated risk is that such a view *"could expose more data publically
+over the project's APIs than the developer intended"* — a real risk, and **not this one**, because
+the exposure it describes requires a grant to `anon` and `anon` holds none. **The lint reads the
+reloption and cannot read the grant**, so it is deciding on half the pair that determines whether
+the risk exists. That is not a tuning disagreement; it is a check evaluating a property that does
+not carry the meaning it assigns to it.
+
+**Why a redesign is not the answer.** Recorded so it is not re-litigated: the per-viewer `CASE` in
+`public_profiles` is a **per-column** decision (`neighborhood_id` returned to the row's owner or
+when `visibility='members'`) and RLS gates **rows**, not columns — so it cannot be expressed as a
+policy. `proposal_results` must aggregate across all ballots while no member may read another's; a
+`SECURITY DEFINER` function returning the tally would satisfy the linter, but that is the same
+privilege posture wearing a different hat, traded for an RPC every call site must be rewritten to
+use. Moving the base tables to a private schema would work and would touch every policy, call site
+and migration — a schema-wide restructuring to satisfy a linter that is wrong about this case.
+
+**Status of the recurrence.** Two out-of-band reverts, 2026-07-30 and 2026-07-31, each a
+member-facing break found by a person rather than a control. Both are tabled in
+`docs/ops/note-2026-07-31-view-invoker-recurrence.md`. Convention 8's cadence is what closes that
+gap; this item is what stops the third revert being *made* rather than merely detected.
 
 **Sources.** `docs/ops/note-2026-07-31-view-invoker-recurrence.md`;
-`migrations/0030_view_owner_rights_restore.sql`; deferred item 11.
+`migrations/0030_view_owner_rights_restore.sql`; `docs/migrations-applied.md` convention 8;
+`migrations/0028_view_grants_and_invoker.sql`; `migrations/0023_profile_visibility.sql`.
