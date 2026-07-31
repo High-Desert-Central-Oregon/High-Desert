@@ -145,13 +145,28 @@ vite.config.ts.timestamp-*
 # Word lock/temp files
 ~$*.docx
 
-# Governance / funding / strategy documents: Markdown is the tracked source-of-truth
-# and a versioned + dated .pdf is the tracked human-readable export. The .docx are
-# regenerated from the Markdown for editing/signature and are NOT tracked (binary,
-# non-diffable, regenerable). To push a .docx anyway, force-add it: `git add -f <file>`.
-docs/governance/**/*.docx
-docs/funding/**/*.docx
-docs/strategy/**/*.docx
+# Governance / funding / strategy documents — see CLAUDE.md -> "Do NOT publish".
+#
+# This repository is PUBLIC on two forges. These directories accumulate exactly the
+# categories that must not be published: real-person conflict-of-interest data, dollar
+# figures and compensation, pre-counsel drafts of legal instruments, and non-public
+# funder or partner posture. Their home is ~/dev/steppe-private/.
+#
+# Broadened from `*.docx` to the whole directories on 2026-07-31. The previous entries
+# excluded only the Word copies, for diffability — a formatting concern that never asked
+# whether the content belonged in a public repo at all.
+#
+# ⚠ WHAT THIS DOES AND DOES NOT DO. It stops FUTURE files in these directories from being
+# added by accident. It does NOT untrack anything already tracked — gitignore has no effect
+# on paths already in the index — and it does not unpublish anything already committed.
+# Do not read these lines as a fix for what is already there; the already-tracked documents
+# are a separate, per-document decision.
+#
+# Legitimate public additions here (e.g. a ballot draft or the moderation policy, where
+# publication is the point) still work: force-add with `git add -f <file>`.
+docs/governance/
+docs/funding/
+docs/strategy/
 # (Other .docx — e.g. docs/brand/word/steppe-reference.docx — remain tracked.)
 
 # Stray pandoc/weasyprint intermediates (delete locally: rm -f docs/html2pdf*)
