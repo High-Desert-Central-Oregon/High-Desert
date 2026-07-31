@@ -152,19 +152,29 @@ vite.config.ts.timestamp-*
 # figures and compensation, pre-counsel drafts of legal instruments, and non-public
 # funder or partner posture. Their home is ~/dev/steppe-private/.
 #
-# Broadened from `*.docx` to the whole directories on 2026-07-31. The previous entries
-# excluded only the Word copies, for diffability — a formatting concern that never asked
-# whether the content belonged in a public repo at all.
+# ⚠ WHAT THESE LINES DO AND DO NOT DO. They stop FUTURE files from being added by accident.
+# They do NOT untrack anything already tracked — gitignore has no effect on paths already in
+# the index — and they do not unpublish anything already committed. Do not read them as a fix
+# for what is already there.
 #
-# ⚠ WHAT THIS DOES AND DOES NOT DO. It stops FUTURE files in these directories from being
-# added by accident. It does NOT untrack anything already tracked — gitignore has no effect
-# on paths already in the index — and it does not unpublish anything already committed.
-# Do not read these lines as a fix for what is already there; the already-tracked documents
-# are a separate, per-document decision.
+# THE ASYMMETRY IS DELIBERATE.
 #
-# Legitimate public additions here (e.g. a ballot draft or the moderation policy, where
-# publication is the point) still work: force-add with `git add -f <file>`.
-docs/governance/
+# docs/governance/ is ignored only for `*.docx`, NOT directory-wide, because that folder
+# deliberately holds PUBLISHED material: the conflict-of-interest register, the ballot drafts,
+# the moderation policy draft. Publication is the point for those. A directory-wide ignore
+# would silently swallow every legitimate addition and make `git add -f` the normal path —
+# which trains people to force past the very rule that is supposed to be doing the thinking,
+# and hides new files from `git status` where nobody looks for them.
+#
+# docs/funding/ and docs/strategy/ stay directory-wide: neither holds anything publishable.
+#
+# THE IGNORE IS NOT THE CONTROL. What keeps the wrong things out of governance is CLAUDE.md ->
+# "Do NOT publish": the CONSENT rule (third-party personal data only where the person has
+# agreed to that association, and never at greater granularity than the disclosure requires)
+# and the DRAFTS rule (a draft governing instrument stays out because a reader cannot tell it
+# from the ratified thing; a disclosure log is not a draft). Those are judgements a person
+# makes. A path pattern cannot make them, and should not be relied on as though it could.
+docs/governance/**/*.docx
 docs/funding/
 docs/strategy/
 # (Other .docx — e.g. docs/brand/word/steppe-reference.docx — remain tracked.)
