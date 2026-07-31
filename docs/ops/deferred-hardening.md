@@ -430,3 +430,42 @@ belt-and-braces check rather than the primary detection.
 
 **Sources.** `docs/ops/incident-2026-07-30-mirror-analytics-beacon.md`;
 `.woodpecker/ci.yml` → `mirror-provenance`; `docs/deploy-provenance.md`.
+
+---
+
+## 12. Scheduled `security_invoker` check on the four public views
+
+**What.** Nothing detects an out-of-band change to the views' `reloptions`. It has happened
+**twice** — 2026-07-30 and 2026-07-31 — and both times a member-facing break ran in production
+until a person noticed by accident
+(`docs/ops/note-2026-07-31-view-invoker-recurrence.md`). The advisor will keep suggesting the
+change indefinitely, and no suppression mechanism exists, so recurrence is the default.
+
+**The check** is one query with an expected result of zero rows:
+
+```sql
+select c.relname, array_to_string(c.reloptions, ',') as reloptions
+  from pg_class c join pg_namespace n on n.oid = c.relnamespace
+ where n.nspname = 'public' and c.relkind = 'v'
+   and ( (c.relname in ('public_profiles','proposal_results','groups_directory')
+          and coalesce(array_to_string(c.reloptions,','),'') ilike '%security_invoker=on%')
+      or (c.relname = 'content_moderation'
+          and coalesce(array_to_string(c.reloptions,','),'') not ilike '%security_invoker=on%') );
+```
+
+**Three properties it needs**, learned from the two reverts and from pipeline #218:
+
+1. **Scheduled, not push-triggered.** Both reverts happened with no push to Codeberg, so a
+   push-time gate cannot see them — the same structural blindness as item 11.
+2. **It must reach a person.** #218 failed on `mirror-provenance` and the failure was not acted
+   on. A check that only reddens a build reproduces the failure it is meant to catch.
+3. **It must assert `content_moderation` in the OTHER direction** — pinned *on*. A check that
+   only looks for `=on` would call a correct view broken and train people to ignore it.
+
+**Trigger condition — build it now, alongside item 11.** Both are "assert an invariant on a
+schedule and notify a human", neither is expressible as a push-time gate, and the marginal cost
+of the second once the first exists is a few lines. Waiting means the third revert is found the
+same way as the first two.
+
+**Sources.** `docs/ops/note-2026-07-31-view-invoker-recurrence.md`;
+`migrations/0030_view_owner_rights_restore.sql`; deferred item 11.
