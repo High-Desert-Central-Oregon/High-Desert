@@ -2,7 +2,7 @@
 
 **Status:** Accepted
 **Date:** 2026-07-29
-**Version:** 1.2
+**Version:** 1.3
 **Author:** Greg Chism, Founding Executive Director
 
 ## Changelog
@@ -11,6 +11,7 @@
 |---|---|---|
 | 1.0 | 2026-07-29 | Initial record. Bearer-with-cap tokens, redemption as an allowlist writer, invite-graph placement and retention, admin-minted now. |
 | 1.1 | 2026-07-29 | Amended after building the routes and UI. §4 corrected on where `created_by` is set. Added §7 (rate limiting, and a reversal of the build brief), §8 (the redemption GET is inert), and a note on what the verification caught. |
+| 1.3 | 2026-07-30 | Baseline **rotated by migration 0029**: the gate's `search_path` is now pinned to `(public, pg_temp)` with the other 46 pre-0026 definer functions, so §2's original hash is historical. §4's `created_by` correction is now satisfied in the database. |
 | 1.2 | 2026-07-29 | §9 added: the pledge landing is **withdrawn**, not deferred. Pledging never required an account, so routing new members to a pledge page answered a question nobody had. `neighborhood_id` is redesignated mint-time provenance rather than a routing input. The 1.1 open item is closed. |
 
 ---
@@ -89,8 +90,21 @@ byte-identical to how it went in. The baseline, captured from production on 2026
 
 ```
 sha256(pg_get_functiondef('public.enforce_invited_signup'::regproc))
-  = 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e
+  = 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e   <-- HISTORICAL (0027's criterion)
+  = 4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07   <-- CURRENT (rotated by 0029)
 ```
+
+> **Rotated in 0029, deliberately — added in 1.3.** The first value is what 0027 asserted and
+> remains the correct account of that build; it is not an error to be corrected. Migration 0029
+> pinned this function's `search_path` to `(public, pg_temp)` along with the other 46 pre-0026
+> definer functions, and `ALTER FUNCTION ... SET` changes what `pg_get_functiondef()` emits, so
+> the hash moved on purpose.
+>
+> 0027 left the `search_path` alone precisely **because** byte-identity was its regression
+> criterion: hardening the gate inside the build whose whole claim was *"the gate was not
+> touched"* would have destroyed the check that proved it. The two changes wanted separate
+> commits and separate verification, and they got them. Checking prod against the first value
+> today is expected to mismatch.
 
 If that hash changes, the build has failed regardless of what else works. The regression
 that matters most is not that a valid token admits someone — it is that an email which
@@ -163,10 +177,12 @@ never supplies the attribution.
 > database guarantees it" and "the one write path happens to do it" are different
 > assurances and only one of them survives a second write path being added.
 >
-> Moving it into the database as `default auth.uid()` is deferred to the `search_path`
-> sweep migration (see *Known deviation* below and `docs/ops/deferred-hardening.md`),
-> which is already the migration that revisits definer-function hygiene. 0027 is applied
-> to production and is not editable.
+> Moving it into the database as `default auth.uid()` was deferred to the `search_path` sweep.
+> **Done in migration 0029**, which sets `alter column created_by set default auth.uid()`.
+> The mint action is unaffected: a DEFAULT applies only when an INSERT omits the column, and
+> the action supplies it explicitly, where an explicit value always wins. What changed is that
+> a future write path which forgets the column now records the acting user instead of NULL —
+> the sentence above is finally true of the database rather than of one code path.
 
 Service-role is confined to `redeem_invite()`. It has to be: the person redeeming is
 anonymous and has no session, so the write cannot be authorised as them. That function is
@@ -395,10 +411,12 @@ in §2, and altering its `search_path` would break that check while folding an u
 hardening into a build whose entire claim is that the gate was not touched. The two
 changes want separate commits and separate verification.
 
-Follow-up: a sweep pinning `public, pg_temp` on every SECURITY DEFINER function created
-before 0026 — around forty-four functions, of which this is one. It should be its own
-migration, with the hash of each affected body recorded before and after. Tracked, with
-the other deferred items this build accumulated, in `docs/ops/deferred-hardening.md`.
+~~Follow-up: a sweep pinning `public, pg_temp` on every SECURITY DEFINER function created
+before 0026.~~ **Done — migration 0029.** It was **47** functions, not forty-four, and there
+were **zero** unpinned ones: all 47 already carried `SET search_path TO 'public'`, so the
+sweep only moved `pg_temp` from implicitly-first to explicitly-last. No schema left any
+path, which is why the change could be shown non-destructive structurally rather than case
+by case. Only the gate's hash is pinned anywhere, so only it needed rotating.
 
 ---
 

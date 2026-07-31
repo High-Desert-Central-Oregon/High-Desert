@@ -29,8 +29,16 @@ import { dbReachable, makeClient, impersonate, RANDO, DB_URL } from "./helpers/p
  * row it creates carries the TAG prefix below.
  */
 
+// Rotated by migration 0029, which pinned this function's search_path to
+// (public, pg_temp) along with the other 46 pre-0026 definer functions.
+// ALTER FUNCTION ... SET changes pg_get_functiondef output, so the hash moved
+// deliberately. The pre-0029 value was
+// 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e — historical.
+// 0027 left the search_path alone on purpose: byte-identity of the gate was
+// that build's regression criterion, and hardening it there would have
+// destroyed the check that made the build trustworthy.
 const BASELINE_SHA =
-  "8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e";
+  "4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07";
 
 /** Everything this suite writes is prefixed so cleanup is exact. */
 const TAG = "zz-invite-test";

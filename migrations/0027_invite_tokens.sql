@@ -30,6 +30,17 @@
 --   regression that matters most is not that a valid token admits someone — it
 --   is that an email which never passed through a token still cannot sign up.
 --
+--   ⚠ SUPERSEDED BY 0029 — the value above is HISTORICAL. It records what THIS
+--   build asserted and remains the correct account of 0027. Migration 0029
+--   pinned this function's search_path to (public, pg_temp) along with the other
+--   46 pre-0026 definer functions; ALTER FUNCTION ... SET changes what
+--   pg_get_functiondef() emits, so the baseline rotated deliberately to
+--     4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07
+--   0027 left the search_path alone ON PURPOSE: byte-identity of the gate was
+--   this build's regression criterion, and hardening it here would have
+--   destroyed the check that made the build trustworthy. Do not "correct" the
+--   value above — checking prod against it today is expected to mismatch.
+--
 -- G-flags / decisions taken here:
 --   G-INV-1  Tokens are BEARER with a use cap, not single-use. Single-use would
 --            fix the interface and leave the bottleneck (fifty invitations =

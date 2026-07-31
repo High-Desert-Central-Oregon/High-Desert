@@ -14,21 +14,38 @@ written; the applied ledger is `docs/migrations-applied.md`.
 
 ---
 
-## 1. `search_path` sweep on pre-0026 definer functions
+## ~~1. `search_path` sweep on pre-0026 definer functions~~ — CLOSED by migration 0029
 
 **What.** Migration 0026 established `SET search_path = public, pg_temp` as the standard
 for every `SECURITY DEFINER` function, which prevents a temporary table shadowing a real
 one inside a definer body. Roughly **forty-four** functions predate that standard and
 carry the older `SET search_path TO 'public'`.
 
-**Including `enforce_invited_signup()`** — the invite gate itself. That is the reason this
-is written down rather than done: the byte-identity of that function is the regression
-criterion for migration 0027
-(`sha256(pg_get_functiondef(...)) = 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e`),
-asserted in the migration header, the dry-run matrix, and the test suite. Changing its
-`search_path` moves that hash. Doing it inside 0027 would have folded an unrelated
-hardening into a build whose entire claim was that the gate was not touched, and would have
-broken the check that proved it.
+**CLOSED 2026-07-30 by migration 0029.** Kept struck through rather than deleted, per this
+file's own rule.
+
+**It was 47 functions, not forty-four**, and **zero** were unpinned — all 47 already carried
+`SET search_path TO 'public'`. That made the sweep provably non-destructive: naming `pg_temp`
+explicitly moves it from implicitly-first to last, and removes no schema from any path.
+Verified first that no function creates a temp object, and that the only `extensions.` users
+(`mint_calendar_feed`, `rotate_calendar_feed`) call it fully qualified — pgcrypto lives in
+`extensions`, not `public`, so an unqualified call would have been a real break.
+
+**Including `enforce_invited_signup()`** — the invite gate. Its byte-identity was migration
+0027's regression criterion, which is why the sweep could not happen there: hardening the
+gate inside the build whose entire claim was that the gate was untouched would have destroyed
+the check that proved it. The baseline therefore rotated deliberately in 0029:
+
+```
+pre-0029 (historical, 0027's criterion): 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e
+post-0029 (current):                    4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07
+```
+
+All six references were rotated in the same commit — the 0027 header (annotated as
+superseded, not overwritten), `seed/matrix-0027.sql`, `steppe/tests/invite-tokens.test.ts`,
+the ADR, the ledger, and this item. Only the gate's hash is pinned anywhere; the other 46
+rotated too and are deliberately not asserted, because 46 pinned body hashes would be 46 ways
+for a maintenance edit to fail a check for no security reason.
 
 **How it must be done.** Its own migration, with **the hash of every affected body recorded
 before and after** — not a count of functions changed. The before-hashes are the evidence
@@ -77,7 +94,7 @@ trusting something weaker than it appears.
 
 ---
 
-## 3. `default auth.uid()` on `invite_tokens.created_by`
+## ~~3. `default auth.uid()` on `invite_tokens.created_by`~~ — CLOSED by migration 0029
 
 **What.** Migration 0027 ships `created_by` with no default and no trigger. The mint server
 action sets it from the caller's session, so the attribution is server-set and a client
@@ -245,7 +262,7 @@ limiting* (v1.1).
 
 ---
 
-## 8. The prod column comment on `invite_tokens.neighborhood_id` describes withdrawn work
+## ~~8. The prod column comment on `invite_tokens.neighborhood_id` describes withdrawn work~~ — CLOSED by migration 0029
 
 **What.** The live comment in production still reads:
 
@@ -268,8 +285,13 @@ it describes, which is exactly why a stale one outranks a correct file nobody op
 **Why it was not fixed in place.** Migration 0027 is applied to production. The file is not
 editable after apply, and a `COMMENT ON COLUMN` is DDL, so correcting it is a migration.
 
-**How it must be done.** Fold into the `search_path` sweep (item 1) — that migration already
-touches this subsystem and already carries before/after hashes. Reword to state provenance
+**CLOSED 2026-07-30 by migration 0029**, which rewrote the comment to state mint-time
+provenance only and cites ADR §9 at the object, so the next reader lands on the record instead
+of re-deriving it. The column itself is unchanged: still nullable, still `ON DELETE SET NULL`,
+still read by no function. Only the sentence describing it was wrong.
+
+**How it was done.** Folded into the `search_path` sweep (item 1), the migration that already
+touches this subsystem. Reword to state provenance
 only, and cite ADR §9 so the next reader lands on the record rather than re-deriving it. The
 column itself does not change: still nullable, still `ON DELETE SET NULL`, still read by no
 function. Only the sentence describing it is wrong.
