@@ -490,3 +490,63 @@ gap; this item is what stops the third revert being *made* rather than merely de
 **Sources.** `docs/ops/note-2026-07-31-view-invoker-recurrence.md`;
 `migrations/0030_view_owner_rights_restore.sql`; `docs/migrations-applied.md` convention 8;
 `migrations/0028_view_grants_and_invoker.sql`; `migrations/0023_profile_visibility.sql`.
+
+---
+
+## 13. `interest_signups` carries the permissive default ACL for `anon` / `authenticated`
+
+**What.** `interest_signups` is deny-by-default at the *policy* layer — RLS enabled, **zero**
+policies (0014) — but at the *privilege* layer it still holds the wide ACL that Supabase's
+project defaults hand every new table in this project. Read from prod:
+
+```
+interest_signups | anon          | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE
+interest_signups | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE
+qr_counts        | anon          | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE
+qr_counts        | authenticated | DELETE, INSERT, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE
+```
+
+**This is defense-in-depth, not a live hole, and the distinction is the whole point of the
+item.** RLS is what actually refuses the write: neither role is the table owner, so
+deny-by-default binds them, and `steppe/tests/rls-smoke.test.ts` exercises exactly that against a
+live database. The grant is a *second* lock that was never turned, sitting behind a first lock
+that is closed. Nothing is currently reachable through it.
+
+**Same latent gap already noted for `qr_counts`** — not in this file, but as the worked proof
+under convention 5 of `docs/migrations-applied.md`: `seed/matrix-0025.sql` case 5e asserts
+`has_table_privilege('anon','public.qr_counts','insert')` is **false**, which passes locally and
+would **fail against prod**, because local and prod apply different default ACLs. That case is
+the standing evidence that a green local matrix says nothing about prod privileges. The two
+tables share one cause and should be fixed together.
+
+**Why it matters despite not being live.** The posture is one policy away from being a hole. Any
+future `create policy … for insert to anon` on either table — added for a plausible reason, by
+someone reading "RLS is on" as the safety property — would immediately be backed by a full DML
+grant rather than by a narrow one, and the review that added the policy would not see the grant.
+0026 already took the stricter posture deliberately for `pledges` (G-PLG-b: RLS **and** every
+privilege revoked from all three client roles), and recorded that it was going one step past
+0014. This item is 0014 and 0015 catching up to that.
+
+**How it must be done. Its own migration and its own guard — not folded into a feature build.**
+A `revoke` that turns out to be load-bearing must fail visibly and in isolation, not inside a
+commit whose subject is about something else. Specifically:
+
+1. `revoke all on public.interest_signups from anon, authenticated;` and the same for
+   `qr_counts`. `service_role` is deliberately **out of scope** — it bypasses RLS by design and
+   is the sole writer of both tables (`/api/interest`, `/api/qr` → `increment_qr_count()`).
+   Narrowing the secret key is a sweep-wide decision, exactly as G-VW-2 held for the four views.
+2. A guard that asserts the *prod* posture rather than the local one. `matrix-0025` case 5e is
+   the cautionary example: it asserts the right property against a substrate that cannot
+   disprove it. The guard for this must either run against prod's catalog read-only, or assert
+   the revoke's presence in a way local defaults cannot satisfy accidentally.
+3. Re-run `tests/rls-smoke.test.ts` afterwards. Its refusals must still be refusals — and the
+   error should change shape, from an RLS violation to `insufficient_privilege`, which is itself
+   the evidence the second lock is now doing work.
+
+**Before it lands.** Nothing blocks it. It should not share a commit with any behavioural change,
+and it should not be attempted at the same stop-gate as an unrelated migration.
+
+**Sources.** `migrations/0014_interest_signups.sql`; `migrations/0015_qr_counts.sql`;
+`migrations/0026_neighborhood_pledges.sql` (G-PLG-b, the stricter posture);
+`docs/migrations-applied.md` convention 5; `seed/matrix-0025.sql` case 5e;
+`steppe/tests/rls-smoke.test.ts`.
