@@ -111,9 +111,9 @@ status question resolves by running that query against prod, never by recalling 
    already recorded in this file and in the prod catalog, and both are permanent. Everything
    unapplied renumbers around it, furthest-from-landing moving furthest.
 
-## Applied status (as of 2026-07-30)
+## Applied status (as of 2026-08-10)
 
-All migrations **0012–0030 are applied and live in production**, and every one of them now has a
+All migrations **0012–0031 are applied and live in production**, and every one of them now has a
 row below. Status was verified against prod with the probe query in the next section (owner-run,
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
 fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
@@ -121,7 +121,8 @@ returned `APPLIED` for all sixteen rows including the newly recorded 0027; re-ru
 which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028; re-run again
 2026-07-30, which returned `APPLIED` for all **eighteen** rows including the newly recorded 0029;
 re-run again 2026-07-30, which returned `APPLIED` for all **nineteen** rows including the newly
-recorded 0030). For 0012–0023, `Applied on` uses
+recorded 0030; re-run again 2026-08-10, which returned `APPLIED` for all **twenty** rows including
+the newly recorded 0031). For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -316,6 +317,28 @@ signed-in member's browser renders them. The remaining two mechanisms are covere
 `steppe/tests/view-invoker-rights.test.ts` and `seed/matrix-0030.sql`, both of which assert the
 working state **and** flip `security_invoker` to prove the assertion can fail.
 
+0031 (join signup source) was applied by hand in the dashboard SQL editor at its stop-gate on
+2026-08-10, after a GREEN `seed/matrix-0031.sql` dry-run and a GREEN full Vitest suite, and verified
+against prod by the read-only check in the probe below: `interest_signups.source` is present, `text`,
+**`NOT NULL`**, defaults to `'direct'::text`, and carries
+`CHECK ((source = ANY (ARRAY['bc'::text, 'pc'::text, 'bm'::text, 'direct'::text])))`. The table's
+deny-by-default posture is unchanged — **RLS on, still ZERO policies**, re-confirmed after the apply.
+All 8 pre-existing rows took the `'direct'` default; no row holds any other value. It adds one
+column recording which printed piece produced a signup (`?r=bc|pc|bm` on the business card,
+postcard and bookmark; `direct` otherwise), and touches no function, no policy and no grant. The
+applied file was `migrations/0031_join_signup_source.sql` at SHA-256
+`adbe0a97a90ace5757a38c68c8ac7e903be669a1bc941ac44a0bf5dffe48bdb9`.
+
+> **0031 is migration-file only — deliberately NOT folded into `schema.sql`**, consistent with every
+> migration from 0016 onward. `schema.sql` is a **baseline through 0015**
+> (`scripts/reset-local.sh:40`); a fresh database is built by running it and then replaying 0016+ in
+> order. An earlier draft of this migration *did* fold the column in and said so in its header; that
+> was removed before the apply, because a baseline-plus-one-column `schema.sql` is worse than a clean
+> baseline — no downstream reader can tell which parts are folded and which are not. The removal was
+> proved non-load-bearing: `reset-local.sh` rebuilds local to the identical column, default, CHECK and
+> zero-policy shape without it. **An earlier hash for this file, `f9d9f923…`, is STALE** — it predates
+> the header correction and was never applied to anything. The applied bytes are `adbe0a97…` above.
+
 > **0024 and 0025 carry no apply date, on purpose.** Both were applied by hand and both are
 > confirmed live by the probe below (re-run 2026-07-26), but the day each was applied was never
 > written down, and nothing in the catalog records when DDL ran. The date is therefore left as
@@ -345,6 +368,7 @@ working state **and** flip `security_invoker` to prove the assertion can fail.
 | 0028 view grants + owner rights | `91f9a91` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
 | 0029 search_path sweep + created_by default | `2421762` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
 | 0030 view owner rights restore | `916b295` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
+| 0031 join signup source (`interest_signups.source`) | `1d569e3` | 2026-08-10 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -606,7 +630,30 @@ from (values
            where table_schema = 'public'
              and table_name in ('public_profiles','proposal_results',
                                 'content_moderation','groups_directory')
-             and grantee = 'authenticated' and privilege_type = 'SELECT') = 4)
+             and grantee = 'authenticated' and privilege_type = 'SELECT') = 4),
+  -- 0031 asserts the CONSTRAINT and the RLS posture, not just the column. The
+  -- column alone is not a sufficient signature: an ALTER that added it without
+  -- the CHECK would let an unrecognised value be stored, which is the one thing
+  -- the migration exists to prevent. The zero-policy clause is here because the
+  -- table's whole protection is deny-by-default RLS (0014) — adding the column
+  -- must not have been an occasion to add a policy.
+  ('0031 join signup source',
+   'interest_signups.source present, NOT NULL, defaults to direct, four-value CHECK; RLS still zero-policy',
+   exists (select 1 from information_schema.columns
+            where table_schema = 'public' and table_name = 'interest_signups'
+              and column_name = 'source'
+              and data_type = 'text'
+              and is_nullable = 'NO'
+              and column_default ilike '%direct%')
+     and exists (select 1 from pg_constraint
+                  where conrelid = 'public.interest_signups'::regclass
+                    and conname = 'interest_signups_source_check'
+                    and pg_get_constraintdef(oid) ilike '%bc%'
+                    and pg_get_constraintdef(oid) ilike '%pc%'
+                    and pg_get_constraintdef(oid) ilike '%bm%'
+                    and pg_get_constraintdef(oid) ilike '%direct%')
+     and (select count(*) from pg_policies
+           where schemaname = 'public' and tablename = 'interest_signups') = 0)
 ) as m(migration, probe, present)
 order by m.migration;
 ```
