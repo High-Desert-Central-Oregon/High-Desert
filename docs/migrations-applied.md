@@ -65,17 +65,42 @@ status question resolves by running that query against prod, never by recalling 
    `26451c0b8194cb764589f8556f4d3fc2bd7c3f557c18344ae616083ed96a2d7a`; the file is now
    `5623dcf5db6da89d15904f3cd75f6233c5c473309e054c7cab91cb9578e648fb`. Comment-stripped, the two
    are identical — 34 executable statements on each side. The SQL that ran is unchanged.
+8. **The apply-status probe is run on a CADENCE, not only at stop-gates.** Weekly, and before any
+   session that touches the database. It is a read-only catalog `SELECT`; running it costs
+   seconds.
+
+   **The evidence is that the probe was already correct and still caught nothing.** 0023's tuple
+   asserts `public_profiles` is not `security_invoker=on`, and 0028's asserts the same for all
+   three owner-rights views plus `content_moderation` pinned the other way. Those clauses are
+   exactly the drift that occurred — **twice**, on 2026-07-30 and again on 2026-07-31. The second
+   revert would have been reported `MISSING` by the committed probe on the day it happened, by a
+   query already sitting in this file. It was found by a person instead. (For the first, the
+   `public_profiles` clause was *added in response to it*, so the probe would have caught it only
+   in the counterfactual where that clause already existed — which is precisely the argument for
+   the cadence, since the clause exists now and the next revert is the one it can catch.)
+
+   **Why it caught nothing is not a defect in the query.** The probe is only ever run to answer
+   *"did my migration land?"* — a question asked at a stop-gate, by someone who just applied
+   something, about the thing they just applied. Nobody runs it to ask *"is prod still what we
+   think it is?"*, and that is the question drift answers. Both reverts arrived with no push, no
+   migration, and no stop-gate, so the moment that triggers the probe never came.
+
+   **A correct check nobody runs is not a check.** It is documentation of a check. The cadence is
+   what converts the query from a confirmation ritual into a detection control, and it is the
+   reason deferred item 12 is a *standing exception* rather than a second monitor: the monitoring
+   already exists here and only needed a schedule.
 
 ## Applied status (as of 2026-07-30)
 
-All migrations **0012–0029 are applied and live in production**, and every one of them now has a
+All migrations **0012–0030 are applied and live in production**, and every one of them now has a
 row below. Status was verified against prod with the probe query in the next section (owner-run,
 output confirmed 2026-07-14 for 0012–0023; re-run 2026-07-26, which returned `APPLIED` for all
 fifteen rows including the newly recorded 0024, 0025 and 0026; re-run again 2026-07-29, which
 returned `APPLIED` for all sixteen rows including the newly recorded 0027; re-run again 2026-07-30,
 which returned `APPLIED` for all **seventeen** rows including the newly recorded 0028; re-run again
-2026-07-30, which returned `APPLIED` for all **eighteen** rows including the newly recorded 0029).
-For 0012–0023, `Applied on` uses
+2026-07-30, which returned `APPLIED` for all **eighteen** rows including the newly recorded 0029;
+re-run again 2026-07-30, which returned `APPLIED` for all **nineteen** rows including the newly
+recorded 0030). For 0012–0023, `Applied on` uses
 each migration's introducing-commit date as the by-hand-apply proxy (owner may refine specific
 dates); 0024 and 0025 are deliberately left undated, see the note below. 0023 (profile visibility + perf
 indexes) was applied by hand at its stop-gate on 2026-07-14, after its four-lens review and a
@@ -217,6 +242,59 @@ Both unverified mechanisms are covered locally by `steppe/tests/view-invoker-rig
 `seed/matrix-0028.sql`, each of which asserts the working state **and** flips `security_invoker`
 to prove the assertion can fail.
 
+0030 (view owner rights restore) was applied by hand at its stop-gate on 2026-07-30, after a GREEN
+`seed/matrix-0030.sql` dry-run, and verified against prod by the probe tuple below: `public_profiles`,
+`proposal_results` and `groups_directory` are at **`security_invoker=false`**; `content_moderation`
+remains **pinned to `security_invoker=on`**; `anon` and `PUBLIC` hold **nothing** on all four; and
+`authenticated` holds **exactly `SELECT`**, four grants and no other privilege. The gate hash was
+unchanged at `4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07` — 0030 touches no
+function. The applied file was `migrations/0030_view_owner_rights_restore.sql` at SHA-256
+`e4078f166385483e1764b5b3b13b71f4111e6d7f652d108f4e339da0a2a852b4`.
+
+**This is the second out-of-band revert of the same deliberate design, and recording it as a
+recurrence rather than as an incident is the point.** 0023 set `public_profiles` to owner rights on
+purpose and said so at the object; a dashboard advisor action reverted it; 0028 restored it; a
+second out-of-band action reverted it again; 0030 restores it. Two reverts of one decision is not
+bad luck — it is the predictable output of a vendor panel that will keep proposing the same change
+indefinitely, against a repo that had no way to see the change land.
+
+**What 0030 fixed, and how much of it was actually user-visible — stated separately, because
+conflating them would overstate the damage and understate the exposure.** All three views carried
+the regression; only one could manifest:
+
+- **`public_profiles` — a live, member-facing break.** The view returned the caller **only their
+  own row**, across the nine call sites that read it for other members' names. Member names and
+  neighborhoods rendered empty in the app for as long as the revert stood.
+- **`proposal_results` — the same regression, not user-visible.** The tally collapses to the
+  caller's own ballot under invoker rights, but prod holds **zero proposals**, so there was nothing
+  to collapse.
+- **`groups_directory` — the same regression, not user-visible.** Unjoined `members_only` groups
+  vanish and `join_policy = 'request'` becomes unreachable, but prod holds **zero `members_only`
+  groups**, so the break had nothing to manifest against.
+
+**Grants survived this revert, and that fact is the diagnostic.** `anon` held nothing and
+`authenticated` held exactly `SELECT` throughout — measured before the apply, not assumed. A view
+drop/create re-applies the project's default privileges, as the 2026-07-30 remediation demonstrated
+by handing `anon` all seven; privileges being intact therefore proves this run was
+`ALTER VIEW … SET`, not a recreate. That is why 0030 carries **no `REVOKE`**: there was nothing to
+repair.
+
+**The absence of a revoke here is a fact about this incident, not licence to reorder a future one.**
+Owner rights are safe **only** because `anon` holds nothing on these views. An owner-rights view
+reads past base-table RLS by design; what keeps that from being an exposure is that the sole role
+which can reach it is `authenticated`, with the view's own projection deciding what that role sees.
+Restore `anon SELECT` on any of the three and the posture becomes an exposure — every member row
+readable by anyone holding the publishable key. **Revoke before restoring owner rights, always.**
+
+**The member-facing render was not re-confirmed in the app.** What *was* confirmed is stronger than
+the catalog alone and weaker than an app check, so it is worth naming precisely: prod's read path
+was exercised under SQL-level impersonation as `authenticated`, and returned **3 of 3 members with
+non-null names** — the cross-member read the break had collapsed to 1. That is the same instrument
+used for 0028, and it carries the same caveat: it proves the database returns the rows, not that a
+signed-in member's browser renders them. The remaining two mechanisms are covered locally by
+`steppe/tests/view-invoker-rights.test.ts` and `seed/matrix-0030.sql`, both of which assert the
+working state **and** flip `security_invoker` to prove the assertion can fail.
+
 > **0024 and 0025 carry no apply date, on purpose.** Both were applied by hand and both are
 > confirmed live by the probe below (re-run 2026-07-26), but the day each was applied was never
 > written down, and nothing in the catalog records when DDL ran. The date is therefore left as
@@ -245,6 +323,7 @@ to prove the assertion can fail.
 | 0027 invite tokens (bearer, capped) | `9899c0c` | 2026-07-29 | by hand, SQL editor | ✅ Applied |
 | 0028 view grants + owner rights | `91f9a91` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
 | 0029 search_path sweep + created_by default | `2421762` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
+| 0030 view owner rights restore | `916b295` | 2026-07-30 | by hand, SQL editor | ✅ Applied |
 
 ⚠️ 0019 was introduced inside a UI commit (`35f486c`), not its own commit — the anti-pattern the
 convention above forbids. It **is** applied (its `file_appeal()` recognizes `post` targets, so
@@ -472,7 +551,41 @@ from (values
      and (select col_description('public.invite_tokens'::regclass, ordinal_position)
             from information_schema.columns
            where table_schema='public' and table_name='invite_tokens'
-             and column_name='neighborhood_id') not ilike '%pledge landing%')
+             and column_name='neighborhood_id') not ilike '%pledge landing%'),
+  -- 0030 restores what 0028 already restored once. Its tuple duplicates 0028's
+  -- reloption assertions on purpose: the drift recurred, and a tuple that only
+  -- says "0030 ran" would report APPLIED against a third revert. Kept
+  -- character-identical to the header of migrations/0030_view_owner_rights_restore.sql.
+  ('0030 view owner rights restored',
+   'three views owner-rights, content_moderation invoker; anon holds nothing on any of the four; authenticated exactly SELECT',
+   -- (i) the three owner-rights views are owner-rights. `security_invoker=off`
+   --     and an ABSENT reloption both mean owner rights, so assert NOT-on
+   --     rather than equality to a literal.
+   not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                where n.nspname = 'public'
+                  and c.relname in ('public_profiles','proposal_results','groups_directory')
+                  and coalesce(array_to_string(c.reloptions, ','), '') ilike '%security_invoker=on%')
+   -- (ii) content_moderation stays invoker-rights, deliberately
+     and exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
+                  where n.nspname = 'public' and c.relname = 'content_moderation'
+                    and coalesce(array_to_string(c.reloptions, ','), '') ilike '%security_invoker=on%')
+   -- (iii) no anon or PUBLIC privilege on any of the four — the coupling above
+     and not exists (select 1 from information_schema.role_table_grants
+                      where table_schema = 'public'
+                        and table_name in ('public_profiles','proposal_results',
+                                           'content_moderation','groups_directory')
+                        and grantee in ('anon','PUBLIC'))
+   -- (iv) authenticated holds exactly SELECT, nothing more
+     and not exists (select 1 from information_schema.role_table_grants
+                      where table_schema = 'public'
+                        and table_name in ('public_profiles','proposal_results',
+                                           'content_moderation','groups_directory')
+                        and grantee = 'authenticated' and privilege_type <> 'SELECT')
+     and (select count(*) from information_schema.role_table_grants
+           where table_schema = 'public'
+             and table_name in ('public_profiles','proposal_results',
+                                'content_moderation','groups_directory')
+             and grantee = 'authenticated' and privilege_type = 'SELECT') = 4)
 ) as m(migration, probe, present)
 order by m.migration;
 ```
