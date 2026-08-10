@@ -105,6 +105,34 @@ steps:
         fi
         echo "DCO OK: all pushed commits carry a Signed-off-by trailer."
 
+  # ---------------------------------------------------------------------------
+  # Migration-number collision guard. A migration number is a name for one piece
+  # of work; this fails the run when one number names two.
+  #
+  # WHY IT MUST FETCH EVERY BRANCH. The collision this exists to catch is
+  # invisible from any single branch — on 2026-08-10 the number 0030 was claimed
+  # by an applied-and-pushed migration, an unpushed local one, and a spec
+  # proposing a third, and each author had checked "what's the last migration"
+  # against a different branch and got a different answer. A gate that only saw
+  # its own checkout would have passed all three. So: deepen a shallow clone and
+  # fetch all heads before scanning.
+  #
+  # Runs on push AND pull_request, on every branch (inherits the top-level
+  # `when`), because the useful moment to catch a duplicate number is while the
+  # branch is still cheap to renumber — not after it lands.
+  migration-numbers:
+    image: alpine/git
+    commands:
+      - |
+        set -eu
+        if [ -f "$(git rev-parse --git-dir)/shallow" ]; then
+          echo "note: shallow clone — deepening so every branch is visible to the scan"
+          git fetch -q --unshallow || git fetch -q --deepen=2147483647 || true
+        fi
+        git fetch -q --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*' || \
+          echo "note: could not fetch all heads — scanning the refs present in this clone"
+        sh scripts/check-migration-numbers.sh
+
   install:
     image: node:26
     directory: steppe

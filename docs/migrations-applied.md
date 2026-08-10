@@ -90,6 +90,27 @@ status question resolves by running that query against prod, never by recalling 
    reason deferred item 12 is a *standing exception* rather than a second monitor: the monitoring
    already exists here and only needed a schedule.
 
+9. **The next migration number is derived from ALL branches, never from the one you are on** —
+   and CI enforces it (`scripts/check-migration-numbers.sh`, wired as the `migration-numbers`
+   step in `.woodpecker/ci.yml`).
+
+   **The evidence.** On 2026-08-10 the number 0030 was claimed three ways at once: the applied
+   and pushed `0030_view_owner_rights_restore.sql`; a locally written, unpushed
+   `0030_join_signup_source.sql`; and `docs/spec/notices-n1-spec-v1.md` proposing a third,
+   `0030_notices_and_sources.sql`. Two of the three also claimed the same dry-run path,
+   `seed/matrix-0030.sql`. Nobody was careless — each author had checked what the last migration
+   was, against a different branch, and got a different answer. The N1 spec even said so in its
+   own header: *"0029 is the last applied"*. It was not; 0030 was.
+
+   **Why "check the ledger" was not sufficient on its own.** This file only records what is
+   **applied**. A number claimed by an unapplied migration on an unmerged branch is invisible
+   here, and that is exactly the state a second author collides with. The ledger answers *what
+   ran*; the guard answers *what is spoken for*. Both questions have to be asked.
+
+   **Which claimant moves, when it happens.** The applied one never moves — its number is
+   already recorded in this file and in the prod catalog, and both are permanent. Everything
+   unapplied renumbers around it, furthest-from-landing moving furthest.
+
 ## Applied status (as of 2026-07-30)
 
 All migrations **0012–0030 are applied and live in production**, and every one of them now has a
