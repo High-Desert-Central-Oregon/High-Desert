@@ -36,6 +36,25 @@ describe.skipIf(!enabled)("RLS smoke — deny-by-default (anonymous client)", ()
     expect(error).toBeTruthy();
   });
 
+  // Guard (d), migration 0031: the ACTUAL write path for interest_signups is
+  // the server-only service-role route (app/api/interest/route.ts) — there is
+  // no anon RPC and no anon table grant that matters, because RLS (zero
+  // policies) is what blocks this regardless of table-level grant state. This
+  // documents that posture directly against a live database and fails loudly
+  // if the deny-by-default RLS on this table ever regresses.
+  //
+  // Deliberately uses an ALLOWLISTED source value ('bc'), not a hostile one:
+  // a hostile value would be refused by the source CHECK constraint even if
+  // RLS were broken, which would make this test green for the wrong reason
+  // and hide an RLS regression behind the CHECK. Using a value that passes
+  // every other constraint isolates RLS as the only thing that can block it.
+  it("anon cannot WRITE interest_signups.source directly, even a well-formed value", async () => {
+    const { error } = await supa
+      .from("interest_signups")
+      .insert({ email: "rls-probe-source@example.com", consent: true, source: "bc" });
+    expect(error).toBeTruthy();
+  });
+
   it("anon cannot READ votes — ballots are secret (no read policy exists)", async () => {
     const { data, error } = await supa.from("votes").select("*").limit(5);
     expect(error ? true : (data ?? []).length === 0).toBe(true);
