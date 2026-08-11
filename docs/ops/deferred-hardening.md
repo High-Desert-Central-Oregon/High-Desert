@@ -550,3 +550,57 @@ and it should not be attempted at the same stop-gate as an unrelated migration.
 `migrations/0026_neighborhood_pledges.sql` (G-PLG-b, the stricter posture);
 `docs/migrations-applied.md` convention 5; `seed/matrix-0025.sql` case 5e;
 `steppe/tests/rls-smoke.test.ts`.
+
+---
+
+## 14. Two parallel print-QR attribution mechanisms now exist
+
+**What.** As of migration 0031 there are **two** independent ways a printed piece tells Steppe it
+produced a visit, and they overlap in purpose:
+
+| | Short-slug system (0015 / 0025) | `?r=` source column (0031) |
+|---|---|---|
+| URL | `steppe.community/q` → 307 → `/join?utm_source=qr&utm_medium=card&utm_content=quiet` | `www.steppe.community/join?r=bc` |
+| Code | `app/{q,p,d,e,c,s}/route.ts` → `lib/print-slugs.ts` | `lib/signup-source.ts` → `/api/interest` |
+| Storage | `qr_counts` — aggregate scan/join counts per variant per day | `interest_signups.source` — per-row, on the signup |
+| Granularity | six print variants | three pieces (`bc`, `pc`, `bm`) |
+
+Both answer "which printed thing worked". Neither can see the other's data.
+
+**They are also mutually incompatible as currently written.** `printRedirect()` builds its
+destination with `new URL(PRINT_SLUGS[slug], request.url)`, which takes the query string from the
+slug table and **discards whatever the incoming request carried**. So `/q?r=bc` redirects to
+`/join?...utm_content=quiet` with no `r`, and the signup records `'direct'`. A printed piece can
+use the short slug *or* carry `?r=`, not both.
+
+**The concrete cost already paid, which is why this is filed rather than shrugged at.** Because
+`?r=` could not go through a short slug, the printed QR had to encode the full
+`https://www.steppe.community/join?r=bc`. That is long enough that holding the QR at **33 modules**
+required dropping error correction from **H to Q**. Level Q tolerates ~25% damage against H's ~30%
+— on a business card that lives in a wallet, or a postcard that goes through a sorting machine,
+that margin is the thing being spent. The short-slug system exists precisely to keep printed URLs
+short; the new mechanism bypassed it and paid for it in redundancy.
+
+**Reconcile before the next print run** — the deadline is real, because a print run is not
+revisable and the QRs on it are permanent. Three steps, in order:
+
+1. **Make `printRedirect()` preserve incoming query params**, merging them over the slug's own
+   (or under, if a collision on `utm_content` should favour the slug). This is the enabling
+   change and is small — one function in `lib/print-slugs.ts`.
+2. **Move printed QRs onto short slugs**, so the encoded URL is `steppe.community/b` rather than
+   the full `/join?r=bc`. That buys the module budget back and lets error correction return to H.
+3. **Pick ONE attribution path.** Two systems measuring the same thing will disagree, and the
+   disagreement will be discovered when someone is trying to decide whether to reprint. The
+   per-row `interest_signups.source` is the more useful of the two (it survives to the signup and
+   can be joined against), but `qr_counts` is the zero-PII aggregate that also counts **scans that
+   did not convert** — which is the number that tells you a piece is being picked up but the page
+   is not landing. Choosing means deciding whether non-converting scans are worth the second
+   system; do not keep both by default.
+
+**Before it lands.** Nothing blocks step 1. Steps 2 and 3 want to be settled before artwork goes
+to press, and step 3 should be an explicit decision recorded in `DECISIONS.md`, not an outcome.
+
+**Sources.** `steppe/lib/print-slugs.ts` (`PRINT_SLUGS`, `printRedirect`);
+`steppe/lib/signup-source.ts`; `steppe/app/api/interest/route.ts`;
+`migrations/0015_qr_counts.sql`; `migrations/0025_qr_print_variants.sql`;
+`migrations/0031_join_signup_source.sql`.

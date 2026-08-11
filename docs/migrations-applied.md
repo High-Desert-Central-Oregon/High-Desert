@@ -111,6 +111,31 @@ status question resolves by running that query against prod, never by recalling 
    already recorded in this file and in the prod catalog, and both are permanent. Everything
    unapplied renumbers around it, furthest-from-landing moving furthest.
 
+10. **A migration is not done when it applies. It is done when it applies AND its file is on
+    `main` AND it is recorded here.** All three, or the work is still in flight.
+
+    **Why this is a rule and not a nicety.** For eleven days `0030_view_owner_rights_restore.sql`
+    was live in production while its file existed only on the unmerged branch
+    `db/0030-view-owner-rights-restore`. Prod had been changed; `main` could not describe the
+    change. Anyone deriving "the next number" from `main` — the ordinary, correct-looking thing
+    to do — got 0030, because on `main` 0030 did not exist. That is precisely how the number came
+    to be claimed three ways (convention 9), and the guard that now catches it is a backstop for
+    this rule, not a replacement for it.
+
+    **This is the same failure shape as the `security_invoker` reset, and worth naming as such.**
+    There, a dashboard action changed prod while the repo went on describing the old state; here,
+    a stop-gate apply changed prod while `main` went on describing the old state. Different
+    cause, identical consequence: **the database said one thing and the repo said another, and
+    every reader who trusted the repo was wrong.** Convention 6 forbids the first. This forbids
+    the second. Both exist because the gap between them is invisible until something breaks in a
+    way that reads as a code bug.
+
+    **In practice.** Apply at the stop-gate, then land the branch and record the row — same day,
+    ideally the same sitting. A migration applied but unmerged is a **known-open** state, not a
+    finished one: say so out loud if it has to persist across a session, because the next person
+    to pick a number will not be able to see it. If the apply reveals the migration was wrong,
+    the fix is a follow-up migration, not an unmerged branch left as a silent correction.
+
 ## Applied status (as of 2026-08-10)
 
 All migrations **0012–0031 are applied and live in production**, and every one of them now has a
