@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendInterestConfirmation } from "@/lib/interest-email";
+import { isSignupSourceCode } from "@/lib/signup-source";
 
 /**
  * Pre-launch interest capture (app/(site)/join → here).
@@ -11,12 +12,21 @@ import { sendInterestConfirmation } from "@/lib/interest-email";
  * client — which lives in lib/supabase/admin.ts and is NEVER importable by client
  * code (the secret key is not NEXT_PUBLIC_*). This route is the single writer.
  *
- * Body: { email, first_name?, in_area?, consent, company? }
+ * Body: { email, first_name?, in_area?, consent, company?, source? }
  *   - email     required, validated
  *   - consent   required true (the form's "email me when ready" checkbox)
  *   - company   honeypot — a visually-hidden field real people leave empty;
  *               if it's filled we treat the request as a bot and drop it
  *               silently (return ok without inserting, so we don't tip it off).
+ *   - source    which printed piece (?r=bc|pc|bm) produced this signup
+ *               (migration 0031). The client already validates against the
+ *               same allowlist for a decent error path, but that is not the
+ *               check that counts — this route NEVER trusts a client-supplied
+ *               string into the column. Anything other than the three known
+ *               codes (including a missing value, or a hostile string a
+ *               client sent directly to this route) is coerced to 'direct'
+ *               here, before the insert. The interest_signups_source_check
+ *               CHECK constraint is a backstop, not the primary defense.
  *
  * Returns { ok: true } on insert, { ok: true, duplicate: true } if the email was
  * already on the list (on-conflict-do-nothing), or { ok: false, error } on a bad
@@ -94,6 +104,13 @@ export async function POST(request: Request) {
 
   const in_area = typeof data.in_area === "boolean" ? data.in_area : null;
 
+  // Never trust the raw query-string/body value into the column: coerce
+  // anything outside the allowlist (missing, malformed, or a hostile string
+  // sent directly to this route) to 'direct'.
+  const source = typeof data.source === "string" && isSignupSourceCode(data.source)
+    ? data.source
+    : "direct";
+
   const admin = createAdminClient();
 
   // On-conflict-do-nothing on the unique email. With ignoreDuplicates an existing
@@ -102,7 +119,7 @@ export async function POST(request: Request) {
   const { data: inserted, error } = await admin
     .from("interest_signups")
     .upsert(
-      { email, first_name, in_area, consent: true },
+      { email, first_name, in_area, consent: true, source },
       { onConflict: "email", ignoreDuplicates: true },
     )
     .select("id");
