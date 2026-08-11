@@ -1,18 +1,20 @@
 "use client";
 import Image from "next/image";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { isQrVariant, type QrVariant } from "@/lib/qr-variants";
+import { isSignupSourceCode } from "@/lib/signup-source";
 
 /**
  * Interest-signup form card for /join. POSTs to the real /api/interest endpoint
  * (service-role insert into interest_signups) and shows the confirmation only once
  * the server accepts it. Copy is localized from the "join" catalog namespace.
  *
- * Field mapping to the unchanged /api/interest contract: email → email; name →
+ * Field mapping to the /api/interest contract: email → email; name →
  * first_name; neighborhood → in_area (true when provided); consent → true (implied
- * by submitting under the visible privacy notice); company → honeypot.
+ * by submitting under the visible privacy notice); company → honeypot; source →
+ * which printed piece (?r=bc|pc|bm) produced the visit, or null (migration 0031).
  */
 type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
 
@@ -38,6 +40,22 @@ export function JoinForm() {
   const t = useTranslations("join");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+
+  // Which printed piece produced this visit (?r=bc|pc|bm), read once on mount.
+  // Validated against the same allowlist the server re-validates against — an
+  // unrecognized or absent code is simply not sent, and the server records
+  // 'direct' (migration 0031). Held in a ref, not state: it never changes
+  // after mount and reading it shouldn't trigger a render.
+  const sourceRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const r = new URLSearchParams(window.location.search).get("r");
+      if (isSignupSourceCode(r)) sourceRef.current = r;
+    } catch {
+      /* URL unavailable — skip silently */
+    }
+  }, []);
 
   // QR scan count, on mount: when a printed QR lands here with
   // a known ?utm_content, record ONE scan per scan-session (sessionStorage
@@ -80,6 +98,7 @@ export function JoinForm() {
           in_area: neighborhood !== "" ? true : null,
           consent: true,
           company: String(fd.get("company") ?? ""), // honeypot
+          source: sourceRef.current,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
