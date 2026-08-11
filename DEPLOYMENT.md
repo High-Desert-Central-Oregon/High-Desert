@@ -72,42 +72,65 @@ Supabase project — hosted or self-hosted — but the SQL itself is standard Po
 
 **Where the schema lives (repo root):**
 
-- **`schema.sql`** — the canonical, full schema: tables, RLS policies, triggers,
-  views, and seeds. This is the source of truth.
-- **`migrations/`** — ordered, idempotent incremental changes (`0001_*` …
-  `0016_*`), each already folded into `schema.sql` **except `0016`** (the
-  verification-evidence Storage bucket + policies), which is Supabase-only
-  (needs the `storage` schema) and is applied after `schema.sql`, not inlined.
+- **`schema.sql`** — a **baseline through migration 0015**. It is *not* the
+  current schema and running it alone does not produce one. It carries the
+  tables, RLS policies, triggers, views and seeds as they stood at 0015, with
+  migrations `0001`–`0015` already folded in.
+- **`migrations/`** — ordered, idempotent incremental changes. **Every migration
+  numbered above `0015` is applied on top of the baseline and none of them is
+  folded into `schema.sql`.** That is the convention from `0016` onward, and it
+  is deliberate: a partially-folded `schema.sql` would give a reader no way to
+  tell which parts are already in the baseline and which still need replaying.
+
+> **The reproduction path is `schema.sql` + every migration above 0015, in
+> filename order.** This is not a description of intent — it is literally what
+> `scripts/reset-local.sh:40` does, and that script is the maintained definition
+> of a correct rebuild. Prefer reading it over trusting this paragraph.
 
 > There is no `supabase/migrations/` directory — migrations live in the
-> repo-root `migrations/` directory.
+> repo-root `migrations/` directory. Consequently **`supabase db push` does
+> nothing here**, and a bare `supabase db reset` leaves an empty database.
 
 **Applying it:**
 
 ```bash
-# Fresh database — apply the full schema:
-psql "$DATABASE_URL" -f schema.sql
-
-# Or, with the Supabase CLI against a linked project:
-supabase db push        # apply migrations to the remote project
-
-# Local rebuild — use the script, not a bare `supabase db reset`. Because there
-# is no supabase/migrations/ and no supabase/seed.sql, a bare reset leaves an
-# empty database; the script resets, applies schema.sql, applies every migration
-# after 0015 in order, and reloads seed/dry-run-accounts.sql last so the test
-# suite is green afterwards. It refuses to run against a non-loopback host.
+# Local rebuild — the supported path. Resets, applies schema.sql, replays every
+# migration above 0015 in filename order, then reloads seed/dry-run-accounts.sql
+# so the test suite is green afterwards. Refuses to run against a non-loopback
+# host. Enumerates the migrations rather than hardcoding a list, so a new one
+# needs no edit here.
 ./scripts/reset-local.sh
+
+# Fresh NON-local database, by hand — the baseline ALONE IS NOT ENOUGH:
+psql "$DATABASE_URL" -f schema.sql                    # baseline: through 0015
+for f in migrations/*.sql; do                         # then replay 0016+ in order
+  n=$(basename "$f"); n=${n%%_*}
+  [ "$((10#$n))" -gt 15 ] && psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$f"
+done
 ```
 
-For an existing database, apply only the new migration(s) in order, e.g.:
+Stopping after `schema.sql` provisions an **0015-era database** — no invite
+allowlist or `auth.users` signup gate (0024), no pledge campaigns (0026), no
+invite tokens (0027), no `search_path` pinning (0029). The application will fail
+in ways that look like code bugs.
+
+For an existing database, apply only the pending migration(s) in order, e.g.:
 
 ```bash
-psql "$DATABASE_URL" -f migrations/0015_qr_counts.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f migrations/0029_search_path_sweep.sql
 ```
 
+Production migrations are applied **by hand at a stop-gate**, as the owner, in
+the Supabase SQL editor — see `CLAUDE.md` and the ledger conventions in
+`docs/migrations-applied.md`. Which migrations are actually live is answered by
+the apply-status probe in that file, run against prod — never by reading this
+directory.
+
 Always apply pending migrations **before** deploying the matching app build, or
-routes that depend on new tables (e.g. `/api/interest` → `interest_signups`) will
-error.
+routes that depend on new columns or tables will error. This is not theoretical:
+`/api/interest` sends `interest_signups.source` unconditionally, so deploying it
+against a database without that column (migration 0031) returns HTTP 500 on
+**every** join submission — no row written, no confirmation email sent.
 
 ---
 
