@@ -77,6 +77,22 @@ async function seed(c: pg.Client) {
     [PROP],
   );
   await c.query(`alter table proposals enable trigger trg_guard_proposal_columns`);
+
+  // Groups for the directory: one public unjoined, one members_only unjoined,
+  // one members_only the member HAS joined. Under invoker rights the middle one
+  // disappears, which is the break 0030 restores.
+  await c.query(
+    `insert into groups (id, slug, name, description, visibility, join_policy)
+     values (($1||'0000000000aa')::uuid, 'vw30-public',  'VW30 Public',  'pub desc',    'public',       'open'),
+            (($1||'0000000000bb')::uuid, 'vw30-private', 'VW30 Private', 'priv desc',   'members_only', 'request'),
+            (($1||'0000000000cc')::uuid, 'vw30-joined',  'VW30 Joined',  'joined desc', 'members_only', 'request')`,
+    [PFX],
+  );
+  await c.query(
+    `insert into group_members (group_id, user_id, role, status)
+     values (($1||'0000000000cc')::uuid, ($1||'000000000001')::uuid, 'member', 'active')`,
+    [PFX],
+  );
 }
 
 /** Read both views as one of the seeded members. */
@@ -95,11 +111,15 @@ async function readAsMember(c: pg.Client) {
     `select ballots::int as ballots, revealed from proposal_results where proposal_id=$1`,
     [PROP],
   );
+  const groups = await c.query(
+    `select count(*)::int as n from groups_directory where slug like 'vw30-%'`,
+  );
   await c.query(`reset role`);
   return {
     membersVisible: profiles.rows[0].n as number,
     ballots: (results.rows[0]?.ballots ?? 0) as number,
     revealed: (results.rows[0]?.revealed ?? false) as boolean,
+    groupsVisible: groups.rows[0].n as number,
   };
 }
 
@@ -148,27 +168,33 @@ describe.skipIf(!dbUp)("0028 view owner-rights", () => {
     expect([...new Set(authed.map((r) => r.privilege_type))]).toEqual(["SELECT"]);
   });
 
-  it("a member reads OTHER members and a FULL tally (owner rights working)", async () => {
+  it("a member reads OTHER members, a FULL tally, and ALL groups (owner rights working)", async () => {
     await h.inTxn(async (c) => {
       await seed(c);
       const r = await readAsMember(c);
       expect(r.membersVisible).toBe(6); // not 1 — the whole point
       expect(r.ballots).toBe(6);
       expect(r.revealed).toBe(true);
+      // 0030: an unjoined members_only group must still be LISTED, or
+      // join_policy='request' is unreachable.
+      expect(r.groupsVisible).toBe(3);
     });
   });
 
-  it("flipping security_invoker ON breaks both reads — so the test above is real", async () => {
+  it("flipping security_invoker ON breaks all three reads — so the test above is real", async () => {
     await h.inTxn(async (c) => {
       await seed(c);
       await c.query(`alter view public_profiles  set (security_invoker = on)`);
       await c.query(`alter view proposal_results set (security_invoker = on)`);
+      await c.query(`alter view groups_directory set (security_invoker = on)`);
 
       const r = await readAsMember(c);
-      // This is exactly what production returns today.
+      // This is exactly what production returned during both reverts:
+      // 2026-07-30 (0028 restored it) and 2026-07-31 (0030 restored it again).
       expect(r.membersVisible).toBe(1);
       expect(r.ballots).toBe(1);
       expect(r.revealed).toBe(false);
+      expect(r.groupsVisible).toBe(2); // the unjoined members_only group vanishes
     });
   });
 
