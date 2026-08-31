@@ -305,7 +305,8 @@ export function GenerativeLandscape({
       gl!.shaderSource(sh, src);
       gl!.compileShader(sh);
       if (!gl!.getShaderParameter(sh, gl!.COMPILE_STATUS)) {
-        console.error(gl!.getShaderInfoLog(sh));
+        const message = gl!.getShaderInfoLog(sh);
+        if (message) console.warn("Steppe landscape shader unavailable:", message);
         return null;
       }
       return sh;
@@ -319,7 +320,8 @@ export function GenerativeLandscape({
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error(gl.getProgramInfoLog(prog));
+      const message = gl.getProgramInfoLog(prog);
+      if (message) console.warn("Steppe landscape program unavailable:", message);
       return;
     }
     gl.useProgram(prog);

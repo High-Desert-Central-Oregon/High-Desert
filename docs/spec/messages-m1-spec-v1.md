@@ -17,7 +17,10 @@ architecture (§6) is itself a G-class posture decision.
 > resolved: **M-G1** plaintext-with-RLS ratified on three binding conditions
 > (the behavioral zero-read pin, the honest Terms paragraph, the full E2E
 > costing on the record) · **M-G4** Reports are Part 1 (the valve before the
-> channel; consent-based excerpt disclosure only) · **M-G2** bodies survive
+> channel; consent-based excerpt disclosure only) · **M-G2 superseded
+> 2026-08-29:** messages authored by a member are deleted with that member's
+> account; see `docs/decisions/message-deletion-and-retention.md` and migration
+> 0034. The original analysis below remains as the historical record.
 > account deletion, identity tombstones — signed; the deletion-copy amendment
 > is owed (Part 4) · **M-G3** silent block — the bundle's "a steward was
 > notified" string is NOT shipped in any form · **M-G5** the event

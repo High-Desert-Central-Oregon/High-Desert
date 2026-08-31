@@ -12,8 +12,8 @@ import { isSignupSourceCode } from "@/lib/signup-source";
  * the server accepts it. Copy is localized from the "join" catalog namespace.
  *
  * Field mapping to the /api/interest contract: email → email; name →
- * first_name; neighborhood → in_area (true when provided); consent → true (implied
- * by submitting under the visible privacy notice); company → honeypot; source →
+ * first_name; neighborhood → in_area (true when provided); consent → the explicit
+ * email-notice checkbox; company → honeypot; source →
  * which printed piece (?r=bc|pc|bm) produced the visit, or null (migration 0031).
  */
 type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
@@ -84,6 +84,13 @@ export function JoinForm() {
     const form = e.currentTarget;
     const fd = new FormData(form);
     const neighborhood = String(fd.get("neighborhood") ?? "").trim();
+    const consent = fd.get("consent") === "true";
+
+    if (!consent) {
+      setError(t("errConsent"));
+      setStatus("error");
+      return;
+    }
 
     setStatus("submitting");
     setError("");
@@ -96,7 +103,7 @@ export function JoinForm() {
           email: String(fd.get("email") ?? ""),
           first_name: String(fd.get("name") ?? ""),
           in_area: neighborhood !== "" ? true : null,
-          consent: true,
+          consent,
           company: String(fd.get("company") ?? ""), // honeypot
           source: sourceRef.current,
         }),
@@ -169,6 +176,21 @@ export function JoinForm() {
           </label>
           <input id="nb" name="neighborhood" type="text" placeholder={t("phNeighborhood")} />
         </div>
+
+        <label className="consentrow" htmlFor="consent">
+          <input
+            id="consent"
+            name="consent"
+            type="checkbox"
+            value="true"
+            required
+          />
+          <span>
+            {t.rich("consentLabel", {
+              link: (c) => <a href="/privacy">{c}</a>,
+            })}
+          </span>
+        </label>
 
         {/* Honeypot — real people leave this empty. */}
         <div className="hp" aria-hidden="true">

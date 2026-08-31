@@ -21,7 +21,7 @@ export const en = {
     spanish: "Español",
     somethingWrong: "Sorry, something went wrong.",
     cancel: "Cancel",
-    sealAlt: "Steppe Strata Seal — Redmond, Oregon",
+    sealAlt: "Steppe Strata Seal, Redmond, Oregon",
     isomimoAlt: "Steppe gear emblem holding a high-desert landscape",
   },
 
@@ -70,7 +70,7 @@ export const en = {
       "Your invitation worked, but we couldn't email the sign-in code. Try signing in with this address.",
     errorNetwork: "We couldn't reach Steppe. Check your connection and try again.",
     privacyNote:
-      "We use your email only to sign you in. No ads, no trackers, and nothing sold — ever.",
+      "We use your email only to sign you in. There are no ads or trackers, and we never sell your information.",
     alreadyMember: "Already have an account?",
     signInLink: "Sign in",
   },
@@ -88,7 +88,7 @@ export const en = {
     labelLabel: "What is this for?",
     labelPlaceholder: "Counter cards, Fred Meyer",
     placeLabel: "Neighborhood (optional)",
-    placeNone: "Anywhere — general purpose",
+    placeNone: "Anywhere (general purpose)",
     placeHint: "Leave this alone for counter cards and press. Pick a neighborhood and the pledge page fills itself in.",
     mint: "Make the invitation",
     minting: "Making…",
@@ -122,14 +122,14 @@ export const en = {
   auth: {
     title: "Sign in to Steppe",
     subtitle:
-      "Steppe is invite-only right now. If your email was invited, this same form signs you in — and sets up your account the first time. We email a one-time 6-digit code and a sign-in link, so there's no password to remember or leak.",
+      "Steppe is invite-only right now. If your email was invited, this form signs you in and sets up your account the first time. We email a one-time 6-digit code and a sign-in link, so there is no password to remember or leak.",
     emailLabel: "Email address",
     emailPlaceholder: "you@example.com",
     submit: "Email me a sign-in code",
     submitting: "Sending…",
     checkEmailTitle: "Check your email",
     checkEmailBody:
-      "If that address can join, we emailed a 6-digit code to {email}. Enter it below — it's the easiest way in. The code and the link in that email each work once and expire soon.",
+      "If that address can join, we emailed a 6-digit code to {email}. Enter it below. The code and the sign-in link each work once and expire soon.",
     codeLabel: "6-digit code",
     codeVerify: "Sign in with the code",
     codeVerifying: "Checking…",
@@ -138,7 +138,7 @@ export const en = {
       "That code didn't match or has expired. Request a new one and try again.",
     codeError: "We couldn't check that code. Please try again.",
     codeResend: "Email me a new code",
-    codeResent: "New code sent — check your email again.",
+    codeResent: "New code sent. Check your email again.",
     orTapLink: "Or tap the sign-in link in the same email.",
     sendAnother: "Use a different email",
     errorGeneric: "We couldn't send the link. Check the address and try again.",
@@ -153,9 +153,9 @@ export const en = {
   welcome: {
     title: "Before you join in",
     intro:
-      "These are the Terms of Membership and the Privacy Policy for Steppe. Please read them — they're short and in plain language — then confirm at the bottom to continue.",
+      "These are the Terms of Membership and the Privacy Policy for Steppe. They are short and written in plain language. Read them, then confirm at the bottom to continue.",
     draftNotice:
-      "Draft for review — pending Oregon legal review. The final wording may change before public launch.",
+      "Draft for review. Oregon legal review is pending, and the final wording may change before public launch.",
     signedInAs: "Signed in as {email}.",
     notYou: "Not you?",
     scrollHint: "Scroll to the end of both documents to continue.",
@@ -177,6 +177,11 @@ export const en = {
     nextTitle: "What's next",
     nextBody:
       "Verify that you live in Redmond to join neighborhood events and the community vote.",
+    readyKicker: "Ready to take part",
+    readyTitle: "Your community board is open",
+    readyBody:
+      "Read what neighbors are sharing, offer what you can, or post what you need. Everything stays newest first.",
+    readyCta: "Open the Exchange",
     statusVerified: "Verified resident",
     statusUnverified: "Not yet verified",
     statusLabel: "Membership status",
@@ -189,7 +194,7 @@ export const en = {
 
   install: {
     eyebrow: "Add to home screen",
-    why: "Open Steppe like an app — no download, no app store.",
+    why: "Open Steppe like an app. No download or app store is required.",
     installCta: "Install",
     // Spelled in words on purpose — never depend on a rendered share glyph.
     iosHow: "Tap the Share button, then Add to Home Screen.",
@@ -204,7 +209,7 @@ export const en = {
     legend: "Choose your neighborhood",
     noneOptionLabel: "None of these fit",
     noneOptionHint:
-      "If your part of Redmond isn't listed — a broader area, a rural pocket, or a community outside city limits — choose this. A neighbor on the team will follow up to help place you.",
+      "Choose this if your part of Redmond is not listed, including a broader area, a rural pocket, or a community outside city limits. A neighbor on the team will follow up to help place you.",
     noneNoteLabel: "Where do you live? (optional)",
     noneNotePlaceholder:
       "e.g. Downtown Redmond, or a rural area outside the listed neighborhoods",
@@ -242,7 +247,7 @@ export const en = {
     post: "Post",
     searchPh: "Search the Exchange",
     searchSubmit: "Search",
-    emptyTitle: "A quiet column today",
+    emptyTitle: "No posts in this category",
     emptySub: "Nothing in this filter yet. Check back, or post the first.",
     categoryField: "Category",
     titleField: "Title",
@@ -268,16 +273,16 @@ export const en = {
     backToBoard: "Back to the Exchange",
     newTitle: "New post",
     newIntro:
-      "Posts appear newest first for every verified member — nothing is sorted for clicks.",
-    eventChipHint: "Events have their own form — dates, place, and RSVPs.",
+      "Posts appear newest first for every verified member. Nothing is sorted for clicks.",
+    eventChipHint: "Events have their own form for dates, place, and RSVPs.",
     segUpcoming: "Upcoming",
-    upcomingEmpty: "Nothing on the calendar yet — post the first gathering.",
+    upcomingEmpty: "Nothing is on the calendar yet. Post the first gathering.",
   },
 
   events: {
     // Masthead grammar (preview vocabulary): mono dateline + italic voice.
     dateline: "Neighborhood gatherings · Soonest first",
-    voice: "Real gatherings by verified neighbors — RSVP with one tap.",
+    voice: "Real gatherings by verified neighbors. RSVP with one tap.",
     listTitle: "Neighborhood events",
     listIntro:
       "Upcoming gatherings, soonest first. Events in your neighborhood come first, then the rest of Redmond.",
@@ -289,7 +294,7 @@ export const en = {
     allRedmond: "All of Redmond",
     chipEvent: "Event",
     addCal: "Add to calendar",
-    icsNote: "Add to your calendar — or copy these details",
+    icsNote: "Add to your calendar or copy these details",
     icsDescription: "A Steppe community event. RSVPs stay inside Steppe.",
     hostedBy: "Hosted by {name}",
     whenLabel: "When",
@@ -300,7 +305,7 @@ export const en = {
     backToEvents: "← All events",
     newTitle: "Create an event",
     newIntro:
-      "Host a neighborhood gathering. Keep it simple — a title, when, and where.",
+      "Host a neighborhood gathering. Add a title, date, and place.",
     fieldTitle: "Title",
     fieldTitlePlaceholder: "e.g. Block cleanup at the park",
     fieldWhen: "Date and time",
@@ -329,10 +334,10 @@ export const en = {
     // three homes), composePrivacy (the composer), the two Message buttons.
     title: "Messages",
     dateline: "Verified neighbors · Private to the two of you",
-    voice: "Messages stay inside Steppe — never SMS or email, never seen by anyone else.",
+    voice: "Messages stay inside Steppe. They are never sent by SMS or email, and no one else can read them.",
     msgInside: "Messages stay inside Steppe",
     composePrivacy:
-      "Your contact stays inside Steppe. Neighbors reach you here — never by SMS or email.",
+      "Your contact stays inside Steppe. Neighbors reach you here, never by SMS or email.",
     rowSub: "Your conversations",
     emptyTitle: "No messages yet",
     emptySub: "Say hello to a neighbor from one of their posts.",
@@ -360,7 +365,7 @@ export const en = {
     menuMore: "Conversation options",
     mute: "Mute this conversation",
     unmute: "Unmute this conversation",
-    muted: "Muted — you won't be notified",
+    muted: "Muted. You won't be notified.",
     leave: "Leave conversation",
     block: "Block neighbor",
     blockConfirm:
@@ -368,7 +373,7 @@ export const en = {
     blockCta: "Block",
     reportThread: "Report to a moderator",
     reportThreadConfirm:
-      "Send this conversation to a moderator? They'll see the messages you quote here — nothing else.",
+      "Send this conversation to a moderator? They will see only the messages you quote here.",
     reportThreadLabel: "What should a moderator know?",
     reportThreadCta: "Send report",
     reportThreadSent: "Sent to a moderator, privately.",
@@ -383,7 +388,7 @@ export const en = {
     rowSub: "Your RSVPs and your groups' gatherings",
     dateline: "Your groups · Your RSVPs",
     voice:
-      "Your gatherings in one column — what you answered and where you belong.",
+      "Your gatherings in one column: what you answered and where you belong.",
     maybeTag: "Maybe",
     // Agenda | Month toggle + the month grid (spec §1.2–1.3).
     segAgenda: "Agenda",
@@ -395,13 +400,13 @@ export const en = {
     emptySub: "RSVP to a gathering, or join a group.",
     gateTitle: "Verify to see your calendar",
     gateBody:
-      "Your calendar fills with your RSVPs and your groups — both start with verification.",
+      "Your calendar fills with your RSVPs and your groups. Both require verification.",
     gateCta: "Verify your residency",
     // Connect to calendar — subscription feeds (spec §1.4). Capability
     // language stays plain: the link is a key.
     connectHeading: "Connect to calendar",
     connectBody:
-      "A private link your calendar app checks for updates. Anyone who has the link can read that calendar — treat it like a key. You can replace or remove it here anytime.",
+      "A private link your calendar app checks for updates. Anyone who has the link can read that calendar, so treat it like a key. You can replace or remove it here anytime.",
     createLink: "Create calendar link",
     pasteLabel: "Paste into your calendar app",
     lastRead: "Last read {when}",
@@ -420,10 +425,10 @@ export const en = {
   groups: {
     // Directory — dateline + voice are the bundle's own strings.
     dateline: "Neighborhood circles · Member-owned",
-    voice: "Small groups of verified neighbors — join freely, leave anytime.",
+    voice: "Small groups of verified neighbors. Join freely and leave anytime.",
     title: "Groups",
     intro:
-      "Community groups — boards, calendars, events. Browse by category or search by name.",
+      "Community groups have boards, calendars, and events. Browse by category or search by name.",
     create: "Create group",
     searchLabel: "Search",
     searchPlaceholder: "Search groups by name",
@@ -435,6 +440,7 @@ export const en = {
     visibilityMembersOnly: "Members only",
     upcomingSection: "Upcoming",
     memberCount: { one: "{count} member", other: "{count} members" },
+    everyoneMembers: "Every verified member",
     // Membership controls
     join: "Join",
     requestToJoin: "Request to join",
@@ -488,9 +494,9 @@ export const en = {
     presetAdvancedHint: "Set visibility and join policy separately.",
     fieldVisibility: "Visibility",
     fieldJoinPolicy: "Join policy",
-    joinOpen: "Open — join instantly",
-    joinRequest: "Request — a maintainer approves",
-    joinLocked: "Locked — invite only",
+    joinOpen: "Open: join instantly",
+    joinRequest: "Request: a maintainer approves",
+    joinLocked: "Locked: invite only",
     creating: "Creating…",
     createSubmit: "Create group",
     nameRequired: "Please add a group name.",
@@ -506,7 +512,7 @@ export const en = {
     settingsSaved: "Settings saved.",
     settingsError: "We couldn't save the settings. Please try again.",
     pendingTitle: "Join requests",
-    pendingIntro: "People waiting to join — oldest first.",
+    pendingIntro: "People waiting to join, oldest first.",
     pendingEmpty: "No pending requests.",
     approve: "Approve",
     deny: "Deny",
@@ -517,7 +523,7 @@ export const en = {
     confirmRemove: "Remove this member from the group?",
     confirmDemote: "Step this maintainer down to a regular member?",
     addTitle: "Add a member",
-    addIntro: "Add a verified member directly — useful for invite-only groups.",
+    addIntro: "Add a verified member directly. This is useful for invite-only groups.",
     addEmpty: "No verified members match that name.",
     addSearchHint: "Search by name to add a verified member.",
     addSearching: "Searching…",
@@ -562,7 +568,7 @@ export const en = {
     intro:
       "Neighborhood events and the community vote are for verified Redmond residents. Choose one way to show you live here, and a neighbor on the review team checks it by hand.",
     forget:
-      "We delete your document the moment a reviewer decides. We keep only that you're verified, the date, and the method — never the document itself.",
+      "We delete your document as soon as a reviewer decides. We keep only the result, date, and method. We never keep the document itself.",
     methodLegend: "How would you like to verify?",
     fileLabel: "Upload your document",
     fileHint: "A clear photo or PDF, up to 10 MB.",
@@ -575,7 +581,7 @@ export const en = {
     errorGeneric: "We couldn't submit that. Please try again.",
     pendingTitle: "Your verification is under review",
     pendingBody:
-      "A reviewer will check it soon. You'll get full access once you're approved — you can safely close this page.",
+      "A reviewer will check it soon. You will get full access once approved. You can safely close this page.",
     verifiedTitle: "You're a verified resident",
     verifiedBody:
       "Thank you. You have full access to neighborhood events and the community vote.",
@@ -594,7 +600,7 @@ export const en = {
       voter_reg: "Your Oregon voter registration showing your address.",
       property_record: "A property tax statement or deed for your Redmond home.",
       postcard_code:
-        "No document needed. We mail a one-time code to your Redmond address and a reviewer confirms it with you — for anyone using a PO box or without standard paperwork.",
+        "No document is needed. We mail a one-time code to your Redmond address, and a reviewer confirms it with you. This option is for anyone using a PO box or without standard paperwork.",
     },
   },
 
@@ -605,8 +611,8 @@ export const en = {
     empty: "No verifications are waiting right now.",
     viewEvidence: "View evidence",
     opening: "Opening…",
-    noEvidence: "No file — mailed-code request",
-    evidenceError: "Couldn't open the evidence. The link may have expired — try again.",
+    noEvidence: "No file (mailed-code request)",
+    evidenceError: "Couldn't open the evidence. The link may have expired. Try again.",
     approve: "Approve",
     reject: "Reject",
     deciding: "Saving…",
@@ -630,12 +636,12 @@ export const en = {
     // clause — that surface doesn't exist here yet (parity G1). Stay truthful.
     dateline: "The community's public record · Everyone starts at 1×",
     voice:
-      "Secret ballots — everyone starts at 1×; weight accrues with tenure (1×–3×, member-amendable).",
+      "Secret ballots. Everyone starts at 1×; weight accrues with tenure (1×–3×, member-amendable).",
     segProposals: "Proposals",
     segRecord: "Record",
     listTitle: "Proposals & votes",
     listIntro:
-      "Community proposals and their voting windows — open votes first, then upcoming, then closed. Your ballot is secret until a vote closes; results appear only after.",
+      "Community proposals and their voting windows appear here. Open votes come first, followed by upcoming and closed votes. Your ballot is secret until a vote closes; results appear only afterward.",
     create: "New proposal",
     empty: "No proposals yet.",
     openSection: "Open for voting",
@@ -664,7 +670,7 @@ export const en = {
     gateCta: "Verify your residency",
     newTitle: "New proposal",
     newIntro:
-      "Put a decision to the community. Set when voting opens and closes — both are Redmond time.",
+      "Put a decision to the community. Set when voting opens and closes. Both use Redmond time.",
     fieldTitle: "Title",
     fieldTitlePlaceholder: "e.g. Adopt the community garden plan",
     fieldKind: "Type of decision",
@@ -680,10 +686,12 @@ export const en = {
     windowRequired: "Please set valid open and close times.",
     windowOrder: "Voting must close after it opens.",
     closesPast: "The close time must be in the future.",
+    foundationalNotice:
+      "A foundational proposal must be published at least 30 days before voting opens.",
     errorGeneric: "We couldn't create the proposal. Please try again.",
     voteHeading: "Your vote",
     voteSecrecyNote:
-      "Your ballot is secret — only you can see it. You can change it any time until voting closes. No results are shown until then.",
+      "Your ballot is secret. Only you can see it, and you can change it until voting closes. No results are shown before then.",
     choices: {
       yes: "Yes",
       no: "No",
@@ -697,11 +705,21 @@ export const en = {
     votingOpensNote: "Voting opens {date}. Check back then to cast your vote.",
     resultsHeading: "Result",
     resultsNote:
-      "Tenure-weighted totals, aggregate only — individual ballots are never shown.",
+      "Tenure-weighted totals are shown only in aggregate. Individual ballots are never shown.",
     turnout: { one: "{count} ballot cast", other: "{count} ballots cast" },
     noResult: "No result is available for this proposal.",
     resultsTooLowTurnout:
       "Too few people voted to show the breakdown without revealing how individuals voted. Only the turnout above is shown.",
+    outcomes: {
+      passed: "Passed",
+      failed: "Did not pass",
+      insufficient_turnout: "Not binding: participation requirement not met",
+    },
+    participationRule:
+      "{required} ballots required from {eligible} eligible members",
+    approvalRule:
+      "{approval}% approval among weighted yes/no votes · {required}% required",
+    noDecisiveVotes: "No weighted yes/no votes were cast.",
     closeHint:
       "Voting has ended. Recording the close writes the official result to the public audit log.",
     recordClose: "Record official close",
@@ -716,7 +734,7 @@ export const en = {
     removedReason: "Reason",
     appealable: "If you posted this, you can appeal.",
     controlHeading: "Moderator tools",
-    reasonLabel: "Reason (required — shown to the member and in the public log)",
+    reasonLabel: "Reason (required; shown to the member and in the public log)",
     reasonPlaceholder: "Why is this being removed or restored?",
     removeConfirm:
       "Remove this content? The reason will be visible to the member and in the public transparency log.",
@@ -761,7 +779,7 @@ export const en = {
       "After review, the removal was overturned and the content restored.",
     appealsTitle: "Appeals",
     appealsIntro:
-      "Open appeals from members, oldest first. You can't resolve an appeal of your own action — a different moderator must.",
+      "Open appeals from members appear oldest first. A different moderator must resolve an appeal of your own action.",
     appealsEmpty: "No open appeals.",
     appealOnEvent: "Removal of an event",
     appealOnPost: "Appeal on a removed post",
@@ -781,7 +799,7 @@ export const en = {
   transparency: {
     title: "Transparency",
     intro:
-      "A public record of what moderators have done and why, including how appeals turned out — so moderation stays out in the open.",
+      "A public record lists moderator actions, reasons, and appeal outcomes. This keeps moderation in the open.",
     empty: "No moderation activity yet.",
     actionRemoveEvent: "An event was removed",
     actionRemoveProposal: "A proposal was removed",
@@ -789,29 +807,29 @@ export const en = {
     actionRestoreEvent: "An event was restored",
     actionRestoreProposal: "A proposal was restored",
     actionRestoreGeneric: "Content was restored",
-    appealUpheld: "Appeal reviewed — the removal stands",
-    appealOverturned: "Appeal reviewed — the content was restored",
+    appealUpheld: "Appeal reviewed: removal stands",
+    appealOverturned: "Appeal reviewed: content restored",
     reason: "Reason",
     byModerator: "by {name}",
     byModeratorUnknown: "by a moderator",
     viewContent: "View",
   },
   account: {
-    voice: "Private by default — you choose what neighbors see.",
+    voice: "Your profile starts private. You choose what neighbors see.",
     title: "Your account",
     intro:
       "Your data is yours. Take a copy whenever you like, or close your account and go.",
     exportHeading: "Export your data",
     exportBody:
-      "Download everything your account holds as a single file — your profile, RSVPs, proposals, your own ballots, and more. Verification documents are never kept.",
+      "Download your profile, RSVPs, proposals, your own ballots, and other account data as a single file. Verification documents are never kept.",
     exportButton: "Download my data",
     deleteHeading: "Delete your account",
     deleteBody:
       "This permanently closes your account and erases your personal information. It cannot be undone.",
     deleteKept:
-      "Kept, but no longer linked to you: your past votes, any moderation record, and the terms you agreed to stay in the community's permanent record as “Former member,” so closed results and agreements are never rewritten. Messages you sent stay in your neighbors' conversations, no longer signed with your name.",
+      "Kept, but no longer linked to you: your past votes, any moderation record, and the terms you agreed to stay in the community's permanent record as “Former member,” so closed results and agreements are never rewritten.",
     deleteErased:
-      "Erased for good: your profile, your RSVPs, the events you created, your calendar links, your reports, your verification status, and your neighborhood.",
+      "Erased for good: your profile, your RSVPs, the events you created, your calendar links, your reports, the messages you sent, your verification status, and your neighborhood. Conversation threads with no remaining messages are also removed.",
     deleteIrreversible:
       "There is no undo, and no way to sign back in afterward.",
     deleteConfirmLabel: "Type {word} to confirm",
@@ -824,9 +842,9 @@ export const en = {
     profileRowSub: "Your name, and what neighbors can see",
     profileTitle: "Your profile",
     profileIntro:
-      "Your profile is private by default. Set your name, then reveal fields one at a time — to no one, or to all members.",
+      "Your profile starts private. Set your name, then choose which fields all members can see.",
     nameLabel: "Display name",
-    nameHelp: "The name neighbors see. Not your legal name — choose what you like.",
+    nameHelp: "The name neighbors see. It does not have to be your legal name.",
     nameSave: "Save name",
     nameSaved: "Name saved.",
     nameRequired: "Enter a name.",
@@ -834,7 +852,7 @@ export const en = {
     profileSaveError: "We couldn't save that. Please try again.",
     visibilityHeading: "What neighbors can see",
     visibilityIntro:
-      "Every field starts hidden. Reveal it to all members, or keep it to yourself — one field at a time.",
+      "Every field starts hidden. Choose which fields all members can see and which stay private.",
     fieldNeighborhood: "Neighborhood",
     fieldNeighborhoodNone: "Not set",
     visHidden: "Hidden",
@@ -850,7 +868,7 @@ export const en = {
   },
   error: {
     title: "Something went wrong on our end",
-    body: "That's on us, not you. Try again — and if it keeps happening, it's worth letting us know.",
+    body: "We couldn't load this page. Try again. If it keeps happening, contact support.",
     retry: "Try again",
     back: "Back to Steppe",
   },

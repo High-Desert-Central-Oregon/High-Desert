@@ -32,9 +32,9 @@ async function NotFoundCard() {
         <Image
           src="/brand/steppe-isomimo-512.png"
           alt={dict.common.isomimoAlt}
-          width={160}
-          height={160}
-          className="mx-auto mt-6"
+          width={422}
+          height={512}
+          className="mx-auto mt-6 h-40 w-auto"
         />
         <CardHeader>
           <h1 className="text-2xl font-semibold tracking-tight">

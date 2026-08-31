@@ -1,125 +1,149 @@
 <!--
   DRAFT SCAFFOLD — pending legal review.
 
-  This is the single source of truth for /legal/privacy. The delivered
-  legal-privacy-policy.md should REPLACE this file verbatim (same path). The page
-  reads this file at build, strips the [CONFIRM …] reviewer blockquotes, lists any
-  remaining [BRACKET] placeholders in the build log, and is noindex until counsel
-  signs off and every placeholder is filled.
+  This is the single source of truth for /legal/privacy. The page reads this
+  file at build, strips [CONFIRM …] reviewer blockquotes, reports remaining
+  bracketed review items, and stays noindex until counsel signs off.
 
-  Do not hand-convert to JSX — edit this markdown only.
+  Organizational and data-responsibility facts were updated 2026-08-29 from
+  the founder's confirmed operating instructions. They are not represented as
+  legal advice or counsel approval.
 -->
 
 # Privacy Policy
 
 ```
-Effective date:  June 22, 2026
-Version:         Draft v1
-Last updated:    June 22, 2026
+Effective date:  On publication for the founding beta
+Version:         Draft v2
+Last updated:    August 29, 2026
 Status:          Draft (pending legal review)
 ```
 
-Steppe is community-owned, ad-free civic infrastructure for Redmond, Central
-Oregon, operated by Steppe, a fiscally sponsored nonprofit (fiscal sponsor: Ignite
-Empowerment Foundation, a Central Oregon 501(c)(3)). This policy explains what we collect, why,
-and the choices you have. A plain-language summary of these commitments lives at
-[steppe.community/privacy](/privacy); this document is the formal version.
+Steppe is ad-free civic infrastructure in development for Redmond and Central
+Oregon. Steppe has a signed fiscal-sponsorship agreement with Ignite Empowerment
+Foundation, a Central Oregon 501(c)(3). Gregory Chism operates the member app and
+handles member data. Ignite handles sponsor-routed grants, donations, and other
+sponsored responsibilities, but does not routinely handle the membership
+database or member subscriptions. A particular contract may be handled by
+Gregory Chism or Ignite; the contract will identify its actual party.
 
-> [CONFIRM: Greg + counsel — confirm the controlling legal entity name and whether
-> a separate processor entity needs to be named for the membership database.]
+This policy explains what the founding beta collects, why, who handles it, and
+the choices members have. The plain-language summary is at
+[steppe.community/privacy](/privacy).
+
+> [CONFIRM: counsel — identify the legally correct contracting/controller name
+> for Gregory Chism's beta operations and the required Ignite project wording.]
 
 ## 1. Information We Collect
 
-We collect the minimum needed to run a verified, member-owned community. Nothing
-is kept "just in case."
+We collect the minimum needed for the interest list and, once beta accounts are
+enabled, a verified local community.
 
 | Category | Examples | Why we collect it |
 | --- | --- | --- |
-| Account basics | Email, username | Sign-in and member-to-member contact |
-| Dues & payment | Confirmation of payment | Membership status (card handled by [PAYMENT PROCESSOR], not stored by us) |
-| Residency check | Proof of local address | Confirm eligibility, then deleted |
-| What you post | Listings, messages, group activity, votes | Provide the service you asked for |
-| Minimal logs | Basic technical records | Keep the service running and safe |
+| Beta interest | Email; optional first name and area response; explicit email consent | Send the one beta-readiness notice requested |
+| Account basics | Email, display name, language | Sign-in and member-to-member contact |
+| Residency check | Proof of local address | Intended for one eligibility decision; collection remains closed until deletion and orphan cleanup are verified |
+| Member content | Listings, messages, group activity, votes | Provide the service the member requested |
+| Safety intake | A report and an excerpt a participant chooses to disclose | Let a human moderator review the report |
+| Minimal logs | Basic technical and security records | Keep the service working and safe |
 
-> [CONFIRM: counsel — confirm whether IP addresses in minimal logs are in scope and
-> their retention window.]
+The founding beta is free and does not collect member subscription payments.
+Before paid membership begins, this policy and the checkout flow will name the
+payment provider and describe the data it receives. Gregory Chism will administer
+member subscriptions directly rather than routing them through Ignite.
 
-## 2. How We Use Your Information
+## 2. How We Use Information
 
-We use your information to operate the membership, deliver the local exchange,
-groups, and governance features, send service email through Resend, and keep the
-platform secure. We do not use it for advertising, and there is no behavioral
-profiling.
+We use information to operate the beta list and member service, verify local
+eligibility, provide the exchange, groups, messages, and governance, send service
+email, respond to reports, and secure the platform. We do not use member data for
+advertising or behavioral profiling, and we do not sell it.
 
-When you message us through the contact form, your name, email, and message are
-sent through Resend to our inbox so we can reply. We do not store contact messages
-in the app; they live in our email inbox.
+Contact-form messages are delivered through Resend to the Steppe inbox. They are
+not stored in the app. Direct messages are readable in the app only by the two
+participants; moderators and administrators have no message-reader interface.
+Database operators can technically access plaintext stored in the database, but
+Steppe policy and ordinary tooling prohibit routine access.
 
 ## 3. Legal Bases for Processing
 
-Where applicable law requires a legal basis, we rely on the performance of our
-membership agreement with you, your consent where you have given it, and our
-legitimate interest in operating a secure, member-governed service.
+Where a legal basis is required, Steppe relies on the requested service or
+membership agreement, explicit consent for the beta-readiness email and other
+optional communications, legal obligations, and the legitimate interest in
+operating a secure community service.
 
-> [CONFIRM: counsel — confirm the legal-basis framing for the jurisdictions in
-> scope at launch.]
+> [CONFIRM: counsel — confirm legal bases and jurisdictions for beta.]
 
 ## 4. How We Share Information
 
-We never sell or rent your information. We share it only with service providers
-that help us operate, under contract and only as needed.
+We do not sell or rent member information. We disclose the minimum needed to
+service providers operating under contract, to Ignite when a sponsored
+responsibility actually requires it, or when valid legal process requires it.
 
 | Recipient | Purpose | What they receive |
 | --- | --- | --- |
-| [PAYMENT PROCESSOR] | Process dues | Payment details you enter with them |
-| Resend | Send service email and deliver contact-form messages | Your email address; contact-message content in transit |
-| Hosting & infrastructure | Run the service | Data needed to operate it |
+| Supabase | Authentication, database, and private verification storage | Account and app data needed to provide those services |
+| Resend | Service email and contact-form delivery | Recipient email; contact content in transit |
+| Hosting/infrastructure providers | Run and secure the app | Requests and operational data needed to host it |
+| Ignite Empowerment Foundation | Administer sponsored funds and responsibilities | Only information needed for the applicable sponsored matter; no routine membership-database access |
+| A future payment provider | Process member subscriptions after beta | Payment and transaction data entered with that provider |
 
-> [CONFIRM: counsel — confirm Resend as a named subprocessor and the contact-form
-> data flow (message content transits Resend to the inbox; not stored in the app).]
+The future payment provider will be named before paid membership data is
+collected. A contract handled by Ignite or Gregory Chism will identify that party
+rather than treating “Steppe” as an unspecified legal entity.
 
-## 5. Data Retention
+## 5. Retention and Account Deletion
 
-We keep information only as long as needed for the purpose it was collected, then
-delete it.
+We do not keep member data merely because storage is available.
 
 | Data | Retention |
 | --- | --- |
-| Account basics | While you are a member; deleted on leaving |
-| Residency proof | Deleted after verification |
-| What you post | Until you delete it |
-| Minimal logs | up to 90 days, then purged |
+| Beta-interest email | Until the notice is sent or the person asks to be removed |
+| Account basics | While the account is active; intended to be removed or scrubbed on deletion after the deletion/session-revocation gate passes |
+| Residency proof | Not collected until delete-after-review and orphan cleanup are verified end to end |
+| Messages | Intended to remain participant-only and to remove a person's sent messages on account deletion; both behavior and session revocation must pass the beta gate |
+| Safety reports | Until resolved or the reporter deletes their account; a participant-supplied excerpt may remain even if the source conversation is later deleted |
+| Consent, closed-ballot, moderation, and audit records | Kept in minimized or anonymized form when deletion would make the governance or accountability record inaccurate |
+| Minimal operational logs | Kept only as long as operationally needed; no fixed purge promise is made until it is technically enforced and verified |
+
+A valid legal hold may temporarily stop deletion of the specific records covered
+by that hold. Steppe will not broaden a hold beyond its lawful scope.
 
 ## 6. Your Rights and Choices
 
-You can see the information we hold about you, export it, correct it, and delete
-your account. When you leave, we delete our copy. To make a request, contact us at
-the address in Section 10.
+The intended beta process lets you ask to see, export, or correct information,
+withdraw optional communication consent, and delete your account. Before beta
+invitations, Steppe must verify that export coverage is complete, deletion removes
+ordinary account data and authored messages, and every surviving session loses
+authority. Integrity-required governance, consent, moderation, and audit records
+may remain attached only to a scrubbed “Former member” profile where necessary.
 
 ## 7. Security
 
-We use reasonable administrative, technical, and physical safeguards to protect
-your information. No system is perfectly secure, and we will notify affected
-members and regulators of a breach as required by law.
+Steppe uses access controls, row-level database rules, least-privilege service
+credentials, private verification storage, and human review for consequential
+moderation. No system is perfectly secure. Steppe will give notices required by
+applicable breach law.
 
 ## 8. Children's Privacy
 
-Steppe is for adults. The service is not directed to children, and you must be at
-least 18 to become a member. We do not knowingly collect information from anyone under
-18, and we do not knowingly collect information from a child under 13 (consistent with
-the federal Children's Online Privacy Protection Act). A version for ages 13–17 is
-planned and will launch only with its own protections and applicable children's-privacy
-compliance.
+The founding beta is for adults and is not directed to children. A version for
+ages 13–17 will not launch without separate safeguards and legal review. Steppe
+does not knowingly collect information from a child under 13.
 
-> [CONFIRM: Greg + counsel — confirm the minimum membership age.]
+> [CONFIRM: counsel — confirm minimum beta membership age.]
 
 ## 9. Changes to This Policy
 
-We may update this policy. We will post the revised version here with a new
-effective date and, for material changes, give members notice in advance.
+We will post a revised version with a new effective date and give advance notice
+of material changes where required. A material privacy promise will not be
+published before the product can actually perform it.
 
-## 10. Contact Us
+## 10. Contact
 
-Questions or requests about this policy, or your data, can be sent to
+Privacy questions and requests go to
 [hello@steppe.community](mailto:hello@steppe.community) or by mail to
-3566 NW 8th Street, Redmond, OR 97756.
+3566 NW 8th Street, Redmond, OR 97756. Gregory Chism handles member-data
+requests. Ignite should be contacted only for a sponsored matter that Ignite
+actually administers.

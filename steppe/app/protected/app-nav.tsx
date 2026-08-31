@@ -4,6 +4,7 @@ import { HorizonBand } from "@/components/broadsheet/horizon-band";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { SearchSlot } from "./search-slot";
 import { MessagesSlot } from "./messages-slot";
+import { DocumentLanguage } from "@/components/document-language";
 import type { Locale } from "@/lib/i18n";
 import type { Destination } from "./nav-destinations";
 
@@ -47,6 +48,7 @@ export function AppNav({
     // (navStyle :1865: background var(--bone)); the rail's hairline below is
     // the zone's rule. Flush page mastheads continue the same bone beneath it.
     <div className="w-full bg-muted">
+      <DocumentLanguage locale={locale} />
       {/* The bundle's horizon band tops the shell (strata + sun, decoration). */}
       <HorizonBand />
       <nav lang={locale} className="flex w-full justify-center border-b">

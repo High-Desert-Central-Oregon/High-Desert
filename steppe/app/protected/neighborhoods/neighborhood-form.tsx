@@ -125,7 +125,7 @@ export function NeighborhoodForm({
                 {dict.neighborhoods.noneOptionLabel}
               </span>
               <span className="ml-1 text-muted-foreground">
-                — {dict.neighborhoods.noneOptionHint}
+                · {dict.neighborhoods.noneOptionHint}
               </span>
             </span>
           </label>

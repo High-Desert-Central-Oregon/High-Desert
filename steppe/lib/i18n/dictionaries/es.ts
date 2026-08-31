@@ -25,7 +25,7 @@ export const es: Dictionary = {
     spanish: "Español",
     somethingWrong: "Lo sentimos, algo salió mal.",
     cancel: "Cancelar",
-    sealAlt: "Sello Strata de Steppe — Redmond, Oregón",
+    sealAlt: "Sello Strata de Steppe, Redmond, Oregón",
     isomimoAlt: "Emblema de engranaje de Steppe con un paisaje de alto desierto",
   },
 
@@ -74,7 +74,7 @@ export const es: Dictionary = {
       "Tu invitación funcionó, pero no pudimos enviar el código de acceso. Intenta iniciar sesión con este correo.",
     errorNetwork: "No pudimos conectar con Steppe. Revisa tu conexión e inténtalo de nuevo.",
     privacyNote:
-      "Usamos tu correo solo para que inicies sesión. Sin anuncios, sin rastreadores y sin vender nada — nunca.",
+      "Usamos tu correo solo para que inicies sesión. No hay anuncios ni rastreadores, y nunca vendemos tu información.",
     alreadyMember: "¿Ya tienes cuenta?",
     signInLink: "Iniciar sesión",
   },
@@ -93,7 +93,7 @@ export const es: Dictionary = {
     labelLabel: "¿Para qué es?",
     labelPlaceholder: "Tarjetas de mostrador, Fred Meyer",
     placeLabel: "Vecindario (opcional)",
-    placeNone: "Cualquier lugar — uso general",
+    placeNone: "Cualquier lugar (uso general)",
     placeHint: "Déjalo así para tarjetas de mostrador y prensa. Elige un vecindario y la página de compromisos se rellena sola.",
     mint: "Crear la invitación",
     minting: "Creando…",
@@ -127,14 +127,14 @@ export const es: Dictionary = {
   auth: {
     title: "Inicia sesión en Steppe",
     subtitle:
-      "Por ahora Steppe es solo por invitación. Si tu correo fue invitado, este mismo formulario te da acceso —y crea tu cuenta la primera vez—. Te enviamos un código de 6 dígitos de un solo uso y un enlace de acceso, así no hay contraseña que recordar ni que se pueda filtrar.",
+      "Por ahora Steppe es solo por invitación. Si tu correo fue invitado, este formulario te da acceso y crea tu cuenta la primera vez. Te enviamos un código de 6 dígitos de un solo uso y un enlace de acceso, así no hay contraseña que recordar ni que se pueda filtrar.",
     emailLabel: "Correo electrónico",
     emailPlaceholder: "tu@ejemplo.com",
     submit: "Envíenme un código para entrar",
     submitting: "Enviando…",
     checkEmailTitle: "Revisa tu correo",
     checkEmailBody:
-      "Si esa dirección puede unirse, enviamos un código de 6 dígitos a {email}. Escríbelo abajo — es la forma más fácil de entrar. El código y el enlace de ese correo funcionan una sola vez y caducan pronto.",
+      "Si esa dirección puede unirse, enviamos un código de 6 dígitos a {email}. Escríbelo abajo. El código y el enlace de acceso funcionan una sola vez y caducan pronto.",
     codeLabel: "Código de 6 dígitos",
     codeVerify: "Entrar con el código",
     codeVerifying: "Comprobando…",
@@ -144,7 +144,7 @@ export const es: Dictionary = {
       "El código no coincide o ya caducó. Solicita uno nuevo e inténtalo otra vez.",
     codeError: "No pudimos comprobar ese código. Inténtalo de nuevo.",
     codeResend: "Envíenme un código nuevo",
-    codeResent: "Código nuevo enviado — revisa tu correo otra vez.",
+    codeResent: "Código nuevo enviado. Revisa tu correo otra vez.",
     orTapLink: "O toca el enlace de acceso en el mismo correo.",
     sendAnother: "Usar otro correo",
     errorGeneric:
@@ -160,7 +160,7 @@ export const es: Dictionary = {
   welcome: {
     title: "Antes de participar",
     intro:
-      "Estos son los Términos de Membresía y la Política de Privacidad de Steppe. Por favor léelos —son breves y en lenguaje claro— y luego confirma al final para continuar.",
+      "Estos son los Términos de Membresía y la Política de Privacidad de Steppe. Son breves y están escritos en lenguaje claro. Léelos y luego confirma al final para continuar.",
     draftNotice:
       "Borrador para revisión: pendiente de revisión legal en Oregón. La redacción final puede cambiar antes del lanzamiento público.",
     signedInAs: "Sesión iniciada como {email}.",
@@ -184,6 +184,11 @@ export const es: Dictionary = {
     nextTitle: "Qué sigue",
     nextBody:
       "Verifica que vives en Redmond para participar en los eventos del vecindario y la votación comunitaria.",
+    readyKicker: "Listo para participar",
+    readyTitle: "El tablón de tu comunidad está abierto",
+    readyBody:
+      "Lee lo que comparten tus vecinos, ofrece lo que puedas o publica lo que necesites. Todo aparece de más nuevo a más antiguo.",
+    readyCta: "Abrir el Intercambio",
     statusVerified: "Residente verificado",
     statusUnverified: "Aún no verificado",
     statusLabel: "Estado de membresía",
@@ -196,7 +201,7 @@ export const es: Dictionary = {
 
   install: {
     eyebrow: "Añadir a la pantalla de inicio",
-    why: "Abre Steppe como una aplicación — sin descargas y sin tienda de aplicaciones.",
+    why: "Abre Steppe como una aplicación. No necesitas descargarla ni usar una tienda de aplicaciones.",
     installCta: "Instalar",
     // En palabras a propósito — nunca depender de un ícono de compartir dibujado.
     iosHow: "Toca el botón Compartir y luego 'Añadir a pantalla de inicio'.",
@@ -211,7 +216,7 @@ export const es: Dictionary = {
     legend: "Elige tu vecindario",
     noneOptionLabel: "Ninguno encaja",
     noneOptionHint:
-      "Si tu parte de Redmond no aparece en la lista — un área más amplia, un bolsillo rural o una comunidad fuera de los límites de la ciudad — elige esta opción. Un vecino del equipo te contactará para ayudarte.",
+      "Elige esta opción si tu parte de Redmond no aparece en la lista, incluida un área más amplia, una zona rural o una comunidad fuera de los límites de la ciudad. Un vecino del equipo te contactará para ayudarte.",
     noneNoteLabel: "¿Dónde vives? (opcional)",
     noneNotePlaceholder:
       "p. ej. el centro de Redmond, o una zona rural fuera de los vecindarios listados",
@@ -248,7 +253,7 @@ export const es: Dictionary = {
     post: "Publicar",
     searchPh: "Buscar en el Intercambio",
     searchSubmit: "Buscar",
-    emptyTitle: "Una columna tranquila hoy",
+    emptyTitle: "No hay publicaciones en esta categoría",
     emptySub: "Aún no hay nada en este filtro. Vuelve luego, o publica el primero.",
     categoryField: "Categoría",
     titleField: "Título",
@@ -274,15 +279,15 @@ export const es: Dictionary = {
     backToBoard: "Volver al Intercambio",
     newTitle: "Publicar",
     newIntro:
-      "Las publicaciones aparecen de más nueva a más antigua para cada miembro verificado — nada se ordena por clics.",
+      "Las publicaciones aparecen de más nueva a más antigua para cada miembro verificado. Nada se ordena por clics.",
     eventChipHint: "Los eventos tienen su propio formulario: fechas, lugar y RSVP.",
     segUpcoming: "Próximos",
-    upcomingEmpty: "Aún no hay nada en el calendario — publica el primer encuentro.",
+    upcomingEmpty: "Aún no hay nada en el calendario. Publica el primer encuentro.",
   },
 
   events: {
     dateline: "Encuentros del vecindario · Los más próximos primero",
-    voice: "Encuentros reales de vecinos verificados — confirma con un toque.",
+    voice: "Encuentros reales de vecinos verificados. Confirma con un toque.",
     listTitle: "Eventos del vecindario",
     listIntro:
       "Próximos encuentros, los más cercanos primero. Los eventos de tu vecindario aparecen primero, luego el resto de Redmond.",
@@ -294,7 +299,7 @@ export const es: Dictionary = {
     allRedmond: "Todo Redmond",
     chipEvent: "Evento",
     addCal: "Añadir al calendario",
-    icsNote: "Añádelo a tu calendario — o copia estos datos",
+    icsNote: "Añádelo a tu calendario o copia estos datos",
     icsDescription: "Un evento comunitario de Steppe. Los RSVP se quedan en Steppe.",
     hostedBy: "Organizado por {name}",
     whenLabel: "Cuándo",
@@ -331,10 +336,10 @@ export const es: Dictionary = {
   messages: {
     title: "Mensajes",
     dateline: "Vecinos verificados · Privado entre ustedes dos",
-    voice: "Los mensajes se quedan en Steppe — nunca por SMS o correo, y nadie más los ve.",
+    voice: "Los mensajes se quedan en Steppe. Nunca se envían por SMS ni por correo, y nadie más puede leerlos.",
     msgInside: "Los mensajes se quedan en Steppe",
     composePrivacy:
-      "Tu contacto se queda en Steppe. Los vecinos te encuentran aquí — nunca por SMS o correo.",
+      "Tu contacto se queda en Steppe. Los vecinos te encuentran aquí, nunca por SMS ni por correo.",
     rowSub: "Tus conversaciones",
     emptyTitle: "Aún no hay mensajes",
     emptySub: "Saluda a un vecino desde una de sus publicaciones.",
@@ -359,7 +364,7 @@ export const es: Dictionary = {
     menuMore: "Opciones de la conversación",
     mute: "Silenciar esta conversación",
     unmute: "Reactivar esta conversación",
-    muted: "Silenciado — no recibirás avisos",
+    muted: "Silenciado. No recibirás avisos.",
     leave: "Salir de la conversación",
     block: "Bloquear vecino",
     blockConfirm:
@@ -367,7 +372,7 @@ export const es: Dictionary = {
     blockCta: "Bloquear",
     reportThread: "Reportar a la moderación",
     reportThreadConfirm:
-      "¿Enviar esta conversación a la moderación? Verán los mensajes que cites aquí — nada más.",
+      "¿Enviar esta conversación a la moderación? Solo verán los mensajes que cites aquí.",
     reportThreadLabel: "¿Qué debería saber la moderación?",
     reportThreadCta: "Enviar reporte",
     reportThreadSent: "Enviado a la moderación, en privado.",
@@ -379,7 +384,7 @@ export const es: Dictionary = {
     rowSub: "Tus RSVP y los eventos de tus grupos",
     dateline: "Tus grupos · Tus RSVP",
     voice:
-      "Tus encuentros en una columna — lo que respondiste y donde perteneces.",
+      "Tus encuentros en una columna: tus respuestas y los grupos a los que perteneces.",
     maybeTag: "Quizá",
     segAgenda: "Agenda",
     segMonth: "Mes",
@@ -390,11 +395,11 @@ export const es: Dictionary = {
     emptySub: "Confirma tu asistencia a un evento, o únete a un grupo.",
     gateTitle: "Verifícate para ver tu calendario",
     gateBody:
-      "Tu calendario se llena con tus RSVP y tus grupos — ambos empiezan con la verificación.",
+      "Tu calendario se llena con tus confirmaciones y tus grupos. Ambos requieren verificación.",
     gateCta: "Verifica tu residencia",
     connectHeading: "Conecta tu calendario",
     connectBody:
-      "Un enlace privado que tu app de calendario consulta. Cualquiera con el enlace puede leer ese calendario — trátalo como una llave. Puedes reemplazarlo o quitarlo aquí cuando quieras.",
+      "Un enlace privado que consulta tu app de calendario. Cualquiera que tenga el enlace puede leer ese calendario, así que trátalo como una llave. Puedes reemplazarlo o quitarlo cuando quieras.",
     createLink: "Crear enlace de calendario",
     pasteLabel: "Pégalo en tu app de calendario",
     lastRead: "Última lectura {when}",
@@ -412,10 +417,10 @@ export const es: Dictionary = {
 
   groups: {
     dateline: "Círculos del barrio · De los miembros",
-    voice: "Grupos pequeños de vecinos verificados — únete libremente, sal cuando quieras.",
+    voice: "Grupos pequeños de vecinos verificados. Únete libremente y sal cuando quieras.",
     title: "Grupos",
     intro:
-      "Grupos de la comunidad — tableros, calendarios, eventos. Explora por categoría o busca por nombre.",
+      "Los grupos de la comunidad tienen tableros, calendarios y eventos. Explora por categoría o busca por nombre.",
     create: "Crear grupo",
     searchLabel: "Buscar",
     searchPlaceholder: "Busca grupos por nombre",
@@ -427,6 +432,7 @@ export const es: Dictionary = {
     visibilityMembersOnly: "Solo miembros",
     upcomingSection: "Próximos",
     memberCount: { one: "{count} miembro", other: "{count} miembros" },
+    everyoneMembers: "Todos los miembros verificados",
     // Controles de membresía
     join: "Unirse",
     requestToJoin: "Solicitar unirse",
@@ -480,9 +486,9 @@ export const es: Dictionary = {
     presetAdvancedHint: "Define la visibilidad y la política de ingreso por separado.",
     fieldVisibility: "Visibilidad",
     fieldJoinPolicy: "Política de ingreso",
-    joinOpen: "Abierto — unirse al instante",
-    joinRequest: "Solicitud — un responsable aprueba",
-    joinLocked: "Cerrado — solo por invitación",
+    joinOpen: "Abierto: únete al instante",
+    joinRequest: "Solicitud: un responsable aprueba",
+    joinLocked: "Cerrado: solo por invitación",
     creating: "Creando…",
     createSubmit: "Crear grupo",
     nameRequired: "Añade un nombre de grupo.",
@@ -499,7 +505,7 @@ export const es: Dictionary = {
     settingsSaved: "Configuración guardada.",
     settingsError: "No pudimos guardar la configuración. Inténtalo de nuevo.",
     pendingTitle: "Solicitudes de ingreso",
-    pendingIntro: "Personas esperando para unirse — más antiguas primero.",
+    pendingIntro: "Personas esperando para unirse, por orden de solicitud.",
     pendingEmpty: "No hay solicitudes pendientes.",
     approve: "Aprobar",
     deny: "Rechazar",
@@ -511,7 +517,7 @@ export const es: Dictionary = {
     confirmDemote: "¿Bajar a este responsable a miembro normal?",
     addTitle: "Añadir un miembro",
     addIntro:
-      "Añade directamente a un miembro verificado — útil para grupos por invitación.",
+      "Añade directamente a un miembro verificado. Esta opción sirve para grupos por invitación.",
     addEmpty: "Ningún miembro verificado coincide con ese nombre.",
     addSearchHint: "Busca por nombre para añadir un miembro verificado.",
     addSearching: "Buscando…",
@@ -556,7 +562,7 @@ export const es: Dictionary = {
     intro:
       "Los eventos del vecindario y la votación comunitaria son para residentes verificados de Redmond. Elige una forma de mostrar que vives aquí, y un vecino del equipo de revisión la comprueba a mano.",
     forget:
-      "Borramos tu documento en el momento en que una persona decide. Solo conservamos que estás verificado, la fecha y el método — nunca el documento en sí.",
+      "Borramos tu documento en cuanto una persona toma la decisión. Solo conservamos el resultado, la fecha y el método. Nunca guardamos el documento.",
     methodLegend: "¿Cómo te gustaría verificarte?",
     fileLabel: "Sube tu documento",
     fileHint: "Una foto clara o un PDF, hasta 10 MB.",
@@ -569,7 +575,7 @@ export const es: Dictionary = {
     errorGeneric: "No pudimos enviarlo. Inténtalo de nuevo.",
     pendingTitle: "Tu verificación está en revisión",
     pendingBody:
-      "Una persona la revisará pronto. Tendrás acceso completo en cuanto se apruebe — puedes cerrar esta página con tranquilidad.",
+      "Una persona la revisará pronto. Tendrás acceso completo en cuanto se apruebe. Puedes cerrar esta página.",
     verifiedTitle: "Eres residente verificado",
     verifiedBody:
       "Gracias. Tienes acceso completo a los eventos del vecindario y a la votación comunitaria.",
@@ -588,7 +594,7 @@ export const es: Dictionary = {
       voter_reg: "Tu registro electoral de Oregón que muestre tu dirección.",
       property_record: "Un recibo de impuestos sobre la propiedad o escritura de tu casa en Redmond.",
       postcard_code:
-        "No se necesita documento. Enviamos un código de un solo uso a tu dirección en Redmond y una persona lo confirma contigo — para quienes usan un apartado postal o no tienen documentación estándar.",
+        "No se necesita documento. Enviamos un código de un solo uso a tu dirección en Redmond y una persona lo confirma contigo. Esta opción sirve para quienes usan un apartado postal o no tienen documentación estándar.",
     },
   },
 
@@ -599,8 +605,8 @@ export const es: Dictionary = {
     empty: "No hay verificaciones en espera por ahora.",
     viewEvidence: "Ver evidencia",
     opening: "Abriendo…",
-    noEvidence: "Sin archivo — solicitud de código por correo",
-    evidenceError: "No se pudo abrir la evidencia. El enlace puede haber caducado — inténtalo de nuevo.",
+    noEvidence: "Sin archivo (solicitud de código por correo)",
+    evidenceError: "No se pudo abrir la evidencia. El enlace puede haber caducado. Inténtalo de nuevo.",
     approve: "Aprobar",
     reject: "Rechazar",
     deciding: "Guardando…",
@@ -622,7 +628,7 @@ export const es: Dictionary = {
   governance: {
     dateline: "El registro público · Todos empiezan en 1×",
     voice:
-      "Votos secretos — todos empiezan en 1× y el peso crece con la antigüedad (1×–3×, modificable por los miembros).",
+      "Votos secretos. Todos empiezan en 1× y el peso crece con la antigüedad (1×–3×, modificable por los miembros).",
     segProposals: "Propuestas",
     segRecord: "Registro",
     listTitle: "Propuestas y votaciones",
@@ -672,6 +678,8 @@ export const es: Dictionary = {
     windowRequired: "Por favor indica horas de apertura y cierre válidas.",
     windowOrder: "La votación debe cerrar después de abrir.",
     closesPast: "La hora de cierre debe estar en el futuro.",
+    foundationalNotice:
+      "Una propuesta fundacional debe publicarse al menos 30 días antes de que abra la votación.",
     errorGeneric: "No pudimos crear la propuesta. Inténtalo de nuevo.",
     voteHeading: "Tu voto",
     voteSecrecyNote:
@@ -695,6 +703,16 @@ export const es: Dictionary = {
     noResult: "No hay resultado disponible para esta propuesta.",
     resultsTooLowTurnout:
       "Votaron muy pocas personas para mostrar el desglose sin revelar cómo votó cada quien. Solo se muestra la participación indicada arriba.",
+    outcomes: {
+      passed: "Aprobada",
+      failed: "No aprobada",
+      insufficient_turnout: "No vinculante: no se alcanzó la participación requerida",
+    },
+    participationRule:
+      "Se requieren {required} votos de {eligible} miembros elegibles",
+    approvalRule:
+      "{approval}% de aprobación entre los votos ponderados sí/no · se requiere {required}%",
+    noDecisiveVotes: "No se emitieron votos ponderados de sí o no.",
     closeHint:
       "La votación terminó. Registrar el cierre escribe el resultado oficial en el registro de auditoría público.",
     recordClose: "Registrar cierre oficial",
@@ -789,7 +807,7 @@ export const es: Dictionary = {
     viewContent: "Ver",
   },
   account: {
-    voice: "Privado por defecto — tú eliges qué ven los vecinos.",
+    voice: "Tu perfil empieza privado. Tú eliges qué ven los vecinos.",
     title: "Tu cuenta",
     intro:
       "Tus datos son tuyos. Llévate una copia cuando quieras, o cierra tu cuenta y vete.",
@@ -801,9 +819,9 @@ export const es: Dictionary = {
     deleteBody:
       "Esto cierra tu cuenta de forma permanente y borra tu información personal. No se puede deshacer.",
     deleteKept:
-      "Se conserva, pero ya no vinculado a ti: tus votos anteriores, cualquier registro de moderación y los términos que aceptaste permanecen en el registro permanente de la comunidad como «Miembro anterior», para no reescribir nunca resultados ni acuerdos ya cerrados. Los mensajes que enviaste se quedan en las conversaciones de tus vecinos, ya sin tu nombre.",
+      "Se conserva, pero ya no vinculado a ti: tus votos anteriores, cualquier registro de moderación y los términos que aceptaste permanecen en el registro permanente de la comunidad como «Miembro anterior», para no reescribir nunca resultados ni acuerdos ya cerrados.",
     deleteErased:
-      "Se borra para siempre: tu perfil, tus confirmaciones de asistencia, los eventos que creaste, tus enlaces de calendario, tus reportes, tu estado de verificación y tu vecindario.",
+      "Se borra para siempre: tu perfil, tus confirmaciones de asistencia, los eventos que creaste, tus enlaces de calendario, tus reportes, los mensajes que enviaste, tu estado de verificación y tu vecindario. También se eliminan los hilos de conversación que ya no tengan mensajes.",
     deleteIrreversible:
       "No hay forma de deshacerlo ni de volver a iniciar sesión después.",
     deleteConfirmLabel: "Escribe {word} para confirmar",
@@ -816,10 +834,10 @@ export const es: Dictionary = {
     profileRowSub: "Tu nombre y lo que ven los vecinos",
     profileTitle: "Tu perfil",
     profileIntro:
-      "Tu perfil es privado por defecto. Pon tu nombre y luego revela los campos uno a uno — a nadie, o a todos los miembros.",
+      "Tu perfil empieza privado. Pon tu nombre y elige qué campos pueden ver todos los miembros.",
     nameLabel: "Nombre visible",
     nameHelp:
-      "El nombre que ven los vecinos. No es tu nombre legal — elige el que quieras.",
+      "El nombre que ven los vecinos. No tiene que ser tu nombre legal.",
     nameSave: "Guardar nombre",
     nameSaved: "Nombre guardado.",
     nameRequired: "Escribe un nombre.",
@@ -827,7 +845,7 @@ export const es: Dictionary = {
     profileSaveError: "No pudimos guardarlo. Inténtalo de nuevo.",
     visibilityHeading: "Lo que pueden ver los vecinos",
     visibilityIntro:
-      "Cada campo empieza oculto. Revélalo a todos los miembros, o guárdalo para ti — un campo a la vez.",
+      "Cada campo empieza oculto. Elige qué campos pueden ver todos los miembros y cuáles siguen privados.",
     fieldNeighborhood: "Vecindario",
     fieldNeighborhoodNone: "Sin definir",
     visHidden: "Oculto",

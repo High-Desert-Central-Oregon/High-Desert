@@ -28,7 +28,17 @@ export const metadata = {
 
 type ResultRow = Pick<
   ProposalResult,
-  "ballots" | "revealed" | "yes_weight" | "no_weight" | "abstain_weight"
+  | "ballots"
+  | "revealed"
+  | "yes_weight"
+  | "no_weight"
+  | "abstain_weight"
+  | "electorate_size"
+  | "required_ballots"
+  | "approval_fraction"
+  | "approval_ratio"
+  | "quorum_met"
+  | "outcome"
 >;
 
 async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -55,7 +65,7 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
   const { data: proposal } = await supabase
     .from("proposals")
     .select(
-      "id, author_id, title, body, kind, status, opens_at, closes_at, created_at",
+      "id, author_id, title, body, kind, status, opens_at, closes_at, electorate_size, quorum_fraction, approval_fraction, privacy_floor, rules_version, created_at",
     )
     .eq("id", id)
     .maybeSingle<ProposalRow>();
@@ -140,7 +150,9 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
   if (state === "closed") {
     const { data } = await supabase
       .from("proposal_results")
-      .select("ballots, revealed, yes_weight, no_weight, abstain_weight")
+      .select(
+        "ballots, revealed, yes_weight, no_weight, abstain_weight, electorate_size, required_ballots, approval_fraction, approval_ratio, quorum_met, outcome",
+      )
       .eq("proposal_id", proposal.id)
       .maybeSingle<ResultRow>();
     result = data ?? null;
@@ -254,29 +266,51 @@ async function ProposalDetail({ params }: { params: Promise<{ id: string }> }) {
 
           {result ? (
             <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+              <p className="font-medium">
+                {dict.governance.outcomes[result.outcome]}
+              </p>
               <p className="text-sm text-muted-foreground">
                 {plural(locale, Number(result.ballots), dict.governance.turnout)}
+                {" · "}
+                {t(dict.governance.participationRule, {
+                  required: Number(result.required_ballots),
+                  eligible: Number(result.electorate_size),
+                })}
               </p>
               {result.revealed ? (
-                <dl className="flex flex-col gap-2">
-                  {(
-                    [
-                      ["yes", result.yes_weight],
-                      ["no", result.no_weight],
-                      ["abstain", result.abstain_weight],
-                    ] as const
-                  ).map(([choice, weight]) => (
-                    <div
-                      key={choice}
-                      className="flex items-center justify-between gap-4 text-sm"
-                    >
-                      <dt>{dict.governance.choices[choice]}</dt>
-                      <dd className="font-mono font-medium tabular-nums">
-                        {Number(weight ?? 0).toFixed(1)}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
+                <>
+                  <dl className="flex flex-col gap-2">
+                    {(
+                      [
+                        ["yes", result.yes_weight],
+                        ["no", result.no_weight],
+                        ["abstain", result.abstain_weight],
+                      ] as const
+                    ).map(([choice, weight]) => (
+                      <div
+                        key={choice}
+                        className="flex items-center justify-between gap-4 text-sm"
+                      >
+                        <dt>{dict.governance.choices[choice]}</dt>
+                        <dd className="font-mono font-medium tabular-nums">
+                          {Number(weight ?? 0).toFixed(1)}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="border-t pt-3 text-sm text-muted-foreground">
+                    {result.approval_ratio === null
+                      ? dict.governance.noDecisiveVotes
+                      : t(dict.governance.approvalRule, {
+                          approval: Math.round(
+                            Number(result.approval_ratio) * 100,
+                          ),
+                          required: Math.round(
+                            Number(result.approval_fraction) * 100,
+                          ),
+                        })}
+                  </p>
+                </>
               ) : (
                 // Below MIN_TURNOUT: turnout shows, but the weighted breakdown is
                 // withheld so a small-N close can't reveal how someone voted.

@@ -204,7 +204,7 @@ async function AppealsContent({
                   </p>
                   <p className="mt-1 text-muted-foreground">
                     {t(dict.moderation.reportBy, {
-                      name: reporterNames.get(r.reporter_id) ?? "—",
+                      name: reporterNames.get(r.reporter_id) ?? "·",
                       date: formatRedmondDateTime(r.created_at, locale),
                     })}
                   </p>
@@ -285,7 +285,7 @@ async function AppealsContent({
                       : isPost
                         ? dict.moderation.appealOnPost
                         : dict.moderation.appealOnProposal}
-                    {title ? ` — ${title}` : ""}
+                    {title ? ` · ${title}` : ""}
                   </p>
                   {action?.reason && (
                     <p className="mt-1 text-muted-foreground">
@@ -297,7 +297,7 @@ async function AppealsContent({
                 <div className="rounded-md bg-muted/50 p-3 text-sm">
                   <p className="font-medium">
                     {t(dict.moderation.appealBy, {
-                      name: names.get(appeal.user_id) ?? "—",
+                      name: names.get(appeal.user_id) ?? "·",
                     })}
                   </p>
                   <p className="mt-1 whitespace-pre-wrap">{appeal.body}</p>

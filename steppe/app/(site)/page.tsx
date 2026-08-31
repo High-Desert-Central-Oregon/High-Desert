@@ -12,7 +12,7 @@ import { GenerativeScene } from "./_components/generative-scene";
 export const metadata = {
   title: "Steppe · a place that belongs to the people in it",
   description:
-    "Steppe is civic infrastructure for Central Oregon, owned by the members who use it. Member dues pay for it, so it works for members instead of advertisers.",
+    "Steppe is fiscally sponsored civic infrastructure in development for Central Oregon. Join the list for the free founding beta.",
 };
 
 export default async function HomePage() {
@@ -80,8 +80,8 @@ export default async function HomePage() {
           <Image
             src="/brand/steppe-isomimo-512.png"
             alt={t("isomimoAlt")}
-            width={260}
-            height={260}
+            width={422}
+            height={512}
             className="howmark"
           />
           <div className="steps">

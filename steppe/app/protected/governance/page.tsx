@@ -10,6 +10,7 @@ import { Masthead } from "@/components/broadsheet/masthead";
 import { SectionLabel, SectionRow } from "@/components/broadsheet/section-row";
 import { Fab } from "@/components/broadsheet/fab";
 import { MarkerChip } from "@/components/broadsheet/chips";
+import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
 import { formatRedmondDateTime } from "@/lib/time";
 import { kindMarker } from "@/lib/markers";
 import { proposalState, type ProposalState } from "@/lib/governance";
@@ -137,7 +138,7 @@ async function GovernanceContent() {
     .sort((a, b) => Date.parse(b.closes_at) - Date.parse(a.closes_at));
 
   return (
-    <div lang={locale} className="flex flex-col gap-8">
+    <div lang={locale} className="flex flex-col gap-8 pb-20 md:pb-0">
       {/* FOUNDER OVERRIDE (2026-07-12): masthead band ABOVE the segments,
           matching every other tab root — the bundle's Govern exception
           (segments on top, :637) is overridden; recorded in the tokens
@@ -149,12 +150,19 @@ async function GovernanceContent() {
         flush
       />
       <GovSegments active="proposals" dict={dict} />
-      <Fab href="/protected/governance/new" label={dict.governance.create} />
+      {all.length > 0 && (
+        <Fab href="/protected/governance/new" label={dict.governance.create} />
+      )}
 
       {all.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-          {dict.governance.empty}
-        </p>
+        <QuietEmpty
+          title={dict.governance.empty}
+          sub={dict.governance.listIntro}
+          action={{
+            href: "/protected/governance/new",
+            label: dict.governance.create,
+          }}
+        />
       ) : (
         <div className="flex flex-col gap-8">
           {open.length > 0 && (

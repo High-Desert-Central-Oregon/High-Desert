@@ -1,175 +1,167 @@
 <!--
   DRAFT SCAFFOLD — pending legal review.
 
-  This is the single source of truth for /legal/terms. The delivered
-  legal-terms.md should REPLACE this file verbatim (same path). The page reads
-  this file at build, strips the [CONFIRM …] reviewer blockquotes, lists any
-  remaining [BRACKET] placeholders in the build log, and is noindex until counsel
-  signs off and every placeholder is filled.
+  This is the single source of truth for /legal/terms. The page reads this file
+  at build, strips [CONFIRM …] reviewer blocks, reports remaining review items,
+  and stays noindex until counsel signs off.
 
-  Written to describe and advertise the real posture (Trust & Safety /
-  Verification Retention decision record), and to keep every promise at or below
-  actual practice — over-promising creates an enforceable duty.
-
-  Do not hand-convert to JSX — edit this markdown only.
+  Organizational facts, beta posture, subscription responsibility, and deletion
+  behavior were updated from confirmed founder instructions on 2026-08-29.
+  Beta boundaries were updated from confirmed founder instructions on 2026-08-30.
 -->
 
-# Terms of Membership
+# Founding Beta Terms
 
 ```
-Effective date:  June 22, 2026
-Version:         Draft v1
-Last updated:    June 22, 2026
+Effective date:  On publication for the founding beta
+Version:         Draft v2.1
+Last updated:    August 30, 2026
 Status:          Draft (pending legal review)
 ```
 
-Steppe is community-owned, ad-free civic infrastructure for Redmond, Central
-Oregon, operated by Steppe, a fiscally sponsored nonprofit (fiscal sponsor: Ignite
-Empowerment Foundation, a Central Oregon 501(c)(3)). These Terms of Membership govern your use of
-Steppe. A plain-language summary of how Steppe works lives across the site, and a
-companion [Privacy Policy](/legal/privacy) explains how we handle data; this
-document is the formal version. By becoming a member you agree to these terms.
+Steppe is ad-free civic infrastructure in development for Redmond and Central
+Oregon. Steppe has a signed fiscal-sponsorship agreement with Ignite Empowerment
+Foundation. Ignite handles sponsor-routed grants, donations, and other sponsored
+responsibilities. Gregory Chism operates the member app, handles member data, and
+will administer member subscriptions directly. Either Gregory Chism or Ignite
+may handle a particular contract; every contract or enrollment flow must identify
+its actual party before the user agrees.
 
-> [CONFIRM: Greg + counsel — Steppe operates as a fiscally sponsored nonprofit (sponsor:
-> Ignite Empowerment Foundation). Confirm which entity is the contracting party and data
-> controller for members (Steppe vs. the fiscal sponsor), reconcile with the "Oregon public
-> benefit corporation / articles of incorporation" language used elsewhere, and confirm the
-> governing-law / venue clause.]
+These terms govern the founding beta. They do not claim that Steppe has already
+formed the planned Oregon public benefit nonprofit or that the draft Articles and
+Charter have been filed or adopted.
 
-## 1. Membership and Verification
+> [CONFIRM: counsel — supply the legally correct contracting name for beta,
+> confirm Ignite's project description, and confirm governing law and venue.]
 
-Membership is open to verified residents of Central Oregon (beginning with Redmond,
-Oregon) who are at least 18 years old. Steppe is not anonymous: you prove once that you
-live here, and that gate is what keeps the community real. Membership is limited to
-adults; a version for ages 13–17 is planned for the future, with its own protections,
-and is not yet available.
+## 1. Beta Participation and Verification
 
-A person reviews your proof of residency, and **the proof is deleted the moment
-that check is made.** We keep only that you are verified, the date, and the
-method — never an identity document, and never your legal name. To one another,
-members are known by a username (pseudonymous to peers). One account per member.
+The founding beta is free and intended for verified adult residents of Central
+Oregon, beginning with Redmond. Steppe will first run a readiness test capped at
+50 people. It will advance only if at least 25 people participate and at least one
+local-organization collaboration produces current, real-time local information in the
+service. If both gates pass, the founding launch is capped at 250 members and is
+free for six months. Gregory Chism is the support contact and incident owner for
+both stages.
 
-> [CONFIRM: Greg + counsel — confirm the minimum membership age and the service
-> area definition.]
+Paid membership is planned afterward at a flat $4 per month with a no-questions
+hardship waiver, but no payment will be collected until final paid-membership
+terms identify the contracting party, payment provider, price, renewal method,
+cancellation, and applicable consumer notices.
 
-## 2. Community Standards: A Two-Tier Model
+A human reviewer is intended to check proof of residency once collection opens.
+Collection remains closed until deletion after review and orphan cleanup are
+verified end to end. The intended retained record is only the verification result,
+date, and method, not the identity document or legal name. Members use a chosen display name
+with one another. One account is allowed per member.
 
-What is and isn't allowed on Steppe lives in two layers.
+> [CONFIRM: counsel — confirm minimum age, service area, paid-membership renewal
+> disclosures, and verification language.]
 
-### Legal floor (not subject to member vote)
+## 2. Community Standards
 
-A short list of conduct is prohibited everywhere on Steppe and **cannot be
-enabled by any member vote**, because it reflects the law and the safety
-obligations of the organization:
+The following legal and safety floor is not subject to a member vote:
 
 - illegal goods or services;
-- child sexual abuse material (CSAM) — reported to the NCMEC as required by law
-  upon actual knowledge;
-- non-consensual intimate imagery — removed through the process required by the
-  TAKE IT DOWN Act;
-- credible threats of violence;
+- child sexual abuse material;
+- non-consensual intimate imagery;
+- credible threats of violence; and
 - human trafficking or exploitation.
 
-> [CONFIRM: counsel — confirm the exact CSAM→NCMEC reporting procedure, the NCII
-> takedown process and timelines, and the statutory citations to name here.]
+Community norms above that floor are intended to be member-governed through the
+governance process and the amendable Schedule of Defaults.
 
-### Community norms (member-governed)
+> [CONFIRM: counsel — confirm reporting/takedown processes and statutory notices
+> before beta publication.]
 
-Everything above that floor — civility, harassment, the categories the
-marketplace may list, and similar standards — is set by the members through
-governance and recorded in the amendable Schedule of Defaults. Members decide the
-norms; members do not get to vote the legal floor away.
+## 3. Moderation and Messages
 
-## 3. Moderation
+Moderation is report-driven. A member reports content, a human reviews it, and a
+consequential moderation action is recorded and may be appealed. Steppe does not
+promise proactive monitoring, scanning, or filtering.
 
-Moderation is **reactive and report-driven**: members report content, human
-moderators review and decide, and the outcome is recorded in the public
-transparency log. A person — not an automated system — makes every consequential
-call.
+Direct messages are readable in the app only by their participants; moderators
+and administrators have no message-reader interface. Messages are stored as
+plaintext protected by access controls rather than end-to-end encryption, so a
+database operator can technically access them even though ordinary policy and
+tooling prohibit routine access. A participant may voluntarily disclose a quoted
+excerpt in a safety report.
 
-We do **not** proactively monitor, scan, or filter your posts or your messages,
-and nothing here should be read as a promise to do so. Surfacing and sorting tools
-may help a moderator find a report faster, but they never decide. Removals may be
-appealed through the governance process.
+## 4. Exchange
 
-## 4. The Marketplace / Exchange
+Steppe hosts member listings for needs, offers, goods, jobs, mutual aid, and
+events. It does not process, hold, or escrow exchange payments. Transactions are
+off-platform arrangements between members. Steppe is not a party to those
+transactions and does not warrant a listing, member, item, or service.
 
-Steppe hosts member listings — needs, offers, goods, jobs, mutual aid, and events.
+## 5. Member Content
 
-- **No on-platform payments.** Steppe does not process, hold, or escrow money. Any
-  transaction happens off-platform, directly between members, at their own
-  arrangement and risk.
-- **Prohibited items.** Listings may not offer anything on the legal floor in
-  Section 2, nor anything on the member-governed prohibited-items list.
-- **Report a listing.** Any member can report a listing; moderators act on reports
-  as described in Section 3.
+You keep ownership of content you author and grant only the license needed to
+store and display it through the service. Export tools provide the account data
+the app can associate with you.
 
-Steppe is not a party to transactions between members and makes no warranty about
-any listing, member, item, or service. Verified residency is the primary deterrent
-against bad-faith dealing.
+When you delete your account, Steppe deletes messages you authored, removes empty
+threads, and removes or scrubs ordinary account data. Content another member
+authored remains theirs. A quoted excerpt another participant voluntarily included
+in a safety report may remain as that report's intake record.
 
-## 5. Your Content
+## 6. Governance
 
-You keep ownership of what you post. You grant Steppe only the limited license
-needed to store and display your content to other members so the service works.
-You can delete your content, export your data, and leave at any time.
+The beta applies the rule set recorded in Steppe's dated governance outcome
+resolution:
 
-## 6. Data, Privacy, and Legal Process
+- ordinary proposals require a weighted simple majority;
+- major proposals require 15% participation and 60% approval;
+- foundational proposals require 15% participation, 75% approval, and at least
+  30 days between publication and voting opening;
+- abstentions count toward participation but not the weighted yes/no approval
+  percentage; and
+- no proposal is binding below the five-ballot privacy floor.
 
-How we handle data is set out in the [Privacy Policy](/legal/privacy). In short,
-and as it bears on these terms:
+The eligible-member count and rule set are snapshotted when a proposal is created.
+The founding cohort may ratify or amend these beta defaults prospectively.
 
-- **Verification evidence is deleted immediately** after the residency check; we
-  retain only the verified status, the date, and the method. Because we do not
-  keep the proof, **we cannot produce or disclose it — including under legal
-  process.**
-- Messages and other member content are minimized and kept only for a limited
-  window.
-- We disclose member data only as required by **valid legal process**, and we can
-  only ever produce what we actually hold. The scope of "we don't keep it" is
-  verification identity; we are honest that account details and content within
-  their retention window do exist and may be subject to lawful disclosure.
+App governance during beta is a product/operating process. It is not represented
+as a legally sufficient corporate-member vote until the planned entity exists and
+counsel confirms compliance with Oregon written-ballot and quorum rules.
 
-## 7. Acceptable Use
+## 7. Privacy and Legal Process
 
-Don't break the law; don't abuse, harass, endanger, or impersonate neighbors;
-don't try to evade verification or moderation; and don't scrape, overload, or
-attack the service.
+The [Privacy Policy](/legal/privacy) explains data roles and retention. In short:
+residency-proof collection remains closed until cleanup is verified; Gregory Chism
+handles member data; Ignite has no routine membership-database access; and complete
+export, account deletion, message cleanup, and session revocation are beta launch
+gates rather than claims of current production readiness.
 
-## 8. Suspension and Termination
+Steppe may preserve a specific record subject to valid legal process or a legal
+hold. It also preserves minimized consent, closed-ballot, moderation, appeal, and
+audit records when deletion would make the accountability record inaccurate.
 
-We may suspend or remove a member who violates the legal floor in Section 2 or,
-through the governance process, the community norms. You may leave at any time and
-we delete our copy of your data, except where an entry must remain in the
-append-only governance and transparency record.
+## 8. Acceptable Use and Account Action
 
-> [CONFIRM: counsel — reconcile member deletion with the append-only
-> moderation/governance/audit record (what is scrubbed vs. what is retained as a
-> tombstone).]
+Do not break the law; abuse, harass, endanger, or impersonate neighbors; evade
+verification or moderation; scrape member data; overload the service; or attack
+its security. Steppe may suspend access for violations of the legal floor or the
+then-current community rules, subject to the documented appeal process where it
+applies. You may leave at any time.
 
-## 9. Disclaimers and Limitation of Liability
+## 9. Beta Service and Liability
 
-The service is provided "as is," without warranties, to the fullest extent
-permitted by law. To the fullest extent Oregon law allows, Steppe and its directors,
-officers, employees, and volunteers are not liable for indirect, incidental, or
-consequential damages, and our total liability for any claim is limited to the dues you
-paid us in the twelve months before the claim (which is zero during any period when
-membership is free). Nothing here limits liability that cannot be limited under Oregon
-law — including for gross negligence, willful misconduct, or personal injury — or any
-non-waivable rights you have under the Oregon Unlawful Trade Practices Act.
+The beta is experimental and may change, pause, or lose data. It is provided “as
+is” to the fullest extent applicable law permits. Nothing here waives rights or
+liability that Oregon law does not allow a party to waive.
 
-> [CONFIRM: counsel — supply the warranty disclaimer and liability-limitation
-> language appropriate for an Oregon public benefit nonprofit.]
+> [CONFIRM: counsel — provide the warranty, liability, indemnity, governing-law,
+> and venue language for the actual beta contracting party.]
 
-## 10. Governance and Changes to These Terms
+## 10. Changes
 
-The community-norms layer of these terms is amendable by member vote through the
-governance process; the legal floor in Section 2 is not. We will post any revised
-version here with a new effective date and, for material changes, give members
-notice in advance.
+Steppe will post revised terms with a new effective date and provide advance
+notice of material changes where required. Privacy or governance behavior will
+not be advertised before the product can actually perform it.
 
 ## 11. Contact
 
-Questions about these terms can be sent to
+Questions can be sent to
 [hello@steppe.community](mailto:hello@steppe.community) or by mail to
 3566 NW 8th Street, Redmond, OR 97756.

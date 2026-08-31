@@ -148,7 +148,7 @@ async function GroupContent({
       );
       roster = active
         .map((m) => ({
-          name: nameById.get(m.user_id) ?? "—",
+          name: nameById.get(m.user_id) ?? "·",
           role: m.role,
         }))
         // Maintainers first, then alphabetical — legible, not ranked by activity.

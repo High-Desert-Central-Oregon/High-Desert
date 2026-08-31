@@ -1,9 +1,7 @@
-/* Preview page styles — hero (from _design-source/steppe-preview-v3.html), the
- * static "One honest feed" caption, and the live app embed (.pe-*, see
- * components/preview-embed.tsx). The old v3 phone FACSIMILE was replaced by the
- * embedded Claude Design export and its ~900 lines of dead rules were removed
- * (2026-07-04 housekeeping); the embed keeps the phone light (#FBF7EE) in both
- * themes by design. Shared chrome / tokens / strata: site-base.css + tokens.css. */
+/* Preview page styles — a concise three-step product story and the live app embed
+ * (.pe-*, see components/preview-embed.tsx). The embed is now supporting evidence,
+ * not the entire page: visitors understand Exchange → Groups → Governance before
+ * trying the product. Shared chrome / tokens / strata: site-base.css + tokens.css. */
 
 /* hero */
 .site-root .preview .hero {
@@ -46,72 +44,126 @@ html[data-theme="dark"] .site-root .preview .hero h1 em {
   line-height: 1.6;
 }
 
-/* caption */
-.site-root .preview .caption {
-  position: sticky;
-  top: 90px;
-  max-width: 380px;
+/* Three-step product story */
+.site-root .preview .preview-story-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
+  gap: clamp(42px, 7vw, 92px);
+  align-items: start;
+  padding: clamp(46px, 7vw, 88px) 0 clamp(64px, 9vw, 112px);
 }
-.site-root .preview .caption .ck {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--rust);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.site-root .preview .preview-story ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
-.site-root .preview .caption .ck .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.site-root .preview .preview-story-step {
+  position: relative;
+  padding: clamp(28px, 4vw, 48px) 0 clamp(32px, 5vw, 58px)
+    clamp(24px, 4vw, 46px);
+  border-top: 1px solid var(--rule);
+}
+.site-root .preview .preview-story-step::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: 0;
+  left: 0;
+  width: 4px;
   background: var(--rust);
 }
-.site-root .preview .caption h2 {
-  font-size: clamp(26px, 3.2vw, 36px);
+.site-root .preview .preview-story-groups::before {
+  background: var(--juniper);
+}
+.site-root .preview .preview-story-govern::before {
+  background: var(--ochre);
+}
+.site-root .preview .preview-story-kicker {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.site-root .preview .preview-story-kicker span {
+  color: var(--rust);
+  font-weight: 600;
+}
+.site-root .preview .preview-story-step h2 {
+  font-size: clamp(30px, 4.2vw, 48px);
   margin-bottom: 14px;
 }
-.site-root .preview .caption p {
-  font-size: 16.5px;
+.site-root .preview .preview-story-step p {
+  max-width: 56ch;
+  font-size: clamp(16px, 1.5vw, 18px);
   color: var(--text-muted);
-  line-height: 1.6;
-}
-.site-root .preview .caption .meta {
-  margin-top: 18px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-  line-height: 1.7;
+  line-height: 1.65;
 }
 
-@media (max-width: 900px) {
-  .site-root .preview .caption {
-    position: static;
-    max-width: none;
-    order: 2;
-  }
+/* Live demo — a restrained broadsheet plate beside the narrative. */
+.site-root .preview .preview-demo {
+  position: sticky;
+  top: 82px;
+  min-width: 0;
+  padding: 14px clamp(14px, 2vw, 22px) 22px;
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+}
+.site-root .preview .preview-demo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.site-root .preview .preview-demo-head p {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: right;
+}
+.site-root .preview .preview-demo-context {
+  margin: 12px 0 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.site-root .preview .preview-trust {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+.site-root .preview .preview-trust > span {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+.site-root .preview .preview-trust h2 {
+  margin: 8px 0;
+  font-size: clamp(22px, 2.6vw, 30px);
+}
+.site-root .preview .preview-trust p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 /* ============================================================================
- * Preview embed — the live, interactive Steppe app (a self-contained Claude
- * Design export) shown in place of the old facsimile. See
+ * Preview embed — the full, interactive intended-state Steppe facsimile. It uses
+ * sample content so all beta features can be reviewed without a login. See
  * components/preview-embed.tsx and public/preview-app/README.md.
  * ========================================================================== */
-
-/* Layout: the embed (left) beside the static "One honest feed" explainer (right).
- * Mirrors the old phone + caption composition; collapses to one column on narrow
- * screens, where the existing `.caption { order: 2 }` rule drops it below. */
-.site-root .preview .pe-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 360px);
-  gap: clamp(28px, 5vw, 64px);
-  align-items: start;
-  padding: 8px 0 clamp(48px, 7vw, 86px);
-}
 
 .site-root .preview .pe {
   display: flex;
@@ -147,7 +199,7 @@ html[data-theme="dark"] .site-root .preview .hero h1 em {
   align-self: center;
   width: auto;
   max-width: 100%;
-  height: min(760px, 82vh);
+  height: min(640px, 68vh);
   aspect-ratio: 482 / 952;
   margin: 0 auto;
   overflow: hidden;
@@ -256,9 +308,14 @@ html[data-theme="dark"] .site-root .preview .hero h1 em {
 
 /* Mobile: stack, and make the full-screen control prominent (full width). */
 @media (max-width: 900px) {
-  .site-root .preview .pe-layout {
+  .site-root .preview .preview-story-layout {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 46px;
+  }
+  .site-root .preview .preview-demo {
+    position: static;
+    width: min(100%, 520px);
+    margin: 0 auto;
   }
   .site-root .preview .pe-bar {
     display: flex;
@@ -268,6 +325,36 @@ html[data-theme="dark"] .site-root .preview .hero h1 em {
     width: 100%;
     justify-content: center;
     padding: 13px 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-root .preview .hero {
+    padding-top: 32px;
+  }
+  .site-root .preview .hero-in {
+    padding-bottom: 18px;
+  }
+  .site-root .preview .preview-story-layout {
+    padding-top: 34px;
+    gap: 38px;
+  }
+  .site-root .preview .preview-story-step {
+    padding-left: 20px;
+  }
+  .site-root .preview .preview-demo {
+    padding-inline: 12px;
+  }
+  .site-root .preview .preview-demo-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .site-root .preview .preview-demo-head p {
+    text-align: left;
+  }
+  .site-root .preview .pe-view {
+    height: min(620px, 72vh);
   }
 }
 

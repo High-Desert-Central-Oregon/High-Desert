@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Image from "next/image";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { SectionRow } from "@/components/broadsheet/section-row";
 import { Fab } from "@/components/broadsheet/fab";
 import { MarkerChip } from "@/components/broadsheet/chips";
 import { ActionLink } from "@/components/broadsheet/action-link";
+import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
 import { Input } from "@/components/ui/input";
 import { VerifiedGate } from "@/components/verified-gate";
 import { MembershipControl } from "./membership-control";
@@ -93,7 +93,7 @@ async function DirectoryContent({
   const catById = new Map(categories.map((c) => [c.id, c]));
 
   return (
-    <div lang={locale} className="flex flex-col gap-8">
+    <div lang={locale} className="flex flex-col gap-8 pb-20 md:pb-0">
       {/* Preview masthead grammar (dateline + voice are the bundle's own).
           The search slot lives in the shell header now (AppNav) — same ?s=1
           link, global on member routes. */}
@@ -103,7 +103,9 @@ async function DirectoryContent({
         voice={dict.groups.voice}
         flush
       />
-      <Fab href="/protected/groups/new" label={dict.groups.create} />
+      {rows.length > 0 && (
+        <Fab href="/protected/groups/new" label={dict.groups.create} />
+      )}
 
       {/* Browse/search — a plain GET form (JS-optional), revealed by the header
           slot; the category filter lives INSIDE it, not stacked on the root. */}
@@ -152,16 +154,11 @@ async function DirectoryContent({
       )}
 
       {rows.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-6 text-center">
-          {/* ISoMiMo warms the empty state (floor 120px). */}
-          <Image
-            src="/brand/steppe-isomimo-512.png"
-            alt={dict.common.isomimoAlt}
-            width={150}
-            height={150}
-          />
-          <p className="text-sm text-muted-foreground">{dict.groups.empty}</p>
-        </div>
+        <QuietEmpty
+          title={dict.groups.empty}
+          sub={dict.groups.intro}
+          action={{ href: "/protected/groups/new", label: dict.groups.create }}
+        />
       ) : (
         <ul className="flex flex-col border-t">
           {rows.map((g) => {
@@ -207,8 +204,10 @@ async function DirectoryContent({
                   title={g.name}
                   sub={isPublic && g.description ? g.description : undefined}
                   meta={
-                    showCount
-                      ? plural(locale, g.member_count, dict.groups.memberCount)
+                    g.is_system
+                      ? dict.groups.everyoneMembers
+                      : showCount
+                        ? plural(locale, g.member_count, dict.groups.memberCount)
                       : undefined
                   }
                   right={

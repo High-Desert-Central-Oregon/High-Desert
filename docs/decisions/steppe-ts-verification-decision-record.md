@@ -41,7 +41,7 @@ The guiding posture: Steppe is not anonymous — it is **pseudonymous to peers, 
 - Pair with a prohibited-items list and report-a-listing. Verified identity is the primary deterrent.
 
 ### 6. Data minimization
-- Short retention windows on chat / DMs. Minimizing retained data is both the privacy-protective and the liability/subpoena-exposure-reducing move — they point the same direction.
+- **2026-08-29 addendum:** no fixed timed-retention promise is made until an automated purge is implemented and verified. Instead, account deletion removes messages authored by the departing member and empty threads. This is the implemented minimization control; see `message-deletion-and-retention.md`.
 
 ### 7. Terms & website copy — honest under-promising
 - Public copy **describes and advertises** the real posture: we verify you're a neighbor, then delete the proof; we hold no identity documents; we cannot disclose verification evidence we do not keep.

@@ -123,13 +123,13 @@ export default function ProtectedLayout({
           room — no second column, no sidebar. */}
       <main
         id="main"
-        className="flex w-full max-w-[var(--content-max)] flex-1 flex-col gap-[var(--row-rhythm)] p-[var(--pad-screen)] max-md:pb-24"
+        className="flex w-full max-w-[var(--content-max)] flex-1 flex-col gap-[var(--row-rhythm)] p-[var(--pad-screen)] max-md:pb-32"
       >
         {children}
       </main>
 
       {/* Bottom tab bar (< md) — the mobile navigation; the main column above
-          reserves clearance for it (max-md:pb-24). */}
+          reserves clearance for it (max-md:pb-32), including form actions. */}
       <Suspense>
         <BottomTabs />
       </Suspense>

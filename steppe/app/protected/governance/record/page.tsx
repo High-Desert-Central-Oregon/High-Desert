@@ -4,10 +4,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ScrollText } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { t, type Dictionary } from "@/lib/i18n";
+import { VerifiedGate } from "@/components/verified-gate";
 import { Masthead } from "@/components/broadsheet/masthead";
 import { GovSegments } from "../gov-segments";
 
@@ -63,14 +64,25 @@ function contentHref(row: AuditRow): string | null {
 }
 
 async function RecordContent() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/auth/login");
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
 
   const { locale, dict } = await getServerDictionary();
+  if (!profile.verified) {
+    return (
+      <VerifiedGate
+        title={dict.governance.gateTitle}
+        body={dict.governance.gateBody}
+        ctaLabel={dict.governance.gateCta}
+        locale={locale}
+      />
+    );
+  }
+
   const supabase = await createClient();
 
   // Moderation + appeal entries from the append-only audit log, newest first.
-  // audit_log is readable by every member (al_read); it holds no private data.
+  // audit_log is readable by every verified member (al_read); it holds no private data.
   const { data: entries } = await supabase
     .from("audit_log")
     .select("action, entity, entity_id, metadata, actor_id, created_at")

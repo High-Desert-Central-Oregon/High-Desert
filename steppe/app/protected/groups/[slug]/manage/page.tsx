@@ -102,14 +102,14 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
 
   const pending = rosterRows
     .filter((r) => r.status === "pending" || r.status === "invited")
-    .map((r) => ({ userId: r.user_id, name: nameById.get(r.user_id) ?? "—" }))
+    .map((r) => ({ userId: r.user_id, name: nameById.get(r.user_id) ?? "·" }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const active = rosterRows
     .filter((r) => r.status === "active")
     .map((r) => ({
       userId: r.user_id,
-      name: nameById.get(r.user_id) ?? "—",
+      name: nameById.get(r.user_id) ?? "·",
       role: r.role,
     }))
     .sort(

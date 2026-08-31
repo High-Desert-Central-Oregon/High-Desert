@@ -126,7 +126,7 @@ async function PostDetailContent({
           .maybeSingle<{ name: string }>()
       : Promise.resolve({ data: null }),
   ]);
-  const authorName = author?.display_name ?? "—";
+  const authorName = author?.display_name ?? "·";
   const hood = nb?.name ?? dict.events.allRedmond;
 
   return (

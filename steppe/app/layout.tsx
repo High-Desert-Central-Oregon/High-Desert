@@ -56,7 +56,7 @@ const defaultUrl = siteOrigin();
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Steppe — Redmond, Oregon",
+  title: "Steppe · Redmond, Oregon",
   description:
     "Community-owned, verified, ad-free civic infrastructure for Redmond, Oregon.",
 };

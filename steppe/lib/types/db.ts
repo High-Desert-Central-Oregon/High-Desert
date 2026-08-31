@@ -77,6 +77,11 @@ export type ProposalRow = {
   status: ProposalStatus;
   opens_at: string;
   closes_at: string;
+  electorate_size: number;
+  quorum_fraction: number;
+  approval_fraction: number;
+  privacy_floor: number;
+  rules_version: string;
   created_at: string;
 };
 
@@ -90,8 +95,17 @@ export type ProposalResult = {
   kind: ProposalKind;
   status: ProposalStatus;
   closes_at: string;
+  electorate_size: number;
+  quorum_fraction: number;
+  approval_fraction: number;
+  privacy_floor: number;
+  rules_version: string;
+  required_ballots: number;
   ballots: number;
   revealed: boolean;
+  quorum_met: boolean;
+  approval_ratio: number | null;
+  outcome: "passed" | "failed" | "insufficient_turnout";
   yes_weight: number | null;
   no_weight: number | null;
   abstain_weight: number | null;
