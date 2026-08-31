@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 /**
  * The bundle's quiet empty state (inner.html :584-597): a miniature strata
  * horizon — rust sun at the bundle's 322/402 station over sage and basalt
@@ -5,7 +7,15 @@
  * from the Exchange board so every honestly-empty surface (the board,
  * My Calendar) draws the same horizon once.
  */
-export function QuietEmpty({ title, sub }: { title: string; sub: string }) {
+export function QuietEmpty({
+  title,
+  sub,
+  action,
+}: {
+  title: string;
+  sub: string;
+  action?: { href: string; label: string };
+}) {
   return (
     <div className="px-6 pb-10 pt-[14px] text-center">
       <div
@@ -40,6 +50,17 @@ export function QuietEmpty({ title, sub }: { title: string; sub: string }) {
       <p className="mt-[6px] text-[13.5px] leading-[1.5] text-muted-foreground">
         {sub}
       </p>
+      {action && (
+        <Link
+          href={action.href}
+          className="mt-5 inline-flex min-h-11 items-center bg-primary px-5 py-3 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <span aria-hidden="true" className="mr-2 font-sans text-base leading-none">
+            ＋
+          </span>
+          {action.label}
+        </Link>
+      )}
     </div>
   );
 }

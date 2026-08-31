@@ -1,8 +1,7 @@
 // Partners (/partners) — React from the canonical design (steppe-partners-v2.html)
 // on the shared chrome + tokens. Marketing copy is localized from the active
-// catalog (messages/*.json, "partners" namespace). Conservative claims carried
-// as-is (Aspiration is the only named fiscal sponsor); thresholds/percentages are
-// literals.
+// catalog (messages/*.json, "partners" namespace). Current organizational facts
+// reflect the signed Ignite sponsorship; thresholds/percentages are literals.
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import "./partners.css";
@@ -11,7 +10,7 @@ import { Hero } from "../_components/hero";
 export const metadata = {
   title: "Steppe · for partners",
   description:
-    "Community-owned civic infrastructure for Redmond, Central Oregon — the model, the structural guarantees that protect it, how it's funded, and how to help build it.",
+    "A fiscally sponsored civic project preparing a founding beta for Redmond, Central Oregon. See the model, funding responsibilities, and ways to help build it.",
 };
 
 export default async function PartnersPage() {

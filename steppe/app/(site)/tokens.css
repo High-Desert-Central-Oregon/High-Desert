@@ -68,7 +68,7 @@ html[data-theme="light"] {
   --card: #fbf7ee;
   --border: rgba(54, 86, 61, 0.16);
   --text: #2a2e2c;
-  --text-muted: #736e60;
+  --text-muted: #5f5a4e;
   --feat-text: #fbf7ee;
   --feat-muted: #c4cbba;
   --nav-bg: rgba(237, 230, 213, 0.86);
@@ -113,7 +113,7 @@ html:not([data-theme]) {
   --card: #fbf7ee;
   --border: rgba(54, 86, 61, 0.16);
   --text: #2a2e2c;
-  --text-muted: #736e60;
+  --text-muted: #5f5a4e;
   --feat-text: #fbf7ee;
   --feat-muted: #c4cbba;
   --nav-bg: rgba(237, 230, 213, 0.86);

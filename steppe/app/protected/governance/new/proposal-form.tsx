@@ -13,6 +13,7 @@ function errorMessage(state: ProposalFormState, dict: Dictionary): string | null
   if (state.error === "window-required") return dict.governance.windowRequired;
   if (state.error === "window-order") return dict.governance.windowOrder;
   if (state.error === "closes-past") return dict.governance.closesPast;
+  if (state.error === "foundational-notice") return dict.governance.foundationalNotice;
   return dict.governance.errorGeneric;
 }
 

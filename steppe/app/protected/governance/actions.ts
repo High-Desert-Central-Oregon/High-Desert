@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile, isModerator } from "@/lib/auth";
 import { redmondWallTimeToUtcISO } from "@/lib/time";
+import { hasFoundationalNotice } from "@/lib/governance";
 import type { ProposalKind } from "@/lib/types/db";
 
 export type ProposalFormState = { error: string } | null;
@@ -50,6 +51,9 @@ export async function createProposal(
     return { error: "window-order" };
   }
   if (Date.parse(closesIso) <= Date.now()) return { error: "closes-past" };
+  if (kind === "immutable" && !hasFoundationalNotice(Date.parse(opensIso), Date.now())) {
+    return { error: "foundational-notice" };
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase

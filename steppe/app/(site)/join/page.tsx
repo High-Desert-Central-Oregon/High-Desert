@@ -9,9 +9,9 @@ import { JoinForm } from "./join-form";
 import { Hero } from "../_components/hero";
 
 export const metadata = {
-  title: "Steppe · become a member",
+  title: "Steppe · join the founding beta",
   description:
-    "Membership makes you an owner and a voter in a place that belongs to its members, not advertisers or investors. $4/month, flat. Leave your email and we'll tell you when membership opens in Redmond.",
+    "Join the list for Steppe's free founding beta in Redmond. Paid membership is planned after beta at $4/month with a hardship waiver.",
 };
 
 export default async function JoinPage() {

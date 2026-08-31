@@ -4,14 +4,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 /**
- * PreviewEmbed — embeds the finished Steppe app (a self-contained Claude Design
- * export at public/preview-app/steppe-exchange.html) on the /preview page as a
- * live, interactive preview.
+ * PreviewEmbed — embeds Steppe's complete intended-state facsimile (a
+ * self-contained design export at public/preview-app/steppe-exchange.html) on
+ * the /preview page as a live, interactive preview.
  *
  * The export is a RUNTIME BUNDLE (inlined fonts + JS, fully offline) rendering the
- * real Exchange app — four tabs, messages, compose, governance, EN/ES. It is NOT
- * ported into React; it is embedded as-is in an <iframe>. To refresh the preview,
- * re-export from Claude Design and overwrite the HTML file (see
+ * full beta experience — four tabs, messages, compose, governance, EN/ES — with
+ * sample people and content so it remains reviewable without authentication. It
+ * is NOT a production data session or a substitute for authenticated testing.
+ * To refresh the preview, re-export the design and overwrite the HTML file (see
  * public/preview-app/README.md). Bump APP_SRC's ?v= if a deploy is cached.
  *
  * Two states:
@@ -27,15 +28,15 @@ import { useTranslations } from "next-intl";
  *    is scaled to fill the viewport as large as it can
  *    while staying fully visible, with the export's paper padding CROPPED off the
  *    edges — so on a phone-shaped screen the app runs edge-to-edge (a real
- *    facsimile, not a small mock on paper). Esc/X exit, body-scroll lock, focus
- *    trap + restore, and a best-effort native Fullscreen request layered on top.
+ *    facsimile, not a small mock on paper). Esc/X exit, body-scroll lock, and a
+ *    focus trap + restore keep the overlay predictable across browsers.
  *
  * First-party, same-origin asset, so the iframe is NOT sandboxed — the event
  * "Add to calendar" .ics download depends on an un-sandboxed download.
  */
 
 // Versioned src: bump the ?v= date after re-exporting if a CDN serves a stale copy.
-const APP_SRC = "/preview-app/steppe-exchange.html?v=2026-07-11";
+const APP_SRC = "/preview-app/steppe-exchange.html?v=2026-08-30-visual";
 
 // Geometry of the export: a fixed PHONE_W×PHONE_H device centered inside PAD px of
 // paper on every side (so the natural content box is BASE_W×BASE_H). Inline we fit
@@ -60,10 +61,39 @@ export function PreviewEmbed() {
   );
 
   const viewRef = useRef<HTMLDivElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
   const scrollYRef = useRef(0);
+
+  // The bundle can finish before React hydrates, in which case React never sees
+  // the native load event and the loading mask would remain over a ready app.
+  // Listen first, then also inspect the same-origin document for that completed
+  // state. The pathname check avoids treating the iframe's initial about:blank
+  // document as the loaded preview.
+  useEffect(() => {
+    const frame = iframeRef.current;
+    if (!frame) return;
+
+    const markLoaded = () => {
+      try {
+        const isPreviewDocument =
+          frame.contentWindow?.location.pathname ===
+          "/preview-app/steppe-exchange.html";
+        if (isPreviewDocument && frame.contentDocument?.readyState === "complete") {
+          setLoaded(true);
+        }
+      } catch {
+        // APP_SRC is same-origin today. If that changes, onLoad remains the
+        // cross-origin-safe path below.
+      }
+    };
+
+    frame.addEventListener("load", markLoaded);
+    markLoaded();
+    return () => frame.removeEventListener("load", markLoaded);
+  }, []);
 
   // Inline sizing: CONTAIN the whole padded export (phone + its paper frame) in the
   // view box — scale to fit BOTH width and height, then center — so the entire phone
@@ -102,8 +132,8 @@ export function PreviewEmbed() {
   }, []);
 
   // Full-screen lifecycle: body-scroll lock, Esc-to-close, focus into the overlay,
-  // a focus trap that pulls stray focus back to the close button, focus restore to
-  // the trigger on close, and a best-effort native Fullscreen request/exit.
+  // a focus trap that pulls stray focus back to the close button, and focus
+  // restoration to the trigger on close.
   useEffect(() => {
     if (!fullscreen) return;
     if (typeof document === "undefined") return;
@@ -115,12 +145,6 @@ export function PreviewEmbed() {
     // Capture the trigger now: it stays mounted behind the overlay, so this is the
     // element we return focus to on close (read in cleanup, hence captured here).
     const trigger = triggerRef.current;
-
-    // Best-effort OS-level immersion; the overlay stands on its own if this fails.
-    const overlay = overlayRef.current;
-    if (overlay?.requestFullscreen) {
-      overlay.requestFullscreen().catch(() => {});
-    }
 
     // Move focus to the exit control once the overlay is mounted.
     closeRef.current?.focus();
@@ -148,9 +172,6 @@ export function PreviewEmbed() {
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("focusin", onFocusIn);
       body.style.overflow = prevOverflow;
-      if (document.fullscreenElement) {
-        document.exitFullscreen?.().catch(() => {});
-      }
       // Restore scroll position and return focus to the trigger.
       window.scrollTo(0, scrollYRef.current);
       trigger?.focus();
@@ -225,6 +246,7 @@ export function PreviewEmbed() {
           </div>
         )}
         <iframe
+          ref={iframeRef}
           className="pe-iframe"
           src={APP_SRC}
           title={t("embedTitle")}

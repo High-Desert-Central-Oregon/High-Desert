@@ -72,14 +72,17 @@ function FilterBar({
   dict: Dictionary;
 }) {
   const chip = (isActive: boolean) =>
-    `flex shrink-0 items-center gap-[7px] whitespace-nowrap border-b-2 pb-[3px] font-mono text-[11.5px] font-semibold uppercase tracking-[0.1em] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
+    `flex min-h-11 shrink-0 items-center gap-[7px] whitespace-nowrap border-b-2 pt-1 font-mono text-[11.5px] font-semibold uppercase tracking-[0.1em] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${
       isActive
         ? "border-accent text-foreground"
         : "border-transparent text-muted-foreground hover:text-foreground"
     }`;
   return (
-    <nav aria-label={dict.exchange.categoryField} className="border-b-2 border-foreground">
-      <ul className="flex gap-[18px] overflow-x-auto pb-[12px] pt-[11px]">
+    <nav
+      aria-label={dict.exchange.categoryField}
+      className="relative border-b-2 border-foreground"
+    >
+      <ul className="flex gap-[18px] overflow-x-auto pb-[12px] pr-12 pt-[7px] sm:pr-0">
         <li>
           <Link
             href="/protected/exchange"
@@ -106,6 +109,12 @@ function FilterBar({
           </li>
         ))}
       </ul>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-0 flex w-12 items-center justify-end bg-gradient-to-l from-background via-background/95 to-transparent pr-1 text-xl text-accent sm:hidden"
+      >
+        ›
+      </span>
     </nav>
   );
 }
@@ -166,7 +175,7 @@ function PinnedFeature({
         {standfirst}
       </p>
       <p className="mt-[13px] clear-both font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
-        — {authorName.toUpperCase()} · {dict.exchange.verified.toUpperCase()}
+        · {authorName.toUpperCase()} · {dict.exchange.verified.toUpperCase()}
       </p>
     </Link>
   );
@@ -352,10 +361,10 @@ async function BoardContent({
   );
   const hood = (id: string | null) =>
     (id ? hoodOf.get(id) : null) ?? dict.events.allRedmond;
-  const name = (id: string) => nameOf.get(id) ?? "—";
+  const name = (id: string) => nameOf.get(id) ?? "·";
 
   return (
-    <div lang={locale} className="flex flex-col gap-5">
+    <div lang={locale} className="flex flex-col gap-5 pb-20 md:pb-0">
       {/* Preview masthead grammar — the bundle's own dateline + voice, both
           load-bearing copy (member-owned · no ads; newest first). */}
       <Masthead

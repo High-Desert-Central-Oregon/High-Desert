@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { SealMark } from "./seal-mark";
 import { LocaleToggle } from "./locale-toggle";
@@ -14,15 +14,26 @@ import { LocaleToggle } from "./locale-toggle";
  * scroll position. Reduced motion → condense instantly (CSS guards the transition).
  *
  * Nav: Charter · Membership · Exchange · Preview · Contact (Charter/Exchange are home
- * anchors). On mobile the row becomes a horizontally-scrollable strip so every link is
- * reachable on small screens. EN/ES rides in the dateline bar; no theme toggle (single
- * paper palette; the day/night theme is automatic — Part 6).
+ * anchors). On mobile the ruled row becomes a compact menu, avoiding a clipped,
+ * horizontally-scrollable strip and keeping every destination at a full touch-target
+ * size. EN/ES stays in the dateline and is repeated inside the mobile menu so it remains
+ * reachable after the dateline condenses.
  */
 export function SiteHeader() {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const active = (href: string) => (pathname === href ? "active" : undefined);
   const [condensed, setCondensed] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  const navItems = [
+    { href: "/#charter", label: t("charter") },
+    { href: "/join", label: t("membership") },
+    { href: "/#exchange", label: t("exchange") },
+    { href: "/preview", label: t("preview") },
+    { href: "/contact", label: t("contact") },
+  ];
 
   useEffect(() => {
     // Hysteresis (condense >96, release <32) with an rAF throttle. The dead band is
@@ -46,8 +57,38 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !headerRef.current?.contains(event.target)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+    };
+  }, [menuOpen]);
+
   return (
-    <header className={`masthead${condensed ? " condensed" : ""}`}>
+    <header
+      ref={headerRef}
+      className={`masthead${condensed ? " condensed" : ""}${menuOpen ? " menu-open" : ""}`}
+    >
       <div className="mast-top">
         <div className="wrap">
           <span>Vol. I · No. 1</span>
@@ -64,17 +105,49 @@ export function SiteHeader() {
             Steppe
           </Link>
           <nav className="bnav" aria-label="Primary">
-            <Link href="/#charter">{t("charter")}</Link>
-            <Link href="/join" className={active("/join")}>
-              {t("membership")}
-            </Link>
-            <Link href="/#exchange">{t("exchange")}</Link>
-            <Link href="/preview" className={active("/preview")}>
-              {t("preview")}
-            </Link>
-            <Link href="/contact" className={active("/contact")}>
-              {t("contact")}
-            </Link>
+            {navItems.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={active(href)}
+                aria-current={pathname === href ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <button
+            type="button"
+            className="mast-menu-button"
+            aria-expanded={menuOpen}
+            aria-controls="mast-mobile-menu"
+            aria-label={menuOpen ? t("menuClose") : t("menuOpen")}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="mast-menu-bars" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+          </button>
+        </div>
+        <div className="mast-mobile-menu" id="mast-mobile-menu">
+          <nav className="wrap" aria-label="Primary">
+            {navItems.map(({ href, label }, index) => (
+              <Link
+                key={href}
+                href={href}
+                className={active(href)}
+                aria-current={pathname === href ? "page" : undefined}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                {label}
+              </Link>
+            ))}
+            <div className="mast-mobile-locale">
+              <LocaleToggle />
+            </div>
           </nav>
         </div>
       </div>

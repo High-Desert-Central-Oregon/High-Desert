@@ -106,7 +106,7 @@ async function ReviewContent() {
               <li key={row.id}>
                 <ReviewRow
                   id={row.id}
-                  applicantName={namesById.get(row.user_id) ?? "—"}
+                  applicantName={namesById.get(row.user_id) ?? "·"}
                   methodLabel={dict.verify.methods[row.method]}
                   hasEvidence={Boolean(row.evidence_path)}
                   submittedAt={formatRedmondDate(row.created_at, locale)}
@@ -140,7 +140,7 @@ async function ReviewContent() {
                 <li key={r.id}>
                   <NeighborhoodRequestRow
                     id={r.id}
-                    memberName={namesById.get(r.user_id) ?? "—"}
+                    memberName={namesById.get(r.user_id) ?? "·"}
                     note={r.note}
                     // Moderators no longer read another member's join date (0023);
                     // show when the help request was opened instead — the relevant,

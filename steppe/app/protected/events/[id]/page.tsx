@@ -44,11 +44,11 @@ function AttendeeList({
       <ul className="flex flex-col gap-1.5">
         {rows.map((r) => (
           <li key={r.user_id} className="text-sm">
-            <span className="font-medium">{names.get(r.user_id) ?? "—"}</span>
+            <span className="font-medium">{names.get(r.user_id) ?? "·"}</span>
             {r.bringing && (
               <span className="text-muted-foreground">
                 {" "}
-                — {t(dict.rsvp.bringingTag, { item: r.bringing })}
+                · {t(dict.rsvp.bringingTag, { item: r.bringing })}
               </span>
             )}
           </li>

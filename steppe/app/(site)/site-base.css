@@ -368,8 +368,8 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
   background: var(--bg-alt);
   color: var(--text);
 }
-/* The light band-alt is sage (#c3cdb6); darken muted text on it to clear WCAG AA
-   (the global --text-muted #736e60 only hits ~3.08:1 on sage). */
+/* The light band-alt is sage (#c3cdb6); darken muted text on it beyond the base
+   AA-safe muted token so it also clears WCAG AA on the darker sage surface. */
 html[data-theme="light"] .site-root .band-alt {
   --text-muted: #545040;
 }
@@ -909,7 +909,7 @@ html[data-js] .site-root .rv.in {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 30px;
+  min-height: 44px;
   font-family: var(--mono);
   font-size: 9.5px;
   letter-spacing: 0.06em;
@@ -920,6 +920,18 @@ html[data-js] .site-root .rv.in {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+.site-root .mast-top .lang {
+  gap: 0;
+}
+.site-root .mast-top .lang button,
+.site-root .mast-mobile-locale .lang button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
 }
 .site-root .mast .wrap {
   display: flex;
@@ -959,7 +971,10 @@ html[data-js] .site-root .rv.in {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  padding: 4px 16px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
   border-left: 1px solid var(--rule);
   transition: color 0.15s;
 }
@@ -971,31 +986,141 @@ html[data-js] .site-root .rv.in {
 .site-root .bnav a.active {
   color: var(--rust);
 }
+
+.site-root .mast-menu-button,
+.site-root .mast-mobile-menu {
+  display: none;
+}
+
+.site-root .mast-menu-button {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.site-root .mast-menu-button:hover {
+  border-color: var(--rust);
+  color: var(--rust);
+}
+.site-root .mast-menu-bars {
+  display: grid;
+  gap: 4px;
+  width: 19px;
+}
+.site-root .mast-menu-bars span {
+  display: block;
+  height: 1.5px;
+  background: currentColor;
+  transform-origin: center;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease;
+}
+.site-root .mast-menu-button[aria-expanded="true"] .mast-menu-bars span:first-child {
+  transform: translateY(5.5px) rotate(45deg);
+}
+.site-root .mast-menu-button[aria-expanded="true"] .mast-menu-bars span:nth-child(2) {
+  opacity: 0;
+}
+.site-root .mast-menu-button[aria-expanded="true"] .mast-menu-bars span:last-child {
+  transform: translateY(-5.5px) rotate(-45deg);
+}
+
 @media (max-width: 720px) {
+  .site-root [id] {
+    scroll-margin-top: 76px;
+  }
   .site-root .mast-top .wrap {
-    flex-direction: column;
-    align-items: flex-start;
-    min-height: 0;
-    gap: 3px;
-    padding-top: 7px;
-    padding-bottom: 8px;
+    min-height: 44px;
   }
-  .site-root .mast .wrap {
-    padding-bottom: 10px;
-  }
-  /* Mobile: a slim horizontally-scrollable nav strip so every link stays reachable. */
-  .site-root .bnav {
-    width: 100%;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .site-root .bnav::-webkit-scrollbar {
+  .site-root .mast-top .wrap > span:first-child {
     display: none;
   }
-  .site-root .bnav a {
-    white-space: nowrap;
+  .site-root .mast-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .site-root .mast .wrap {
+    flex-wrap: nowrap;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .site-root .bnav {
+    display: none;
+  }
+  .site-root .mast-menu-button {
+    display: inline-flex;
+  }
+  .site-root .mast-mobile-menu {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    border-top: 1px solid transparent;
+    background: var(--paper);
+    transition:
+      grid-template-rows 0.24s ease,
+      visibility 0.24s,
+      border-color 0.24s ease;
+  }
+  .site-root .masthead.menu-open .mast-mobile-menu {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    border-color: var(--rule);
+  }
+  .site-root .mast-mobile-menu > .wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    min-height: 0;
+    gap: 0;
+    justify-content: stretch;
+    overflow: hidden;
+  }
+  .site-root .mast-mobile-menu a {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    align-items: center;
+    min-height: 48px;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .site-root .mast-mobile-menu a > span {
+    color: var(--rust);
+    font-size: 9.5px;
+  }
+  .site-root .mast-mobile-menu a:hover,
+  .site-root .mast-mobile-menu a.active {
+    color: var(--rust);
+  }
+  .site-root .mast-mobile-locale {
+    display: flex;
+    justify-content: flex-end;
+    padding: 4px 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .site-root .mast-right > span:first-child {
+    font-size: 9px;
+    letter-spacing: 0.035em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-root .mast-menu-bars span,
+  .site-root .mast-mobile-menu {
+    transition: none;
   }
 }
 

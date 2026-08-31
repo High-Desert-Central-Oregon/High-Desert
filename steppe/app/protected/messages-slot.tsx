@@ -21,7 +21,7 @@ export function MessagesSlot({
   return (
     <Link
       href="/protected/messages"
-      aria-label={hasUnread ? `${label} — ${unreadLabel}` : label}
+      aria-label={hasUnread ? `${label}. ${unreadLabel}` : label}
       className="relative shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <IconSlot>

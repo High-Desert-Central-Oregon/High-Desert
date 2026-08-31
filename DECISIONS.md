@@ -7,6 +7,54 @@ Companion to `CLAUDE.md` (the invariants), `SPEC.md` (the build spec), and
 
 ---
 
+## 2026-08-30 — Founding-beta boundaries and release scope confirmed
+
+**Two-stage boundary.** The readiness test is capped at 50 people. Steppe
+advances from that test to a founding launch only if at least 25 people
+participate and at least one local-organization collaboration produces current,
+real-time local information in Steppe. Failure of either condition is a no-go and
+triggers another test or a change to the operating model rather than an automatic
+launch.
+
+**Founding launch.** If both gates pass, the founding launch is capped at 250
+members and remains free for six months. Paid membership is outside this period
+and still requires its own contracting, payment, legal, and operational gates.
+
+**Ownership.** Gregory Chism is the support contact and incident owner for both
+stages. These are operating-readiness criteria, not software health or security
+gates; the security, legal, privacy, migration, and end-to-end verification gates
+remain independently required.
+
+**Release scope.** The Central Oregon Cascade contour artwork remains a separate,
+held concept and is excluded from the current app/site release. The remaining
+facelift, business-language, governance, privacy, documentation, and brand work
+is approved for release packaging, subject to the named review and deployment
+gates.
+
+## 2026-08-29 — Governance outcomes and message deletion resolved for beta
+
+**Governance.** The prior tally-only implementation is superseded by the
+authoritative outcome rules in `docs/decisions/governance-outcomes.md` and
+migration 0033. Each proposal snapshots its eligible electorate and rule set;
+abstentions count toward participation but not weighted yes/no approval; major
+and foundational votes use 15% quorum and 60%/75% approval respectively; the
+five-ballot secrecy floor is also the minimum for a binding result; and
+foundational voting cannot open until 30 days after publication. Closed results
+are now `passed`, `failed`, or `insufficient_turnout` in both the member view and
+the permanent close entry.
+
+**Privacy.** M-G2 below is superseded only as to the leaver's message bodies.
+Per `docs/decisions/message-deletion-and-retention.md` and migration 0034,
+account deletion removes every message the departing member authored and removes
+an empty thread. Counterpart-authored content and integrity-required consent,
+ballot, moderation, and audit records remain. No arbitrary client message-delete
+path is added and no timed-retention promise is made.
+
+**Authority and revisit.** These are pre-beta product/operating resolutions by
+the Founding Executive Director, not fabricated board minutes or founding-cohort
+ratification. The cohort can amend them prospectively; counsel must map app votes
+to Oregon written-ballot rules before they are treated as corporate-member acts.
+
 ## 2026-07-13 — Messages (M1) approved to build; privacy posture ratified; seven M-G flags resolved
 
 **Decision.** Build member messaging per `docs/spec/messages-m1-spec-v1.md`
@@ -47,7 +95,11 @@ context-anchored starts, text-only, poll-on-nav, one thread per pair.
   channel. This also pays the X1 §8 debt (the post-detail Report button).
   Moderator access to message content is consent-based only: a participant's
   own quoted excerpt attached to their report — never the thread.
-- **M-G2 (deletion & the counterpart's copy)** — **bodies survive, signed.**
+- **M-G2 (deletion & the counterpart's copy)** — **SUPERSEDED 2026-08-29.**
+  This paragraph records the original choice; the current rule deletes messages
+  authored by a member when that member deletes their account. See the newer
+  entry above and `docs/decisions/message-deletion-and-retention.md`.
+  **Original choice: bodies survive, signed.**
   A conversation is co-owned; deleting an account scrubs the leaver's
   identity (the "Former member" tombstone) but does not erase their words
   from the other member's thread — the appeals/votes precedent, the email
@@ -325,7 +377,8 @@ which would be a deliberate community choice, not a default.
 ### (b) Governance results — members-only + a minimum-turnout floor
 
 **Decision.** `proposal_results` is gated to **authenticated members** (anon read
-dropped). And a **minimum-turnout floor**: if fewer than **5** distinct members
+dropped; the 2026-08-29 governance outcome resolution later narrowed this to
+verified, non-deleted members). And a **minimum-turnout floor**: if fewer than **5** distinct members
 voted, the weighted breakdown is withheld ("turnout too low to reveal") and only
 the turnout count is shown. **5 is provisional config for the cohort to ratify**,
 alongside the governance thresholds (quorum 15%, major 60%, immutable 75%).

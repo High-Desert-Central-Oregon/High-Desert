@@ -1,0 +1,13 @@
+# The hosted app is steppe/. Keep governance, counsel, migration, and design
+# working material out of Vercel's source-upload context.
+/.claude/
+/_design-source/
+/counsel-packet/
+/docs/
+/infra/
+/migrations/
+/output/
+/scripts/
+/seed/
+/supabase/
+/schema.sql

@@ -184,3 +184,4 @@ docs/html2pdf*
 
 # macOS
 .DS_Store
+.vercel

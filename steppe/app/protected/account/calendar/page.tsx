@@ -323,7 +323,7 @@ function ConnectSection({
             <li key={f.id} id={`feed-${f.id}`} className="flex flex-col gap-2">
               <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-foreground">
                 {f.group_id
-                  ? (groupNames.get(f.group_id) ?? "—")
+                  ? (groupNames.get(f.group_id) ?? "·")
                   : dict.calendar.title}
               </p>
               {/* The copy panel — the ICS fallback grammar (:936-938). */}

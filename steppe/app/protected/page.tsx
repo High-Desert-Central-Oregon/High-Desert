@@ -76,7 +76,10 @@ async function Home() {
   }
 
   return (
-    <div lang={locale} className="flex flex-col gap-8">
+    <div
+      lang={locale}
+      className="flex flex-col gap-8 md:w-[min(64rem,calc(100vw-44px))] md:self-center"
+    >
       <header className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">
           {dict.home.title}
@@ -133,66 +136,78 @@ async function Home() {
         </section>
       )}
 
-      <div className="flex flex-col gap-3">
-        {/* Membership status */}
-        <section
-          aria-label={dict.home.statusLabel}
-          className="flex items-center gap-3 rounded-lg border bg-card p-4"
-        >
-          {verified ? (
-            <CheckCircle2
-              className="size-5 shrink-0 text-success"
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,1fr)] lg:items-start">
+        <div className="flex flex-col gap-3">
+          {/* Membership status */}
+          <section
+            aria-label={dict.home.statusLabel}
+            className="flex items-center gap-3 rounded-lg border bg-card p-4"
+          >
+            {verified ? (
+              <CheckCircle2
+                className="size-5 shrink-0 text-success"
+                aria-hidden="true"
+              />
+            ) : (
+              <Clock
+                className="size-5 shrink-0 text-muted-foreground"
+                aria-hidden="true"
+              />
+            )}
+            <div className="min-w-0 flex-1 text-sm">
+              <p className="font-medium">{dict.home.statusLabel}</p>
+              <p className="text-muted-foreground">
+                {verified ? dict.home.statusVerified : dict.home.statusUnverified}
+              </p>
+            </div>
+          </section>
+
+          {/* Neighborhood */}
+          <section
+            aria-label={dict.home.neighborhoodLabel}
+            className="flex items-center gap-3 rounded-lg border bg-card p-4"
+          >
+            <MapPin
+              className="size-5 shrink-0 text-muted-foreground"
               aria-hidden="true"
             />
-          ) : (
-            <Clock className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-          )}
-          <div className="min-w-0 flex-1 text-sm">
-            <p className="font-medium">{dict.home.statusLabel}</p>
-            <p className="text-muted-foreground">
-              {verified ? dict.home.statusVerified : dict.home.statusUnverified}
-            </p>
-          </div>
-        </section>
+            <div className="min-w-0 flex-1 text-sm">
+              <p className="font-medium">{dict.home.neighborhoodLabel}</p>
+              <p className="text-muted-foreground">
+                {neighborhoodName ?? dict.home.noNeighborhood}
+              </p>
+            </div>
+            <Button asChild variant="ghost" size="sm" className="shrink-0">
+              <Link href="/protected/neighborhoods">
+                {neighborhoodName
+                  ? dict.home.changeCta
+                  : dict.home.neighborhoodCta}
+              </Link>
+            </Button>
+          </section>
+        </div>
 
-        {/* Neighborhood */}
-        <section
-          aria-label={dict.home.neighborhoodLabel}
-          className="flex items-center gap-3 rounded-lg border bg-card p-4"
-        >
-          <MapPin
-            className="size-5 shrink-0 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <div className="min-w-0 flex-1 text-sm">
-            <p className="font-medium">{dict.home.neighborhoodLabel}</p>
-            <p className="text-muted-foreground">
-              {neighborhoodName ?? dict.home.noNeighborhood}
-            </p>
-          </div>
-          <Button asChild variant="ghost" size="sm" className="shrink-0">
-            <Link href="/protected/neighborhoods">
-              {neighborhoodName
-                ? dict.home.changeCta
-                : dict.home.neighborhoodCta}
+        <section className="border-t-2 border-foreground bg-muted/45 p-5 lg:sticky lg:top-5">
+          <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
+            {verified ? dict.home.readyKicker : dict.home.nextTitle}
+          </p>
+          <h2 className="mt-2 font-serif text-xl font-semibold">
+            {verified ? dict.home.readyTitle : dict.home.nextTitle}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            {verified ? dict.home.readyBody : dict.home.nextBody}
+          </p>
+          <Button asChild className="mt-5 min-h-11">
+            <Link href={verified ? "/protected/exchange" : "/protected/verify"}>
+              {verified ? dict.home.readyCta : dict.home.verifyCta}
             </Link>
           </Button>
         </section>
       </div>
 
-      <p className="text-sm text-success">
+      <p className="border-t pt-4 text-xs leading-relaxed text-muted-foreground">
         {dict.home.consentRecorded}
       </p>
-
-      <section className="rounded-lg border border-dashed p-5">
-        <h2 className="font-medium">{dict.home.nextTitle}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{dict.home.nextBody}</p>
-        {!verified && (
-          <Button asChild className="mt-4">
-            <Link href="/protected/verify">{dict.home.verifyCta}</Link>
-          </Button>
-        )}
-      </section>
     </div>
   );
 }

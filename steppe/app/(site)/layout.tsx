@@ -14,6 +14,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { SiteHeader } from "./_components/site-header";
 import { SiteFooter } from "./_components/site-footer";
+import { DocumentLanguage } from "@/components/document-language";
 
 // Locale comes from the NEXT_LOCALE cookie (i18n/request.ts); the client provider
 // makes the active catalog available to client components (header toggle, etc.).
@@ -38,6 +39,7 @@ async function LocalizedShell({ children }: { children: React.ReactNode }) {
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <div className="site-root">
+        <DocumentLanguage locale={locale} />
         <SiteHeader />
         {children}
         <SiteFooter />

@@ -132,6 +132,27 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   outline: none;
   border-color: var(--rust);
 }
+.site-root .join .consentrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 2px 0 12px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+.site-root .join .consentrow input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-top: 1px;
+  padding: 0;
+  accent-color: var(--rust);
+}
+.site-root .join .consentrow a {
+  color: var(--rust);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 /* honeypot — visually hidden, off the tab order */
 .site-root .join .hp {
   position: absolute;
@@ -183,6 +204,8 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
 }
 .site-root .join .formnote a {
   color: var(--rust);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 .site-root .join .success .seal {
   display: block;
@@ -242,12 +265,15 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   align-items: start;
 }
 .site-root .join .tlist {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 16px;
   border-top: 1px solid var(--border);
 }
 .site-root .join .trow {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 16px;
+  grid-template-columns: subgrid;
   padding: 18px 2px;
   border-bottom: 1px solid var(--border);
   align-items: baseline;

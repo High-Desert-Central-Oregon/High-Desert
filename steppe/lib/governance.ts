@@ -11,6 +11,15 @@ import type { ProposalStatus } from "@/lib/types/db";
  */
 export type ProposalState = "upcoming" | "open" | "closed";
 
+/** Foundational proposals require a full notice period before voting opens.
+ * The database is authoritative (migration 0033); this constant only provides
+ * a friendly form error before the insert reaches that guard. */
+export const FOUNDATIONAL_NOTICE_DAYS = 30;
+
+export function hasFoundationalNotice(opensAtMs: number, createdAtMs: number): boolean {
+  return opensAtMs >= createdAtMs + FOUNDATIONAL_NOTICE_DAYS * 24 * 60 * 60 * 1000;
+}
+
 export function proposalState(
   opensAt: string,
   closesAt: string,

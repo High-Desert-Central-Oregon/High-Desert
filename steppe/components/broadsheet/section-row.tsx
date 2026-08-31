@@ -93,7 +93,7 @@ export function SectionRow({
           {titleEl}
         </p>
         {sub && (
-          <p className="mt-[3px] text-[12.5px] leading-[1.45] text-muted-foreground">
+          <p className="mt-[3px] line-clamp-3 text-[12.5px] leading-[1.45] text-muted-foreground">
             {sub}
           </p>
         )}

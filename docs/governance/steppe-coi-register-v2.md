@@ -45,7 +45,7 @@ This register is the canonical record of disclosed conflicts and related-party r
 ### 002 — Director Weimer ↔ Ignite Empowerment Foundation (fiscal sponsor)
 
 - **Disclosing person:** Brandon Weimer, director (and, as needed, the ED on the organization's behalf).
-- **Nature:** Director Weimer is the **spouse of the founder of Ignite Empowerment Foundation (IEF)**, which is **Steppe's confirmed fiscal sponsor** (sponsorship agreement pending signature). Under the arrangement, IEF holds and re-grants Steppe-directed funds and charges an administrative fee.
+- **Nature:** Director Weimer is the **spouse of the founder of Ignite Empowerment Foundation (IEF)**, which is **Steppe's confirmed fiscal sponsor** (formal agreement signed; confirmed 2026-08-29). Under the arrangement, IEF handles sponsor-routed funds and sponsored responsibilities other than member subscriptions. Gregory Chism handles member subscriptions and member data; contracts name Gregory or IEF as applicable.
 - **Steppe involvement:** Yes — Steppe is a party to the fiscal-sponsorship relationship with IEF.
 - **Why recorded:** A family relationship between a Steppe director and the fiscal sponsor's founder bears directly on board independence and makes the Steppe–IEF relationship (agreement, admin fee, fund flows, transition off sponsorship) an **interested-person / related-party matter**. It also means Director Weimer — otherwise the board's most independent member relative to the Chism–Cobb conflict — is **not** a clean, universally disinterested director.
 - **Recusal terms (board-adopted):**
