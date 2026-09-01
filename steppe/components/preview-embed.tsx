@@ -36,7 +36,7 @@ import { useTranslations } from "next-intl";
  */
 
 // Versioned src: bump the ?v= date after re-exporting if a CDN serves a stale copy.
-const APP_SRC = "/preview-app/steppe-exchange.html?v=2026-08-30-visual";
+const APP_SRC = "/preview-app/steppe-exchange.html?v=2026-08-31-parity";
 
 // Geometry of the export: a fixed PHONE_W×PHONE_H device centered inside PAD px of
 // paper on every side (so the natural content box is BASE_W×BASE_H). Inline we fit

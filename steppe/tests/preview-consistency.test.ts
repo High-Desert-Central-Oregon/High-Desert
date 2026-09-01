@@ -9,6 +9,8 @@ function read(path: string): string {
 describe("public beta walkthrough", () => {
   const previewBundle = read("public/preview-app/steppe-exchange.html");
   const publicEnglish = read("messages/en.json");
+  const accountPage = read("app/protected/account/page.tsx");
+  const appNav = read("app/protected/app-nav.tsx");
   const serializedPage = previewBundle.match(
     /<script type="__bundler\/template">\n([\s\S]*?)\n  <\/script>/,
   );
@@ -64,6 +66,59 @@ describe("public beta walkthrough", () => {
     }
     expect(previewBundle).toContain(
       'data-noscroll=\\"\\" tabindex=\\"0\\" sc-camel-on-scroll=\\"{{ p.onFilterScroll }}\\"',
+    );
+  });
+
+  it("keeps the You surface aligned to shipped beta doors", () => {
+    for (const label of [
+      "Your groups",
+      "Your governance",
+      "Messages",
+      "My calendar",
+      "Neighborhood",
+      "Your data",
+      "Sign out",
+    ]) {
+      expect(previewPage).toContain(label);
+    }
+
+    for (const liveReference of [
+      "dict.account.groupsRow",
+      "dict.account.governanceRow",
+      "dict.messages.title",
+      "dict.calendar.title",
+      "dict.nav.neighborhoodLink",
+      "dict.account.dataRow",
+    ]) {
+      expect(accountPage).toContain(liveReference);
+    }
+
+    expect(previewPage).not.toContain("ySaved:");
+    expect(previewPage).not.toContain("yMembership:");
+    expect(previewPage).not.toContain("ySettings:");
+    expect(previewPage).not.toContain("$4/mo");
+    expect(previewPage).not.toContain("Opens in the full app");
+  });
+
+  it("keeps the language control on the left side of the real shell", () => {
+    expect(appNav.indexOf("<LanguageSwitcher")).toBeGreaterThan(-1);
+    expect(appNav.indexOf("<LanguageSwitcher")).toBeLessThan(
+      appNav.indexOf("<Wordmark"),
+    );
+  });
+
+  it("contains the direct preview so its tab rail cannot jump with page scroll", () => {
+    expect(previewPage).toContain('id="steppe-preview-stage"');
+    expect(previewPage).toContain('id="steppe-preview-phone"');
+    expect(previewPage).toContain("overflow:clip;-webkit-font-smoothing");
+    expect(previewPage).toContain(
+      "align-items:center;justify-content:center;overflow:clip",
+    );
+    expect(previewPage).toContain(
+      "Math.min(1, availableWidth / 402, availableHeight / 872)",
+    );
+    expect(previewPage).toContain(
+      "window.addEventListener('resize', fitPreview, { passive: true })",
     );
   });
 });
