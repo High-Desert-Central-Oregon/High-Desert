@@ -54,6 +54,9 @@ export function AppNav({
       <nav lang={locale} className="flex w-full justify-center border-b">
       {/* Rail aligns to the same --content-max column as <main>. */}
       <div className="flex w-full max-w-[var(--content-max)] items-center gap-4 p-3 px-[var(--pad-screen)] text-sm">
+        {/* Preview parity: language is the first shell control, on the left.
+            Search and Messages remain the right-side action pair. */}
+        <LanguageSwitcher current={locale} />
         <Link
           href="/protected"
           className="shrink-0 py-1 focus-visible:underline focus-visible:outline-none"
@@ -84,7 +87,6 @@ export function AppNav({
             unreadLabel={unreadLabel}
             hasUnread={hasUnread}
           />
-          <LanguageSwitcher current={locale} />
         </div>
       </div>
       </nav>

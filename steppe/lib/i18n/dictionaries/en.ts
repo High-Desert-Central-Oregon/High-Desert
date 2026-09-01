@@ -840,6 +840,21 @@ export const en = {
     // Profile editor (Y1) — the "You" surface's name + per-field visibility.
     profileRow: "Edit profile",
     profileRowSub: "Your name, and what neighbors can see",
+    verifiedMeta: "Verified, then forgotten",
+    unverifiedMeta: "Verification not complete",
+    verifiedPrivacyNote:
+      "Your identity was verified once, then forgotten. Neighbors see only what you choose below.",
+    unverifiedPrivacyNote:
+      "Your profile starts private. Verify when you are ready to join member-only spaces.",
+    editPublic: "Edit what's public",
+    verifyRowSub: "Confirm that you live in Redmond",
+    groupsRow: "Your groups",
+    groupsRowSub: "Browse, join, and manage your groups",
+    governanceRow: "Your governance",
+    governanceRowSub: "Your participation and ballots stay private",
+    neighborhoodRowSub: "Your Redmond neighborhood",
+    dataRow: "Your data",
+    dataRowSub: "Download a copy anytime",
     profileTitle: "Your profile",
     profileIntro:
       "Your profile starts private. Set your name, then choose which fields all members can see.",

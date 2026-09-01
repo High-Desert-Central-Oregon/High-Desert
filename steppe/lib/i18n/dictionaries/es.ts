@@ -832,6 +832,21 @@ export const es: Dictionary = {
     // Editor de perfil (Y1) — el nombre y la visibilidad por campo en "Tú".
     profileRow: "Editar perfil",
     profileRowSub: "Tu nombre y lo que ven los vecinos",
+    verifiedMeta: "Verificada y luego olvidada",
+    unverifiedMeta: "Verificación pendiente",
+    verifiedPrivacyNote:
+      "Tu identidad se verificó una vez y luego se olvidó. Los vecinos ven solo lo que elijas abajo.",
+    unverifiedPrivacyNote:
+      "Tu perfil empieza privado. Verifica cuando quieras entrar a los espacios exclusivos para miembros.",
+    editPublic: "Editar lo público",
+    verifyRowSub: "Confirma que vives en Redmond",
+    groupsRow: "Tus grupos",
+    groupsRowSub: "Explora, únete y administra tus grupos",
+    governanceRow: "Tu gobernanza",
+    governanceRowSub: "Tu participación y tus votos son privados",
+    neighborhoodRowSub: "Tu vecindario de Redmond",
+    dataRow: "Tus datos",
+    dataRowSub: "Descarga una copia cuando quieras",
     profileTitle: "Tu perfil",
     profileIntro:
       "Tu perfil empieza privado. Pon tu nombre y elige qué campos pueden ver todos los miembros.",
