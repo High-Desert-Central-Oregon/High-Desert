@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
  * Use ONLY inside a server action that has itself already verified the caller's
  * authority, and ONLY for an operation RLS cannot express — or, in the last two
  * cases below, for a caller who has no session for RLS to act on at all. In this
- * build that is exactly five things:
+ * build that is these operations:
  *   1. deleting a member's verification-evidence object from storage when a
  *      moderator decides — the DB drops the pointer, this client drops the file,
  *      together completing "verify, then forget" (CLAUDE.md invariant 1). There
@@ -30,6 +30,10 @@ import { createClient } from "@supabase/supabase-js";
  *      (migration 0027) precisely so this route is the only door and its rate
  *      limit binds. MINTING is deliberately NOT here: a moderator has a session,
  *      so minting runs under RLS through the ordinary client.
+ *
+ *   6. anonymous bug-report intake and its minimal notification/retention worker
+ *      (migration 0035). Operator reads and updates still run as the session
+ *      through RLS; intake validates and binds identity before service-role writes.
  *
  * Never import this into client code, and never expose the secret key
  * (`SUPABASE_SERVICE_ROLE_KEY` is server-only — not `NEXT_PUBLIC_*`).
