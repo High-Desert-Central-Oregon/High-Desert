@@ -1,3 +1,5 @@
+import { isSupportOperator } from "@/lib/bug-reports/server";
+import { bugCopy } from "@/lib/bug-reports/copy";
 import { Suspense } from "react";
 import Link from "next/link";
 import { PageSkeleton } from "@/components/page-skeleton";
@@ -13,13 +15,15 @@ import { SignOutButton } from "./sign-out-button";
 import { InstallRow } from "./install-row";
 
 function initials(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase() || "S";
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0] ?? "")
+      .join("")
+      .toUpperCase() || "S"
+  );
 }
 
 /**
@@ -36,6 +40,7 @@ async function AccountView() {
   const profile = await getMyProfile();
   const isMod = profile?.role === "moderator" || profile?.role === "admin";
   const verified = profile?.verified ?? false;
+  const supportOperator = await isSupportOperator();
 
   // Neighborhood name for the identity dateline (member since = profile row age).
   let neighborhood: string | null = null;
@@ -68,6 +73,9 @@ async function AccountView() {
     sub?: string;
     download?: boolean;
   }[] = [
+    ...(supportOperator
+      ? [{ href: "/protected/support", label: bugCopy[locale].queue }]
+      : []),
     ...(!verified
       ? [
           {
@@ -187,7 +195,10 @@ async function AccountView() {
                     </span>
                   )}
                 </span>
-                <ChevronRight className="size-4 text-accent" aria-hidden="true" />
+                <ChevronRight
+                  className="size-4 text-accent"
+                  aria-hidden="true"
+                />
               </Link>
             </li>
           ))}

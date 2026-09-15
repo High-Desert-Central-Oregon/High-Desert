@@ -52,6 +52,8 @@ export async function updateSession(request: NextRequest) {
   const isPublicApi =
     pathname === "/api/interest" ||
     pathname === "/api/contact" ||
+    pathname === "/api/bug-reports" ||
+    pathname === "/api/support/maintenance" ||
     pathname === "/api/qr" ||
     pathname === "/api/weather" ||
     // Pledge submission + removal. Public by necessity (the pledger has no

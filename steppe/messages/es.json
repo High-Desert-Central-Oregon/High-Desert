@@ -330,7 +330,9 @@
     "fullPolicy": "Política completa:",
     "questions": "Preguntas:",
     "contactUs": "Contáctanos",
-    "legalGoverns": "La política legal completa está disponible en inglés, y la versión en inglés es la que prevalece."
+    "legalGoverns": "La política legal completa está disponible en inglés, y la versión en inglés es la que prevalece.",
+    "bugReportsTitle": "Informes opcionales de errores de la beta",
+    "bugReportsDescription": "Tú eliges si quieres registrar pasos técnicos para informar de un error. Hasta 100 eventos de los últimos 10 minutos permanecen en esta sesión de página hasta que decidas enviarlos. Describen páginas, acciones y errores sin texto escrito, mensajes privados, códigos de acceso ni grabaciones de pantalla. Puedes revisar u omitir los diagnósticos. Los informes enviados son privados para el equipo designado de soporte de Steppe, caducan a los 30 días y se eliminan mediante una limpieza programada. Los informes enviados con la sesión iniciada se incluyen en la exportación y eliminación de la cuenta. Los avisos por correo contienen una referencia y un enlace para iniciar sesión, sin el contenido del informe. Las copias descargadas y las copias de seguridad del proveedor tienen sus propios plazos de conservación."
   },
   "contact": {
     "heroEyebrow": "Contacto",

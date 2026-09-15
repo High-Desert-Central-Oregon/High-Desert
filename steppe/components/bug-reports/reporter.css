@@ -1,0 +1,173 @@
+.steppe-bug-launcher {
+  position: fixed;
+  right: 0;
+  top: 44%;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.7rem 0.8rem;
+  background: #783e2c;
+  color: #fffaf0;
+  border: 1px solid #fffaf0;
+  border-right: 0;
+  box-shadow: 0 2px 10px #0002;
+  font:
+    600 13px var(--font-sans-mkt),
+    sans-serif;
+  cursor: pointer;
+  border-radius: 8px 0 0 8px;
+}
+.steppe-bug-launcher:focus-visible {
+  outline: 3px solid #1e5949;
+  outline-offset: 3px;
+}
+.steppe-bug-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(560px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 24px;
+  background: #fffaf0;
+  color: #292820;
+  border: 1px solid #786c57;
+  box-shadow: 0 12px 60px #0005;
+  font:
+    15px/1.5 var(--font-sans-mkt),
+    sans-serif;
+  text-align: left;
+}
+.steppe-bug-dialog::backdrop {
+  background: #16171088;
+}
+.steppe-bug-dialog header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+.steppe-bug-dialog h2 {
+  font:
+    600 26px var(--font-display),
+    serif;
+  margin: 0;
+}
+.steppe-bug-dialog button,
+.steppe-bug-dialog a {
+  min-height: 44px;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.steppe-bug-dialog header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.steppe-bug-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+.steppe-bug-dialog label {
+  font-weight: 600;
+}
+.steppe-bug-dialog input:not([type="checkbox"]),
+.steppe-bug-dialog textarea {
+  width: 100%;
+  background: #fffdf8;
+  color: #292820;
+  border: 1px solid #817565;
+  padding: 10px;
+  font: inherit;
+  border-radius: 0;
+}
+.steppe-bug-dialog textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.steppe-bug-dialog .steppe-bug-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 8px;
+}
+.steppe-bug-check input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #783e2c;
+}
+.steppe-bug-hint {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #595346;
+  margin: 0;
+}
+.steppe-bug-dialog pre {
+  font-size: 11px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #eee7d8;
+  padding: 10px;
+  max-height: 230px;
+  overflow: auto;
+}
+.steppe-bug-dialog summary {
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.steppe-bug-dialog footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  border-top: 1px solid #b4a58c;
+  padding-top: 8px;
+}
+.steppe-bug-dialog .steppe-bug-submit {
+  background: #783e2c;
+  color: #fffaf0;
+  text-decoration: none;
+  font-weight: 600;
+  border: 0;
+}
+.steppe-bug-dialog :focus-visible {
+  outline: 2px solid #1e5949;
+  outline-offset: 3px;
+}
+.steppe-bug-dialog [role="alert"] {
+  border-left: 3px solid #783e2c;
+  padding-left: 10px;
+}
+.steppe-bug-dialog button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+@media (max-width: 640px) {
+  .steppe-bug-launcher {
+    top: auto;
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    font-size: 11px;
+    padding: 10px 8px;
+    max-width: 145px;
+  }
+  .steppe-bug-dialog {
+    padding: 18px;
+  }
+}
+@media print {
+  .steppe-bug-launcher,
+  .steppe-bug-dialog {
+    display: none;
+  }
+}

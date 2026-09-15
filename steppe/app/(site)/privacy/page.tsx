@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { CANONICAL_ORIGIN } from "@/lib/site-url";
 import "./privacy.css";
 import { Hero } from "../_components/hero";
+import { bugReportsEnabled } from "@/lib/bug-reports/server";
 
 export const metadata = {
   title: "Steppe · privacy",
@@ -78,6 +79,12 @@ export default async function PrivacyPage() {
               </div>
             </div>
           </div>
+          {bugReportsEnabled() && (
+            <div className="closing">
+              <h3>{t("bugReportsTitle")}</h3>
+              <p>{t("bugReportsDescription")}</p>
+            </div>
+          )}
         </div>
       </section>
 
