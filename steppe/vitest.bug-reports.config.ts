@@ -13,6 +13,7 @@ export default defineConfig({
     environment: "node",
     include: [
       "tests/bug-*.test.ts",
+      "tests/sentry-privacy.test.ts",
       "tests/interest-route.test.ts",
       "tests/invite-redeem-route.test.ts",
       "tests/pledge-route.test.ts",
