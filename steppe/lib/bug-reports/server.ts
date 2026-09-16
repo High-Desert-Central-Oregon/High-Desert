@@ -72,8 +72,11 @@ export async function hasExhaustedBugReportNotifications() {
     throw new Error("bug-report notification health check failed");
   return count > 0;
 }
-export async function readLimitedJson(request: Request): Promise<unknown> {
-  if (Number(request.headers.get("content-length")) > 64_000)
+export async function readLimitedJson(
+  request: Pick<Request, "headers" | "body">,
+  limit = 64_000,
+): Promise<unknown> {
+  if (Number(request.headers.get("content-length")) > limit)
     throw new Error("too large");
   const reader = request.body?.getReader();
   if (!reader) throw new Error("empty");
@@ -84,7 +87,7 @@ export async function readLimitedJson(request: Request): Promise<unknown> {
       const { done, value } = await reader.read();
       if (done) break;
       length += value.length;
-      if (length > 64_000) {
+      if (length > limit) {
         await reader.cancel();
         throw new Error("too large");
       }

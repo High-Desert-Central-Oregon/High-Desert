@@ -1,3 +1,7 @@
+import {
+  sanitizeSentryReferences,
+  type SentryReference,
+} from "./sentry-references";
 /** Only these technical event names and route templates may leave the device. */
 export const EVENT_NAMES = [
   "page.open",
@@ -107,6 +111,7 @@ export type Environment = {
 export type Diagnostics = {
   events: DiagnosticEvent[];
   environment: Environment;
+  sentryErrors?: SentryReference[];
 };
 export function sanitizeDiagnostics(value: unknown): Diagnostics | null {
   if (!value || typeof value !== "object") return null;
@@ -145,6 +150,9 @@ export function sanitizeDiagnostics(value: unknown): Diagnostics | null {
     .sort((a, b) => a.atMs - b.atMs);
   return {
     events,
+    ...(Array.isArray(d.sentryErrors)
+      ? { sentryErrors: sanitizeSentryReferences(d.sentryErrors) }
+      : {}),
     environment: {
       release:
         typeof rawEnv.release === "string" &&

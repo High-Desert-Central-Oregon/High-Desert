@@ -211,3 +211,46 @@ prepared from the base schema and 0035, pass its loopback connection string in
   are unavailable through the CLI check, so hosted schema/account access and
   real delivery remain unverified. Keep intake disabled until activation checks
   are complete. No production migration or role grant was performed.
+
+## Matching Sentry errors to a report
+
+When a reporter chooses **Include the technical details shown below**, the report
+can include up to five references to anonymous browser errors from the preceding
+ten minutes in that page session. They can refresh the preview before sending.
+The optional activity timeline and report text stay in Steppe. Nothing from a
+report is copied into Sentry. Existing anonymous crash monitoring is independent
+of the optional activity recorder.
+
+Support operators see a **Sentry errors** section on each report. It retrieves
+only the exact included event IDs from the fixed `steppe-xu/steppe` project.
+Event ID, release, production environment and occurrence time must agree before
+showing the error type, handled state, app source locations and a Sentry link.
+There is no matching by email, inferred identity, page or approximate time.
+Refreshing the case can pick up an event after Sentry finishes processing it.
+
+Set server-only `SENTRY_REPORTS_READ_TOKEN` in the Steppe production deployment
+to a dedicated Sentry credential with `project:read`. The existing Vercel release
+integration credential does not have this permission. Never prefix this value
+with `NEXT_PUBLIC_`, commit it, or put it in report diagnostics. Rotate/revoke it
+through Sentry and update Vercel together. See the [Sentry event API](https://docs.sentry.io/api/events/retrieve-an-event-for-a-project/).
+
+The authenticated report read and support-operator permission check happen before
+any Sentry request. Provider requests have four-second timeouts, no redirects or
+cache, and a bounded response. Missing credentials, authorization failure, expired
+or missing events and Sentry outages leave report review available. No provider
+message, identity, request body, breadcrumb, source snippet or context is stored
+or rendered. The error references follow the report's existing retention period;
+Sentry event retention is separate. A deleted Sentry event may remain unavailable.
+
+References are memory-only until included in a report, and cleared on account
+changes, sign-out and page exit. Reports without references remain valid. Errors
+after a page reload, older than ten minutes, blocked by the browser, or never sent
+to Sentry cannot be retroactively connected. Server errors are not captured by
+the existing browser-only monitoring setup.
+
+This change needs no database migration and does not enable intake. Preserve the
+existing `BUG_REPORTS_ENABLED` activation decision separately from deploying code.
+Validation covers real SDK transport sanitization, exact correlation, consent
+serialization, account clearing, operator authorization, delayed processing,
+mismatched events and provider failures. Database tests still require the explicit
+disposable local database configured by the existing test runbook.
