@@ -15,6 +15,7 @@ beforeEach(() => {
   vi.stubEnv("RESEND_API_KEY", "test-only");
   vi.stubEnv("BUG_REPORT_NOTIFY_TO", "operator@example.test");
   vi.stubEnv("BUG_REPORT_MAINTENANCE_SECRET", "test-secret");
+  vi.stubEnv("CRON_SECRET", "");
   vi.stubEnv("BUG_REPORTS_ENABLED", "true");
   mocks.rpc.mockImplementation(async (name: string) => ({
     data:
@@ -71,6 +72,52 @@ describe("bug-report notification delivery and retention", () => {
     expect(mocks.rpc).toHaveBeenCalledWith(
       "purge_expired_bug_reports",
     );
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+  it("accepts Vercel's cron token and runs cleanup before notification retry", async () => {
+    vi.stubEnv("CRON_SECRET", "vercel-test-secret");
+    const response = await GET(
+      new Request("https://example.test/api/support/maintenance", {
+        headers: { authorization: "Bearer vercel-test-secret" },
+      }),
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(mocks.rpc).toHaveBeenNthCalledWith(1, "purge_expired_bug_reports");
+    expect(mocks.send).toHaveBeenCalledOnce();
+  });
+  it.each(["Bearer test-secret", "Bearer wrong-token"])(
+    "rejects an obsolete or wrong token when Vercel cron is configured: %s",
+    async (authorization) => {
+      vi.stubEnv("CRON_SECRET", "vercel-test-secret");
+      const response = await GET(
+        new Request("https://example.test/api/support/maintenance", {
+          headers: { authorization },
+        }),
+      );
+      expect(response.status).toBe(401);
+      expect(mocks.rpc).not.toHaveBeenCalled();
+    },
+  );
+  it("fails closed without either secret", async () => {
+    vi.stubEnv("BUG_REPORT_MAINTENANCE_SECRET", "");
+    const response = await GET(
+      new Request("https://example.test/api/support/maintenance", {
+        headers: { authorization: "Bearer undefined" },
+      }),
+    );
+    expect(response.status).toBe(401);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+  it("returns a visible failure and skips mail when cleanup fails", async () => {
+    mocks.rpc.mockResolvedValue({ data: null, error: { message: "unavailable" } });
+    const response = await GET(
+      new Request("https://example.test/api/support/maintenance", {
+        headers: { authorization: "Bearer test-secret" },
+      }),
+    );
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ ok: false });
     expect(mocks.send).not.toHaveBeenCalled();
   });
 });

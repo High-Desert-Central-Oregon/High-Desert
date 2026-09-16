@@ -5,9 +5,10 @@ import {
   bugReportsEnabled,
   deliverBugReportNotifications,
 } from "@/lib/bug-reports/server";
-/** Intended for an authenticated hourly scheduler; not configured by this patch. */
+/** Vercel sends CRON_SECRET as the bearer token for the hourly job. */
 export async function GET(request: Request) {
-  const secret = process.env.BUG_REPORT_MAINTENANCE_SECRET;
+  const secret =
+    process.env.CRON_SECRET || process.env.BUG_REPORT_MAINTENANCE_SECRET;
   const actual = Buffer.from(request.headers.get("authorization") ?? "");
   const expected = Buffer.from(`Bearer ${secret}`);
   if (
