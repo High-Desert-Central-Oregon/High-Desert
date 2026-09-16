@@ -1,5 +1,6 @@
 "use client";
 
+import { clearDiagnostics } from "@/lib/bug-reports/client";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -11,6 +12,7 @@ import { createClient } from "@/lib/supabase/client";
 export function SignOutButton({ label }: { label: string }) {
   const router = useRouter();
   const signOut = async () => {
+    clearDiagnostics();
     await createClient().auth.signOut();
     router.push("/auth/login");
   };

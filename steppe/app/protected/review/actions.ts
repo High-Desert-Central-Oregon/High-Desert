@@ -72,9 +72,13 @@ export async function decideVerification(
   // 1. Read current state (moderators may read any verification via RLS).
   const { data: row } = await supabase
     .from("verifications")
-    .select("status, evidence_path")
+    .select("*")
     .eq("id", verificationId)
-    .maybeSingle<{ status: string; evidence_path: string | null }>();
+    .maybeSingle<{
+      status: string;
+      evidence_path: string | null;
+      review_state?: string;
+    }>();
 
   // 2. Only ever act on a still-pending request. If it's already decided (or a
   //    retry after the RPC committed), do nothing — no duplicate audit entry —
@@ -83,6 +87,10 @@ export async function decideVerification(
     revalidatePath("/protected/review");
     return null;
   }
+
+  // A migrated case must use the recorded-decision workflow. Never let an old
+  // browser tab purge evidence outside it during a rolling deployment.
+  if (row.review_state !== undefined) return { error: "workflow-required" };
 
   // 3. Delete the evidence file BEFORE committing the decision. `remove` does
   //    not error on an already-missing object, so this is idempotent and safe to

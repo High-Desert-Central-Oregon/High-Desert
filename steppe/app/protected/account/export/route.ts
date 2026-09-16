@@ -37,6 +37,8 @@ export async function GET() {
     auditLog,
     calendarFeeds,
     reportsMade,
+    bugReports,
+    verificationProgress,
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
     supabase
@@ -68,7 +70,13 @@ export async function GET() {
       .from("reports")
       .select("id, target_type, target_id, body, created_at, resolved_at, outcome")
       .eq("reporter_id", uid),
+    // Export saved reports even when intake is disabled. Older installations
+    // may not have applied the optional bug-report migration yet.
+    supabase.from("bug_reports").select("id,description,expected,contact_email,page,locale,release,diagnostics,status,created_at,expires_at").eq("reporter_id", uid),
+    supabase.rpc("my_verification_progress"),
   ]);
+  if (bugReports.error && !["42P01", "PGRST205"].includes(bugReports.error.code)) return NextResponse.json({ error: "export unavailable" }, { status: 503 });
+  if(verificationProgress.error && !["PGRST202","42883"].includes(verificationProgress.error.code))return NextResponse.json({error:"export unavailable"},{status:503});
 
   const payload = {
     // UTC instant — machine-readable export metadata, not a Redmond wall-clock
@@ -88,6 +96,8 @@ export async function GET() {
     audit_log: auditLog.data ?? [],
     calendar_feeds: calendarFeeds.data ?? [],
     reports: reportsMade.data ?? [],
+    bug_reports: bugReports.data ?? [],
+    verification_progress: verificationProgress.data ?? [],
   };
 
   return new NextResponse(JSON.stringify(payload, null, 2), {

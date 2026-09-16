@@ -1,3 +1,4 @@
+import { pipelinesEnabled } from "@/lib/member-pipelines/server";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -12,7 +13,7 @@ import { isSignupSourceCode } from "@/lib/signup-source";
  * client — which lives in lib/supabase/admin.ts and is NEVER importable by client
  * code (the secret key is not NEXT_PUBLIC_*). This route is the single writer.
  *
- * Body: { email, first_name?, in_area?, consent, company?, source? }
+ * Body: { email, first_name?, neighborhood?, in_area?, consent, company?, source? }
  *   - email     required, validated
  *   - consent   required true (the form's "email me when ready" checkbox)
  *   - company   honeypot — a visually-hidden field real people leave empty;
@@ -32,7 +33,6 @@ import { isSignupSourceCode } from "@/lib/signup-source";
  * already on the list (on-conflict-do-nothing), or { ok: false, error } on a bad
  * request. We never reveal anything about who else is on the list.
  */
-
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -102,14 +102,19 @@ export async function POST(request: Request) {
     typeof data.first_name === "string" ? data.first_name.trim() : "";
   const first_name = firstNameRaw === "" ? null : firstNameRaw.slice(0, 120);
 
+  const neighborhood =
+    typeof data.neighborhood === "string"
+      ? data.neighborhood.trim().slice(0, 120) || null
+      : null;
   const in_area = typeof data.in_area === "boolean" ? data.in_area : null;
 
   // Never trust the raw query-string/body value into the column: coerce
   // anything outside the allowlist (missing, malformed, or a hostile string
   // sent directly to this route) to 'direct'.
-  const source = typeof data.source === "string" && isSignupSourceCode(data.source)
-    ? data.source
-    : "direct";
+  const source =
+    typeof data.source === "string" && isSignupSourceCode(data.source)
+      ? data.source
+      : "direct";
 
   const admin = createAdminClient();
 
@@ -119,7 +124,14 @@ export async function POST(request: Request) {
   const { data: inserted, error } = await admin
     .from("interest_signups")
     .upsert(
-      { email, first_name, in_area, consent: true, source },
+      {
+        email,
+        first_name,
+        in_area,
+        consent: true,
+        source,
+        ...(pipelinesEnabled() ? { neighborhood } : {}),
+      },
       { onConflict: "email", ignoreDuplicates: true },
     )
     .select("id");
@@ -166,5 +178,7 @@ export async function POST(request: Request) {
     }
   }
 
-  return NextResponse.json(duplicate ? { ok: true, duplicate: true } : { ok: true });
+  return NextResponse.json(
+    duplicate ? { ok: true, duplicate: true } : { ok: true },
+  );
 }

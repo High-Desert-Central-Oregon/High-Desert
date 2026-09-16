@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +41,14 @@ export function PostForm({
     null,
   );
   const error = errorMessage(state, dict);
+  // React resets uncontrolled form fields when an action returns, including a
+  // returned validation error. Keep the draft in memory until success navigates.
+  const [draft, setDraft] = useState({
+    title: "",
+    body: "",
+    category: "offer",
+    neighborhood: "",
+  });
 
   const chipClass =
     "flex cursor-pointer items-center gap-[7px] border px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-foreground peer-checked:border-foreground peer-checked:bg-muted peer-focus-visible:ring-1 peer-focus-visible:ring-ring";
@@ -82,7 +90,8 @@ export function PostForm({
                   id={`cat-${c}`}
                   name="category"
                   value={c}
-                  defaultChecked={c === "offer"}
+                  checked={draft.category === c}
+                  onChange={() => setDraft({ ...draft, category: c })}
                   className="peer sr-only"
                 />
                 <label htmlFor={`cat-${c}`} className={chipClass}>
@@ -107,6 +116,8 @@ export function PostForm({
         <Input
           id="title"
           name="title"
+          value={draft.title}
+          onChange={(e) => setDraft({ ...draft, title: e.target.value })}
           required
           maxLength={160}
           placeholder={dict.exchange.titlePh}
@@ -118,6 +129,8 @@ export function PostForm({
         <textarea
           id="body"
           name="body"
+          value={draft.body}
+          onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           rows={5}
           required
           maxLength={4000}
@@ -131,7 +144,8 @@ export function PostForm({
         <select
           id="neighborhood_id"
           name="neighborhood_id"
-          defaultValue=""
+          value={draft.neighborhood}
+          onChange={(e) => setDraft({ ...draft, neighborhood: e.target.value })}
           className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:w-72"
         >
           <option value="">{dict.events.allRedmond}</option>

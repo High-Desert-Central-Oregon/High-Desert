@@ -3,7 +3,10 @@
 // "what membership is" terms. The step-by-step "how it works" lives on the home, so it
 // is not repeated here. Copy is localized from the "join" namespace; the LAUNCH_PHASE
 // gate and signup flow are unchanged.
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import Link from "next/link";
+import { pipelinesEnabled } from "@/lib/member-pipelines/server";
+import { pc } from "@/lib/member-pipelines/copy";
 import "./join.css";
 import { JoinForm } from "./join-form";
 import { Hero } from "../_components/hero";
@@ -16,8 +19,10 @@ export const metadata = {
 
 export default async function JoinPage() {
   const t = await getTranslations("join");
+  const locale=await getLocale();
   return (
     <div className="join">
+      {pipelinesEnabled() && <nav className="wrap flex flex-wrap gap-5 py-4"><span>{pc(locale,"joinList")}</span><Link className="underline" href="/invite">{pc(locale,"acceptInvite")}</Link><Link className="underline" href="/auth/login">{pc(locale,"signIn")}</Link></nav>}
       <Hero
         size="band"
         eyebrow={t("heroEyebrow")}

@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { BugReporting } from "@/components/bug-reports/mount";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Besley, Schibsted_Grotesk, Martian_Mono } from "next/font/google";
@@ -85,6 +87,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Suspense><BugReporting /></Suspense>
         </ThemeProvider>
       </body>
     </html>

@@ -7,15 +7,19 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import type { VerificationRow } from "@/lib/verification";
+import { pipelinesEnabled } from "@/lib/member-pipelines/server";
+import { VerificationStatus } from "@/components/member-pipelines/verification-status";
 
 export const metadata = {
   title: "Verify residency · Steppe",
 };
 
 /** The member's most recent verification request, if any (own row via RLS). */
-async function latestVerification(userId: string): Promise<VerificationRow | null> {
+async function latestVerification(
+  userId: string,
+): Promise<VerificationRow | null> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("verifications")
     .select(
       "id, user_id, method, status, evidence_path, reviewed_by, reviewed_at, created_at",
@@ -24,6 +28,7 @@ async function latestVerification(userId: string): Promise<VerificationRow | nul
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle<VerificationRow>();
+  if (error) throw new Error("Verification status could not be loaded");
   return data ?? null;
 }
 
@@ -50,6 +55,13 @@ async function VerifyContent() {
 
   // A request is in the human-review queue.
   if (latest?.status === "pending") {
+    if (pipelinesEnabled())
+      return (
+        <div lang={locale} className="flex flex-col gap-4">
+          <h1 className="font-serif text-3xl">{dict.verify.title}</h1>
+          <VerificationStatus locale={locale} />
+        </div>
+      );
     return (
       <StatusCard
         lang={locale}
@@ -88,6 +100,9 @@ async function VerifyContent() {
           {dict.verify.rejectedNote}
         </p>
       )}
+      {pipelinesEnabled() && latest?.status === "rejected" && (
+        <VerificationStatus locale={locale} />
+      )}
 
       <VerifyForm dict={dict} uid={user.id} />
     </div>
@@ -108,11 +123,12 @@ function StatusCard({
   body: string;
 }) {
   const toneClass =
-    tone === "success"
-      ? "text-success"
-      : "text-muted-foreground";
+    tone === "success" ? "text-success" : "text-muted-foreground";
   return (
-    <div lang={lang} className="flex flex-col gap-3 rounded-lg border bg-card p-6">
+    <div
+      lang={lang}
+      className="flex flex-col gap-3 rounded-lg border bg-card p-6"
+    >
       <div className={`flex items-center gap-3 ${toneClass}`}>
         {icon}
         <h1 className="text-xl font-semibold tracking-tight text-foreground">

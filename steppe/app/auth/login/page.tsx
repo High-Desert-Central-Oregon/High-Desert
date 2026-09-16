@@ -4,13 +4,17 @@ import { MagicLinkForm } from "@/components/magic-link-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Lockup } from "@/components/wordmark";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { ProviderButtons } from "@/components/member-pipelines/provider-buttons";
+import { pc } from "@/lib/member-pipelines/copy";
+import { pipelinesEnabled } from "@/lib/member-pipelines/server";
 
 export const metadata = {
   title: "Sign in · Steppe",
 };
 
-async function LoginCard() {
+async function LoginCard({searchParams}:{searchParams:Promise<{issue?:string}>}) {
   const { locale, dict } = await getServerDictionary();
+  const issue=(await searchParams).issue;
   return (
     <main
       id="main"
@@ -29,15 +33,16 @@ async function LoginCard() {
           <LanguageSwitcher current={locale} />
         </div>
         <MagicLinkForm dict={dict} locale={locale} />
+        {pipelinesEnabled() && <><ProviderButtons locale={locale}/>{issue&&<p role="alert">{pc(locale,"authFailed")}</p>}<nav className="flex flex-wrap gap-4 text-sm"><Link className="underline" href="/join">{pc(locale,"joinList")}</Link><Link className="underline" href="/invite">{pc(locale,"acceptInvite")}</Link></nav></>}
       </div>
     </main>
   );
 }
 
-export default function LoginPage() {
+export default function LoginPage(props:{searchParams:Promise<{issue?:string}>}) {
   return (
     <Suspense>
-      <LoginCard />
+      <LoginCard {...props}/>
     </Suspense>
   );
 }

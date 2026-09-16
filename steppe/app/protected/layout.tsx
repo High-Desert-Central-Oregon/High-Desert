@@ -4,7 +4,7 @@ import { InstallAffordance } from "@/components/install-affordance";
 import { AppNav } from "./app-nav";
 import { TabBar } from "./tab-bar";
 import { destinations } from "./nav-destinations";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getConsentState } from "@/lib/onboarding";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { getUnreadState } from "@/lib/messages";
@@ -46,6 +46,9 @@ async function SkipLink() {
 
 /** Server shim: fetch the dictionary once, hand it to the client affordance. */
 async function InstallBanner() {
+  // Keep installation guidance out of the signup and residency-review steps.
+  const profile = await getMyProfile();
+  if (!profile?.verified) return null;
   const { locale, dict } = await getServerDictionary();
   return <InstallAffordance locale={locale} dict={dict} />;
 }

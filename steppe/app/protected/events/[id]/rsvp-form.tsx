@@ -1,5 +1,6 @@
 "use client";
 
+import { recordDiagnostic } from "@/lib/bug-reports/client";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,13 @@ export function RsvpForm({
   dict: Dictionary;
 }) {
   const [saveState, save, saving] = useActionState<RsvpState, FormData>(
-    setRsvp,
+    async (previous, formData) => {
+      try {
+        const result = await setRsvp(previous, formData);
+        recordDiagnostic(result && "ok" in result ? "rsvp.saved" : "rsvp.failed");
+        return result;
+      } catch (error) { recordDiagnostic("rsvp.failed"); throw error; }
+    },
     null,
   );
   const [cancelState, cancel, cancelling] = useActionState<RsvpState, FormData>(

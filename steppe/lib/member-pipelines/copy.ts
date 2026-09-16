@@ -1,0 +1,203 @@
+const messages = {
+  retryFailed: [
+    "Delivery could not be retried. Refresh and try again.",
+    "No se pudo reintentar el envío. Actualiza e inténtalo de nuevo.",
+  ],
+  deliveryStopped: ["Delivery needs attention", "El envío necesita atención"],
+  cancel: ["Cancel", "Cancelar"],
+  confirmDecision: ["Confirm decision", "Confirmar decisión"],
+  readyForReview: ["Ready for review", "Lista para revisar"],
+  awaitingReply: [
+    "Waiting for applicant reply",
+    "Esperando la respuesta de la persona",
+  ],
+  previous: ["Previous page", "Página anterior"],
+  following: ["Next page", "Página siguiente"],
+  work: ["Work", "Trabajo"],
+  workIntro: [
+    "Invitations, reviews, and support in one place.",
+    "Invitaciones, revisiones y soporte en un solo lugar.",
+  ],
+  people: ["Invite a person", "Invitar a una persona"],
+  interest: ["Interest list", "Lista de interés"],
+  invited: ["Individual invitations", "Invitaciones individuales"],
+  batches: [
+    "Neighborhood / cohort invitations",
+    "Invitaciones de vecindario / grupo",
+  ],
+  inviteIntro: [
+    "Invite one email address for seven days. The person signs in with an email code and completes normal residency verification.",
+    "Invita a una dirección de correo durante siete días. La persona inicia sesión con un código y completa la verificación habitual de residencia.",
+  ],
+  email: ["Email address", "Correo electrónico"],
+  language: ["Invitation language", "Idioma de la invitación"],
+  send: ["Send invitation", "Enviar invitación"],
+  sending: ["Saving…", "Guardando…"],
+  queued: [
+    "Invitation saved. Check delivery status below.",
+    "Invitación guardada. Revisa el estado del envío abajo.",
+  ],
+  failed: [
+    "That change could not be completed. Please try again.",
+    "No se pudo completar el cambio. Inténtalo de nuevo.",
+  ],
+  inviteFailed: [
+    "That change could not be completed. Refresh and try again. For a resend, wait at least a minute; the limit is five requests per day.",
+    "No se pudo completar el cambio. Actualiza e inténtalo de nuevo. Para reenviar, espera al menos un minuto; el límite es de cinco solicitudes al día.",
+  ],
+  loadFailed: [
+    "This information could not be loaded. Please refresh and try again.",
+    "No se pudo cargar la información. Actualiza e inténtalo de nuevo.",
+  ],
+  empty: ["No entries on this page.", "No hay entradas en esta página."],
+  invitePerson: ["Invite this person", "Invitar a esta persona"],
+  resend: ["Resend invitation", "Reenviar invitación"],
+  revoke: ["Revoke invitation", "Revocar invitación"],
+  confirmRevoke: [
+    "Stop this individual invitation? Existing accounts and other invitations remain valid.",
+    "¿Detener esta invitación individual? Las cuentas existentes y otras invitaciones siguen siendo válidas.",
+  ],
+  revoked: ["Revoked", "Revocada"],
+  expired: ["Expired", "Caducada"],
+  expires: ["Expires", "Caduca"],
+  noConsent: [
+    "No email consent recorded",
+    "No hay consentimiento de correo registrado",
+  ],
+  pending: ["Delivery pending", "Envío pendiente"],
+  sent: ["Sent", "Enviado"],
+  cancelled: ["Cancelled", "Cancelado"],
+  not_sent: ["Not invited", "Sin invitación"],
+  not_joined: ["Not joined yet", "Aún no se ha unido"],
+  account_created: [
+    "Account confirmed · verification next",
+    "Cuenta confirmada · sigue la verificación",
+  ],
+  verification_pending: [
+    "Verification awaiting review",
+    "Verificación pendiente de revisión",
+  ],
+  verified: ["Verified member", "Miembro verificado"],
+  newer: ["Newer", "Más recientes"],
+  older: ["Older", "Más antiguos"],
+  reviews: ["Verification reviews", "Revisiones de residencia"],
+  bugs: ["Bug reports", "Informes de errores"],
+  notices: ["Service email delivery", "Envío de correos del servicio"],
+  noticeIntro: [
+    "Pending messages stay saved if email delivery fails.",
+    "Los mensajes pendientes quedan guardados si falla el envío.",
+  ],
+  retry: ["Retry delivery", "Reintentar envío"],
+  next: ["Your next step", "Tu siguiente paso"],
+  verifyNext: [
+    "Confirm your residency to participate.",
+    "Confirma tu residencia para participar.",
+  ],
+  verify: ["Verify residency", "Verificar residencia"],
+  waiting: [
+    "Your request is with the review team.",
+    "Tu solicitud está con el equipo de revisión.",
+  ],
+  viewStatus: ["View verification status", "Ver estado de verificación"],
+  question: ["More information needed", "Se necesita más información"],
+  requestInfo: ["Request more information", "Pedir más información"],
+  questionHint: [
+    "Ask a clear question. Do not copy document details, addresses, or identity numbers into this message.",
+    "Haz una pregunta clara. No copies datos de documentos, direcciones ni números de identidad en este mensaje.",
+  ],
+  reply: ["Your reply", "Tu respuesta"],
+  replyHint: [
+    "Answer the question without pasting identity documents or private numbers. The reviewer can arrange another verification method if needed.",
+    "Responde sin copiar documentos de identidad ni números privados. El equipo puede coordinar otro método de verificación si hace falta.",
+  ],
+  sendReply: ["Send reply for review", "Enviar respuesta para revisión"],
+  replied: [
+    "Reply sent. A person will review it.",
+    "Respuesta enviada. Una persona la revisará.",
+  ],
+  applicantReply: ["Applicant reply", "Respuesta de la persona"],
+  case: ["Review request", "Revisar solicitud"],
+  decisionMessage: ["Message to the applicant", "Mensaje para la persona"],
+  approve: ["Approve", "Aprobar"],
+  reject: ["Decline", "Rechazar"],
+  confirmApprove: [
+    "Approve this person's residency verification?",
+    "¿Aprobar la verificación de residencia de esta persona?",
+  ],
+  confirmReject: [
+    "Decline this request and send the explanation below?",
+    "¿Rechazar la solicitud y enviar la explicación de abajo?",
+  ],
+  finishing: [
+    "A decision is recorded. Evidence cleanup and confirmation must finish before access changes.",
+    "Se registró una decisión. La eliminación de la prueba y la confirmación deben finalizar antes de cambiar el acceso.",
+  ],
+  finish: ["Finish recorded decision", "Finalizar decisión registrada"],
+  decisionFailed: [
+    "The decision is not complete. Refresh this case and use Finish recorded decision to retry safely.",
+    "La decisión no está completa. Actualiza este caso y usa Finalizar decisión registrada para reintentar.",
+  ],
+  saved: ["Saved.", "Guardado."],
+  evidence: ["Prepare evidence link", "Preparar enlace a la prueba"],
+  openEvidence: [
+    "Open evidence (valid for one minute)",
+    "Abrir prueba (válida por un minuto)",
+  ],
+  evidenceError: [
+    "Evidence could not be opened. Refresh and try again.",
+    "No se pudo abrir la prueba. Actualiza e inténtalo de nuevo.",
+  ],
+  noEvidence: [
+    "No uploaded document. Coordinate the selected verification method with the applicant before deciding.",
+    "No hay documento adjunto. Coordina el método elegido con la persona antes de decidir.",
+  ],
+  updated: ["Last updated", "Última actualización"],
+  questionSent: [
+    "Question sent. The applicant can reply from their verification page.",
+    "Pregunta enviada. La persona puede responder desde su página de verificación.",
+  ],
+  signInMethods: ["Sign-in methods", "Métodos de acceso"],
+  google: ["Continue with Google", "Continuar con Google"],
+  apple: ["Continue with Apple", "Continuar con Apple"],
+  connectGoogle: ["Connect Google", "Conectar Google"],
+  connectApple: ["Connect Apple", "Conectar Apple"],
+  methodsIntro: [
+    "Connect another sign-in method to this same account. Your profile and verification stay together.",
+    "Conecta otro método a esta misma cuenta. Tu perfil y verificación se mantienen juntos.",
+  ],
+  appleHint: [
+    "New here? Start with your invited email. You can connect Apple afterward, including a private Apple email address.",
+    "¿Es tu primera vez? Empieza con el correo invitado. Después puedes conectar Apple, incluso con un correo privado de Apple.",
+  ],
+  authFailed: [
+    "Sign-in could not finish. Try your email code, or return to Sign-in methods to connect a provider.",
+    "No se pudo completar el acceso. Prueba el código por correo o vuelve a Métodos de acceso para conectar un proveedor.",
+  ],
+  connected: ["Connected methods", "Métodos conectados"],
+  joinList: ["Join the beta list", "Unirme a la lista de la beta"],
+  acceptInvite: ["Accept an invitation", "Aceptar una invitación"],
+  signIn: ["Sign in", "Iniciar sesión"],
+  help: ["Help", "Ayuda"],
+  helpIntro: [
+    "Choose what you need help with.",
+    "Elige con qué necesitas ayuda.",
+  ],
+  accountHelp: ["Account or sign-in help", "Ayuda con la cuenta o el acceso"],
+  safetyHelp: [
+    "Report a safety concern from the relevant post or message.",
+    "Informa de un problema de seguridad desde la publicación o el mensaje correspondiente.",
+  ],
+  myActivity: ["My activity", "Mi actividad"],
+  myPosts: ["My posts", "Mis publicaciones"],
+  myEvents: ["My RSVPs", "Mis confirmaciones de asistencia"],
+  myReports: ["My bug reports", "Mis informes de errores"],
+  activityEmpty: [
+    "Nothing here yet. Browse the exchange to find something nearby.",
+    "Aún no hay nada aquí. Explora el intercambio para encontrar algo cerca.",
+  ],
+  exchange: ["Browse the exchange", "Explorar el intercambio"],
+} as const;
+export type PipelineKey = keyof typeof messages;
+export function pc(locale: string, key: PipelineKey) {
+  return messages[key][locale === "es" ? 1 : 0];
+}

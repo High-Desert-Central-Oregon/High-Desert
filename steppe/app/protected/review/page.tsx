@@ -9,6 +9,9 @@ import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
 import { formatRedmondDate } from "@/lib/time";
 import type { VerificationMethod } from "@/lib/verification";
+import Link from "next/link";
+import { pipelinesEnabled } from "@/lib/member-pipelines/server";
+import { pc } from "@/lib/member-pipelines/copy";
 
 export const metadata = {
   title: "Verification reviews · Steppe",
@@ -19,6 +22,7 @@ type PendingRow = {
   user_id: string;
   method: VerificationMethod;
   evidence_path: string | null;
+  review_state?: string;
   created_at: string;
 };
 
@@ -29,7 +33,16 @@ type OpenRequest = {
   created_at: string;
 };
 
-async function ReviewContent() {
+async function ReviewContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const search = await searchParams;
+  const page = Math.min(
+    10000,
+    Math.max(0, parseInt(search.page ?? "0", 10) || 0),
+  );
   // Moderator-only. The page is a flow gate; the RPC and storage policies are
   // the hard gates, but we shouldn't render the queue to non-moderators at all.
   const profile = await getMyProfile();
@@ -42,11 +55,16 @@ async function ReviewContent() {
   const supabase = await createClient();
 
   // Pending verification checks, oldest first — chronological, never ranked (invariant 7).
-  const { data: pending } = await supabase
+  const { data: pending, error: pendingError } = await supabase
     .from("verifications")
-    .select("id, user_id, method, evidence_path, created_at")
+    .select(
+      pipelinesEnabled()
+        ? "id, user_id, method, evidence_path, created_at, review_state"
+        : "id, user_id, method, evidence_path, created_at",
+    )
     .eq("status", "pending")
     .order("created_at", { ascending: true })
+    .range(page * 25, page * 25 + 24)
     .returns<PendingRow[]>();
 
   const rows = pending ?? [];
@@ -54,7 +72,7 @@ async function ReviewContent() {
   // Open neighborhood-help requests ("none of these fit"), oldest first —
   // chronological, never ranked (invariant 7). Members who simply haven't
   // chosen a neighborhood yet do NOT appear here; only an explicit flag does.
-  const { data: requests } = await supabase
+  const { data: requests, error: requestsError } = await supabase
     .from("neighborhood_requests")
     .select("id, user_id, note, created_at")
     .eq("status", "open")
@@ -90,13 +108,20 @@ async function ReviewContent() {
       {/* ── Verification queue ──────────────────────────────────────────────── */}
       <section className="flex flex-col gap-6">
         <header className="flex flex-col gap-2">
+          {pipelinesEnabled() && (
+            <Link className="underline" href="/protected/work">
+              {pc(locale, "work")}
+            </Link>
+          )}
           <h1 className="text-2xl font-semibold tracking-tight">
             {dict.review.title}
           </h1>
           <p className="text-sm text-muted-foreground">{dict.review.intro}</p>
         </header>
 
-        {rows.length === 0 ? (
+        {pendingError ? (
+          <p role="alert">{pc(locale, "loadFailed")}</p>
+        ) : rows.length === 0 ? (
           <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
             {dict.review.empty}
           </p>
@@ -104,32 +129,71 @@ async function ReviewContent() {
           <ul className="flex flex-col gap-3">
             {rows.map((row) => (
               <li key={row.id}>
-                <ReviewRow
-                  id={row.id}
-                  applicantName={namesById.get(row.user_id) ?? "·"}
-                  methodLabel={dict.verify.methods[row.method]}
-                  hasEvidence={Boolean(row.evidence_path)}
-                  submittedAt={formatRedmondDate(row.created_at, locale)}
-                  dict={dict}
-                />
+                {pipelinesEnabled() ? (
+                  <Link
+                    className="block rounded border p-4 underline"
+                    href={`/protected/review/${row.id}`}
+                  >
+                    {namesById.get(row.user_id) ?? "·"} ·{" "}
+                    {dict.verify.methods[row.method]} ·{" "}
+                    {formatRedmondDate(row.created_at, locale)}
+                    <span className="mt-2 block text-sm">
+                      {pc(
+                        locale,
+                        row.review_state === "needs_information"
+                          ? "awaitingReply"
+                          : row.review_state === "finalizing"
+                            ? "finish"
+                            : "readyForReview",
+                      )}
+                    </span>
+                  </Link>
+                ) : (
+                  <ReviewRow
+                    id={row.id}
+                    applicantName={namesById.get(row.user_id) ?? "·"}
+                    methodLabel={dict.verify.methods[row.method]}
+                    hasEvidence={Boolean(row.evidence_path)}
+                    submittedAt={formatRedmondDate(row.created_at, locale)}
+                    dict={dict}
+                  />
+                )}
               </li>
             ))}
           </ul>
         )}
+        <nav className="flex gap-4">
+          {page > 0 && (
+            <Link
+              className="underline"
+              href={`/protected/review?page=${page - 1}`}
+            >
+              {pc(locale, "previous")}
+            </Link>
+          )}
+          {rows.length === 25 && (
+            <Link
+              className="underline"
+              href={`/protected/review?page=${page + 1}`}
+            >
+              {pc(locale, "following")}
+            </Link>
+          )}
+        </nav>
       </section>
 
       {/* ── Open neighborhood-help requests ─────────────────────────────────── */}
       <section className="flex flex-col gap-4">
         <header className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold">
-            {dict.review.requestsTitle}
-          </h2>
+          <h2 className="text-lg font-semibold">{dict.review.requestsTitle}</h2>
           <p className="text-sm text-muted-foreground">
             {dict.review.requestsIntro}
           </p>
         </header>
 
-        {requestRows.length === 0 ? (
+        {requestsError ? (
+          <p role="alert">{pc(locale, "loadFailed")}</p>
+        ) : requestRows.length === 0 ? (
           <p className="rounded-lg border border-dashed p-5 text-sm text-muted-foreground">
             {dict.review.requestsEmpty}
           </p>
@@ -160,10 +224,12 @@ async function ReviewContent() {
   );
 }
 
-export default function ReviewPage() {
+export default function ReviewPage(props: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <ReviewContent />
+      <ReviewContent {...props} />
     </Suspense>
   );
 }

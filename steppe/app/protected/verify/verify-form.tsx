@@ -1,5 +1,6 @@
 "use client";
 
+import { recordDiagnostic } from "@/lib/bug-reports/client";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -75,6 +76,7 @@ export function VerifyForm({
 
         const supabase = createClient();
         evidencePath = `${uid}/${crypto.randomUUID()}.${evidenceExtension(file.type)}`;
+        recordDiagnostic("verification.upload");
         const { error: uploadError } = await supabase.storage
           .from(EVIDENCE_BUCKET)
           .upload(evidencePath, file, {
@@ -82,6 +84,7 @@ export function VerifyForm({
             upsert: false,
           });
         if (uploadError) {
+          recordDiagnostic("verification.upload_failed");
           setError(dict.verify.errorGeneric);
           return;
         }
@@ -89,7 +92,10 @@ export function VerifyForm({
 
       const result = await submitVerification(method, evidencePath);
       // On success the action redirects; only an error comes back here.
-      if (result?.error) setError(dict.verify.errorGeneric);
+      if (result?.error) {
+        recordDiagnostic("verification.save_failed");
+        setError(dict.verify.errorGeneric);
+      }
     });
   };
 

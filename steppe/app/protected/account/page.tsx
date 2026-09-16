@@ -1,3 +1,5 @@
+import { isSupportOperator } from "@/lib/bug-reports/server";
+import { bugCopy } from "@/lib/bug-reports/copy";
 import { Suspense } from "react";
 import Link from "next/link";
 import { PageSkeleton } from "@/components/page-skeleton";
@@ -11,15 +13,23 @@ import { t } from "@/lib/i18n";
 import { DeleteAccount } from "./delete-account";
 import { SignOutButton } from "./sign-out-button";
 import { InstallRow } from "./install-row";
+import {
+  canManageOnboarding,
+  pipelinesEnabled,
+} from "@/lib/member-pipelines/server";
+import { pc } from "@/lib/member-pipelines/copy";
+import { VerificationStatus } from "@/components/member-pipelines/verification-status";
 
 function initials(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0] ?? "")
-    .join("")
-    .toUpperCase() || "S";
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0] ?? "")
+      .join("")
+      .toUpperCase() || "S"
+  );
 }
 
 /**
@@ -36,6 +46,8 @@ async function AccountView() {
   const profile = await getMyProfile();
   const isMod = profile?.role === "moderator" || profile?.role === "admin";
   const verified = profile?.verified ?? false;
+  const supportOperator = await isSupportOperator();
+  const managesPeople = await canManageOnboarding();
 
   // Neighborhood name for the identity dateline (member since = profile row age).
   let neighborhood: string | null = null;
@@ -68,6 +80,22 @@ async function AccountView() {
     sub?: string;
     download?: boolean;
   }[] = [
+    ...(pipelinesEnabled() && (isMod || supportOperator || managesPeople)
+      ? [{ href: "/protected/work", label: pc(locale, "work") }]
+      : []),
+    ...(pipelinesEnabled()
+      ? [
+          {
+            href: "/protected/account/sign-in-methods",
+            label: pc(locale, "signInMethods"),
+          },
+          { href: "/protected/activity", label: pc(locale, "myActivity") },
+          { href: "/protected/help", label: pc(locale, "help") },
+        ]
+      : []),
+    ...(!pipelinesEnabled() && supportOperator
+      ? [{ href: "/protected/support", label: bugCopy[locale].queue }]
+      : []),
     ...(!verified
       ? [
           {
@@ -102,7 +130,7 @@ async function AccountView() {
       label: dict.nav.neighborhoodLink,
       sub: dict.account.neighborhoodRowSub,
     },
-    ...(isMod
+    ...(isMod && !pipelinesEnabled()
       ? [
           { href: "/protected/review", label: dict.nav.reviewLink },
           { href: "/protected/moderation", label: dict.nav.appealsLink },
@@ -119,6 +147,9 @@ async function AccountView() {
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
+      {pipelinesEnabled() && !verified && (
+        <VerificationStatus locale={locale} compact />
+      )}
       {/* Identity — the bundle's You masthead: name, dateline, privacy voice. */}
       <Masthead
         title={displayName}
@@ -187,7 +218,10 @@ async function AccountView() {
                     </span>
                   )}
                 </span>
-                <ChevronRight className="size-4 text-accent" aria-hidden="true" />
+                <ChevronRight
+                  className="size-4 text-accent"
+                  aria-hidden="true"
+                />
               </Link>
             </li>
           ))}

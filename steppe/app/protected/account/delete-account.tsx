@@ -1,5 +1,6 @@
 "use client";
 
+import { clearDiagnostics } from "@/lib/bug-reports/client";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +71,7 @@ export function DeleteAccount({ dict }: { dict: Dictionary }) {
           setError(null);
           start(async () => {
             // Success redirects server-side; reaching here means it failed.
+            clearDiagnostics();
             const result = await deleteMyAccount();
             if (result?.error) setError(dict.account.deleteError);
           });

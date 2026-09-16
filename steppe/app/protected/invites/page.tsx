@@ -8,6 +8,9 @@ import { formatRedmondDate } from "@/lib/time";
 import { CANONICAL_ORIGIN } from "@/lib/site-url";
 import { MintForm } from "./mint-form";
 import { TokenRow } from "./token-row";
+import Link from "next/link";
+import { canManageOnboarding } from "@/lib/member-pipelines/server";
+import { pc } from "@/lib/member-pipelines/copy";
 
 /**
  * Invitations (/protected/invites) — mint a capped token, print it, revoke it.
@@ -50,6 +53,7 @@ async function InvitesContent() {
   }
 
   const { locale, dict } = await getServerDictionary();
+  const managesPeople = await canManageOnboarding();
   const supabase = await createClient();
 
   const [{ data: tokens }, { data: neighborhoods }] = await Promise.all([
@@ -73,6 +77,7 @@ async function InvitesContent() {
   return (
     <div lang={locale} className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
+        {managesPeople && <Link className="underline" href="/protected/people">{pc(locale,"people")}</Link>}
         <h1 className="text-2xl font-semibold">{dict.invites.title}</h1>
         <p className="max-w-prose text-sm text-muted-foreground">
           {dict.invites.lead}
