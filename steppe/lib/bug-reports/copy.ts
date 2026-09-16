@@ -1,4 +1,22 @@
 const en = {
+  refreshDetails: "Refresh technical details",
+  sentryHint:
+    "Including technical details also links up to five recent crash references shown below. Anonymous crash monitoring runs separately; your description and activity history stay in Steppe.",
+  sentryHeading: "Related Sentry errors",
+  sentryNone:
+    "No Sentry error references were included. A problem can occur without a captured error.",
+  sentryUnavailable:
+    "Sentry details are temporarily unavailable. Refresh this page to try again.",
+  sentryNotConfigured: "Sentry detail lookup has not been configured.",
+  sentryPending:
+    "This error is not available in Sentry yet, or it has expired. Refresh to check again.",
+  sentryMismatch:
+    "The reference could not be matched to this release and time.",
+  sentryOpen: "Open error in Sentry",
+  sentryNote:
+    "Exact error references supplied with this report. Details are retrieved when this page opens, so delayed Sentry processing can appear on refresh. No match is inferred from another person's report.",
+  sentryHandled: "Handled by the app",
+  sentryUnhandled: "Unhandled error",
   button: "Report a bug",
   title: "Help us fix this",
   intro:
@@ -9,7 +27,7 @@ const en = {
   emailHint: "Add an email if you'd like us to follow up.",
   capture: "Remember technical steps while I test",
   captureHint:
-    "Off until you choose it. Keeps up to 10 minutes or 100 technical events on this device, only while this page session is open. Nothing is uploaded until you send a report. No typed text or screen recordings.",
+    "Off until you choose it. Keeps up to 10 minutes or 100 technical events on this device, only while this page session is open. This activity history is uploaded only when you include it in a report. No typed text or screen recordings.",
   captureOn: "Technical history is on for this page session.",
   include: "Include the technical details shown below",
   preview: "Review technical details",
@@ -75,6 +93,23 @@ const en = {
 };
 export type BugCopy = typeof en;
 const es: BugCopy = {
+  refreshDetails: "Actualizar detalles técnicos",
+  sentryHint:
+    "Al incluir detalles técnicos, también se vinculan hasta cinco referencias recientes a errores que se muestran abajo. La supervisión anónima de errores funciona por separado; tu descripción e historial permanecen en Steppe.",
+  sentryHeading: "Errores relacionados de Sentry",
+  sentryNone:
+    "No se incluyeron referencias de Sentry. Puede haber un problema sin un error registrado.",
+  sentryUnavailable:
+    "Los detalles de Sentry no están disponibles por ahora. Actualiza la página para reintentar.",
+  sentryNotConfigured: "La consulta de detalles de Sentry no está configurada.",
+  sentryPending:
+    "Este error aún no está disponible en Sentry o ha caducado. Actualiza para comprobarlo.",
+  sentryMismatch: "La referencia no coincide con esta versión y hora.",
+  sentryOpen: "Abrir error en Sentry",
+  sentryNote:
+    "Referencias exactas incluidas en este informe. Los detalles se consultan al abrir esta página; si Sentry tarda en procesarlos, pueden aparecer al actualizar. No se deducen coincidencias con informes de otras personas.",
+  sentryHandled: "Gestionado por la app",
+  sentryUnhandled: "Error no gestionado",
   button: "Reportar un error",
   title: "Ayúdanos a corregirlo",
   intro:
@@ -85,7 +120,7 @@ const es: BugCopy = {
   emailHint: "Añade un correo si quieres que te respondamos.",
   capture: "Recordar pasos técnicos mientras pruebo",
   captureHint:
-    "Desactivado hasta que lo elijas. Guarda hasta 10 minutos o 100 eventos técnicos en este dispositivo durante esta sesión de página. No se envía nada hasta que envíes un informe. No guarda texto escrito ni grabaciones de pantalla.",
+    "Desactivado hasta que lo elijas. Guarda hasta 10 minutos o 100 eventos técnicos en este dispositivo durante esta sesión de página. Este historial solo se envía cuando lo incluyes en un informe. No guarda texto escrito ni grabaciones de pantalla.",
   captureOn: "El historial técnico está activado para esta sesión de página.",
   include: "Incluir los detalles técnicos que se muestran abajo",
   preview: "Revisar detalles técnicos",

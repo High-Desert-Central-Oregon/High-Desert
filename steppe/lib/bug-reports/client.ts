@@ -1,5 +1,6 @@
 "use client";
 import { DiagnosticBuffer, type EventName, type Environment } from "./shared";
+import { sentryReferences } from "./sentry-references";
 export const diagnosticBuffer = new DiagnosticBuffer();
 export function recordDiagnostic(name: EventName) {
   if (typeof window !== "undefined")
@@ -7,6 +8,7 @@ export function recordDiagnostic(name: EventName) {
 }
 export function clearDiagnostics() {
   diagnosticBuffer.enable(false);
+  sentryReferences.clear();
   if (typeof window !== "undefined")
     window.dispatchEvent(new Event("steppe:diagnostics-cleared"));
 }

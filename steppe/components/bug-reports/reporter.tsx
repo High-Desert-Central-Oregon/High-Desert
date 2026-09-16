@@ -1,4 +1,5 @@
 "use client";
+import { sentryReferences } from "@/lib/bug-reports/sentry-references";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Bug, X } from "lucide-react";
@@ -147,6 +148,7 @@ export function BugReporter({
       setDetails(
         sanitizeDiagnostics({
           events: diagnosticBuffer.snapshot(),
+          sentryErrors: sentryReferences.snapshot(),
           environment: diagnosticEnvironment(locale, release),
         }),
       );
@@ -161,6 +163,7 @@ export function BugReporter({
       enabled
         ? sanitizeDiagnostics({
             events: diagnosticBuffer.snapshot(),
+            sentryErrors: sentryReferences.snapshot(),
             environment: diagnosticEnvironment(locale, release),
           })
         : null,
@@ -240,6 +243,7 @@ export function BugReporter({
     setDetails(
       sanitizeDiagnostics({
         events: diagnosticBuffer.snapshot(),
+        sentryErrors: sentryReferences.snapshot(),
         environment: diagnosticEnvironment(locale, release),
       }),
     );
@@ -343,6 +347,10 @@ export function BugReporter({
               />
               {t.include}
             </label>
+            <button type="button" disabled={locked} onClick={show}>
+              {t.refreshDetails}
+            </button>
+            <p className="steppe-bug-hint">{t.sentryHint}</p>
             <details>
               <summary>{t.preview}</summary>
               <p>
