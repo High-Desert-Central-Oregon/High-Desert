@@ -8,10 +8,15 @@ const environment = process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT;
 // Production browser health only. No identity binding, behavior timeline,
 // replay, logs, tracing, server instrumentation or local/preview traffic.
 if (dsn && release && environment === "production") {
-  const client = Sentry.init({
+  Sentry.init({
     dsn, release, environment,
     defaultIntegrations: false,
-    integrations: [Sentry.globalHandlersIntegration(), Sentry.browserSessionIntegration()],
+    integrations: [
+      // Register before BrowserSession can emit its first session on a hidden tab.
+      { name: "SteppeSessionPrivacy", setup(client) { client.on("beforeSendSession", sanitizeSession); } },
+      Sentry.globalHandlersIntegration(),
+      Sentry.browserSessionIntegration(),
+    ],
     sampleRate: 1,
     tracesSampleRate: 0,
     enableLogs: false,
@@ -26,5 +31,4 @@ if (dsn && release && environment === "production") {
     },
     beforeSend: sanitizeError,
   });
-  client?.on("beforeSendSession", sanitizeSession);
 }

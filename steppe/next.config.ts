@@ -46,6 +46,8 @@ export default withSentryConfig(withSerwist(withNextIntl(nextConfig)), {
   release: { name: process.env.VERCEL_GIT_COMMIT_SHA || process.env.SENTRY_RELEASE },
   sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN, deleteSourcemapsAfterUpload: true },
   webpack: {
+    // Only the successful deployment workflow records deploys; builds can fail later.
+    unstable_sentryWebpackPluginOptions: { release: { deploy: false } },
     autoInstrumentServerFunctions: false,
     autoInstrumentMiddleware: false,
     autoInstrumentAppDirectory: false,

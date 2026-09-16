@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { makeSession } from "@sentry/core";
+import { makeSession, getCurrentScope, startSession, captureSession } from "@sentry/core";
+import { BrowserClient, defaultStackParser } from "@sentry/browser";
 import { sanitizeError, sanitizeSession } from "../lib/sentry-privacy";
 
 describe("anonymous browser health", () => {
@@ -29,4 +30,38 @@ describe("anonymous browser health", () => {
     expect(payload.did).toBeUndefined();
     expect(payload.status).toBe("ok");
   });
+  it("keeps crash accounting through the real SDK transport without sending identity", async () => {
+    const envelopes: unknown[] = [];
+    const client = new BrowserClient({
+      dsn: "https://public@example.com/1", release: "transport-test", environment: "test",
+      defaultIntegrations: false, integrations: [], stackParser: defaultStackParser,
+      beforeSend: sanitizeError, sendDefaultPii: false,
+      enableLogs: false, enableMetrics: false, sendClientReports: false,
+      transport: () => ({ send: async (envelope) => { envelopes.push(envelope); return {}; }, flush: async () => true }),
+    });
+    client.on("beforeSendSession", sanitizeSession);
+    const scope = getCurrentScope();
+    scope.setClient(client);
+    client.init();
+    scope.setUser({ id: "private-member", email: "private@example.com" });
+    const session = startSession();
+    captureSession();
+    client.captureEvent({
+      exception: { values: [{ type: "TypeError", value: "private form content", mechanism: { type: "onerror", handled: false }, stacktrace: { frames: [{ filename: "https://www.steppe.community/_next/static/chunks/example.js", lineno: 10, colno: 2 }] } }] },
+      request: { url: "https://www.steppe.community/private-member" },
+    }, {}, scope);
+    await client.flush();
+    expect(session.status).toBe("crashed");
+    expect(session.errors).toBe(1);
+    const payload = JSON.stringify(envelopes);
+    expect(payload).toContain('"type":"session"');
+    expect(payload).toContain('"type":"event"');
+    expect(payload).toContain('"status":"crashed"');
+    expect(payload).not.toContain("private");
+    scope.setUser(null);
+    scope.setSession(undefined);
+    scope.setClient(undefined);
+    await client.close();
+  });
+
 });
