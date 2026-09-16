@@ -1,9 +1,14 @@
+import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import withSerwistInit from "@serwist/next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  env: {
+    NEXT_PUBLIC_SENTRY_RELEASE: process.env.VERCEL_GIT_COMMIT_SHA || process.env.SENTRY_RELEASE || "",
+    NEXT_PUBLIC_SENTRY_ENVIRONMENT: process.env.VERCEL_ENV || "development",
+  },
 };
 
 // next-intl in "without i18n routing" mode: locale comes from the NEXT_LOCALE
@@ -33,4 +38,17 @@ const withSerwist = withSerwistInit({
   globPublicPatterns: [],
 });
 
-export default withSerwist(withNextIntl(nextConfig));
+export default withSentryConfig(withSerwist(withNextIntl(nextConfig)), {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  telemetry: false,
+  release: { name: process.env.VERCEL_GIT_COMMIT_SHA || process.env.SENTRY_RELEASE },
+  sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN, deleteSourcemapsAfterUpload: true },
+  webpack: {
+    autoInstrumentServerFunctions: false,
+    autoInstrumentMiddleware: false,
+    autoInstrumentAppDirectory: false,
+    treeshake: { removeDebugLogging: true, removeTracing: true },
+  },
+});
