@@ -67,10 +67,14 @@ process. Individual invitations and verification review are separate follow-ups.
    Set `BUG_REPORT_NOTIFY_TO` to the operator's confirmed receiving address,
    `RESEND_API_KEY`, and an authorized `CONTACT_FROM`. Verify the durable site
    origin used by `lib/site-url.ts`; preview links must not appear in alerts.
-4. Set a strong `BUG_REPORT_MAINTENANCE_SECRET`. Configure an authenticated
-   **hourly** server-side request to `GET /api/support/maintenance` with
-   `Authorization: Bearer <secret>`. Keep the secret out of URLs. Monitor failed
-   runs. The route is provided; this patch does not install a scheduler.
+4. Set a strong production `CRON_SECRET`. `steppe/vercel.json` configures an
+   **hourly** Vercel request to `GET /api/support/maintenance`; Vercel sends
+   `Authorization: Bearer <secret>` automatically. Redeploy after setting the
+   secret and verify the job in Project Settings → Cron Jobs. Inspect its run
+   logs and investigate non-200 responses; a 503 means maintenance failed.
+   Keep the secret out of URLs. For another scheduler, the route accepts
+   `BUG_REPORT_MAINTENANCE_SECRET` only when `CRON_SECRET` is absent. Do not
+   configure two schedulers for the same job. See [Vercel's cron guidance](https://vercel.com/docs/cron-jobs/manage-cron-jobs).
 5. Reconcile the formal privacy-policy disclosure, backup retention, and support
    export handling with these operational settings before enabling collection.
    The reporter and English/Spanish privacy summary explain the actual feature.
