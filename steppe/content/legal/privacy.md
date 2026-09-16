@@ -15,7 +15,7 @@
 ```
 Effective date:  On publication for the founding beta
 Version:         Draft v2
-Last updated:    August 29, 2026
+Last updated:    September 16, 2026
 Status:          Draft (pending legal review)
 ```
 
@@ -46,6 +46,7 @@ enabled, a verified local community.
 | Residency check | Proof of local address | Intended for one eligibility decision; collection remains closed until deletion and orphan cleanup are verified |
 | Member content | Listings, messages, group activity, votes | Provide the service the member requested |
 | Safety intake | A report and an excerpt a participant chooses to disclose | Let a human moderator review the report |
+| Technical support | Problem description, optional expected result and reply email; account association when signed in; optional reviewed technical details | Investigate and resolve a reported problem |
 | Minimal logs | Basic technical and security records | Keep the service working and safe |
 
 The founding beta is free and does not collect member subscription payments.
@@ -66,6 +67,31 @@ participants; moderators and administrators have no message-reader interface.
 Database operators can technically access plaintext stored in the database, but
 Steppe policy and ordinary tooling prohibit routine access.
 
+### Optional bug reports and crash monitoring
+
+The beta's **Report a bug** control sends your description, normalized page name,
+language and app release to Steppe. Signed-in reports are linked to your account.
+You may add an expected result or reply email. Please leave out passwords, sign-in
+codes, residency documents and private messages.
+
+Technical history is off until you turn it on. It remembers at most 100 technical
+navigation/action/error events from the previous ten minutes in page-session
+memory. You can inspect the history and browser, operating-system, viewport,
+language, connectivity and release details before choosing to include them.
+Typed field values, message contents, vote choices, screenshots, session replay
+and raw exception text are excluded. Your written description may itself contain
+personal information. Signing out, changing accounts or leaving the page session
+clears the local history.
+
+Separately, Sentry receives anonymous browser session health and sanitized error
+records to help us detect crashes. These records exclude member identity,
+submitted text, request content, browsing history and session replay. If you
+choose to include technical details in a report, up to five recent error
+references from that page session can connect the report to its exact Sentry
+errors. Designated support operators see matching error type, time, app release
+and code locations in the private case. Report descriptions and the optional
+activity history stay in Steppe; they are not copied to Sentry.
+
 ## 3. Legal Bases for Processing
 
 Where a legal basis is required, Steppe relies on the requested service or
@@ -84,7 +110,8 @@ responsibility actually requires it, or when valid legal process requires it.
 | Recipient | Purpose | What they receive |
 | --- | --- | --- |
 | Supabase | Authentication, database, and private verification storage | Account and app data needed to provide those services |
-| Resend | Service email and contact-form delivery | Recipient email; contact content in transit |
+| Resend | Service email and contact-form delivery | Recipient email; contact content in transit; bug-report alerts contain only a reference and private review link, not the report description or diagnostics |
+| Sentry | Browser crash health and maintenance monitoring | Anonymous session health, sanitized error/code details and maintenance check-in status; no report descriptions or optional activity history |
 | Hosting/infrastructure providers | Run and secure the app | Requests and operational data needed to host it |
 | Ignite Empowerment Foundation | Administer sponsored funds and responsibilities | Only information needed for the applicable sponsored matter; no routine membership-database access |
 | A future payment provider | Process member subscriptions after beta | Payment and transaction data entered with that provider |
@@ -105,7 +132,20 @@ We do not keep member data merely because storage is available.
 | Messages | Intended to remain participant-only and to remove a person's sent messages on account deletion; both behavior and session revocation must pass the beta gate |
 | Safety reports | Until resolved or the reporter deletes their account; a participant-supplied excerpt may remain even if the source conversation is later deleted |
 | Consent, closed-ballot, moderation, and audit records | Kept in minimized or anonymized form when deletion would make the governance or accountability record inaccurate |
+| Bug reports and private case history | Expire 30 days after submission; ordinary access ends at expiry and the next successful hourly cleanup deletes the stored content. Cleanup failure can delay physical deletion. Account deletion removes linked reports. |
 | Minimal operational logs | Kept only as long as operationally needed; no fixed purge promise is made until it is technically enforced and verified |
+
+Support operators must delete downloaded bug-report copies by the report's
+30-day expiry, or earlier when handling a valid deletion request. Downloads are
+separate copies and must not be placed in shared public folders. Provider recovery
+copies are subject to provider retention; deleting a live record does not promise
+immediate erasure of every recovery copy. If data is restored, expired reports
+and previously requested deletions must be reapplied before ordinary access
+resumes. The current Supabase Free plan does not provide project backups; this
+does not establish a retention period for provider-internal recovery copies.
+
+Account exports include the member's own unexpired bug reports, excluding private
+support notes. Anonymous reports are not retrospectively linked after sign-in.
 
 A valid legal hold may temporarily stop deletion of the specific records covered
 by that hold. Steppe will not broaden a hold beyond its lawful scope.

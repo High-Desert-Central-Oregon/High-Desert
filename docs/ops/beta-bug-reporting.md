@@ -249,8 +249,18 @@ to Sentry cannot be retroactively connected. Server errors are not captured by
 the existing browser-only monitoring setup.
 
 This change needs no database migration and does not enable intake. Preserve the
-existing `BUG_REPORTS_ENABLED` activation decision separately from deploying code.
+`BUG_REPORTS_ENABLED` setting separately from deploying code.
 Validation covers real SDK transport sanitization, exact correlation, consent
 serialization, account clearing, operator authorization, delayed processing,
 mismatched events and provider failures. Database tests still require the explicit
 disposable local database configured by the existing test runbook.
+
+## Activation approval, September 16
+
+The owner approved production intake and the already-authorized single labeled
+test alert to greg@steppe.community. The factual support/crash disclosure and
+downloaded-copy handling rule are published in `steppe/content/legal/privacy.md`;
+this operational approval does not assert counsel sign-off on the wider policy.
+Support exports must be deleted by the originating report expiry or earlier on a
+valid deletion request. Reapply expiry and prior deletions before opening restored
+data. Do not represent live-row cleanup as deletion of provider recovery copies.
