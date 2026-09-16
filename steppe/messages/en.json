@@ -330,7 +330,9 @@
     "fullPolicy": "Full policy:",
     "questions": "Questions:",
     "contactUs": "Contact us",
-    "legalGoverns": "The full legal policy is available in English, and the English version governs."
+    "legalGoverns": "The full legal policy is available in English, and the English version governs.",
+    "bugReportsTitle": "Optional beta bug reports",
+    "bugReportsDescription": "You choose whether to record technical steps for a bug report. Up to 100 events from the last 10 minutes stay in this page session until you choose to send them. These describe pages, actions, and errors without typed text, private messages, sign-in codes, or screen recordings. You can review or omit diagnostics. Submitted reports are private to designated Steppe support, expire after 30 days, and are deleted by scheduled cleanup. Reports sent while signed in are included in account export and deletion. Support email alerts contain a reference and sign-in link, without the report content. Downloaded copies and provider backups follow their own retention settings."
   },
   "contact": {
     "heroEyebrow": "Contact",

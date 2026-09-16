@@ -67,10 +67,15 @@ process. Individual invitations and verification review are separate follow-ups.
    Set `BUG_REPORT_NOTIFY_TO` to the operator's confirmed receiving address,
    `RESEND_API_KEY`, and an authorized `CONTACT_FROM`. Verify the durable site
    origin used by `lib/site-url.ts`; preview links must not appear in alerts.
-4. Set a strong `BUG_REPORT_MAINTENANCE_SECRET`. Configure an authenticated
-   **hourly** server-side request to `GET /api/support/maintenance` with
-   `Authorization: Bearer <secret>`. Keep the secret out of URLs. Monitor failed
-   runs. The route is provided; this patch does not install a scheduler.
+4. Set a strong production `CRON_SECRET`. `steppe/vercel.json` configures an
+   **hourly** Vercel request to `GET /api/support/maintenance`; Vercel sends
+   `Authorization: Bearer <secret>` automatically. Redeploy after setting the
+   secret and verify the job in Project Settings → Cron Jobs. Inspect its run
+   logs and investigate non-200 responses; a 503 means maintenance failed.
+   Keep the secret out of URLs. For another scheduler, the route accepts
+   `BUG_REPORT_MAINTENANCE_SECRET` only when `CRON_SECRET` is absent. Do not
+   configure two schedulers for the same job. See [Vercel's cron guidance](https://vercel.com/docs/cron-jobs/manage-cron-jobs).
+   Configure the maintenance alerts below before relying on unattended operation.
 5. Reconcile the formal privacy-policy disclosure, backup retention, and support
    export handling with these operational settings before enabling collection.
    The reporter and English/Spanish privacy summary explain the actual feature.
@@ -92,6 +97,11 @@ process. Individual invitations and verification review are separate follow-ups.
   Missing mail configuration leaves alerts pending. Inspect the queue and
   scheduler when alerts stop. The retry action asks the operator to check the
   resulting delivery status; it does not claim an email was delivered.
+- Maintenance returns 503 for a failed email attempt, an unavailable queue-health
+  query, or unexpired pending deliveries that exhausted eight attempts (excluding
+  active delivery leases). Exhausted deliveries keep the job unhealthy until
+  resolved or expired. Cleanup still runs first. When intake is disabled,
+  maintenance continues cleanup and pauses notification retries/queue checks.
 - Entire reports and case history expire after 30 days. RLS hides expired cases
   immediately; the next successful hourly cleanup deletes stored content and old
   rate-limit buckets. A broken scheduler delays physical deletion. This does not
@@ -114,6 +124,41 @@ process. Individual invitations and verification review are separate follow-ups.
   rollback; saved cases and account export must survive. For continued operator
   access during maintenance, leave the feature on and restrict intake deliberately
   in a separately reviewed change.
+
+## Maintenance alerts with Sentry
+
+Use a dedicated Steppe project and a cron monitor named `bug-report-maintenance`:
+
+1. Match Vercel's schedule: `0 * * * *`, timezone UTC. Allow ten minutes for a
+   late start and five minutes for completion. Set failure and recovery thresholds
+   to one run. Configure an email alert for this monitor's new and recurring
+   failures and confirm the intended operator's receiving address in Sentry.
+2. Copy the monitor's **HTTP check-in URL** into the server-only Vercel Production
+   variable `SENTRY_BUG_REPORT_CRON_URL` and redeploy. Do not configure it in
+   Preview. The code also requires `VERCEL_ENV=production` before sending.
+3. Run the scheduled job once from Vercel and confirm paired `in_progress`/`ok`
+   check-ins in Sentry. Verify the alert destination using Sentry's test action
+   before marking notifications operational. Do not break production storage or
+   mail credentials to test failures.
+
+The integration follows [Sentry's HTTP cron check-in protocol](https://docs.sentry.io/product/monitors-and-alerts/monitors/crons/getting-started/http/).
+Each authorized run sends only its random run ID, `production` environment, and
+`in_progress`, `ok`, or `error` status. No report data, member identifiers, request
+details, or raw exceptions are transmitted. This does not install browser error
+tracking, session replay, or performance tracing.
+
+Sentry detects missed starts and unfinished runs independently of the app. A
+check-in request times out after three seconds; telemetry failure does not stop
+cleanup or retries. The app logs only a fixed check-in failure message. If Sentry
+itself is unavailable, notification delivery cannot be guaranteed; inspect the
+Vercel job logs directly. A 200 response proves maintenance completed, not that
+Sentry received its check-in or an email reached an inbox.
+
+For an alert, inspect the Vercel maintenance run and the protected support queue.
+Restore database access or mail configuration as appropriate, then manually
+retry exhausted notifications in the queue. Verify the next successful check-in
+and recovery. Disable/delete the Sentry monitor deliberately if permanently
+retiring the scheduled job; stopping intake alone leaves retention scheduled.
 
 ## Validation
 

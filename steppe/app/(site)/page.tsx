@@ -1,13 +1,13 @@
 // Home (/) — the "Broadsheet × Plate" landing, from
 // _design-source/steppe-align-broadsheet-mix.html. A masthead-led broadsheet: the
-// hero standfirst + the generative landscape band (the living masthead), then the
+// hero standfirst + the original layered landscape band, then the
 // Charter, How it works, the local Exchange, and the sign-panel CTA (Parts 4–5).
 // Marketing presentation only; copy is localized from the "landing" namespace.
 import Link from "next/link";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import "./broadsheet.css";
-import { GenerativeScene } from "./_components/generative-scene";
+import { ClassicLandscape } from "./_components/classic-landscape";
 
 export const metadata = {
   title: "Steppe · a place that belongs to the people in it",
@@ -41,11 +41,10 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-        {/* The living masthead: the existing generative landscape (interactive — tap
-            for a new plate; static frame under reduced motion / no-WebGL). Its own
-            weather readout is off here; the credit is the only overlay. */}
+        {/* Restore the original hills within the current page's visual rhythm.
+            This decorative scene is complete before client JavaScript runs. */}
         <div className="herostrata">
-          <GenerativeScene readout={false} creditTagline={t("bsMasthead")} />
+          <ClassicLandscape />
         </div>
       </section>
 

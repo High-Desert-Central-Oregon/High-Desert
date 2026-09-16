@@ -87,7 +87,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <Suspense><BugReporting /></Suspense>
+          <Suspense>
+            <BugReporting />
+          </Suspense>
         </ThemeProvider>
       </body>
     </html>

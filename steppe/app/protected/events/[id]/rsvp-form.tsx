@@ -30,9 +30,14 @@ export function RsvpForm({
     async (previous, formData) => {
       try {
         const result = await setRsvp(previous, formData);
-        recordDiagnostic(result && "ok" in result ? "rsvp.saved" : "rsvp.failed");
+        recordDiagnostic(
+          result && "ok" in result ? "rsvp.saved" : "rsvp.failed",
+        );
         return result;
-      } catch (error) { recordDiagnostic("rsvp.failed"); throw error; }
+      } catch (error) {
+        recordDiagnostic("rsvp.failed");
+        throw error;
+      }
     },
     null,
   );
@@ -43,7 +48,8 @@ export function RsvpForm({
 
   const hasRsvp = initialStatus !== null;
   const error =
-    (saveState && "error" in saveState) || (cancelState && "error" in cancelState)
+    (saveState && "error" in saveState) ||
+    (cancelState && "error" in cancelState)
       ? dict.rsvp.errorGeneric
       : null;
   const saved = saveState && "ok" in saveState;
