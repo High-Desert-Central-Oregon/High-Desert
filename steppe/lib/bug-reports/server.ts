@@ -25,7 +25,9 @@ export async function deliverBugReportNotifications(id?: string) {
     p_id: id ?? null,
   });
   if (error) throw new Error("bug-report notification claim failed");
+  const delivery = { attempted: 0, sent: 0, failed: 0 };
   for (const row of (data ?? []) as { id: string; claim: string }[]) {
+    delivery.attempted += 1;
     let sent = false;
     try {
       if (process.env.RESEND_API_KEY && process.env.BUG_REPORT_NOTIFY_TO) {
@@ -51,7 +53,24 @@ export async function deliverBugReportNotifications(id?: string) {
     );
     if (finishError)
       throw new Error("bug-report notification completion failed");
+    if (sent) delivery.sent += 1;
+    else delivery.failed += 1;
   }
+  return delivery;
+}
+/** Keep exhausted deliveries unhealthy until retry succeeds or the case expires. */
+export async function hasExhaustedBugReportNotifications() {
+  const now = new Date().toISOString();
+  const { count, error } = await createAdminClient()
+    .from("bug_reports")
+    .select("id", { count: "exact", head: true })
+    .eq("notification_state", "pending")
+    .gte("notification_attempts", 8)
+    .gt("expires_at", now)
+    .or(`notification_lease_until.is.null,notification_lease_until.lt.${now}`);
+  if (error || count === null)
+    throw new Error("bug-report notification health check failed");
+  return count > 0;
 }
 export async function readLimitedJson(request: Request): Promise<unknown> {
   if (Number(request.headers.get("content-length")) > 64_000)
