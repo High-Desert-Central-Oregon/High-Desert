@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-const mocks = vi.hoisted(() => ({ rpc: vi.fn(), send: vi.fn() }));
+const mocks = vi.hoisted(() => ({ rpc: vi.fn(), send: vi.fn(), health: vi.fn() }));
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ rpc: mocks.rpc }),
+  createAdminClient: () => ({
+    rpc: mocks.rpc,
+    from: () => ({ select: () => ({ eq: () => ({ gte: () => ({
+      gt: () => ({ or: mocks.health }),
+    }) }) }) }),
+  }),
 }));
 vi.mock("resend", () => ({
   Resend: class {
@@ -17,6 +22,8 @@ beforeEach(() => {
   vi.stubEnv("BUG_REPORT_MAINTENANCE_SECRET", "test-secret");
   vi.stubEnv("CRON_SECRET", "");
   vi.stubEnv("BUG_REPORTS_ENABLED", "true");
+  vi.stubEnv("SENTRY_BUG_REPORT_CRON_URL", "");
+  mocks.health.mockResolvedValue({ count: 0, error: null });
   mocks.rpc.mockImplementation(async (name: string) => ({
     data:
       name === "claim_bug_report_notifications"
@@ -41,7 +48,7 @@ describe("bug-report notification delivery and retention", () => {
   });
   it("keeps provider errors and missing configuration pending", async () => {
     mocks.send.mockResolvedValueOnce({ error: { message: "unavailable" } });
-    await deliverBugReportNotifications();
+    expect(await deliverBugReportNotifications()).toEqual({ attempted: 1, sent: 0, failed: 1 });
     expect(mocks.rpc).toHaveBeenLastCalledWith(
       "finish_bug_report_notification",
       { p_id: "test-case", p_claim: "lease", p_sent: false },
@@ -119,5 +126,32 @@ describe("bug-report notification delivery and retention", () => {
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ ok: false });
     expect(mocks.send).not.toHaveBeenCalled();
+  });
+  it("reports failed email delivery as unhealthy without losing the saved retry", async () => {
+    mocks.send.mockRejectedValue(new Error("private provider failure"));
+    const response = await GET(new Request("https://example.test/api/support/maintenance", {
+      headers: { authorization: "Bearer test-secret" },
+    }));
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ ok: false });
+    expect(mocks.rpc).toHaveBeenLastCalledWith("finish_bug_report_notification", {
+      p_id: "test-case", p_claim: "lease", p_sent: false,
+    });
+  });
+  it("does not recover while unexpired deliveries have exhausted their retry budget", async () => {
+    mocks.rpc.mockResolvedValue({ data: [], error: null });
+    mocks.health.mockResolvedValue({ count: 1, error: null });
+    const response = await GET(new Request("https://example.test/api/support/maintenance", {
+      headers: { authorization: "Bearer test-secret" },
+    }));
+    expect(response.status).toBe(503);
+    expect(mocks.send).not.toHaveBeenCalled();
+  });
+  it("reports an unavailable queue-health query as unhealthy", async () => {
+    mocks.health.mockResolvedValue({ count: null, error: { message: "unavailable" } });
+    const response = await GET(new Request("https://example.test/api/support/maintenance", {
+      headers: { authorization: "Bearer test-secret" },
+    }));
+    expect(response.status).toBe(503);
   });
 });

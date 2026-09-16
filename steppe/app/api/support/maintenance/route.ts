@@ -4,7 +4,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import {
   bugReportsEnabled,
   deliverBugReportNotifications,
+  hasExhaustedBugReportNotifications,
 } from "@/lib/bug-reports/server";
+import { startMaintenanceCheckIn } from "@/lib/bug-reports/monitor";
 /** Vercel sends CRON_SECRET as the bearer token for the hourly job. */
 export async function GET(request: Request) {
   const secret =
@@ -17,13 +19,20 @@ export async function GET(request: Request) {
     !timingSafeEqual(actual, expected)
   )
     return new NextResponse(null, { status: 401 });
+  const monitor = await startMaintenanceCheckIn();
+  let ok = false;
   // Retention keeps running even if new intake is disabled.
   try {
     const { error } = await createAdminClient().rpc(
       "purge_expired_bug_reports",
     );
     if (error) throw new Error("purge failed");
-    if (bugReportsEnabled()) await deliverBugReportNotifications();
+    if (bugReportsEnabled()) {
+      const delivery = await deliverBugReportNotifications();
+      if (delivery.failed || await hasExhaustedBugReportNotifications())
+        throw new Error("notification delivery needs attention");
+    }
+    ok = true;
     return NextResponse.json(
       { ok: true },
       { headers: { "Cache-Control": "no-store" } },
@@ -33,5 +42,7 @@ export async function GET(request: Request) {
       { ok: false },
       { status: 503, headers: { "Cache-Control": "no-store" } },
     );
+  } finally {
+    await monitor?.finish(ok);
   }
 }
