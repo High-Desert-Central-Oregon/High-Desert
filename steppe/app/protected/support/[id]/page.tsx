@@ -9,6 +9,7 @@ import { bugCopy, type BugStatus } from "@/lib/bug-reports/copy";
 import { getLocale } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
 import { CaseControls } from "./case-controls";
+import { ReportSentryDetails } from "@/components/bug-reports/sentry-details";
 async function Case({ params }: { params: Promise<{ id: string }> }) {
   if (!(await isSupportOperator())) redirect("/protected/account");
   const { id } = await params;
@@ -106,6 +107,9 @@ async function Case({ params }: { params: Promise<{ id: string }> }) {
           <p>{t.noDiagnostics}</p>
         )}
       </section>
+      <Suspense fallback={<p>{t.sentryHeading}…</p>}>
+        <ReportSentryDetails id={id} locale={locale} />
+      </Suspense>
       <CaseControls
         id={id}
         status={row.status as BugStatus}
