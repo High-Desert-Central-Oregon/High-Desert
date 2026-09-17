@@ -1,8 +1,29 @@
 # Member pipelines: invitations, verification, and sign-in
 
-Local implementation, 2026-09-14. This document is a release runbook, not evidence
-that hosted migrations, credentials, delivery, or provider callbacks are live.
+Release runbook. Production activation was verified on 2026-09-17 as recorded
+below; untested delivery and provider flows are explicitly listed separately.
 The beta bug-report slice is documented in [beta-bug-reporting.md](beta-bug-reporting.md).
+
+## Production status — 2026-09-17
+
+- PR58 merged as `6a49e76370c18184079b0649880178925adf2088` and deployed.
+- Migrations 0036 and 0037 applied through the owner SQL editor after the new
+  code was ready. API schema refreshed; `MEMBER_PIPELINES_ENABLED=true` enabled.
+- Existing owner admin/support access verified without granting any new role.
+  Work, individual invitation controls and the verification queue opened live.
+- Hosted checks confirmed RLS, no anonymous invitation reads, no direct member
+  invitation writes, a working Auth confirmation trigger, and service-only
+  permission to acknowledge evidence cleanup.
+- The combined maintenance worker returned HTTP200 after activation. Verification
+  notices are configured for the designated reviewer inbox.
+- Exact release-head validation: 126 tests passed with no skips, including isolated
+  PostgreSQL tests. TypeScript, lint and production build passed. Local browser
+  tests covered invite creation, clarification/reply, member access denial,
+  deliberate decision confirmation, completed review and Spanish mobile layout.
+- Real invitation delivery and a new person's complete hosted signup remain an
+  acceptance check awaiting the owner's chosen recipient. Hosted document upload,
+  deletion/recovery and applicant notification checks are not claimed complete.
+  Google, Apple and SMS remain disabled.
 
 ## Member and operator flows
 
@@ -62,7 +83,7 @@ reviewer/admin role to decide cases. Do not automatically grant roles on email m
 
 ## Release order and configuration
 
-This patch is not deployed. Review it and verify a preview before release.
+For a new environment, review the patch and verify a preview before release.
 Owner production SQL is manual: `CLAUDE.md` requires migrations to be applied
 “by hand in the SQL editor, as the owner, at a stop-gate.” Never run test fixtures,
 the test harness, or synthetic consent/approval operations against production.
