@@ -63,8 +63,11 @@ reviewer/admin role to decide cases. Do not automatically grant roles on email m
 ## Local changes to ease of use
 
 - The website neighborhood field is preserved as optional text for owner review;
-  entering it does not assert residency or set `in_area=true`. Storage of the new
-  field activates with the member flag after 0036.
+  entering it does not assert residency or set `in_area=true`. Migration 0036
+  provides its storage column. Interest intake saves it independently of the
+  member-workflow switch, including when those screens are paused. Duplicate
+  email submissions leave the existing record unchanged; they are not an
+  authenticated way to update someone else's neighborhood.
 - Explicit website links for joining the interest list, accepting a batch
   invitation, and signing in. Individual email invitations go straight to sign-in.
 - Verification next-step card under You, applicant questions/replies, and last
