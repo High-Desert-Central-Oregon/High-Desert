@@ -13,6 +13,12 @@ import { t } from "@/lib/i18n";
 import { DeleteAccount } from "./delete-account";
 import { SignOutButton } from "./sign-out-button";
 import { InstallRow } from "./install-row";
+import {
+  canManageOnboarding,
+  pipelinesEnabled,
+} from "@/lib/member-pipelines/server";
+import { pc } from "@/lib/member-pipelines/copy";
+import { VerificationStatus } from "@/components/member-pipelines/verification-status";
 
 function initials(name: string): string {
   return (
@@ -41,6 +47,7 @@ async function AccountView() {
   const isMod = profile?.role === "moderator" || profile?.role === "admin";
   const verified = profile?.verified ?? false;
   const supportOperator = await isSupportOperator();
+  const managesPeople = await canManageOnboarding();
 
   // Neighborhood name for the identity dateline (member since = profile row age).
   let neighborhood: string | null = null;
@@ -73,7 +80,20 @@ async function AccountView() {
     sub?: string;
     download?: boolean;
   }[] = [
-    ...(supportOperator
+    ...(pipelinesEnabled() && (isMod || supportOperator || managesPeople)
+      ? [{ href: "/protected/work", label: pc(locale, "work") }]
+      : []),
+    ...(pipelinesEnabled()
+      ? [
+          {
+            href: "/protected/account/sign-in-methods",
+            label: pc(locale, "signInMethods"),
+          },
+          { href: "/protected/activity", label: pc(locale, "myActivity") },
+          { href: "/protected/help", label: pc(locale, "help") },
+        ]
+      : []),
+    ...(!pipelinesEnabled() && supportOperator
       ? [{ href: "/protected/support", label: bugCopy[locale].queue }]
       : []),
     ...(!verified
@@ -110,7 +130,7 @@ async function AccountView() {
       label: dict.nav.neighborhoodLink,
       sub: dict.account.neighborhoodRowSub,
     },
-    ...(isMod
+    ...(isMod && !pipelinesEnabled()
       ? [
           { href: "/protected/review", label: dict.nav.reviewLink },
           { href: "/protected/moderation", label: dict.nav.appealsLink },
@@ -127,6 +147,9 @@ async function AccountView() {
 
   return (
     <div lang={locale} className="flex flex-col gap-8">
+      {pipelinesEnabled() && !verified && (
+        <VerificationStatus locale={locale} compact />
+      )}
       {/* Identity — the bundle's You masthead: name, dateline, privacy voice. */}
       <Masthead
         title={displayName}

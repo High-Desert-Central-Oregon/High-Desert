@@ -35,6 +35,11 @@ import { createClient } from "@supabase/supabase-js";
  *      (migration 0035). Operator reads and updates still run as the session
  *      through RLS; intake validates and binds identity before service-role writes.
  *
+ *   7. individual-invitation sign-in eligibility and the leased service-email
+ *      worker (0036), plus confirming storage deletion against a previously
+ *      authorized human decision token (0037). Owner invitation creation and
+ *      review decisions themselves use authenticated RPCs, never this client.
+ *
  * Never import this into client code, and never expose the secret key
  * (`SUPABASE_SERVICE_ROLE_KEY` is server-only — not `NEXT_PUBLIC_*`).
  */

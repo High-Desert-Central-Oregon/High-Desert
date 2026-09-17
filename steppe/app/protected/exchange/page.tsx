@@ -6,7 +6,11 @@ import { PageSkeleton } from "@/components/page-skeleton";
 import { Masthead } from "@/components/broadsheet/masthead";
 import { Fab } from "@/components/broadsheet/fab";
 import { MarkerChip } from "@/components/broadsheet/chips";
-import { PostRow, Monogram, initialsFor } from "@/components/broadsheet/post-row";
+import {
+  PostRow,
+  Monogram,
+  initialsFor,
+} from "@/components/broadsheet/post-row";
 import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
 import { VerifiedGate } from "@/components/verified-gate";
 import { ActionLink } from "@/components/broadsheet/action-link";
@@ -128,7 +132,9 @@ function PinnedFeature({
   authorName,
   dict,
   locale,
+  returnTo,
 }: {
+  returnTo: string;
   post: PostItem;
   body: string;
   authorName: string;
@@ -139,11 +145,17 @@ function PinnedFeature({
   const standfirst = body.slice(1, 151) + (body.length > 151 ? "…" : "");
   return (
     <Link
-      href={`/protected/exchange/${post.id}`}
+      href={`/protected/exchange/${post.id}?from=${encodeURIComponent(returnTo)}`}
       className="block border-b pb-5 pt-[18px] transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
     >
       <div className="flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="#A8542C" aria-hidden="true">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="#A8542C"
+          aria-hidden="true"
+        >
           <path d="M9 4h6l-1 7 4 3v2H7v-2l4-3-1-7z" />
         </svg>
         {dict.exchange.pinned}
@@ -217,6 +229,12 @@ async function BoardContent({
   // The header slot opens the search with ?s=1; it stays open server-side
   // while a query is active — no JavaScript required (the groups pattern).
   const searchOpen = sp.s === "1" || q !== "";
+  const returnParams = new URLSearchParams();
+  if (f) returnParams.set("f", f);
+  if (q) returnParams.set("q", q.slice(0, 200));
+  if (searchOpen) returnParams.set("s", "1");
+  const returnTo =
+    "/protected/exchange" + (returnParams.size ? `?${returnParams}` : "");
   // PostgREST or() grammar: quote the pattern, strip the two characters that
   // would escape it. % and _ stay live as wildcards — that's search.
   const qPat = q.replace(/["\\]/g, "");
@@ -319,9 +337,11 @@ async function BoardContent({
     ...posts
       .filter((p) => p !== pinned)
       .map((p): FeedItem => ({ kind: "post", at: p.created_at, post: p })),
-    ...events.map(
-      (e): FeedItem => ({ kind: "event", at: e.created_at, event: e }),
-    ),
+    ...events.map((e): FeedItem => ({
+      kind: "event",
+      at: e.created_at,
+      event: e,
+    })),
   ].sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
 
   // Names, neighborhoods, and event category tags — three batched lookups.
@@ -339,11 +359,16 @@ async function BoardContent({
     ),
   ];
   const catIds = [
-    ...new Set(events.map((e) => e.category_id).filter((x): x is string => !!x)),
+    ...new Set(
+      events.map((e) => e.category_id).filter((x): x is string => !!x),
+    ),
   ];
   const [authorsRes, nbsRes, catsRes] = await Promise.all([
     authorIds.length > 0
-      ? supabase.from("public_profiles").select("id, display_name").in("id", authorIds)
+      ? supabase
+          .from("public_profiles")
+          .select("id, display_name")
+          .in("id", authorIds)
       : Promise.resolve({ data: [] as { id: string; display_name: string }[] }),
     nbIds.length > 0
       ? supabase.from("neighborhoods").select("id, name").in("id", nbIds)
@@ -354,7 +379,9 @@ async function BoardContent({
           data: [] as { id: string; slug: string; name: string }[],
         }),
   ]);
-  const nameOf = new Map((authorsRes.data ?? []).map((a) => [a.id, a.display_name]));
+  const nameOf = new Map(
+    (authorsRes.data ?? []).map((a) => [a.id, a.display_name]),
+  );
   const hoodOf = new Map((nbsRes.data ?? []).map((n) => [n.id, n.name]));
   const catOf = new Map(
     (catsRes.data ?? []).map((c) => [c.id, { slug: c.slug, name: c.name }]),
@@ -434,6 +461,7 @@ async function BoardContent({
       >
         {pinned && (
           <PinnedFeature
+            returnTo={returnTo}
             post={pinned}
             body={pinnedBody}
             authorName={name(pinned.author_id)}
@@ -449,7 +477,7 @@ async function BoardContent({
               item.kind === "post" ? (
                 <li key={`p-${item.post.id}`}>
                   <PostRow
-                    href={`/protected/exchange/${item.post.id}`}
+                    href={`/protected/exchange/${item.post.id}?from=${encodeURIComponent(returnTo)}`}
                     markerLabel={dict.exchange.cats[item.post.category]}
                     markerColor={postCategoryMarker(item.post.category)}
                     hood={hood(item.post.neighborhood_id)}

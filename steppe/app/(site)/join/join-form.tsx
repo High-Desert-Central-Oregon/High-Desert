@@ -12,7 +12,7 @@ import { isSignupSourceCode } from "@/lib/signup-source";
  * the server accepts it. Copy is localized from the "join" catalog namespace.
  *
  * Field mapping to the /api/interest contract: email → email; name →
- * first_name; neighborhood → in_area (true when provided); consent → the explicit
+ * first_name; neighborhood stays optional text (not proof of residency); consent → the explicit
  * email-notice checkbox; company → honeypot; source →
  * which printed piece (?r=bc|pc|bm) produced the visit, or null (migration 0031).
  */
@@ -102,7 +102,7 @@ export function JoinForm() {
         body: JSON.stringify({
           email: String(fd.get("email") ?? ""),
           first_name: String(fd.get("name") ?? ""),
-          in_area: neighborhood !== "" ? true : null,
+          neighborhood,
           consent,
           company: String(fd.get("company") ?? ""), // honeypot
           source: sourceRef.current,
@@ -162,19 +162,39 @@ export function JoinForm() {
         <p className="fsub">{t("fsub")}</p>
         <div className="frow">
           <label htmlFor="em">{t("labelEmail")}</label>
-          <input id="em" name="email" type="email" required placeholder="you@example.com" autoComplete="email" />
+          <input
+            id="em"
+            name="email"
+            type="email"
+            required
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
         </div>
         <div className="frow">
           <label htmlFor="nm">
             {t("labelName")} <span className="opt">{t("optional")}</span>
           </label>
-          <input id="nm" name="name" type="text" placeholder={t("phName")} autoComplete="given-name" />
+          <input
+            id="nm"
+            name="name"
+            type="text"
+            placeholder={t("phName")}
+            autoComplete="given-name"
+          />
         </div>
         <div className="frow">
           <label htmlFor="nb">
-            {t("labelNeighborhood")} <span className="opt">{t("optional")}</span>
+            {t("labelNeighborhood")}{" "}
+            <span className="opt">{t("optional")}</span>
           </label>
-          <input id="nb" name="neighborhood" type="text" placeholder={t("phNeighborhood")} />
+          <input
+            id="nb"
+            name="neighborhood"
+            type="text"
+            maxLength={120}
+            placeholder={t("phNeighborhood")}
+          />
         </div>
 
         <label className="consentrow" htmlFor="consent">
@@ -195,13 +215,35 @@ export function JoinForm() {
         {/* Honeypot — real people leave this empty. */}
         <div className="hp" aria-hidden="true">
           <label htmlFor="company">Company</label>
-          <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
+          <input
+            id="company"
+            name="company"
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+          />
         </div>
 
-        <button className="submitb" type="submit" disabled={status === "submitting"}>
+        <button
+          className="submitb"
+          type="submit"
+          disabled={status === "submitting"}
+        >
           {status === "submitting" ? t("submitting") : t("submit")}
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 8h9M8.5 4l4 4-4 4"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
 

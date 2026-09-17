@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { siteOrigin } from "@/lib/site-url";
+import { pipelinesEnabled } from "@/lib/member-pipelines/server";
 
 /**
  * Request a magic-link sign-in — INVITE-ONLY (migration 0024).
@@ -45,12 +46,17 @@ export async function requestSignInLink(
   let invited = false;
   try {
     const admin = createAdminClient();
+    if (pipelinesEnabled()) {
+      const { data, error } = await admin.rpc("can_start_email_signin", { p_email: email });
+      invited = !error && data === true;
+    } else {
     const { data, error } = await admin
       .from("invited_emails")
       .select("email")
       .eq("email", email)
       .maybeSingle();
     invited = !error && data !== null;
+    }
   } catch (e) {
     console.error("invite gate: allowlist check failed (failing closed)", e);
     invited = false;

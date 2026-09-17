@@ -21,6 +21,7 @@ beforeEach(() => {
   vi.stubEnv("BUG_REPORT_NOTIFY_TO", "operator@example.test");
   vi.stubEnv("BUG_REPORT_MAINTENANCE_SECRET", "test-secret");
   vi.stubEnv("CRON_SECRET", "");
+  vi.stubEnv("MEMBER_PIPELINES_ENABLED", "false");
   vi.stubEnv("BUG_REPORTS_ENABLED", "true");
   vi.stubEnv("SENTRY_BUG_REPORT_CRON_URL", "");
   mocks.health.mockResolvedValue({ count: 0, error: null });
@@ -79,6 +80,7 @@ describe("bug-report notification delivery and retention", () => {
     expect(mocks.rpc).toHaveBeenCalledWith(
       "purge_expired_bug_reports",
     );
+    expect(mocks.rpc).toHaveBeenCalledWith("purge_member_pipeline_data");
     expect(mocks.send).not.toHaveBeenCalled();
   });
   it("accepts Vercel's cron token and runs cleanup before notification retry", async () => {

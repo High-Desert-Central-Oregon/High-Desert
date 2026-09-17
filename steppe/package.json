@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:bug-reports": "vitest run --config vitest.bug-reports.config.ts",
+    "test:member-pipelines": "vitest run --config vitest.member-pipelines.config.ts",
     "test:watch": "vitest"
   },
   "dependencies": {

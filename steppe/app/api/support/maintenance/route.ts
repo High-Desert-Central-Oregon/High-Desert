@@ -6,6 +6,7 @@ import {
   deliverBugReportNotifications,
   hasExhaustedBugReportNotifications,
 } from "@/lib/bug-reports/server";
+import { deliverMemberNotices, pipelinesEnabled } from "@/lib/member-pipelines/server";
 import { startMaintenanceCheckIn } from "@/lib/bug-reports/monitor";
 /** Vercel sends CRON_SECRET as the bearer token for the hourly job. */
 export async function GET(request: Request) {
@@ -32,6 +33,10 @@ export async function GET(request: Request) {
       if (delivery.failed || await hasExhaustedBugReportNotifications())
         throw new Error("notification delivery needs attention");
     }
+    const pipelinePurge = await createAdminClient().rpc("purge_member_pipeline_data");
+    if (pipelinePurge.error && !["PGRST202", "42883"].includes(pipelinePurge.error.code))
+      throw new Error("pipeline purge failed");
+    if (pipelinesEnabled()) await deliverMemberNotices();
     ok = true;
     return NextResponse.json(
       { ok: true },

@@ -12,15 +12,27 @@ const mocks = vi.hoisted(() => {
     data: [{ id: "row-1" }] as { id: string }[] | null,
     error: null as unknown,
   };
-  const selectMock = vi.fn(async () => ({ data: state.data, error: state.error }));
+  const selectMock = vi.fn(async () => ({
+    data: state.data,
+    error: state.error,
+  }));
   const upsertMock = vi.fn(() => ({ select: selectMock }));
   const fromMock = vi.fn(() => ({ upsert: upsertMock }));
   const createAdminClient = vi.fn(() => ({ from: fromMock }));
   const sendInterestConfirmation = vi.fn(async () => ({ ok: true }));
-  return { state, selectMock, upsertMock, fromMock, createAdminClient, sendInterestConfirmation };
+  return {
+    state,
+    selectMock,
+    upsertMock,
+    fromMock,
+    createAdminClient,
+    sendInterestConfirmation,
+  };
 });
 
-vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: mocks.createAdminClient }));
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: mocks.createAdminClient,
+}));
 vi.mock("@/lib/interest-email", () => ({
   sendInterestConfirmation: mocks.sendInterestConfirmation,
 }));
@@ -52,14 +64,34 @@ function post(body: unknown): Request {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.stubEnv("MEMBER_PIPELINES_ENABLED", "false");
   mocks.state.data = [{ id: "row-1" }];
   mocks.state.error = null;
 });
 
 describe("POST /api/interest — Gate 0 funnel", () => {
+  it("preserves the neighborhood without inferring residency", async () => {
+    vi.stubEnv("MEMBER_PIPELINES_ENABLED", "true");
+    await POST(
+      post({
+        email: "person@example.test",
+        neighborhood: "  Dry Canyon  ",
+        consent: true,
+      }),
+    );
+    expect(mocks.upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({ neighborhood: "Dry Canyon", in_area: null }),
+      expect.anything(),
+    );
+  });
   it("accepts a valid new signup: normalizes input, writes the row, sends ONE confirmation", async () => {
     const res = await POST(
-      post({ email: "Neighbor@Example.com ", first_name: "  Ada ", in_area: true, consent: true }),
+      post({
+        email: "Neighbor@Example.com ",
+        first_name: "  Ada ",
+        in_area: true,
+        consent: true,
+      }),
     );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
@@ -90,7 +122,9 @@ describe("POST /api/interest — Gate 0 funnel", () => {
   });
 
   it("drops a honeypot submission silently: no DB write, no email", async () => {
-    const res = await POST(post({ email: "bot@example.com", consent: true, company: "Acme" }));
+    const res = await POST(
+      post({ email: "bot@example.com", consent: true, company: "Acme" }),
+    );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
     expect(mocks.fromMock).not.toHaveBeenCalled();
@@ -111,8 +145,12 @@ describe("POST /api/interest — Gate 0 funnel", () => {
   });
 
   it("a throwing confirmation sender can NEVER fail a signup that's already written", async () => {
-    mocks.sendInterestConfirmation.mockRejectedValueOnce(new Error("provider down"));
-    const res = await POST(post({ email: "resilient@example.com", consent: true }));
+    mocks.sendInterestConfirmation.mockRejectedValueOnce(
+      new Error("provider down"),
+    );
+    const res = await POST(
+      post({ email: "resilient@example.com", consent: true }),
+    );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ ok: true });
   });

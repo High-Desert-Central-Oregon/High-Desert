@@ -1,3 +1,4 @@
+import { exchangeReturnPath } from "@/lib/member-pipelines/shared";
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -37,7 +38,12 @@ type PostRowFull = {
   edited_at: string | null;
 };
 
-type SearchParams = { reported?: string; reportErr?: string; msgErr?: string };
+type SearchParams = {
+  from?: string;
+  reported?: string;
+  reportErr?: string;
+  msgErr?: string;
+};
 
 async function PostDetailContent({
   params,
@@ -85,7 +91,7 @@ async function PostDetailContent({
     return (
       <div lang={locale} className="flex flex-col gap-6">
         <Link
-          href="/protected/exchange"
+          href={exchangeReturnPath(sp.from)}
           className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
         >
           {dict.exchange.backToBoard}
@@ -132,7 +138,7 @@ async function PostDetailContent({
   return (
     <div lang={locale} className="flex flex-col gap-6">
       <Link
-        href="/protected/exchange"
+        href={exchangeReturnPath(sp.from)}
         className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
       >
         {dict.exchange.backToBoard}

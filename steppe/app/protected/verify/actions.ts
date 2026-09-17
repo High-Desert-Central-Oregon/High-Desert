@@ -2,6 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import {
+  pipelinesEnabled,
+  deliverMemberNotices,
+} from "@/lib/member-pipelines/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
@@ -67,6 +72,15 @@ async function discardOwnUpload(
 ): Promise<void> {
   if (!path || !path.startsWith(`${userId}/`)) return;
   try {
+    // A duplicate submit may resend the path already attached to the pending
+    // request. Never delete referenced evidence while cleaning a failed upload.
+    const session = await createClient();
+    const referenced = await session
+      .from("verifications")
+      .select("id")
+      .eq("evidence_path", path)
+      .limit(1);
+    if (referenced.error || referenced.data?.length) return;
     const { error } = await createAdminClient()
       .storage.from(EVIDENCE_BUCKET)
       .remove([path]);
@@ -144,7 +158,8 @@ export async function submitVerification(
     // can't prove the caller owns. A legitimate upload always lands in the own
     // folder (the storage insert policy enforces it), so this is tamper-only;
     // the real orphan, if any, sits at a key the client never sent us.
-    if (!path || !path.startsWith(`${userId}/`)) return { error: "bad-evidence" };
+    if (!path || !path.startsWith(`${userId}/`))
+      return { error: "bad-evidence" };
   } else {
     path = null; // postcard path keeps no evidence
   }
@@ -163,5 +178,13 @@ export async function submitVerification(
   }
 
   revalidatePath("/protected/verify");
+  if (pipelinesEnabled())
+    after(async () => {
+      try {
+        await deliverMemberNotices();
+      } catch {
+        console.error("[member-pipelines] verification notice pending");
+      }
+    });
   redirect("/protected/verify");
 }
