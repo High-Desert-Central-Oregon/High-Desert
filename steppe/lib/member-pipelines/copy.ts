@@ -1,4 +1,12 @@
 const messages = {
+  alreadyMember: [
+    "This email already has an account. An administrator can review it under Remove an account if a fresh signup is needed.",
+    "Este correo ya tiene una cuenta. Un administrador puede revisarla en Eliminar una cuenta si se necesita una nueva inscripción.",
+  ],
+  removalPending: [
+    "Account cleanup is still pending. Finish it under Remove an account before sending a new invitation.",
+    "La limpieza de la cuenta sigue pendiente. Termínala en Eliminar una cuenta antes de enviar una nueva invitación.",
+  ],
   retryFailed: [
     "Delivery could not be retried. Refresh and try again.",
     "No se pudo reintentar el envío. Actualiza e inténtalo de nuevo.",

@@ -8,6 +8,8 @@ import { canManageOnboarding } from "@/lib/member-pipelines/server";
 import { pc, type PipelineKey } from "@/lib/member-pipelines/copy";
 import { formatRedmondDateTime } from "@/lib/time";
 import { InvitationControls } from "./invitation-controls";
+import { canRemoveAccounts } from "@/lib/member-pipelines/removal";
+import { rc } from "@/lib/member-pipelines/removal-copy";
 type Person = {
   id: string;
   email: string;
@@ -28,6 +30,7 @@ async function People({
 }) {
   if (!(await canManageOnboarding())) redirect("/protected/account");
   const locale = await getLocale();
+  const canRemove = await canRemoveAccounts();
   const search = await searchParams;
   const source = search.source === "invited" ? "invited" : "interest";
   const page = Math.min(
@@ -51,6 +54,11 @@ async function People({
       </header>
       <InvitationControls locale={locale} />
       <nav className="flex flex-wrap gap-4">
+        {canRemove && (
+          <Link className="underline" href="/protected/people/remove">
+            {rc(locale, "title")}
+          </Link>
+        )}
         <Link
           aria-current={source === "interest" ? "page" : undefined}
           className="underline"

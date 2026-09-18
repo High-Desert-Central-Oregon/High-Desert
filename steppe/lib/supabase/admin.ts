@@ -40,6 +40,10 @@ import { createClient } from "@supabase/supabase-js";
  *      authorized human decision token (0037). Owner invitation creation and
  *      review decisions themselves use authenticated RPCs, never this client.
  *
+ *   8. finishing an administrator-confirmed account removal (0038): purge
+ *      evidence, SOFT-delete the Auth identity and acknowledge the durable job.
+ *      Authorization and target selection use the caller's session first.
+ *
  * Never import this into client code, and never expose the secret key
  * (`SUPABASE_SERVICE_ROLE_KEY` is server-only — not `NEXT_PUBLIC_*`).
  */
