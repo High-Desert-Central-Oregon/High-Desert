@@ -39,7 +39,16 @@ export async function changeInvitation(input: {
       { p_id: input.id },
     );
   } else return { ok: false };
-  if (result.error) return { ok: false };
+  if (result.error)
+    return {
+      ok: false,
+      reason:
+        result.error.message === "already a member"
+          ? "alreadyMember"
+          : result.error.message === "account removal pending"
+            ? "removalPending"
+            : "inviteFailed",
+    };
   after(async () => {
     try {
       await deliverMemberNotices();

@@ -16,14 +16,21 @@ export type CurrentUser = { id: string; email: string | null };
  * verifies the immutable incoming-request cookie, so the memo is transparent —
  * it introduces no cross-request staleness.
  */
-export const getCurrentUser = cache(
-  async (): Promise<CurrentUser | null> => {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.getClaims();
-    if (error || !data?.claims?.sub) return null;
-    return { id: data.claims.sub, email: data.claims.email ?? null };
-  },
-);
+export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  if (error || !data?.claims?.sub) return null;
+  // A revoked session can still carry a valid JWT until it expires. Check the
+  // live profile so a removed account also exits the server-rendered app.
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", data.claims.sub)
+    .is("deleted_at", null)
+    .maybeSingle();
+  if (profileError || !profile) return null;
+  return { id: data.claims.sub, email: data.claims.email ?? null };
+});
 
 /**
  * The signed-in member's profile row, or null if not signed in. The profile is
@@ -42,6 +49,7 @@ export async function getMyProfile(): Promise<Profile | null> {
       "id, display_name, neighborhood_id, neighborhood_visibility, verified, role, tenure_start, locale, created_at",
     )
     .eq("id", userId)
+    .is("deleted_at", null)
     .maybeSingle<Profile>();
 
   return data ?? null;

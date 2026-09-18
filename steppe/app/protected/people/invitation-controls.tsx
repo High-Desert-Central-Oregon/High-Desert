@@ -43,7 +43,11 @@ export function InvitationControls({
               ? action === "revoke"
                 ? "revoked"
                 : "queued"
-              : "inviteFailed",
+              : result.reason === "alreadyMember"
+                ? "alreadyMember"
+                : result.reason === "removalPending"
+                  ? "removalPending"
+                  : "inviteFailed",
           ),
         );
         if (result.ok) router.refresh();
