@@ -70,8 +70,8 @@ beforeEach(() => {
 });
 
 describe("POST /api/interest — Gate 0 funnel", () => {
-  it("preserves the neighborhood without inferring residency", async () => {
-    vi.stubEnv("MEMBER_PIPELINES_ENABLED", "true");
+  it.each(["true", "false"])("preserves neighborhood with member workflows %s without inferring residency", async (enabled) => {
+    vi.stubEnv("MEMBER_PIPELINES_ENABLED", enabled);
     await POST(
       post({
         email: "person@example.test",
@@ -84,6 +84,24 @@ describe("POST /api/interest — Gate 0 funnel", () => {
       expect.anything(),
     );
   });
+  it("stores an omitted or whitespace-only neighborhood as null", async () => {
+    for (const neighborhood of [undefined, "   "]) {
+      await POST(post({ email: "person@example.test", neighborhood, consent: true }));
+      expect(mocks.upsertMock).toHaveBeenLastCalledWith(
+        expect.objectContaining({ neighborhood: null }),
+        expect.anything(),
+      );
+    }
+  });
+
+  it("bounds neighborhood text to the database limit", async () => {
+    await POST(post({ email: "person@example.test", neighborhood: "x".repeat(121), consent: true }));
+    expect(mocks.upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({ neighborhood: "x".repeat(120) }),
+      expect.anything(),
+    );
+  });
+
   it("accepts a valid new signup: normalizes input, writes the row, sends ONE confirmation", async () => {
     const res = await POST(
       post({

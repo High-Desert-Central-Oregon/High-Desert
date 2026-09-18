@@ -1,4 +1,3 @@
-import { pipelinesEnabled } from "@/lib/member-pipelines/server";
 import { NextResponse } from "next/server";
 import { getTranslations } from "next-intl/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -130,7 +129,7 @@ export async function POST(request: Request) {
         in_area,
         consent: true,
         source,
-        ...(pipelinesEnabled() ? { neighborhood } : {}),
+        neighborhood,
       },
       { onConflict: "email", ignoreDuplicates: true },
     )
