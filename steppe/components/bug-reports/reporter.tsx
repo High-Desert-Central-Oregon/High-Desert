@@ -39,6 +39,7 @@ export function BugReporter({
   const generation = useRef(0);
   const knownUser = useRef<string | null | undefined>(undefined);
   const [open, setOpen] = useState(false);
+  const [labelDismissed, setLabelDismissed] = useState(false);
   const [capture, setCapture] = useState(false);
   const [include, setInclude] = useState(false);
   const [details, setDetails] = useState<Diagnostics | null>(null);
@@ -49,6 +50,14 @@ export function BugReporter({
     "idle" | "invalid" | "sending" | "failed" | "rate" | "saved"
   >("idle");
   const [reportId, setReportId] = useState("");
+
+  useEffect(() => {
+    const dismissLabel = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLabelDismissed(true);
+    };
+    document.addEventListener("keydown", dismissLabel);
+    return () => document.removeEventListener("keydown", dismissLabel);
+  }, []);
 
   useEffect(() => {
     recordDiagnostic("page.open");
@@ -255,10 +264,16 @@ export function BugReporter({
         type="button"
         className="steppe-bug-launcher"
         onClick={show}
+        aria-label={t.button}
         aria-haspopup="dialog"
+        data-label-dismissed={labelDismissed || open}
+        onPointerEnter={() => setLabelDismissed(false)}
+        onFocus={() => setLabelDismissed(false)}
       >
         <Bug size={18} aria-hidden="true" />
-        <span>{t.button}</span>
+        <span className="steppe-bug-launcher-label" aria-hidden="true">
+          {t.button}
+        </span>
       </button>
       <dialog
         ref={dialog}
