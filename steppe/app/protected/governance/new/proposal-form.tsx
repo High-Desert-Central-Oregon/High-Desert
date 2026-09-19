@@ -1,19 +1,25 @@
 "use client";
 
-import { useActionState } from "react";
+import { DraftForm } from "@/components/draft-form";
+
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createProposal, type ProposalFormState } from "../actions";
 import type { Dictionary } from "@/lib/i18n";
 
-function errorMessage(state: ProposalFormState, dict: Dictionary): string | null {
+function errorMessage(
+  state: ProposalFormState,
+  dict: Dictionary,
+): string | null {
   if (!state || !("error" in state)) return null;
   if (state.error === "title-required") return dict.governance.titleRequired;
   if (state.error === "window-required") return dict.governance.windowRequired;
   if (state.error === "window-order") return dict.governance.windowOrder;
   if (state.error === "closes-past") return dict.governance.closesPast;
-  if (state.error === "foundational-notice") return dict.governance.foundationalNotice;
+  if (state.error === "foundational-notice")
+    return dict.governance.foundationalNotice;
   return dict.governance.errorGeneric;
 }
 
@@ -31,14 +37,22 @@ export function ProposalForm({
   defaultOpens: string;
   dict: Dictionary;
 }) {
-  const [state, action, isPending] = useActionState<ProposalFormState, FormData>(
-    createProposal,
-    null,
-  );
+  const [state, action, isPending] = useActionState<
+    ProposalFormState,
+    FormData
+  >(createProposal, null);
   const error = errorMessage(state, dict);
+  // Keep the draft when a form action returns a validation or save error.
+  const [draft, setDraft] = useState({
+    title: "",
+    kind: "minor",
+    body: "",
+    opens_at: defaultOpens,
+    closes_at: "",
+  });
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <DraftForm action={action} className="flex flex-col gap-5">
       {error && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
@@ -50,6 +64,8 @@ export function ProposalForm({
         <Input
           id="title"
           name="title"
+          value={draft.title}
+          onChange={(e) => setDraft({ ...draft, title: e.target.value })}
           required
           maxLength={160}
           placeholder={dict.governance.fieldTitlePlaceholder}
@@ -61,7 +77,8 @@ export function ProposalForm({
         <select
           id="kind"
           name="kind"
-          defaultValue="minor"
+          value={draft.kind}
+          onChange={(e) => setDraft({ ...draft, kind: e.target.value })}
           className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <option value="minor">{dict.governance.kinds.minor}</option>
@@ -78,6 +95,8 @@ export function ProposalForm({
         <textarea
           id="body"
           name="body"
+          value={draft.body}
+          onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           rows={5}
           maxLength={4000}
           placeholder={dict.governance.fieldBodyPlaceholder}
@@ -91,9 +110,10 @@ export function ProposalForm({
           <Input
             id="opens_at"
             name="opens_at"
+            value={draft.opens_at}
+            onChange={(e) => setDraft({ ...draft, opens_at: e.target.value })}
             type="datetime-local"
             required
-            defaultValue={defaultOpens}
           />
         </div>
         <div className="flex flex-col gap-1.5">
@@ -101,6 +121,8 @@ export function ProposalForm({
           <Input
             id="closes_at"
             name="closes_at"
+            value={draft.closes_at}
+            onChange={(e) => setDraft({ ...draft, closes_at: e.target.value })}
             type="datetime-local"
             required
           />
@@ -110,6 +132,6 @@ export function ProposalForm({
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.governance.submitting : dict.governance.submit}
       </Button>
-    </form>
+    </DraftForm>
   );
 }

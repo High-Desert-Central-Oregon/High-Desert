@@ -1241,3 +1241,20 @@ html[data-theme="dark"] .site-root .btn-link {
     transition: none;
   }
 }
+
+/* Keyboard bypass for the shared public header. */
+.site-root .site-skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  transform: translateY(-200%);
+  padding: 12px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid currentColor;
+  text-decoration: underline;
+}
+.site-root .site-skip-link:focus {
+  transform: translateY(0);
+}

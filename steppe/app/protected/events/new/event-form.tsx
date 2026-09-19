@@ -1,6 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { DraftForm } from "@/components/draft-form";
+
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,9 +39,18 @@ export function EventForm({
     null,
   );
   const error = errorMessage(state, dict);
+  // Keep the draft when a form action returns a validation or save error.
+  const [draft, setDraft] = useState({
+    title: "",
+    starts_at: "",
+    neighborhood_id: defaultNeighborhoodId ?? "all",
+    location: "",
+    capacity: "",
+    body: "",
+  });
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <DraftForm action={action} className="flex flex-col gap-5">
       {error && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
@@ -51,6 +62,8 @@ export function EventForm({
         <Input
           id="title"
           name="title"
+          value={draft.title}
+          onChange={(e) => setDraft({ ...draft, title: e.target.value })}
           required
           maxLength={140}
           placeholder={dict.events.fieldTitlePlaceholder}
@@ -61,7 +74,14 @@ export function EventForm({
         <Label htmlFor="when">{dict.events.fieldWhen}</Label>
         {/* Submitted as a plain wall-clock string; the server reads it as
             Redmond time (lib/time.ts), independent of the browser's timezone. */}
-        <Input id="when" name="starts_at" type="datetime-local" required />
+        <Input
+          id="when"
+          name="starts_at"
+          value={draft.starts_at}
+          onChange={(e) => setDraft({ ...draft, starts_at: e.target.value })}
+          type="datetime-local"
+          required
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -69,7 +89,10 @@ export function EventForm({
         <select
           id="neighborhood"
           name="neighborhood_id"
-          defaultValue={defaultNeighborhoodId ?? "all"}
+          value={draft.neighborhood_id}
+          onChange={(e) =>
+            setDraft({ ...draft, neighborhood_id: e.target.value })
+          }
           className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <option value="all">{dict.events.allRedmond}</option>
@@ -86,6 +109,8 @@ export function EventForm({
         <Input
           id="location"
           name="location"
+          value={draft.location}
+          onChange={(e) => setDraft({ ...draft, location: e.target.value })}
           maxLength={200}
           placeholder={dict.events.fieldWherePlaceholder}
         />
@@ -96,6 +121,8 @@ export function EventForm({
         <Input
           id="capacity"
           name="capacity"
+          value={draft.capacity}
+          onChange={(e) => setDraft({ ...draft, capacity: e.target.value })}
           type="number"
           min={1}
           inputMode="numeric"
@@ -108,6 +135,8 @@ export function EventForm({
         <textarea
           id="body"
           name="body"
+          value={draft.body}
+          onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           rows={4}
           maxLength={2000}
           placeholder={dict.events.fieldDetailsPlaceholder}
@@ -118,6 +147,6 @@ export function EventForm({
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.events.submitting : dict.events.submit}
       </Button>
-    </form>
+    </DraftForm>
   );
 }

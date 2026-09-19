@@ -15,6 +15,8 @@ export const en = {
   },
 
   common: {
+    loadFailed: "This page could not be loaded. Please try again.",
+    retry: "Try again",
     loading: "Loading…",
     languageLabel: "Language",
     english: "English",

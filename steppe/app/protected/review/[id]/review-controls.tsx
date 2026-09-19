@@ -27,9 +27,16 @@ export function ReviewControls({
   const router = useRouter();
   const [confirming, setConfirming] = useState<boolean | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const approveRef = useRef<HTMLButtonElement>(null);
+  const declineRef = useRef<HTMLButtonElement>(null);
+  const restoreDecision = useRef<boolean | null>(null);
   useEffect(() => {
     if (confirming !== null) cancelRef.current?.focus();
-  }, [confirming]);
+    else if (!busy && restoreDecision.current !== null) {
+      (restoreDecision.current ? approveRef : declineRef).current?.focus();
+      restoreDecision.current = null;
+    }
+  }, [confirming, busy]);
   const decide = (approve: boolean) => {
     start(async () => {
       try {
@@ -178,14 +185,22 @@ export function ReviewControls({
               <button
                 disabled={busy}
                 className="min-h-11 rounded border px-3"
-                onClick={() => setConfirming(true)}
+                ref={approveRef}
+                onClick={() => {
+                  restoreDecision.current = true;
+                  setConfirming(true);
+                }}
               >
                 {pc(locale, "approve")}
               </button>
               <button
                 disabled={busy || message.trim().length < 5}
                 className="min-h-11 rounded border px-3"
-                onClick={() => setConfirming(false)}
+                ref={declineRef}
+                onClick={() => {
+                  restoreDecision.current = false;
+                  setConfirming(false);
+                }}
               >
                 {pc(locale, "reject")}
               </button>

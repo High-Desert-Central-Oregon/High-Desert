@@ -113,7 +113,7 @@ export default function LegalPrivacyPage() {
   };
 
   return (
-    <main className="legal">
+    <article className="legal">
       <article className="wrap legal-doc">
         <Link className="legal-back" href="/privacy">
           ← Back to the plain-language summary
@@ -142,6 +142,6 @@ export default function LegalPrivacyPage() {
           <Link href="/privacy">← Back to the plain-language summary</Link>
         </p>
       </article>
-    </main>
+    </article>
   );
 }

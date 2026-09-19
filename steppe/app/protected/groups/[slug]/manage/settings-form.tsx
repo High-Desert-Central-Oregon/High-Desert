@@ -1,6 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { DraftForm } from "@/components/draft-form";
+
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +17,10 @@ import type {
 const SELECT_CLASS =
   "h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
-function message(state: SettingsState, dict: Dictionary): {
+function message(
+  state: SettingsState,
+  dict: Dictionary,
+): {
   text: string;
   ok: boolean;
 } | null {
@@ -55,9 +60,16 @@ export function SettingsForm({
     null,
   );
   const msg = message(state, dict);
+  const [draft, setDraft] = useState({
+    name,
+    description: description ?? "",
+    categoryId: categoryId ?? "",
+    visibility,
+    joinPolicy,
+  });
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <DraftForm action={action} className="flex flex-col gap-5">
       <input type="hidden" name="group_id" value={groupId} />
       <input type="hidden" name="slug" value={slug} />
 
@@ -76,7 +88,14 @@ export function SettingsForm({
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="name">{dict.groups.fieldName}</Label>
-        <Input id="name" name="name" required maxLength={120} defaultValue={name} />
+        <Input
+          id="name"
+          name="name"
+          required
+          maxLength={120}
+          value={draft.name}
+          onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -86,7 +105,8 @@ export function SettingsForm({
           name="description"
           rows={3}
           maxLength={2000}
-          defaultValue={description ?? ""}
+          value={draft.description}
+          onChange={(e) => setDraft({ ...draft, description: e.target.value })}
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
@@ -96,7 +116,8 @@ export function SettingsForm({
         <select
           id="category_id"
           name="category_id"
-          defaultValue={categoryId ?? ""}
+          value={draft.categoryId}
+          onChange={(e) => setDraft({ ...draft, categoryId: e.target.value })}
           className={SELECT_CLASS}
         >
           <option value="">{dict.groups.noCategory}</option>
@@ -114,11 +135,19 @@ export function SettingsForm({
           <select
             id="visibility"
             name="visibility"
-            defaultValue={visibility}
+            value={draft.visibility}
+            onChange={(e) =>
+              setDraft({
+                ...draft,
+                visibility: e.target.value as GroupVisibility,
+              })
+            }
             className={SELECT_CLASS}
           >
             <option value="public">{dict.groups.visibilityPublic}</option>
-            <option value="members_only">{dict.groups.visibilityMembersOnly}</option>
+            <option value="members_only">
+              {dict.groups.visibilityMembersOnly}
+            </option>
           </select>
         </div>
         <div className="flex flex-1 flex-col gap-1.5">
@@ -126,7 +155,13 @@ export function SettingsForm({
           <select
             id="join_policy"
             name="join_policy"
-            defaultValue={joinPolicy}
+            value={draft.joinPolicy}
+            onChange={(e) =>
+              setDraft({
+                ...draft,
+                joinPolicy: e.target.value as GroupJoinPolicy,
+              })
+            }
             className={SELECT_CLASS}
           >
             <option value="open">{dict.groups.joinOpen}</option>
@@ -139,6 +174,6 @@ export function SettingsForm({
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.groups.saving : dict.groups.saveSettings}
       </Button>
-    </form>
+    </DraftForm>
   );
 }

@@ -68,7 +68,6 @@ export function ThreadMenu({
         ref={triggerRef}
         type="button"
         aria-label={dict.messages.menuMore}
-        aria-haspopup="menu"
         aria-controls={panelId}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}

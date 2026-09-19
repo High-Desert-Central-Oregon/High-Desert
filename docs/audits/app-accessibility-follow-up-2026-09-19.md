@@ -25,7 +25,7 @@ Narrow viewport tests do not substitute for that zoom check.
 
 ## Findings and recommended order
 
-### 1. High: mobile bug launcher intercepts the compose action — fixed in this branch
+### 1. High: mobile bug launcher intercepts the compose action — fixed in PR #65
 
 On the live exchange at 390×844, New post occupied x238–370, y712–756; the bug launcher
 occupied x280–390, y700–744. The element at the center of New post was the bug button.
@@ -51,7 +51,8 @@ Local verification used the real BugReporter and Fab components:
 - Forced-colors emulation retained a visible icon, border, and 3px focus outline.
 - Focused lint and bug-report suite passed: 92 tests passed, eight database tests skipped.
 
-Production still has the old launcher until this branch is merged and deployed.
+PR #65 is merged. A follow-up live check at 390×844 confirmed the icon-only launcher
+at y400–444, New post at y712–756, and the hover label hidden at rest.
 
 ### 2. High: rejected event/group submissions erase the entered draft
 
@@ -174,5 +175,57 @@ such as legal pages that already supply their own main element to avoid nesting 
 4. Distinguish read failures from empty results; expose calendar selection and public landmarks.
 5. Repeat the affected flows, then complete native zoom and screen-reader acceptance.
 
-Only item 1's implementation is included in this branch. The other findings are a
-reviewable follow-up plan, not deployed repairs.
+The initial audit delivery included item 1's implementation. The follow-up below
+records work on the remaining findings.
+
+
+## Implementation follow-up — 2026-09-19
+
+Branch: `codex/a11y-followups`, based on merged PR #65 (`1de24db`).
+Findings 2–8 are implemented for review; production verification awaits deployment.
+No database migration or production submission is part of this change.
+
+- **Drafts:** event, group, group settings, proposal, and exchange forms retain text,
+  radio choices and select values after a returned action error. A shared DraftForm
+  dispatches in a transition without React's automatic form reset. Controlled selects
+  were observed resetting too, so controlled text state alone was insufficient.
+  Native validation and the form action remain; successful creation still follows the
+  existing server redirect, and successful settings saves retain the saved values.
+- **Reflow:** exchange metadata wraps; at phone widths the complete timestamp gets its
+  own line. The real PostRow fit at 320px with English and Spanish timestamps.
+- **Review/disclosure:** Cancel returns focus to Approve or Decline. Returned and thrown
+  decision failures were checked with inert actions and restored the initiating control.
+  The conversation panel now uses disclosure semantics, retaining Tab access and Escape.
+- **Read failures:** groups and calendar distinguish failed queries from successful
+  empty results. A document GET retry preserves search/category or month/day parameters.
+  Supporting membership, category, moderation, feed and feed-name errors also stop an
+  incomplete view. This avoids displaying incorrect membership actions or offering to
+  create a feed merely because its read failed.
+- **Calendar:** the selected agenda-day link exposes `aria-current`; today remains a
+  separate cell state. The event dot has a visible border in forced colors and navigation
+  chevrons use the current text color and shared focus outline.
+- **Public pages:** a translated skip link targets one focusable main landmark in the
+  shared layout. Legal content uses article elements, avoiding nested main landmarks.
+  Home, join, terms and privacy were checked in the real local Next site. The skip link
+  was visible on keyboard focus and moved focus to main; Spanish text was verified.
+
+### Reproducible verification
+
+- `tests/fixtures/accessibility-followups/README.md` documents the browser fixture. It
+  imports real components and replaces all action imports with inert synthetic stubs.
+- Browser checks reproduced returned validation/server errors in event and group forms,
+  rejected and successful group-settings saves, proposal validation errors, and a Spanish
+  exchange error. Entered values and dropdown selections remained intact.
+- Review controls passed keyboard cancellation from both decisions and focus return after
+  returned/thrown synthetic failures. Thread disclosure passed Tab/Escape checks.
+- Calendar selection and event-marker borders remained visible in forced-colors emulation.
+- `tests/accessibility-load-failures.test.ts` renders the real server-page results with
+  mocked reads, exercising failures and successful empty results without hosted access.
+- Full local tests passed: 268 passed, 134 hosted-database tests skipped, 7 todo.
+  Lint and TypeScript passed; lint retains the one existing anonymous-default-export
+  warning in the earlier color fixture.
+
+The fixture does not verify hosted writes, successful creation redirects, server refresh
+races, or notification delivery. Native 200% browser zoom, actual screen-reader speech,
+and physical mobile/Safari acceptance remain pending. These are not inferred from
+viewport emulation or accessibility-tree inspection.

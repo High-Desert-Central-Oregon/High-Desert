@@ -1,14 +1,12 @@
 "use client";
 
+import { DraftForm } from "@/components/draft-form";
+
 import { useActionState, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  createGroup,
-  suggestCategory,
-  type GroupFormState,
-} from "../actions";
+import { createGroup, suggestCategory, type GroupFormState } from "../actions";
 import type { Dictionary } from "@/lib/i18n";
 
 type Category = { id: string; slug: string; name: string };
@@ -44,6 +42,12 @@ export function CreateGroupForm({
     null,
   );
   const error = errorMessage(state, dict);
+  const [draft, setDraft] = useState({
+    name: "",
+    description: "",
+    visibility: "public",
+    join_policy: "open",
+  });
 
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [categoryId, setCategoryId] = useState<string>("");
@@ -71,14 +75,30 @@ export function CreateGroupForm({
   };
 
   const presets: { key: Preset; label: string; hint: string }[] = [
-    { key: "public_board", label: dict.groups.presetPublicBoard, hint: dict.groups.presetPublicBoardHint },
-    { key: "curated", label: dict.groups.presetCurated, hint: dict.groups.presetCuratedHint },
-    { key: "private", label: dict.groups.presetPrivate, hint: dict.groups.presetPrivateHint },
-    { key: "advanced", label: dict.groups.presetAdvanced, hint: dict.groups.presetAdvancedHint },
+    {
+      key: "public_board",
+      label: dict.groups.presetPublicBoard,
+      hint: dict.groups.presetPublicBoardHint,
+    },
+    {
+      key: "curated",
+      label: dict.groups.presetCurated,
+      hint: dict.groups.presetCuratedHint,
+    },
+    {
+      key: "private",
+      label: dict.groups.presetPrivate,
+      hint: dict.groups.presetPrivateHint,
+    },
+    {
+      key: "advanced",
+      label: dict.groups.presetAdvanced,
+      hint: dict.groups.presetAdvancedHint,
+    },
   ];
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <DraftForm action={action} className="flex flex-col gap-5">
       {error && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-400">
           {error}
@@ -90,6 +110,8 @@ export function CreateGroupForm({
         <Input
           id="name"
           name="name"
+          value={draft.name}
+          onChange={(e) => setDraft({ ...draft, name: e.target.value })}
           required
           maxLength={120}
           placeholder={dict.groups.fieldNamePlaceholder}
@@ -101,6 +123,8 @@ export function CreateGroupForm({
         <textarea
           id="description"
           name="description"
+          value={draft.description}
+          onChange={(e) => setDraft({ ...draft, description: e.target.value })}
           rows={3}
           maxLength={2000}
           placeholder={dict.groups.fieldDescriptionPlaceholder}
@@ -144,7 +168,10 @@ export function CreateGroupForm({
             </Button>
           </div>
           {suggestError && (
-            <span role="alert" className="text-xs text-red-700 dark:text-red-400">
+            <span
+              role="alert"
+              className="text-xs text-red-700 dark:text-red-400"
+            >
               {suggestError}
             </span>
           )}
@@ -153,7 +180,9 @@ export function CreateGroupForm({
 
       {/* Preset picker — sets visibility × join_policy. */}
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium">{dict.groups.fieldPreset}</legend>
+        <legend className="text-sm font-medium">
+          {dict.groups.fieldPreset}
+        </legend>
         <div className="flex flex-col gap-2">
           {presets.map((p) => (
             <label
@@ -182,14 +211,32 @@ export function CreateGroupForm({
         <div className="flex flex-col gap-4 rounded-md border border-dashed p-4 sm:flex-row">
           <div className="flex flex-1 flex-col gap-1.5">
             <Label htmlFor="visibility">{dict.groups.fieldVisibility}</Label>
-            <select id="visibility" name="visibility" className={SELECT_CLASS} defaultValue="public">
+            <select
+              id="visibility"
+              name="visibility"
+              className={SELECT_CLASS}
+              value={draft.visibility}
+              onChange={(e) =>
+                setDraft({ ...draft, visibility: e.target.value })
+              }
+            >
               <option value="public">{dict.groups.visibilityPublic}</option>
-              <option value="members_only">{dict.groups.visibilityMembersOnly}</option>
+              <option value="members_only">
+                {dict.groups.visibilityMembersOnly}
+              </option>
             </select>
           </div>
           <div className="flex flex-1 flex-col gap-1.5">
             <Label htmlFor="join_policy">{dict.groups.fieldJoinPolicy}</Label>
-            <select id="join_policy" name="join_policy" className={SELECT_CLASS} defaultValue="open">
+            <select
+              id="join_policy"
+              name="join_policy"
+              className={SELECT_CLASS}
+              value={draft.join_policy}
+              onChange={(e) =>
+                setDraft({ ...draft, join_policy: e.target.value })
+              }
+            >
               <option value="open">{dict.groups.joinOpen}</option>
               <option value="request">{dict.groups.joinRequest}</option>
               <option value="locked">{dict.groups.joinLocked}</option>
@@ -201,6 +248,6 @@ export function CreateGroupForm({
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.groups.creating : dict.groups.createSubmit}
       </Button>
-    </form>
+    </DraftForm>
   );
 }

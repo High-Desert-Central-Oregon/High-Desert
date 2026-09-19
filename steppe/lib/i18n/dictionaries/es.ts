@@ -19,6 +19,8 @@ export const es: Dictionary = {
   },
 
   common: {
+    loadFailed: "No se pudo cargar esta página. Inténtalo de nuevo.",
+    retry: "Intentar de nuevo",
     loading: "Cargando…",
     languageLabel: "Idioma",
     english: "English",
