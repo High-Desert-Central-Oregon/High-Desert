@@ -202,7 +202,7 @@ export function MonthView({
       height="18"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#36563D"
+      stroke="currentColor"
       strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -227,7 +227,7 @@ export function MonthView({
           <Link
             href={href(prev)}
             aria-label={dict.calendar.prevMonth}
-            className="p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="p-1 text-primary focus-ring"
           >
             {chevron("M15 5l-7 7 7 7")}
           </Link>
@@ -244,7 +244,7 @@ export function MonthView({
           <Link
             href={href(next)}
             aria-label={dict.calendar.nextMonth}
-            className="p-1 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="p-1 text-primary focus-ring"
           >
             {chevron("M9 5l7 7-7 7")}
           </Link>
@@ -301,12 +301,13 @@ export function MonthView({
                       <Link
                         href={href(month, dayKey)}
                         aria-label={`${fullDayLabel(dayKey)}. ${dict.calendar.hasEvents}`}
+                        aria-current={isSelected ? "true" : undefined}
                         className="flex h-full w-full flex-col items-center pt-[9px] transition-colors hover:bg-muted focus-visible:bg-muted focus-ring"
                       >
                         {numeral}
                         <span
                           aria-hidden="true"
-                          className="mt-[4px] block h-[5px] w-[5px] rounded-full bg-accent"
+                          className="mt-[4px] block h-[5px] w-[5px] rounded-full border border-current bg-accent text-accent"
                         />
                       </Link>
                     ) : (

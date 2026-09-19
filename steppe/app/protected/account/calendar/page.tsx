@@ -1,3 +1,4 @@
+import { LoadFailure } from "@/components/load-failure";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { PageSkeleton } from "@/components/page-skeleton";
@@ -17,7 +18,6 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { formatRedmondDateTime } from "@/lib/time";
-import { getHiddenIds } from "@/lib/moderation";
 import { durableOrigin } from "@/lib/site-url";
 import { t, type Dictionary } from "@/lib/i18n";
 import { mintPersonalFeed, removeFeed, rotateFeed } from "./actions";
@@ -94,7 +94,10 @@ async function MyCalendarContent({
     : { startIso: new Date().toISOString(), endIso: null };
 
   // The two membership sources (own rows only; both indexed lookups).
-  const [{ data: memberships }, { data: rsvps }] = await Promise.all([
+  const [
+    { data: memberships, error: membershipError },
+    { data: rsvps, error: rsvpError },
+  ] = await Promise.all([
     supabase
       .from("group_members")
       .select("group_id")
@@ -126,25 +129,63 @@ async function MyCalendarContent({
       kind === "group"
         ? q.in("group_id", groupIds)
         : q.in("id", [...rsvpStatus.keys()]);
-    return q.returns<CalendarEvent[]>().then((r) => r.data ?? []);
+    return q.returns<CalendarEvent[]>();
   };
 
-  const [groupEvents, rsvpEvents, hidden, { data: feedRows }] =
-    await Promise.all([
-      groupIds.length
-        ? windowedScope("group")
-        : Promise.resolve([] as CalendarEvent[]),
-      rsvpStatus.size
-        ? windowedScope("rsvp")
-        : Promise.resolve([] as CalendarEvent[]),
-      getHiddenIds(supabase, "event"),
-      // The member's feed tokens — cf_read scopes to owner rows only.
-      supabase
-        .from("calendar_feeds")
-        .select("id, group_id, token, created_at, rotated_at, last_fetched_at")
-        .order("created_at", { ascending: true })
-        .returns<FeedRow[]>(),
-    ]);
+  const [
+    groupResult,
+    rsvpResult,
+    hiddenResult,
+    { data: feedRows, error: feedError },
+  ] = await Promise.all([
+    groupIds.length
+      ? windowedScope("group")
+      : Promise.resolve({ data: [] as CalendarEvent[], error: null }),
+    rsvpStatus.size
+      ? windowedScope("rsvp")
+      : Promise.resolve({ data: [] as CalendarEvent[], error: null }),
+    supabase
+      .from("content_moderation")
+      .select("target_id")
+      .eq("target_type", "event")
+      .eq("action", "remove")
+      .returns<{ target_id: string }[]>(),
+    // The member's feed tokens — cf_read scopes to owner rows only.
+    supabase
+      .from("calendar_feeds")
+      .select("id, group_id, token, created_at, rotated_at, last_fetched_at")
+      .order("created_at", { ascending: true })
+      .returns<FeedRow[]>(),
+  ]);
+  const retryParams = new URLSearchParams();
+  for (const key of ["v", "m", "d", "feedErr"] as const) {
+    if (sp[key]) retryParams.set(key, sp[key]);
+  }
+  const failure = (
+    <div lang={locale} className="flex flex-col gap-5">
+      <Masthead
+        title={dict.calendar.title}
+        kicker={dict.calendar.dateline}
+        voice={dict.calendar.voice}
+        flush
+      />
+      <LoadFailure href={`${BASE}?${retryParams}`} dict={dict} />
+    </div>
+  );
+  // Do not present a partial agenda or offer to create an existing feed when
+  // one of the supporting reads failed. Retry only reads, preserving the view.
+  if (
+    membershipError ||
+    rsvpError ||
+    groupResult.error ||
+    rsvpResult.error ||
+    hiddenResult.error ||
+    feedError
+  )
+    return failure;
+  const groupEvents = groupResult.data ?? [];
+  const rsvpEvents = rsvpResult.data ?? [];
+  const hidden = new Set((hiddenResult.data ?? []).map((row) => row.target_id));
   const feeds = feedRows ?? [];
 
   // Group names for group-scoped feeds (directory view — verified-safe).
@@ -153,11 +194,12 @@ async function MyCalendarContent({
   ];
   const feedGroupNames = new Map<string, string>();
   if (feedGroupIds.length) {
-    const { data: gs } = await supabase
+    const { data: gs, error: namesError } = await supabase
       .from("groups_directory")
       .select("id, name")
       .in("id", feedGroupIds)
       .returns<{ id: string; name: string }[]>();
+    if (namesError) return failure;
     for (const g of gs ?? []) feedGroupNames.set(g.id, g.name);
   }
 
@@ -354,7 +396,10 @@ function ConnectSection({
                     </p>
                     <form action={rotateFeed}>
                       <input type="hidden" name="feed_id" value={f.id} />
-                      <button type="submit" className={`${confirmBtn} text-foreground`}>
+                      <button
+                        type="submit"
+                        className={`${confirmBtn} text-foreground`}
+                      >
                         {dict.calendar.rotateCta}
                       </button>
                     </form>
@@ -370,7 +415,10 @@ function ConnectSection({
                     </p>
                     <form action={removeFeed}>
                       <input type="hidden" name="feed_id" value={f.id} />
-                      <button type="submit" className={`${confirmBtn} text-accent`}>
+                      <button
+                        type="submit"
+                        className={`${confirmBtn} text-accent`}
+                      >
                         {dict.calendar.removeCta}
                       </button>
                     </form>

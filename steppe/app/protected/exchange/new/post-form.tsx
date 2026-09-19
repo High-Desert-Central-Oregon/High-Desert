@@ -1,5 +1,7 @@
 "use client";
 
+import { DraftForm } from "@/components/draft-form";
+
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -54,7 +56,7 @@ export function PostForm({
     "flex cursor-pointer items-center gap-[7px] border px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-foreground peer-checked:border-foreground peer-checked:bg-muted peer-focus-visible:ring-1 peer-focus-visible:ring-ring";
 
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <DraftForm action={action} className="flex flex-col gap-5">
       {error && (
         <p role="alert" className="text-sm text-destructive">
           {error}
@@ -160,6 +162,6 @@ export function PostForm({
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.exchange.updating : dict.exchange.post}
       </Button>
-    </form>
+    </DraftForm>
   );
 }

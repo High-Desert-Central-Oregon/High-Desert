@@ -1,3 +1,4 @@
+import { LoadFailure } from "@/components/load-failure";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
@@ -71,12 +72,13 @@ async function DirectoryContent({
     .order("name", { ascending: true });
   if (categoryId) query = query.eq("category_id", categoryId);
   if (q) query = query.ilike("name", `%${q}%`);
-  const { data: groups } = await query.returns<GroupDirectoryRow[]>();
+  const { data: groups, error: groupsError } =
+    await query.returns<GroupDirectoryRow[]>();
   const rows = groups ?? [];
 
   // The viewer's own memberships (gm_read returns own rows at any status) → the
   // control on each card. We never read another member's status here.
-  const { data: mine } = await supabase
+  const { data: mine, error: membershipError } = await supabase
     .from("group_members")
     .select("group_id, role, status")
     .eq("user_id", profile.id)
@@ -84,13 +86,31 @@ async function DirectoryContent({
   const membership = new Map(mine?.map((m) => [m.group_id, m]) ?? []);
 
   // Categories for the filter + card labels.
-  const { data: cats } = await supabase
+  const { data: cats, error: categoriesError } = await supabase
     .from("categories")
     .select("id, slug, name")
     .order("name", { ascending: true })
     .returns<Pick<Category, "id" | "slug" | "name">[]>();
   const categories = cats ?? [];
   const catById = new Map(categories.map((c) => [c.id, c]));
+
+  if (groupsError || membershipError || categoriesError) {
+    const retryParams = new URLSearchParams();
+    if (q) retryParams.set("q", q);
+    if (categoryId) retryParams.set("category", categoryId);
+    if (searchOpen) retryParams.set("s", "1");
+    return (
+      <div lang={locale} className="flex flex-col gap-8">
+        <Masthead
+          title={dict.groups.title}
+          kicker={dict.groups.dateline}
+          voice={dict.groups.voice}
+          flush
+        />
+        <LoadFailure href={`/protected/groups?${retryParams}`} dict={dict} />
+      </div>
+    );
+  }
 
   return (
     <div lang={locale} className="flex flex-col gap-8 pb-20 md:pb-0">
@@ -110,47 +130,47 @@ async function DirectoryContent({
       {/* Browse/search — a plain GET form (JS-optional), revealed by the header
           slot; the category filter lives INSIDE it, not stacked on the root. */}
       {searchOpen && (
-      <form
-        method="GET"
-        className="flex flex-col gap-3 border bg-muted/40 p-4 sm:flex-row sm:items-end"
-        role="search"
-      >
-        <div className="flex flex-1 flex-col gap-1.5">
-          <label htmlFor="q" className="text-sm font-medium">
-            {dict.groups.searchLabel}
-          </label>
-          <Input
-            id="q"
-            name="q"
-            defaultValue={q}
-            placeholder={dict.groups.searchPlaceholder}
-          />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="category" className="text-sm font-medium">
-            {dict.groups.categoryLabel}
-          </label>
-          <select
-            id="category"
-            name="category"
-            defaultValue={categoryId}
-            className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:w-56"
-          >
-            <option value="">{dict.groups.allCategories}</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button type="submit" variant="outline">
-            {dict.groups.searchSubmit}
-          </Button>
-          <ActionLink href="/protected/groups" label={dict.common.cancel} />
-        </div>
-      </form>
+        <form
+          method="GET"
+          className="flex flex-col gap-3 border bg-muted/40 p-4 sm:flex-row sm:items-end"
+          role="search"
+        >
+          <div className="flex flex-1 flex-col gap-1.5">
+            <label htmlFor="q" className="text-sm font-medium">
+              {dict.groups.searchLabel}
+            </label>
+            <Input
+              id="q"
+              name="q"
+              defaultValue={q}
+              placeholder={dict.groups.searchPlaceholder}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="category" className="text-sm font-medium">
+              {dict.groups.categoryLabel}
+            </label>
+            <select
+              id="category"
+              name="category"
+              defaultValue={categoryId}
+              className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:w-56"
+            >
+              <option value="">{dict.groups.allCategories}</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button type="submit" variant="outline">
+              {dict.groups.searchSubmit}
+            </Button>
+            <ActionLink href="/protected/groups" label={dict.common.cancel} />
+          </div>
+        </form>
       )}
 
       {rows.length === 0 ? (
@@ -207,8 +227,12 @@ async function DirectoryContent({
                     g.is_system
                       ? dict.groups.everyoneMembers
                       : showCount
-                        ? plural(locale, g.member_count, dict.groups.memberCount)
-                      : undefined
+                        ? plural(
+                            locale,
+                            g.member_count,
+                            dict.groups.memberCount,
+                          )
+                        : undefined
                   }
                   right={
                     <div className="shrink-0">

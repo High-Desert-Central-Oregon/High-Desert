@@ -11,7 +11,7 @@ import "./site-base.css";
 
 import { Suspense } from "react";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { SiteHeader } from "./_components/site-header";
 import { SiteFooter } from "./_components/site-footer";
 import { DocumentLanguage } from "@/components/document-language";
@@ -36,12 +36,18 @@ export default function SiteLayout({
 async function LocalizedShell({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const nav = await getTranslations("nav");
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <div className="site-root">
         <DocumentLanguage locale={locale} />
+        <a className="site-skip-link" href="#site-main">
+          {nav("skipToContent")}
+        </a>
         <SiteHeader />
-        {children}
+        <main id="site-main" tabIndex={-1}>
+          {children}
+        </main>
         <SiteFooter />
       </div>
     </NextIntlClientProvider>

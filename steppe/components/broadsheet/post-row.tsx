@@ -95,12 +95,12 @@ export function PostRow({
     >
       <Monogram initials={initialsFor(authorName)} />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-x-[7px]">
+        <div className="flex flex-wrap items-center gap-x-[7px] gap-y-1">
           <MarkerChip label={markerLabel} color={markerColor} size={9} />
           <span className="min-w-0 flex-1 truncate font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             · {hood}
           </span>
-          <span className="shrink-0 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <span className="min-w-0 basis-full font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:basis-auto">
             · {when}
           </span>
         </div>
