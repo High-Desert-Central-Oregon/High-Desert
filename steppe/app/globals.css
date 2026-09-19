@@ -145,6 +145,23 @@
 /* Broadsheet type vocabulary (T7, from the reference's type scale) — defined at
  * the token layer; surfaces adopt them in their own passes, never ad hoc. */
 @layer components {
+  /* Selectable cards keep body/help text on a neutral surface in every state.
+     Selection is also conveyed by the native radio and a stronger boundary. */
+  .choice-card {
+    @apply border-input bg-background text-foreground;
+  }
+  .choice-card:hover,
+  .choice-card[data-selected="true"] {
+    @apply bg-muted;
+  }
+  .choice-card[data-selected="true"] {
+    @apply border-foreground;
+  }
+  /* Shared contract for custom input/select/textarea controls. Decorative
+     hairlines remain unchanged on cards and dividers. */
+  .field-control {
+    @apply border-input placeholder:text-muted-foreground;
+  }
   .kicker {
     @apply font-mono uppercase text-foreground;
     font-size: 10.5px; /* --fs-kicker */
@@ -162,5 +179,25 @@
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.01em; /* --ls-title */
+  }
+}
+
+/* After utilities so a legacy outline-none cannot erase an authored indicator.
+   The offset separates focus from both dark fills and selected-card borders. */
+.focus-ring:focus-visible,
+.field-control:focus-visible,
+.choice-card:has(:focus-visible) {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .focus-ring:focus-visible,
+  .field-control:focus-visible,
+  .choice-card:has(:focus-visible) {
+    outline-color: Highlight;
+  }
+  .choice-card[data-selected="true"] {
+    border-color: Highlight;
   }
 }

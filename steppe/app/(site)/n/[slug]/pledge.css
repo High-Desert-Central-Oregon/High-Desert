@@ -202,7 +202,7 @@ html[data-theme="dark"] .site-root .pledge .strata-horizon-num {
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .pledge-title {
   margin: 10px 0 0;
@@ -272,8 +272,8 @@ html[data-theme="dark"] .site-root .pledge-count-n {
   font-family: var(--sans);
   font-size: 16px; /* 16px stops iOS zooming the page on focus */
   color: var(--text);
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--site-card);
+  border: 1px solid var(--site-input-border);
   border-radius: 9px;
 }
 .site-root .pledge-input-row input::placeholder {
@@ -290,7 +290,7 @@ html[data-theme="dark"] .site-root .pledge-count-n {
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--paper);
+  color: var(--site-on-juniper);
   background: var(--juniper);
   border: 1px solid var(--juniper);
   border-radius: 9px;
@@ -308,14 +308,11 @@ html[data-theme="dark"] .site-root .pledge-count-n {
   text-decoration: none;
   text-align: center;
 }
-html[data-theme="dark"] .site-root .pledge-submit {
-  color: var(--bone);
-}
 
 .site-root .pledge-error {
   margin: 10px 0 0;
   font-size: 15px;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .pledge-privacy {
   margin: 14px 0 0;
@@ -337,7 +334,7 @@ html[data-theme="dark"] .site-root .pledge-submit {
 /* ---- the confirmation ---------------------------------------------------- */
 .site-root .pledge-done {
   padding: 20px;
-  background: var(--card);
+  background: var(--site-card);
   border: 1px solid var(--juniper);
   border-radius: 12px;
 }
@@ -347,7 +344,7 @@ html[data-theme="dark"] .site-root .pledge-submit {
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .pledge-done-h {
   margin: 8px 0 0;
@@ -381,7 +378,7 @@ html[data-theme="dark"] .site-root .pledge-submit {
   font-size: 12px;
   color: var(--text);
   background: var(--bg-alt);
-  border: 1px solid var(--border);
+  border: 1px solid var(--site-border);
   border-radius: 9px;
   overflow-x: auto;
   white-space: nowrap;
@@ -392,15 +389,15 @@ html[data-theme="dark"] .site-root .pledge-submit {
   font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--paper);
-  background: var(--rust);
-  border: 1px solid var(--rust);
+  color: var(--site-on-action);
+  background: var(--site-action);
+  border: 1px solid var(--site-action);
   border-radius: 9px;
   cursor: pointer;
   white-space: nowrap;
 }
 .site-root .pledge-copy[data-copied] {
-  color: var(--ink);
+  color: var(--site-on-sage);
   background: var(--sage);
   border-color: var(--sage);
 }

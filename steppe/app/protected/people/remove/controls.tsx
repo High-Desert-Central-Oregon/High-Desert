@@ -106,7 +106,7 @@ export function RemovalControls({ locale }: { locale: string }) {
                     value={reason}
                     disabled={busy}
                     onChange={(event) => setReason(event.target.value)}
-                    className="min-h-11 rounded border bg-background p-2"
+                    className="field-control min-h-11 rounded border bg-background p-2"
                   >
                     <option value="">{rc(locale, "choose")}</option>
                     <option value="member_request">

@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { ChoiceCard } from "@/components/ui/choice-card";
 import { hasPendingVerification, submitVerification } from "./actions";
 import {
   ALL_METHODS,
@@ -106,36 +107,19 @@ export function VerifyForm({
           {dict.verify.methodLegend}
         </legend>
 
-        {ALL_METHODS.map((m) => {
-          const selected = method === m;
-          return (
-            <label
-              key={m}
-              className={`flex cursor-pointer gap-3 rounded-lg border p-3 transition-colors ${
-                selected ? "border-foreground bg-accent" : "hover:bg-accent/50"
-              }`}
-            >
-              <input
-                type="radio"
-                name="method"
-                value={m}
-                checked={selected}
-                onChange={() => setMethod(m)}
-                required
-                aria-describedby={`hint-${m}`}
-                className="mt-1 size-4 shrink-0 accent-foreground"
-              />
-              <span className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">
-                  {dict.verify.methods[m]}
-                </span>
-                <span id={`hint-${m}`} className="text-xs text-muted-foreground">
-                  {dict.verify.methodHints[m]}
-                </span>
-              </span>
-            </label>
-          );
-        })}
+        {ALL_METHODS.map((m) => (
+          <ChoiceCard
+            key={m}
+            id={`method-${m}`}
+            name="method"
+            value={m}
+            checked={method === m}
+            onChange={() => setMethod(m)}
+            required
+            title={dict.verify.methods[m]}
+            description={dict.verify.methodHints[m]}
+          />
+        ))}
       </fieldset>
 
       {needsFile && (

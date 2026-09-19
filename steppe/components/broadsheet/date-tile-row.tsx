@@ -37,7 +37,7 @@ export function DateTileRow({
   return (
     <Link
       href={href}
-      className="flex items-center gap-[13px] border-b py-[14px] transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+      className="flex items-center gap-[13px] border-b py-[14px] transition-colors hover:bg-muted focus-visible:bg-muted focus-ring"
     >
       <span className="w-[46px] shrink-0 border py-[6px] text-center">
         <span className="block font-mono text-[8.5px] font-semibold uppercase tracking-[0.1em] text-accent">

@@ -151,7 +151,7 @@ export function MintForm({
           <Label htmlFor="mint-hood">{dict.invites.placeLabel}</Label>
           <select
             id="mint-hood"
-            className="h-9 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs md:text-sm"
+            className="field-control h-9 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs md:text-sm"
             value={neighborhoodId}
             onChange={(e) => setNeighborhoodId(e.target.value)}
             aria-describedby="mint-hood-hint"

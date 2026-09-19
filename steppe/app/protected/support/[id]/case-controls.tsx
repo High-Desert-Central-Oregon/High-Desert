@@ -50,7 +50,7 @@ export function CaseControls({
         <label htmlFor="case-status">{t.status}</label>
         <select
           id="case-status"
-          className="min-h-11 border bg-background p-2"
+          className="field-control min-h-11 border bg-background p-2"
           value={value}
           onChange={(e) => setValue(e.target.value as BugStatus)}
         >
@@ -63,7 +63,7 @@ export function CaseControls({
         <label htmlFor="case-note">{t.note}</label>
         <textarea
           id="case-note"
-          className="min-h-24 border bg-background p-2"
+          className="field-control min-h-24 border bg-background p-2"
           value={note}
           onChange={(e) => setNote(e.target.value)}
           maxLength={2000}

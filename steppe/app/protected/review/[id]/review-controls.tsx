@@ -150,7 +150,7 @@ export function ReviewControls({
               required
               minLength={5}
               maxLength={1200}
-              className="min-h-24 rounded border bg-background p-2"
+              className="field-control min-h-24 rounded border bg-background p-2"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               aria-describedby="question-hint"
@@ -171,7 +171,7 @@ export function ReviewControls({
               maxLength={1200}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="min-h-24 rounded border bg-background p-2"
+              className="field-control min-h-24 rounded border bg-background p-2"
             />
             <p className="text-xs">{pc(locale, "questionHint")}</p>
             <div className="flex gap-3">

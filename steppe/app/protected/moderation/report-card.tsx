@@ -45,7 +45,7 @@ export function ReportCard({
           maxLength={2000}
           rows={3}
           placeholder={dict.moderation.reportPlaceholder}
-          className="w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+          className="field-control w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
         />
         <p className="flex items-center gap-[7px] font-mono text-[9.5px] font-medium uppercase tracking-[0.1em] text-muted-foreground">
           <span

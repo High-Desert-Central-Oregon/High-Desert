@@ -46,7 +46,7 @@ export function MessageComposer({
           maxLength={4000}
           rows={3}
           placeholder={dict.messages.placeholder}
-          className="w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+          className="field-control w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
         />
         {/* composePrivacy — un-reserved with M1 (X1 §8 reserved it for exactly
             this feature). Sage marker + the promise. */}
