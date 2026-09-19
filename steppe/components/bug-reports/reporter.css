@@ -1,13 +1,15 @@
 .steppe-bug-launcher {
   position: fixed;
   right: 0;
-  top: 44%;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 60;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.7rem 0.8rem;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   background: #783e2c;
   color: #fffaf0;
   border: 1px solid #fffaf0;
@@ -18,6 +20,30 @@
     sans-serif;
   cursor: pointer;
   border-radius: 8px 0 0 8px;
+}
+.steppe-bug-launcher-label {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  width: max-content;
+  max-width: calc(100vw - 64px);
+  background: #783e2c;
+  color: #fffaf0;
+  border: 1px solid #fffaf0;
+  border-radius: 4px;
+  visibility: hidden;
+}
+@media (hover: hover) {
+  .steppe-bug-launcher:not([data-label-dismissed="true"]):hover
+    .steppe-bug-launcher-label {
+    visibility: visible;
+  }
+}
+.steppe-bug-launcher:not([data-label-dismissed="true"]):focus-visible
+  .steppe-bug-launcher-label {
+  visibility: visible;
 }
 .steppe-bug-launcher:focus-visible {
   outline: 3px solid #fffaf0;
@@ -155,13 +181,6 @@
   cursor: wait;
 }
 @media (max-width: 640px) {
-  .steppe-bug-launcher {
-    top: auto;
-    bottom: calc(100px + env(safe-area-inset-bottom));
-    font-size: 11px;
-    padding: 10px 8px;
-    max-width: 145px;
-  }
   .steppe-bug-dialog {
     padding: 18px;
   }
