@@ -226,7 +226,7 @@ async function ThreadContent({
           maxLength={4000}
           autoComplete="off"
           placeholder={dict.messages.replyPlaceholder}
-          className="flex-1 border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+          className="field-control flex-1 border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
         />
         <button
           type="submit"

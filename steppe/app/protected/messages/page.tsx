@@ -125,7 +125,7 @@ async function InboxContent() {
               <li key={th.id}>
                 <Link
                   href={`/protected/messages/${th.id}`}
-                  className="flex items-center gap-[13px] border-b py-4 transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+                  className="flex items-center gap-[13px] border-b py-4 transition-colors hover:bg-muted focus-visible:bg-muted focus-ring"
                 >
                   <Monogram initials={initialsFor(name)} size={44} />
                   <span className="min-w-0 flex-1">

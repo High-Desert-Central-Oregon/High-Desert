@@ -66,7 +66,7 @@ html[data-theme="dark"] .site-root::before {
   text-decoration: none;
 }
 .site-root :focus-visible {
-  outline: 2.5px solid var(--rust);
+  outline: 2.5px solid var(--site-focus);
   outline-offset: 3px;
   border-radius: 3px;
 }
@@ -146,8 +146,8 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
   position: relative;
 }
 .site-root .btn-primary {
-  background: var(--rust);
-  color: #fbf7ee;
+  background: var(--site-action);
+  color: var(--site-on-action);
   box-shadow:
     0 1px 0 rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
@@ -163,7 +163,7 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
 .site-root .btn-ghost {
   background: transparent;
   color: var(--text);
-  border-color: var(--border);
+  border-color: var(--site-border);
 }
 .site-root .btn-ghost:hover {
   border-color: var(--rust);
@@ -232,13 +232,13 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
 }
 .site-root .nav-links a.active {
   opacity: 1;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .theme-toggle {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--site-border);
   background: transparent;
   cursor: pointer;
   display: flex;
@@ -270,7 +270,7 @@ html[data-theme="dark"] .site-root .theme-toggle .moon {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--site-border);
   background: transparent;
   cursor: pointer;
   align-items: center;
@@ -694,10 +694,10 @@ html[data-js] .site-root .rv.in {
     font-weight: 500;
     color: var(--text);
     padding: 12px 4px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--site-border);
   }
   .site-root .nav-menu a.active {
-    color: var(--rust);
+    color: var(--site-accent-ink);
   }
   .site-root .nav-menu-lang {
     padding: 12px 0 6px;
@@ -757,7 +757,7 @@ html[data-js] .site-root .rv.in {
   font-size: 10.5px;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   display: flex;
   align-items: center;
 }
@@ -799,8 +799,8 @@ html[data-js] .site-root .rv.in {
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
-  background: var(--rust);
-  color: #fff;
+  background: var(--site-action);
+  color: var(--site-on-action);
   padding: 12px 20px;
   border-radius: 6px;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.22);
@@ -809,7 +809,7 @@ html[data-js] .site-root .rv.in {
   transition: background 0.15s ease;
 }
 .site-root .btn-rust:hover {
-  background: var(--rust-glow);
+  background: var(--site-action-hover);
 }
 .site-root .btn-link {
   display: inline-block;
@@ -832,7 +832,7 @@ html[data-js] .site-root .rv.in {
   line-height: 0.8;
   float: left;
   margin: 6px 10px 0 0;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 
 /* Global Martian Mono optical pass — tighten tracking, hold a legible minimum size,
@@ -849,7 +849,7 @@ html[data-js] .site-root .rv.in {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.01em;
-  color: #6f6a5c;
+  color: var(--ink-soft);
 }
 /* On dark grounds (.on-dark sections, the juniper sign panel) mono reads light. */
 .site-root .on-dark .kick,
@@ -984,7 +984,7 @@ html[data-js] .site-root .rv.in {
 }
 .site-root .bnav a:hover,
 .site-root .bnav a.active {
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 
 .site-root .mast-menu-button,
@@ -1006,7 +1006,7 @@ html[data-js] .site-root .rv.in {
 }
 .site-root .mast-menu-button:hover {
   border-color: var(--rust);
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .mast-menu-bars {
   display: grid;
@@ -1096,12 +1096,12 @@ html[data-js] .site-root .rv.in {
     color: var(--ink-soft);
   }
   .site-root .mast-mobile-menu a > span {
-    color: var(--rust);
+    color: var(--site-accent-ink);
     font-size: 9.5px;
   }
   .site-root .mast-mobile-menu a:hover,
   .site-root .mast-mobile-menu a.active {
-    color: var(--rust);
+    color: var(--site-accent-ink);
   }
   .site-root .mast-mobile-locale {
     display: flex;
@@ -1197,7 +1197,7 @@ html[data-theme="dark"] .site-root .foot .foot-seal-mono {
   transition: color 0.15s;
 }
 .site-root .foot-links a:hover {
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .foot .foot-credit {
   font-family: var(--mono);
@@ -1207,7 +1207,7 @@ html[data-theme="dark"] .site-root .foot .foot-seal-mono {
   margin: 0;
 }
 .site-root .foot .foot-credit a {
-  color: var(--rust);
+  color: var(--site-accent-ink);
   text-decoration: underline;
   text-underline-offset: 2px;
 }

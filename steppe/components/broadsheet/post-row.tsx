@@ -91,7 +91,7 @@ export function PostRow({
   return (
     <Link
       href={href}
-      className="flex min-h-[64px] items-start gap-[14px] border-b py-[var(--row-rhythm)] transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+      className="flex min-h-[64px] items-start gap-[14px] border-b py-[var(--row-rhythm)] transition-colors hover:bg-muted focus-visible:bg-muted focus-ring"
     >
       <Monogram initials={initialsFor(authorName)} />
       <div className="min-w-0 flex-1">

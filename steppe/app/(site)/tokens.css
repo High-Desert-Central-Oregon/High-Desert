@@ -25,13 +25,23 @@
   --basalt-deep: #25282d;
   --rust: #a8542c;
   --rust-glow: #c26b3e;
+  /* Text accents, action fills, and control edges have different contrast jobs.
+     Keep fixed on-fill inks independent of the ambient surface palette. */
+  --site-accent-ink: #823d1e;
+  --site-action: #a8542c;
+  --site-action-hover: #934522;
+  --site-on-action: #ffffff;
+  --site-on-juniper: #fbf7ee;
+  --site-on-sage: #2a2e2c;
+  --site-input-border: #6c675d;
+  --site-focus: #36563d;
   --ochre: #a8842f;
   --range: #4f6b7a;
   --sage-deep: #6e8a5b;
 
   /* Broadsheet ("Broadsheet × Plate") presentation tokens. */
   --ink: #2a2e2c; /* matches --text; named for the broadsheet ink rules */
-  --ink-soft: #5f5a4e; /* mono labels / secondary text on paper (AA on bone/paper) */
+  --ink-soft: #514d43; /* mono labels / secondary text on paper (AA on bone/paper) */
   /* NAME COLLISION with the Exchange app tokens: there `--rule` is a 2px border
      WIDTH and this color is named `--hairline` (docs/design/
      exchange-design-tokens-reference.css). Scopes never meet today; if these
@@ -65,10 +75,10 @@ html[data-theme="light"] {
   --bg-paper: #fbf7ee;
   --bg-feature: #36563d;
   --bg-bedrock: #34383d;
-  --card: #fbf7ee;
-  --border: rgba(54, 86, 61, 0.16);
+  --site-card: #fbf7ee;
+  --site-border: rgba(54, 86, 61, 0.16);
   --text: #2a2e2c;
-  --text-muted: #5f5a4e;
+  --text-muted: #514d43;
   --feat-text: #fbf7ee;
   --feat-muted: #c4cbba;
   --nav-bg: rgba(237, 230, 213, 0.86);
@@ -82,8 +92,8 @@ html[data-theme="dark"] {
   --bg-paper: #2a2f34;
   --bg-feature: #2b4733;
   --bg-bedrock: #1b1e22;
-  --card: #2f343a;
-  --border: rgba(237, 230, 213, 0.13);
+  --site-card: #2f343a;
+  --site-border: rgba(237, 230, 213, 0.13);
   --text: #ece6da;
   --text-muted: #a6a89d;
   --feat-text: #ece6da;
@@ -100,6 +110,9 @@ html[data-theme="dark"] {
   --rule: rgba(237, 230, 213, 0.16);
   --ink-soft: #a6a89d;
   --rust: #c26b3e;
+  --site-accent-ink: #e1a07c;
+  --site-input-border: #92988b;
+  --site-focus: #c3cdb6;
 }
 
 /* Default the ambient attributes so surfaces are themed even before the
@@ -110,10 +123,10 @@ html:not([data-theme]) {
   --bg-paper: #fbf7ee;
   --bg-feature: #36563d;
   --bg-bedrock: #34383d;
-  --card: #fbf7ee;
-  --border: rgba(54, 86, 61, 0.16);
+  --site-card: #fbf7ee;
+  --site-border: rgba(54, 86, 61, 0.16);
   --text: #2a2e2c;
-  --text-muted: #5f5a4e;
+  --text-muted: #514d43;
   --feat-text: #fbf7ee;
   --feat-muted: #c4cbba;
   --nav-bg: rgba(237, 230, 213, 0.86);

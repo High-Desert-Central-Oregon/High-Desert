@@ -15,7 +15,7 @@
   font-size: 12px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   display: inline-block;
   margin-bottom: 24px;
 }
@@ -59,7 +59,7 @@
   margin: 0 0 16px;
 }
 .site-root .legal-doc a {
-  color: var(--rust);
+  color: var(--site-accent-ink);
   font-weight: 500;
 }
 .site-root .legal-doc a:hover {
@@ -87,7 +87,7 @@
   font-size: 13px;
   line-height: 1.9;
   background: var(--bg-paper);
-  border: 1px solid var(--border);
+  border: 1px solid var(--site-border);
   border-left: 3px solid var(--sage);
   border-radius: 10px;
   padding: 16px 18px;
@@ -99,7 +99,7 @@
   font-family: var(--mono);
   font-size: 0.9em;
   background: var(--bg-paper);
-  border: 1px solid var(--border);
+  border: 1px solid var(--site-border);
   border-radius: 4px;
   padding: 1px 5px;
 }
@@ -107,7 +107,7 @@
 /* --- rules */
 .site-root .legal-doc hr {
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--site-border);
   margin: 32px 0;
 }
 
@@ -124,12 +124,12 @@
   text-align: left;
   color: var(--text);
   background: rgba(156, 173, 139, 0.18);
-  border-bottom: 1.5px solid var(--border);
+  border-bottom: 1.5px solid var(--site-border);
   padding: 10px 12px;
 }
 .site-root .legal-doc td {
   padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--site-border);
   color: var(--text-muted);
   line-height: 1.5;
   vertical-align: top;
@@ -141,7 +141,7 @@
 /* table of contents */
 .site-root .legal-toc {
   background: var(--bg-paper);
-  border: 1px solid var(--border);
+  border: 1px solid var(--site-border);
   border-radius: 12px;
   padding: 18px 20px;
   margin: 8px 0 36px;
@@ -175,21 +175,21 @@
 .site-root .legal-foot {
   margin-top: 40px;
   padding-top: 22px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--site-border);
 }
 .site-root .legal-foot a {
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 
 /* dark mode: rust + juniper fail AA on the dark surfaces; use lighter inks */
 html[data-theme="dark"] .site-root .legal-doc a,
 html[data-theme="dark"] .site-root .legal-back,
 html[data-theme="dark"] .site-root .legal-foot a {
-  color: var(--rust-glow);
+  color: var(--site-accent-ink);
 }
 html[data-theme="dark"] .site-root .legal-toc a {
   color: var(--sage);

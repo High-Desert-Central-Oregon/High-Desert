@@ -20,8 +20,9 @@
   border-radius: 8px 0 0 8px;
 }
 .steppe-bug-launcher:focus-visible {
-  outline: 3px solid #1e5949;
+  outline: 3px solid #fffaf0;
   outline-offset: 3px;
+  box-shadow: 0 0 0 6px #1e5949;
 }
 .steppe-bug-dialog {
   position: fixed;

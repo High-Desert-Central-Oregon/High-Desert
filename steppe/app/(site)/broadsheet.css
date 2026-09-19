@@ -232,7 +232,7 @@ html[data-theme="dark"] .site-root .broadsheet .classic-stars {
   font-family: var(--mono);
   font-size: 13px;
   letter-spacing: 0.04em;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 .site-root .broadsheet .step h3 {
   font-size: 19px;
@@ -247,7 +247,7 @@ html[data-theme="dark"] .site-root .broadsheet .classic-stars {
   font-family: var(--mono);
   font-size: 0.82em;
   letter-spacing: 0.02em;
-  color: var(--rust);
+  color: var(--site-accent-ink);
 }
 
 /* ---- exchange — classifieds with ink-square markers (Part 5) ---- */
@@ -293,7 +293,7 @@ html[data-theme="dark"] .site-root .broadsheet .classic-stars {
 .site-root .broadsheet .cl .loc {
   font-family: var(--mono);
   font-size: 11px;
-  color: #6f6a5c;
+  color: var(--ink-soft);
   letter-spacing: 0.01em;
   white-space: nowrap;
 }

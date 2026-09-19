@@ -301,7 +301,7 @@ export function MonthView({
                       <Link
                         href={href(month, dayKey)}
                         aria-label={`${fullDayLabel(dayKey)}. ${dict.calendar.hasEvents}`}
-                        className="flex h-full w-full flex-col items-center pt-[9px] transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+                        className="flex h-full w-full flex-col items-center pt-[9px] transition-colors hover:bg-muted focus-visible:bg-muted focus-ring"
                       >
                         {numeral}
                         <span

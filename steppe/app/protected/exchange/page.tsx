@@ -146,7 +146,7 @@ function PinnedFeature({
   return (
     <Link
       href={`/protected/exchange/${post.id}?from=${encodeURIComponent(returnTo)}`}
-      className="block border-b pb-5 pt-[18px] transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+      className="block border-b pb-5 pt-[18px] transition-colors hover:bg-muted focus-visible:bg-muted focus-ring"
     >
       <div className="flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-accent">
         <svg

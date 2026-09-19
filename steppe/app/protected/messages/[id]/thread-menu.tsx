@@ -37,7 +37,7 @@ export function ThreadMenu({
   const panelRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const item =
-    "block w-full px-[22px] py-[15px] text-left text-[15px] font-medium transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none";
+    "block w-full px-[22px] py-[15px] text-left text-[15px] font-medium transition-colors hover:bg-muted focus-visible:bg-muted focus-ring";
 
   // Escape closes and returns focus to the trigger; an outside click closes.
   useEffect(() => {
@@ -147,7 +147,7 @@ export function ThreadMenu({
                   maxLength={2000}
                   rows={2}
                   placeholder={dict.messages.reportThreadLabel}
-                  className="w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+                  className="field-control w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
                 />
                 <button
                   type="submit"

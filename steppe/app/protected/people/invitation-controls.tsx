@@ -74,7 +74,7 @@ export function InvitationControls({
               maxLength={320}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="min-h-11 rounded border bg-background p-2"
+              className="field-control min-h-11 rounded border bg-background p-2"
             />
           </label>
         )}
@@ -83,7 +83,7 @@ export function InvitationControls({
             <label className="flex flex-col gap-1 text-sm">
               {pc(locale, "language")}
               <select
-                className="min-h-11 border bg-background p-2"
+                className="field-control min-h-11 border bg-background p-2"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >

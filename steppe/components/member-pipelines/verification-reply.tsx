@@ -39,7 +39,7 @@ export function VerificationReply({
         value={reply}
         onChange={(e) => setReply(e.target.value)}
         aria-describedby="reply-hint"
-        className="min-h-24 rounded border bg-background p-2"
+        className="field-control min-h-24 rounded border bg-background p-2"
       />
       <p id="reply-hint" className="text-xs">
         {pc(locale, "replyHint")}

@@ -71,8 +71,8 @@ html[data-theme="dark"] .site-root .join .hero h1 em {
 }
 
 .site-root .join .formcard {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--site-card);
+  border: 1px solid var(--site-border);
   border-radius: var(--r); /* marketing-layer radius token (14px) — audit J1 */
   padding: clamp(22px, 3vw, 32px);
   box-shadow: 0 18px 42px -24px rgba(0, 0, 0, 0.45);
@@ -82,11 +82,11 @@ html[data-theme="dark"] .site-root .join .hero h1 em {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   margin-bottom: 6px;
 }
 html[data-theme="dark"] .site-root .join .formcard .fk {
-  color: var(--rust-glow);
+  color: var(--site-accent-ink);
 }
 .site-root .join .formcard h2 {
   font-size: 25px;
@@ -123,14 +123,15 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   font-size: 15px;
   padding: 12px 13px;
   border-radius: 10px;
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--site-input-border);
   background: var(--field);
   color: var(--text);
   transition: border-color 0.15s;
 }
 .site-root .join input:focus {
-  outline: none;
-  border-color: var(--rust);
+  outline: 2px solid var(--site-focus);
+  outline-offset: 3px;
+  border-color: var(--site-focus);
 }
 .site-root .join .consentrow {
   display: flex;
@@ -149,7 +150,7 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   accent-color: var(--rust);
 }
 .site-root .join .consentrow a {
-  color: var(--rust);
+  color: var(--site-accent-ink);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -166,8 +167,8 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   font-family: var(--sans);
   font-weight: 600;
   font-size: 15px;
-  color: #fbf7ee;
-  background: var(--rust);
+  color: var(--site-on-action);
+  background: var(--site-action);
   border: none;
   border-radius: 11px;
   padding: 13px;
@@ -190,7 +191,7 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
 .site-root .join .formerr {
   font-family: var(--sans);
   font-size: 13px;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   margin-top: 12px;
 }
 .site-root .join .formnote {
@@ -199,11 +200,11 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   color: var(--text-muted);
   margin-top: 14px;
   line-height: 1.65;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--site-border);
   padding-top: 13px;
 }
 .site-root .join .formnote a {
-  color: var(--rust);
+  color: var(--site-accent-ink);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -268,20 +269,20 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
   column-gap: 16px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--site-border);
 }
 .site-root .join .trow {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: subgrid;
   padding: 18px 2px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--site-border);
   align-items: baseline;
 }
 .site-root .join .trow .tn {
   font-family: var(--mono);
   font-size: 12px;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   font-weight: 500;
   white-space: nowrap;
 }
@@ -297,8 +298,8 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   line-height: 1.5;
 }
 .site-root .join .incl {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--site-card);
+  border: 1px solid var(--site-border);
   border-radius: 16px;
   padding: 24px;
 }
@@ -307,7 +308,7 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   margin-bottom: 14px;
 }
 .site-root .join .incl ul {
@@ -344,16 +345,16 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
   grid-template-columns: auto 1fr;
   gap: 24px;
   padding: 24px 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--site-border);
   align-items: start;
 }
 .site-root .join .stn:last-child {
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--site-border);
 }
 .site-root .join .stn .no {
   font-family: var(--mono);
   font-weight: 500;
-  color: var(--rust);
+  color: var(--site-accent-ink);
   font-size: 13px;
   padding-top: 4px;
   min-width: 42px;
@@ -372,7 +373,7 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
 .site-root .join .stn .stamp {
   font-family: var(--mono);
   background: rgba(168, 84, 44, 0.12);
-  color: var(--rust);
+  color: var(--site-accent-ink);
   padding: 1px 7px;
   border-radius: 5px;
   font-size: 0.85em;
@@ -390,4 +391,10 @@ html[data-theme="dark"] .site-root .join .formcard .fk {
     grid-template-columns: 1fr;
     gap: 6px;
   }
+}
+
+.site-root .join input::placeholder,
+.site-root .join textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
 }

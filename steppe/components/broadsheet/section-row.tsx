@@ -116,7 +116,7 @@ export function SectionRow({
         href={href}
         className={cn(
           rowClass,
-          "transition-colors hover:bg-muted focus-visible:bg-muted focus-visible:outline-none",
+          "transition-colors hover:bg-muted focus-visible:bg-muted focus-ring",
         )}
       >
         {body}
