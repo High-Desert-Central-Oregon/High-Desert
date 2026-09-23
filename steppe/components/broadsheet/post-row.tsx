@@ -72,6 +72,8 @@ export function PostRow({
   sub,
   authorName,
   verifiedLabel,
+  statusTag,
+  extraTags,
 }: {
   href: string;
   /** Category chip: colored square + mono label (never color alone). */
@@ -87,6 +89,8 @@ export function PostRow({
   authorName: string;
   /** Accessible name for the verified check (every author is verified). */
   verifiedLabel: string;
+  statusTag?: string;
+  extraTags?: { label: string; color: string }[];
 }) {
   return (
     <Link
@@ -97,6 +101,19 @@ export function PostRow({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-[7px] gap-y-1">
           <MarkerChip label={markerLabel} color={markerColor} size={9} />
+          {extraTags?.map((tag) => (
+            <MarkerChip
+              key={tag.label}
+              label={tag.label}
+              color={tag.color}
+              size={9}
+            />
+          ))}
+          {statusTag && (
+            <span className="rounded border px-2 py-1 text-xs text-foreground">
+              {statusTag}
+            </span>
+          )}
           <span className="min-w-0 flex-1 truncate font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             · {hood}
           </span>

@@ -33,13 +33,24 @@ export async function createEvent(
   const capacityRaw = String(formData.get("capacity") ?? "").trim();
   const neighborhoodRaw = String(formData.get("neighborhood_id") ?? "").trim();
 
+  if (title.length > 140 || body.length > 2000 || location.length > 300)
+    return { error: "too-long" };
   if (!title) return { error: "title-required" };
   // The form sends a wall-clock value; interpret it as Redmond time, not the
   // browser's or server's timezone (lib/time.ts).
   const startsAtIso = redmondWallTimeToUtcISO(startsAt);
   if (!startsAtIso) return { error: "when-required" };
 
-  const capacity = Number.parseInt(capacityRaw, 10);
+  const endsAtRaw = String(formData.get("ends_at") ?? "").trim();
+  const endsAt = endsAtRaw ? redmondWallTimeToUtcISO(endsAtRaw) : null;
+  if (endsAtRaw && (!endsAt || endsAt <= startsAtIso))
+    return { error: "when-required" };
+  const capacity = Number(capacityRaw);
+  if (
+    capacityRaw &&
+    (!Number.isInteger(capacity) || capacity < 1 || capacity > 10000)
+  )
+    return { error: "create-failed" };
   const neighborhoodId =
     neighborhoodRaw && neighborhoodRaw !== "all" ? neighborhoodRaw : null;
 
@@ -52,6 +63,7 @@ export async function createEvent(
       title,
       body: body.length > 0 ? body : null,
       starts_at: startsAtIso,
+      ends_at: endsAt,
       location: location.length > 0 ? location : null,
       capacity: Number.isInteger(capacity) && capacity > 0 ? capacity : null,
     })
@@ -85,6 +97,7 @@ export async function setRsvp(
   const status = String(formData.get("status") ?? "").trim();
   const bringing = String(formData.get("bringing") ?? "").trim();
 
+  if (bringing.length > 120) return { error: "too-long" };
   if (!eventId) return { error: "bad-event" };
   if (status !== "going" && status !== "maybe") return { error: "bad-status" };
 
@@ -102,6 +115,9 @@ export async function setRsvp(
   if (error) return { error: "rsvp-failed" };
 
   revalidatePath(`/protected/events/${eventId}`);
+  revalidatePath("/protected/exchange");
+  revalidatePath("/protected/exchange/upcoming");
+  revalidatePath("/protected/account/calendar");
   return { ok: true };
 }
 
@@ -129,5 +145,8 @@ export async function cancelRsvp(
   if (error) return { error: "cancel-failed" };
 
   revalidatePath(`/protected/events/${eventId}`);
+  revalidatePath("/protected/exchange");
+  revalidatePath("/protected/exchange/upcoming");
+  revalidatePath("/protected/account/calendar");
   return { ok: true };
 }

@@ -42,10 +42,10 @@ async function NewEventContent() {
     <div lang={locale} className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <Link
-          href="/protected/events"
+          href="/protected/exchange"
           className="text-sm text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
         >
-          {dict.events.backToEvents}
+          {dict.exchange.backToBoard}
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">
           {dict.events.newTitle}

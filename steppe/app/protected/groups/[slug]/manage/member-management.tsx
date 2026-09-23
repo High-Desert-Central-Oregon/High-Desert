@@ -90,7 +90,9 @@ export function MemberManagement({
       <section className="flex flex-col gap-3">
         <header className="flex flex-col gap-1">
           <h3 className="font-medium">{dict.groups.pendingTitle}</h3>
-          <p className="text-sm text-muted-foreground">{dict.groups.pendingIntro}</p>
+          <p className="text-sm text-muted-foreground">
+            {dict.groups.pendingIntro}
+          </p>
         </header>
         {pending.length === 0 ? (
           <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
@@ -108,7 +110,9 @@ export function MemberManagement({
                   <Button
                     size="sm"
                     disabled={isPending}
-                    onClick={() => run(() => approveMember(groupId, m.userId, slug))}
+                    onClick={() =>
+                      run(() => approveMember(groupId, m.userId, slug))
+                    }
                   >
                     {dict.groups.approve}
                   </Button>
@@ -116,7 +120,9 @@ export function MemberManagement({
                     size="sm"
                     variant="outline"
                     disabled={isPending}
-                    onClick={() => run(() => denyMember(groupId, m.userId, slug))}
+                    onClick={() =>
+                      run(() => denyMember(groupId, m.userId, slug))
+                    }
                   >
                     {dict.groups.deny}
                   </Button>
@@ -147,7 +153,9 @@ export function MemberManagement({
                   <span className="flex items-center gap-2">
                     <span className="font-medium">{m.name}</span>
                     {isMaintainer && (
-                      <Badge variant="secondary">{dict.groups.roleMaintainer}</Badge>
+                      <Badge variant="secondary">
+                        {dict.groups.roleMaintainer}
+                      </Badge>
                     )}
                   </span>
                   <div className="flex flex-wrap gap-2">
@@ -181,7 +189,8 @@ export function MemberManagement({
                         variant="destructive"
                         disabled={isPending}
                         onClick={() => {
-                          if (!window.confirm(dict.groups.confirmRemove)) return;
+                          if (!window.confirm(dict.groups.confirmRemove))
+                            return;
                           run(() => removeMember(groupId, m.userId, slug));
                         }}
                       >
@@ -201,12 +210,15 @@ export function MemberManagement({
       <section className="flex flex-col gap-3">
         <header className="flex flex-col gap-1">
           <h3 className="font-medium">{dict.groups.addTitle}</h3>
-          <p className="text-sm text-muted-foreground">{dict.groups.addIntro}</p>
+          <p className="text-sm text-muted-foreground">
+            {dict.groups.addIntro}
+          </p>
         </header>
         <label htmlFor="add-search" className="sr-only">
           {dict.groups.addSelectLabel}
         </label>
         <input
+          maxLength={200}
           id="add-search"
           type="search"
           value={query}
@@ -216,7 +228,9 @@ export function MemberManagement({
           className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
         {query.trim().length < 2 ? (
-          <p className="text-sm text-muted-foreground">{dict.groups.addSearchHint}</p>
+          <p className="text-sm text-muted-foreground">
+            {dict.groups.addSearchHint}
+          </p>
         ) : results.length === 0 ? (
           <p className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
             {searching ? dict.groups.addSearching : dict.groups.addEmpty}

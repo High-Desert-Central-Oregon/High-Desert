@@ -67,6 +67,19 @@ async function UpcomingContent({
   const sp = await searchParams;
   const isMonth = sp.v === "month";
   const supabase = await createClient();
+  const { data: myRsvpRows } = await supabase
+    .from("event_rsvps")
+    .select("event_id,status")
+    .eq("user_id", profile.id);
+  const myRsvps = new Map(
+    (myRsvpRows ?? []).map((r) => [r.event_id, r.status]),
+  );
+  const tag = (id: string) =>
+    myRsvps.has(id)
+      ? myRsvps.get(id) === "going"
+        ? dict.rsvp.tagGoing
+        : dict.rsvp.tagMaybe
+      : null;
 
   const shell = (view: React.ReactNode) => (
     <div lang={locale} className="flex flex-col gap-5">
@@ -84,6 +97,7 @@ async function UpcomingContent({
         dict={dict}
         className="-mt-1"
       />
+      <p className="text-xs text-muted-foreground">{dict.events.timeZone}</p>
       {view}
     </div>
   );
@@ -107,7 +121,7 @@ async function UpcomingContent({
     const events = (rows ?? []).filter((e) => !hidden.has(e.id));
     return shell(
       <MonthView
-        events={events}
+        events={events.map((e) => ({ ...e, tag: tag(e.id) }))}
         locale={locale}
         dict={dict}
         basePath={BASE}
@@ -162,6 +176,7 @@ async function UpcomingContent({
                     iso={e.starts_at}
                     locale={locale}
                     title={e.title}
+                    tag={tag(e.id)}
                     when={[
                       formatRedmondDateTime(e.starts_at, locale),
                       e.location,

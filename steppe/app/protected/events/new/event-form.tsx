@@ -1,5 +1,6 @@
 "use client";
 
+import { LocationInput } from "./location-input";
 import { DraftForm } from "@/components/draft-form";
 
 import { useActionState, useState } from "react";
@@ -13,6 +14,7 @@ type Neighborhood = { id: string; name: string };
 
 function errorMessage(state: EventFormState, dict: Dictionary): string | null {
   if (!state || !("error" in state)) return null;
+  if (state.error === "too-long") return dict.events.tooLong;
   if (state.error === "title-required") return dict.events.titleRequired;
   if (state.error === "when-required") return dict.events.whenRequired;
   return dict.events.errorGeneric;
@@ -43,6 +45,7 @@ export function EventForm({
   const [draft, setDraft] = useState({
     title: "",
     starts_at: "",
+    ends_at: "",
     neighborhood_id: defaultNeighborhoodId ?? "all",
     location: "",
     capacity: "",
@@ -66,8 +69,12 @@ export function EventForm({
           onChange={(e) => setDraft({ ...draft, title: e.target.value })}
           required
           maxLength={140}
+          aria-describedby="title-count"
           placeholder={dict.events.fieldTitlePlaceholder}
         />
+        <p id="title-count" className="text-xs text-muted-foreground">
+          {draft.title.length} / 140 {dict.common.characters}
+        </p>
       </div>
 
       <div className="flex flex-col gap-1.5">
@@ -84,6 +91,18 @@ export function EventForm({
         />
       </div>
 
+      <p className="text-xs text-muted-foreground">{dict.events.timeZone}</p>
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="ends_at">{dict.events.fieldEnd}</Label>
+        <Input
+          id="ends_at"
+          name="ends_at"
+          type="datetime-local"
+          value={draft.ends_at}
+          onChange={(e) => setDraft({ ...draft, ends_at: e.target.value })}
+          min={draft.starts_at || undefined}
+        />
+      </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="neighborhood">{dict.events.fieldNeighborhood}</Label>
         <select
@@ -106,13 +125,10 @@ export function EventForm({
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="location">{dict.events.fieldWhere}</Label>
-        <Input
-          id="location"
-          name="location"
+        <LocationInput
           value={draft.location}
-          onChange={(e) => setDraft({ ...draft, location: e.target.value })}
-          maxLength={200}
-          placeholder={dict.events.fieldWherePlaceholder}
+          onChange={(location) => setDraft({ ...draft, location })}
+          dict={dict}
         />
       </div>
 
@@ -125,6 +141,7 @@ export function EventForm({
           onChange={(e) => setDraft({ ...draft, capacity: e.target.value })}
           type="number"
           min={1}
+          max={10000}
           inputMode="numeric"
           placeholder={dict.events.fieldCapacityPlaceholder}
         />
@@ -139,11 +156,16 @@ export function EventForm({
           onChange={(e) => setDraft({ ...draft, body: e.target.value })}
           rows={4}
           maxLength={2000}
+          aria-describedby="body-count"
           placeholder={dict.events.fieldDetailsPlaceholder}
           className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
+        <p id="body-count" className="text-xs text-muted-foreground">
+          {draft.body.length} / 2000 {dict.common.characters}
+        </p>
       </div>
 
+      <p className="text-sm text-muted-foreground">{dict.events.noAutoRsvp}</p>
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.events.submitting : dict.events.submit}
       </Button>

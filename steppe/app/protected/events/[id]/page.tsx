@@ -109,7 +109,11 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
         >
           {dict.events.backToEvents}
         </Link>
-        <RemovedBanner targetType="event" reason={moderation.reason} dict={dict}>
+        <RemovedBanner
+          targetType="event"
+          reason={moderation.reason}
+          dict={dict}
+        >
           <AppealArea
             actionId={moderation.actionId}
             targetType="event"
@@ -186,6 +190,13 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
             {event.title}
           </h1>
           <Badge variant="secondary">{neighborhoodLabel}</Badge>
+          {myRsvp && (
+            <Badge variant="outline">
+              {myRsvp.status === "going"
+                ? dict.rsvp.tagGoing
+                : dict.rsvp.tagMaybe}
+            </Badge>
+          )}
         </div>
         {host?.display_name && (
           <p className="text-sm text-muted-foreground">
@@ -205,6 +216,12 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
             <dt className="font-medium">{dict.events.whenLabel}</dt>
             <dd className="text-muted-foreground">
               {formatRedmondDateTime(event.starts_at, locale)}
+              {event.ends_at && (
+                <span className="block">
+                  {dict.events.endLabel}:{" "}
+                  {formatRedmondDateTime(event.ends_at, locale)}
+                </span>
+              )}
             </dd>
           </div>
         </div>
@@ -294,7 +311,12 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
         startsAt={event.starts_at}
         endsAt={event.ends_at}
         location={event.location}
+        body={event.body}
+        locale={locale}
         labels={{
+          copy: dict.events.copyDetails,
+          copied: dict.events.copied,
+          copyFailed: dict.events.copyFailed,
           button: dict.events.addCal,
           note: dict.events.icsNote,
           description: dict.events.icsDescription,

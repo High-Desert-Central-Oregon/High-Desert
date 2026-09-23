@@ -126,7 +126,11 @@ export function RedeemPanel({
         <CardDescription>{dict.invite.subtitle}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-6"
+          noValidate
+        >
           {/* The token field is shown even when it arrived in the URL, so a
               mistyped or truncated code is fixable in place rather than by
               editing the address bar. Read-and-correct beats a dead end. */}
@@ -173,6 +177,7 @@ export function RedeemPanel({
           <div className="hidden" aria-hidden="true">
             <label htmlFor="invite-company">Company</label>
             <input
+              maxLength={200}
               id="invite-company"
               name="company"
               type="text"
@@ -192,10 +197,15 @@ export function RedeemPanel({
             className="w-full"
             disabled={stage === "submitting"}
           >
-            {stage === "submitting" ? dict.invite.submitting : dict.invite.submit}
+            {stage === "submitting"
+              ? dict.invite.submitting
+              : dict.invite.submit}
           </Button>
 
-          <p id="invite-privacy" className="text-center text-xs text-muted-foreground">
+          <p
+            id="invite-privacy"
+            className="text-center text-xs text-muted-foreground"
+          >
             {dict.invite.privacyNote}
           </p>
         </form>

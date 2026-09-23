@@ -7,9 +7,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 // desync finding). Two kinds, both dependency-free (no RTL/jsdom in this repo):
 //   (a) a REAL render of the control at each confirmed value, asserting the chip
 //       highlight, the radio `checked`, and the helper text all AGREE; plus a
-//       source-structural assertion that all three derive from the single
-//       `shown` source (the interactive settled-error transition needs RTL the
-//       repo doesn't have — this pins the "can never disagree" invariant instead);
+//       source guard for the shared draft chip state and server-confirmed privacy
+//       status (interactive Save and failure paths use the browser fixture);
 //   (b) a static guard that the highlight is React-driven, never CSS :checked.
 //
 // Importing the component pulls its server-action import; mock ONLY that so no
@@ -28,9 +27,8 @@ const SRC = readFileSync(
  *  the static HTML (initial render == the SETTLED value: on success field.visibility
  *  is the new value; on not-persisted the effect reconciles selected back to it). */
 async function render(visibility: "hidden" | "members"): Promise<string> {
-  const { ProfileForm } = await import(
-    "@/app/protected/account/profile/profile-form"
-  );
+  const { ProfileForm } =
+    await import("@/app/protected/account/profile/profile-form");
   const { en } = await import("@/lib/i18n/dictionaries/en");
   return renderToStaticMarkup(
     createElement(ProfileForm as never, {
@@ -85,20 +83,21 @@ describe("profile visibility — render invariant", () => {
       // helper text: matches the same value
       const en = (await import("@/lib/i18n/dictionaries/en")).en;
       expect(statusText(html)).toBe(
-        v === "members" ? en.account.visStateMembers : en.account.visStateHidden,
+        v === "members"
+          ? en.account.visStateMembers
+          : en.account.visStateHidden,
       );
     });
   }
 
-  it("(a) invariant: chip, checked, and helper text all derive from the single `shown` source, and `selected` is reconciled on settle", () => {
-    // The chip highlight, the radio `checked`, and the helper text must ALL read
-    // from `shown` — one source, so no render can show them disagreeing. (A real
-    // interactive drive of the settled-error state needs RTL the repo lacks; this
-    // encodes the invariant that made that bug possible: chip bound to `selected`
-    // while text bound to `shown`.)
+  it("draft chip and checked agree; privacy status uses the confirmed value and drafts reconcile after saving", () => {
+    // The draft radio and highlight agree. Until Save completes, the status
+    // continues to describe the saved privacy setting, never an unsaved pick.
     expect(SRC).toMatch(/shown === o\.value \? "border-accent/); // highlight ← shown
     expect(SRC).toMatch(/checked=\{shown === o\.value\}/); //          checked   ← shown
-    expect(SRC).toMatch(/shown === "members" \? a\.visStateMembers/); // text    ← shown
+    expect(SRC).toMatch(
+      /field\.visibility === "members"\s+\? a\.visStateMembers/,
+    ); // status ← saved value
     // and no display element may bind to the raw optimistic `selected`
     expect(SRC).not.toMatch(/checked=\{selected === o\.value\}/);
     // the reconcile effect clears the stale optimistic pick after a settled action

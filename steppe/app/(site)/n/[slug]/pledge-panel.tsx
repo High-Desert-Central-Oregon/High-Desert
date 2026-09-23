@@ -116,7 +116,11 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
 
           <div className="pledge-body">
             <p className="pledge-eyebrow">
-              {isOpen ? t("stateOpen") : reached ? t("stateReached") : t("stateForming")}
+              {isOpen
+                ? t("stateOpen")
+                : reached
+                  ? t("stateReached")
+                  : t("stateForming")}
             </p>
 
             <h1 className="pledge-title">{name}</h1>
@@ -153,7 +157,10 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
                   </p>
                   <p className="pledge-done-h">
                     {left > 0
-                      ? t("doneRemaining", { remaining: left, neighborhood: name })
+                      ? t("doneRemaining", {
+                          remaining: left,
+                          neighborhood: name,
+                        })
                       : t("doneReached", { neighborhood: name })}
                   </p>
                   <p className="pledge-done-p">{t("doneThreeDoors")}</p>
@@ -182,6 +189,7 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
                     </label>
                     <div className="pledge-input-row">
                       <input
+                        maxLength={320}
                         ref={emailRef}
                         id="pledge-email"
                         name="email"
@@ -206,6 +214,7 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
                   <div className="pledge-hp" aria-hidden="true">
                     <label htmlFor="pledge-company">Company</label>
                     <input
+                      maxLength={200}
                       id="pledge-company"
                       name="company"
                       type="text"

@@ -15,6 +15,7 @@ export function DateTileRow({
   locale,
   title,
   when,
+  tag,
 }: {
   href: string;
   /** The occurrence's start (timestamptz ISO). */
@@ -23,6 +24,7 @@ export function DateTileRow({
   title: string;
   /** Mono when-line (time · place). */
   when: string;
+  tag?: string | null;
 }) {
   const d = new Date(iso);
   const mon = new Intl.DateTimeFormat(locale, {
@@ -54,6 +56,11 @@ export function DateTileRow({
         <span className="mt-1 block font-mono text-[9px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
           {when}
         </span>
+        {tag && (
+          <span className="mt-1 inline-block rounded border px-2 py-1 text-xs">
+            {tag}
+          </span>
+        )}
       </span>
       <RustChevron size={14} />
     </Link>

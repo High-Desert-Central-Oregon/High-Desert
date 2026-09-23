@@ -227,14 +227,9 @@ async function MyCalendarContent({
     else months.push({ month: m, items: [e] });
   }
 
-  // The when-line: time · place, plus the honest "· Maybe" tag on rows the
-  // member answered maybe (spec §1.1; the mono line renders uppercase).
+  // Time and place stay together; personal RSVP status gets a separate tag.
   const whenLine = (e: CalendarEvent) =>
-    [
-      formatRedmondDateTime(e.starts_at, locale),
-      e.location,
-      rsvpStatus.get(e.id) === "maybe" ? dict.calendar.maybeTag : null,
-    ]
+    [formatRedmondDateTime(e.starts_at, locale), e.location]
       .filter(Boolean)
       .join(" · ");
 
@@ -246,6 +241,7 @@ async function MyCalendarContent({
         voice={dict.calendar.voice}
         flush
       />
+      <p className="text-xs text-muted-foreground">{dict.events.timeZone}</p>
       <ViewToggle
         active={isMonth ? "month" : "agenda"}
         agendaHref={BASE}
@@ -259,7 +255,11 @@ async function MyCalendarContent({
           events={events.map((e) => ({
             ...e,
             tag:
-              rsvpStatus.get(e.id) === "maybe" ? dict.calendar.maybeTag : null,
+              rsvpStatus.get(e.id) === "going"
+                ? dict.rsvp.tagGoing
+                : rsvpStatus.get(e.id) === "maybe"
+                  ? dict.rsvp.tagMaybe
+                  : undefined,
           }))}
           locale={locale}
           dict={dict}
@@ -287,6 +287,13 @@ async function MyCalendarContent({
                       locale={locale}
                       title={e.title}
                       when={whenLine(e)}
+                      tag={
+                        rsvpStatus.get(e.id) === "going"
+                          ? dict.rsvp.tagGoing
+                          : rsvpStatus.get(e.id) === "maybe"
+                            ? dict.rsvp.tagMaybe
+                            : undefined
+                      }
                     />
                   </li>
                 ))}
