@@ -6,6 +6,7 @@ import { ProfileForm } from "../../../app/protected/account/profile/profile-form
 import { RsvpForm } from "../../../app/protected/events/[id]/rsvp-form";
 import { EventForm } from "../../../app/protected/events/new/event-form";
 import { PostForm } from "../../../app/protected/exchange/new/post-form";
+import { DeleteEvent } from "../../../app/protected/events/[id]/delete-event";
 import { DeletePost } from "../../../app/protected/exchange/[id]/delete-post";
 import { AddToCalendar } from "../../../app/protected/events/[id]/add-to-calendar";
 import { en } from "../../../lib/i18n/dictionaries/en";
@@ -52,11 +53,17 @@ function App() {
       <label>
         Screen{" "}
         <select value={screen} onChange={(e) => setScreen(e.target.value)}>
-          {["events", "profile", "rsvp", "posts", "edit", "calendar"].map(
-            (s) => (
-              <option key={s}>{s}</option>
-            ),
-          )}
+          {[
+            "events",
+            "edit-event",
+            "profile",
+            "rsvp",
+            "posts",
+            "edit",
+            "calendar",
+          ].map((s) => (
+            <option key={s}>{s}</option>
+          ))}
         </select>
       </label>{" "}
       <label>
@@ -118,6 +125,26 @@ function App() {
               }}
             />
             <DeletePost id="sample" dict={dict} />
+          </>
+        )}
+        {screen === "edit-event" && (
+          <>
+            <EventForm
+              dict={dict}
+              neighborhoods={[]}
+              defaultNeighborhoodId={null}
+              initial={{
+                id: "sample",
+                title: "Park gathering",
+                body: "Bring a blanket.",
+                starts_at: "2026-07-16T01:00:00Z",
+                ends_at: "2026-07-16T02:00:00Z",
+                location: "Sample Park, 12 Main Street",
+                capacity: 20,
+                neighborhood_id: null,
+              }}
+            />
+            <DeleteEvent id="sample" dict={dict} />
           </>
         )}
         {screen === "calendar" && (

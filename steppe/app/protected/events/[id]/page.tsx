@@ -6,6 +6,7 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { VerifiedGate } from "@/components/verified-gate";
 import { RsvpForm } from "./rsvp-form";
+import { DeleteEvent } from "./delete-event";
 import { AddToCalendar } from "./add-to-calendar";
 import { RemovedBanner } from "../../moderation/removed-banner";
 import { ModerationControl } from "../../moderation/moderation-control";
@@ -62,8 +63,15 @@ export const metadata = {
   title: "Event · Steppe",
 };
 
-async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
+async function EventDetail({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
+}) {
   const { id } = await params;
+  const { saved } = await searchParams;
 
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
@@ -93,6 +101,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
 
   if (!event) notFound();
 
+  const isOwner = event.creator_id === profile.id;
   const isMod = profile.role === "moderator" || profile.role === "admin";
 
   // If a moderator removed this event, show the legible removed state instead of
@@ -100,7 +109,6 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   // the affected member can appeal (Part 3), and a moderator can restore it.
   const moderation = await getContentModeration(supabase, "event", event.id);
   if (moderation?.hidden) {
-    const isOwner = event.creator_id === profile.id;
     return (
       <div lang={locale} className="flex flex-col gap-6">
         <Link
@@ -122,6 +130,7 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
             dict={dict}
           />
         </RemovedBanner>
+        {isOwner && <DeleteEvent id={event.id} dict={dict} />}
         {isMod && (
           <ModerationControl
             targetType="event"
@@ -204,6 +213,22 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           </p>
         )}
       </div>
+
+      {isOwner && (
+        <section
+          aria-label={dict.events.manage}
+          className="flex flex-col items-start gap-3"
+        >
+          {saved === "1" && <p role="status">{dict.events.saved}</p>}
+          <Link
+            href={`/protected/events/${event.id}/edit`}
+            className="min-h-11 inline-flex items-center underline focus-ring"
+          >
+            {dict.events.edit}
+          </Link>
+          <DeleteEvent id={event.id} dict={dict} />
+        </section>
+      )}
 
       {/* Key facts */}
       <dl className="flex flex-col gap-3 rounded-lg border bg-card p-4 text-sm">
@@ -339,12 +364,14 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
 
 export default function EventDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
 }) {
   return (
     <Suspense fallback={<PageSkeleton />}>
-      <EventDetail params={params} />
+      <EventDetail params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
