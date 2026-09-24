@@ -317,6 +317,8 @@ async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
           copy: dict.events.copyDetails,
           copied: dict.events.copied,
           copyFailed: dict.events.copyFailed,
+          copyField: dict.events.copyField,
+          fieldCopied: dict.events.fieldCopied,
           button: dict.events.addCal,
           note: dict.events.icsNote,
           description: dict.events.icsDescription,

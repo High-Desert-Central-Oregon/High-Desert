@@ -326,6 +326,8 @@ export const es: Dictionary = {
       "La búsqueda pública usa Photon; solo se comparte el texto de búsqueda.",
     timeZone:
       "Hora del Pacífico (Redmond, Oregón). El horario de verano se ajusta automáticamente.",
+    copyField: "Copiar",
+    fieldCopied: "Copiado",
     copyDetails: "Copiar detalles del evento",
     copied: "Detalles del evento copiados.",
     copyFailed: "Selecciona y copia el texto de abajo.",
