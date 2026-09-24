@@ -32,11 +32,13 @@ export async function updateDisplayName(
   if (name.length > MAX_NAME) return { error: "name-too-long" };
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
     .update({ display_name: name })
-    .eq("id", user.id);
-  if (error) return { error: "save-failed" };
+    .eq("id", user.id)
+    .select("display_name")
+    .single();
+  if (error || data?.display_name !== name) return { error: "save-failed" };
 
   revalidatePath("/protected/account");
   revalidatePath("/protected/account/profile");
@@ -88,10 +90,14 @@ export async function setFieldVisibility(
     // touched no row: the write silently did not persist. Distinct code so the
     // separate auth-context track can key on it; genuine DB faults stay
     // "save-failed".
-    return { error: error.code === "PGRST116" ? "not-persisted" : "save-failed" };
+    return {
+      error: error.code === "PGRST116" ? "not-persisted" : "save-failed",
+    };
   }
   // Belt-and-suspenders: a row came back but the value isn't what we asked for.
-  if ((data as unknown as Record<string, string> | null)?.[field] !== visibility) {
+  if (
+    (data as unknown as Record<string, string> | null)?.[field] !== visibility
+  ) {
     return { error: "not-persisted" };
   }
 

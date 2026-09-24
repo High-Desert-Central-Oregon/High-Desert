@@ -336,11 +336,8 @@ export function MonthView({
                   iso={e.starts_at}
                   locale={locale}
                   title={e.title}
-                  when={[
-                    formatRedmondDateTime(e.starts_at, locale),
-                    e.location,
-                    e.tag,
-                  ]
+                  tag={e.tag}
+                  when={[formatRedmondDateTime(e.starts_at, locale), e.location]
                     .filter(Boolean)
                     .join(" · ")}
                 />

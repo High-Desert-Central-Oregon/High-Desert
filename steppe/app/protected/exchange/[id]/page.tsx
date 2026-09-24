@@ -1,3 +1,4 @@
+import { DeletePost } from "./delete-post";
 import { exchangeReturnPath } from "@/lib/member-pipelines/shared";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -31,6 +32,7 @@ type PostRowFull = {
   id: string;
   author_id: string;
   category: PostCategory;
+  tags: PostCategory[];
   title: string;
   body: string;
   neighborhood_id: string | null;
@@ -40,6 +42,7 @@ type PostRowFull = {
 
 type SearchParams = {
   from?: string;
+  saved?: string;
   reported?: string;
   reportErr?: string;
   msgErr?: string;
@@ -75,7 +78,7 @@ async function PostDetailContent({
   const { data: post } = await supabase
     .from("posts")
     .select(
-      "id, author_id, category, title, body, neighborhood_id, created_at, edited_at",
+      "id, author_id, category, tags, title, body, neighborhood_id, created_at, edited_at",
     )
     .eq("id", id)
     .maybeSingle<PostRowFull>();
@@ -105,6 +108,7 @@ async function PostDetailContent({
             dict={dict}
           />
         </RemovedBanner>
+        {isOwner && <DeletePost id={post.id} dict={dict} />}
         {isMod && (
           <ModerationControl
             targetType="post"
@@ -166,10 +170,13 @@ async function PostDetailContent({
       <article className="flex flex-col">
         {/* Marker kicker: category chip + quiet hood · time (bundle :770-773). */}
         <div className="flex flex-wrap items-center gap-x-[7px] gap-y-1">
-          <MarkerChip
-            label={dict.exchange.cats[post.category]}
-            color={postCategoryMarker(post.category)}
-          />
+          {(post.tags.length ? post.tags : [post.category]).map((tag) => (
+            <MarkerChip
+              key={tag}
+              label={dict.exchange.cats[tag]}
+              color={postCategoryMarker(tag)}
+            />
+          ))}
           <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             · {hood} · {formatRedmondDateTime(post.created_at, locale)}
           </span>
@@ -184,6 +191,22 @@ async function PostDetailContent({
         </p>
       </article>
 
+      {sp.saved === "1" && (
+        <p role="status" className="text-sm text-success">
+          {dict.exchange.saved}
+        </p>
+      )}
+      {isOwner && (
+        <div className="flex flex-wrap items-start gap-4">
+          <Link
+            className="min-h-11 rounded border px-4 py-2 focus-ring"
+            href={`/protected/exchange/${post.id}/edit`}
+          >
+            {dict.exchange.edit}
+          </Link>
+          <DeletePost id={post.id} dict={dict} />
+        </div>
+      )}
       {/* Report + message confirmations/errors — identical every time. */}
       {sp.reported === "1" && (
         <p role="status" className="text-sm font-medium text-foreground">

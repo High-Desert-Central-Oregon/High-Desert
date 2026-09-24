@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { parsePostTags } from "@/lib/post-tags";
 import { getMyProfile } from "@/lib/auth";
 
 /**
@@ -37,11 +38,15 @@ export async function createPost(
 
   const title = String(formData.get("title") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
-  const rawCategory = String(formData.get("category") ?? "");
+  const tags = parsePostTags(formData.getAll("category"));
+  const rawCategory = tags?.[0] ?? "";
   const rawNeighborhood = String(formData.get("neighborhood_id") ?? "").trim();
 
-  if (title.length === 0 || title.length > 160) return { error: "title-required" };
-  if (body.length === 0 || body.length > 4000) return { error: "body-required" };
+  if (title.length === 0 || title.length > 160)
+    return { error: "title-required" };
+  if (body.length === 0 || body.length > 4000)
+    return { error: "body-required" };
+  if (!tags) return { error: "generic" };
   if (!(WRITE_CATS as readonly string[]).includes(rawCategory))
     return { error: "generic" };
   const category = rawCategory as WriteCat;
@@ -61,6 +66,7 @@ export async function createPost(
     group_id: everyone.id,
     author_id: profile.id,
     category,
+    tags,
     title,
     body,
     neighborhood_id: neighborhoodId,
@@ -70,4 +76,62 @@ export async function createPost(
   revalidatePath("/protected/exchange");
   // The board confirms with the bundle's own words: "Posted · newest first".
   redirect("/protected/exchange?posted=1");
+}
+
+/** RLS and the explicit author predicate both scope mutations to the caller. */
+export async function updatePost(
+  id: string,
+  _prev: PostFormState,
+  fd: FormData,
+): Promise<PostFormState> {
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
+  const title = String(fd.get("title") ?? "").trim();
+  const body = String(fd.get("body") ?? "").trim();
+  const tags = parsePostTags(fd.getAll("category"));
+  if (!title || title.length > 160) return { error: "title-required" };
+  if (!body || body.length > 4000) return { error: "body-required" };
+  if (!tags || !profile.verified) return { error: "generic" };
+  const db = await createClient();
+  const { data, error } = await db
+    .from("posts")
+    .update({
+      title,
+      body,
+      tags,
+      category: tags[0],
+      neighborhood_id: String(fd.get("neighborhood_id") ?? "").trim() || null,
+    })
+    .eq("id", id)
+    .eq("author_id", profile.id)
+    .select("id")
+    .single();
+  if (error || !data) return { error: "generic" };
+  revalidatePath("/protected/exchange");
+  revalidatePath(`/protected/exchange/${id}`);
+  revalidatePath("/protected/groups", "layout");
+  redirect(`/protected/exchange/${id}?saved=1`);
+}
+
+export async function deletePost(
+  id: string,
+  _prev: PostFormState,
+  fd: FormData,
+): Promise<PostFormState> {
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
+  if (fd.get("confirm") !== "delete") return { error: "generic" };
+  const db = await createClient();
+  const { data, error } = await db
+    .from("posts")
+    .delete()
+    .eq("id", id)
+    .eq("author_id", profile.id)
+    .select("id")
+    .single();
+  if (error || !data) return { error: "generic" };
+  revalidatePath("/protected/exchange");
+  revalidatePath(`/protected/exchange/${id}`);
+  revalidatePath("/protected/groups", "layout");
+  redirect("/protected/exchange?deleted=1");
 }

@@ -163,6 +163,7 @@ export function JoinForm() {
         <div className="frow">
           <label htmlFor="em">{t("labelEmail")}</label>
           <input
+            maxLength={320}
             id="em"
             name="email"
             type="email"
@@ -176,6 +177,7 @@ export function JoinForm() {
             {t("labelName")} <span className="opt">{t("optional")}</span>
           </label>
           <input
+            maxLength={120}
             id="nm"
             name="name"
             type="text"
@@ -216,6 +218,7 @@ export function JoinForm() {
         <div className="hp" aria-hidden="true">
           <label htmlFor="company">Company</label>
           <input
+            maxLength={200}
             id="company"
             name="company"
             type="text"

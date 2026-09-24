@@ -67,8 +67,20 @@ export function ContactForm() {
       <div className="formcard" id="contact-card">
         <div className="success" role="status">
           <div className="ck">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M5 12l4 4 10-10" stroke="#6E8A5B" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12l4 4 10-10"
+                stroke="#6E8A5B"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
           <h2>{t("successH")}</h2>
@@ -87,6 +99,7 @@ export function ContactForm() {
 
         {/* Honeypot — real people leave this empty. */}
         <input
+          maxLength={200}
           className="hp"
           type="text"
           name="company"
@@ -97,11 +110,27 @@ export function ContactForm() {
 
         <div className="frow">
           <label htmlFor="nm">{t("labelName")}</label>
-          <input id="nm" name="name" type="text" required placeholder={t("phName")} autoComplete="name" />
+          <input
+            maxLength={120}
+            id="nm"
+            name="name"
+            type="text"
+            required
+            placeholder={t("phName")}
+            autoComplete="name"
+          />
         </div>
         <div className="frow">
           <label htmlFor="em">{t("labelEmail")}</label>
-          <input id="em" name="email" type="email" required placeholder="you@example.com" autoComplete="email" />
+          <input
+            maxLength={320}
+            id="em"
+            name="email"
+            type="email"
+            required
+            placeholder="you@example.com"
+            autoComplete="email"
+          />
         </div>
         <div className="frow">
           <label htmlFor="tp">{t("labelTopic")}</label>
@@ -115,13 +144,35 @@ export function ContactForm() {
         </div>
         <div className="frow">
           <label htmlFor="msg">{t("labelMessage")}</label>
-          <textarea id="msg" name="message" required placeholder={t("phMessage")} />
+          <textarea
+            maxLength={5000}
+            id="msg"
+            name="message"
+            required
+            placeholder={t("phMessage")}
+          />
         </div>
 
-        <button className="submitb" type="submit" disabled={status === "submitting"}>
+        <button
+          className="submitb"
+          type="submit"
+          disabled={status === "submitting"}
+        >
           {status === "submitting" ? t("submitting") : t("submit")}
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 8h9M8.5 4l4 4-4 4"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
 

@@ -34,7 +34,8 @@ function redmondOffsetMs(utcMs: number): number {
   }).formatToParts(new Date(utcMs));
 
   const map: Record<string, number> = {};
-  for (const p of parts) if (p.type !== "literal") map[p.type] = Number(p.value);
+  for (const p of parts)
+    if (p.type !== "literal") map[p.type] = Number(p.value);
   // Some ICU builds render midnight as hour "24"; normalize to 0.
   const hour = map.hour === 24 ? 0 : map.hour;
   const asIfUtc = Date.UTC(
@@ -69,7 +70,9 @@ export function redmondWallTimeToUtcISO(wall: string): string | null {
 
   // Reject out-of-range and rolled-over dates (e.g. Feb 31 → Mar 3).
   if (hour > 23 || minute > 59 || second > 59) return null;
-  const rollCheck = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+  const rollCheck = new Date(
+    Date.UTC(year, month - 1, day, hour, minute, second),
+  );
   if (
     rollCheck.getUTCFullYear() !== year ||
     rollCheck.getUTCMonth() !== month - 1 ||
@@ -84,6 +87,9 @@ export function redmondWallTimeToUtcISO(wall: string): string | null {
   const refined = guess - redmondOffsetMs(utc);
   if (refined !== utc) utc = refined;
 
+  // Reject the nonexistent hour during the spring-forward transition instead
+  // of silently shifting a neighbor's event. Fall-back uses the earlier instant.
+  if (utc + redmondOffsetMs(utc) !== guess) return null;
   return new Date(utc).toISOString();
 }
 

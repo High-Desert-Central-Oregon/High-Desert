@@ -1,7 +1,8 @@
 "use client";
 
+import { useActionState, useState } from "react";
+import { DraftForm } from "@/components/draft-form";
 import { recordDiagnostic } from "@/lib/bug-reports/client";
-import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,12 +10,6 @@ import { setRsvp, cancelRsvp, type RsvpState } from "../actions";
 import type { RsvpStatus } from "@/lib/types/db";
 import type { Dictionary } from "@/lib/i18n";
 
-/**
- * RSVP control for an event. A verified member says going/maybe and (optionally)
- * what they're bringing — one row per member, so submitting again just updates
- * it. Withdrawing is a one-click sibling form. Light coordination only; there is
- * no comment field (P12).
- */
 export function RsvpForm({
   eventId,
   initialStatus,
@@ -26,108 +21,99 @@ export function RsvpForm({
   initialBringing: string | null;
   dict: Dictionary;
 }) {
-  const [saveState, save, saving] = useActionState<RsvpState, FormData>(
-    async (previous, formData) => {
-      try {
-        const result = await setRsvp(previous, formData);
-        recordDiagnostic(
-          result && "ok" in result ? "rsvp.saved" : "rsvp.failed",
-        );
-        return result;
-      } catch (error) {
-        recordDiagnostic("rsvp.failed");
-        throw error;
-      }
+  const [choice, setChoice] = useState(initialStatus ?? "");
+  const [bringing, setBringing] = useState(initialBringing ?? "");
+  const [notice, setNotice] = useState<"saved" | "cancelled" | null>(null);
+  // One action queue means old save errors cannot mask a later cancellation.
+  const [state, action, pending] = useActionState<RsvpState, FormData>(
+    async (previous, fd) => {
+      const cancelling = fd.get("operation") === "cancel";
+      const result = await (cancelling ? cancelRsvp : setRsvp)(previous, fd);
+      if (result && "ok" in result) {
+        setNotice(cancelling ? "cancelled" : "saved");
+        if (cancelling) {
+          setChoice("");
+          setBringing("");
+        }
+      } else setNotice(null);
+      recordDiagnostic(result && "ok" in result ? "rsvp.saved" : "rsvp.failed");
+      return result;
     },
     null,
   );
-  const [cancelState, cancel, cancelling] = useActionState<RsvpState, FormData>(
-    cancelRsvp,
-    null,
-  );
-
   const hasRsvp = initialStatus !== null;
-  const error =
-    (saveState && "error" in saveState) ||
-    (cancelState && "error" in cancelState)
-      ? dict.rsvp.errorGeneric
-      : null;
-  const saved = saveState && "ok" in saveState;
-
   return (
     <section className="flex flex-col gap-4 rounded-lg border bg-card p-4">
       <h2 className="font-medium">{dict.rsvp.formHeading}</h2>
-
-      {error && (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
-          {error}
+      {!hasRsvp && !notice && (
+        <p className="text-sm text-muted-foreground">{dict.rsvp.notSaved}</p>
+      )}
+      {state && "error" in state && (
+        <p role="alert" className="text-sm text-destructive">
+          {dict.rsvp.errorGeneric}
         </p>
       )}
-      {saved && !error && (
+      {notice && (
         <p role="status" className="text-sm text-success">
-          {dict.rsvp.saved}
+          {dict.rsvp[notice]}
         </p>
       )}
-
-      <form action={save} className="flex flex-col gap-4">
+      <DraftForm action={action} className="flex flex-col gap-4">
         <input type="hidden" name="event_id" value={eventId} />
-
-        <fieldset className="flex flex-col gap-2">
+        <fieldset disabled={pending} className="flex flex-col gap-2">
           <legend className="sr-only">{dict.rsvp.formHeading}</legend>
           <div className="flex flex-wrap gap-4">
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="status"
-                value="going"
-                defaultChecked={initialStatus !== "maybe"}
-                className="accent-primary"
-              />
-              {dict.rsvp.statusGoing}
-            </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm">
-              <input
-                type="radio"
-                name="status"
-                value="maybe"
-                defaultChecked={initialStatus === "maybe"}
-                className="accent-primary"
-              />
-              {dict.rsvp.statusMaybe}
-            </label>
+            {(["going", "maybe"] as const).map((status) => (
+              <label
+                key={status}
+                className="flex min-h-11 cursor-pointer items-center gap-2 text-sm"
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  value={status}
+                  required
+                  checked={choice === status}
+                  onChange={() => {
+                    setChoice(status);
+                    setNotice(null);
+                  }}
+                  className="accent-primary"
+                />
+                {status === "going"
+                  ? dict.rsvp.statusGoing
+                  : dict.rsvp.statusMaybe}
+              </label>
+            ))}
           </div>
-        </fieldset>
-
-        <div className="flex flex-col gap-1.5">
           <Label htmlFor="bringing">{dict.rsvp.bringingLabel}</Label>
           <Input
             id="bringing"
             name="bringing"
             maxLength={120}
-            defaultValue={initialBringing ?? ""}
+            value={bringing}
+            onChange={(e) => {
+              setBringing(e.target.value);
+              setNotice(null);
+            }}
             placeholder={dict.rsvp.bringingPlaceholder}
           />
-        </div>
-
-        <Button type="submit" disabled={saving} className="self-start">
-          {saving
+        </fieldset>
+        <Button type="submit" disabled={pending} className="self-start">
+          {pending
             ? dict.rsvp.saving
             : hasRsvp
               ? dict.rsvp.update
               : dict.rsvp.submit}
         </Button>
-      </form>
-
+      </DraftForm>
       {hasRsvp && (
-        <form action={cancel}>
+        <form action={action}>
           <input type="hidden" name="event_id" value={eventId} />
-          <button
-            type="submit"
-            disabled={cancelling}
-            className="text-sm text-muted-foreground underline-offset-2 hover:text-red-700 dark:hover:text-red-400 hover:underline disabled:opacity-50"
-          >
-            {cancelling ? dict.rsvp.cancelling : dict.rsvp.cancel}
-          </button>
+          <input type="hidden" name="operation" value="cancel" />
+          <Button type="submit" variant="outline" disabled={pending}>
+            {pending ? dict.rsvp.cancelling : dict.rsvp.cancel}
+          </Button>
         </form>
       )}
     </section>

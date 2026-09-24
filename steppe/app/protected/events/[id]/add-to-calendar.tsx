@@ -1,26 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { calendarDetails } from "@/lib/calendar-details";
 import { buildIcs } from "@/lib/ics";
 
-/**
- * Add to calendar — bundle behavior (inner.html :936-941, addToCalendar
- * :1712-1718): a hairline button that downloads a client-built .ics (zero
- * server state, works offline). The copy-details panel is the SECONDARY
- * fallback: nothing renders until the button is tapped; after a successful
- * download it appears collapsed (a details/summary the member can expand to
- * copy), and it auto-expands only when the download itself failed. DTEND is
- * emitted only when the event has an end (events.ends_at, 0020) — otherwise
- * calendar apps treat it as a point/default-length event; nothing is
- * invented. Document assembly (RFC 5545 escaping + line folding) lives in
- * lib/ics.ts, shared with the subscription-feed route.
- */
+/** Downloads an offline-compatible ICS file and offers copyable, Pacific-time
+ * prose. If clipboard/download access fails, the text remains selectable. */
 export function AddToCalendar({
   eventId,
   title,
   startsAt,
   endsAt,
   location,
+  body,
+  locale,
   labels,
 }: {
   eventId: string;
@@ -29,10 +22,24 @@ export function AddToCalendar({
   /** DTEND when the event has an end (events.ends_at, 0020). */
   endsAt?: string | null;
   location: string | null;
-  labels: { button: string; note: string; description: string };
+  body?: string | null;
+  locale: string;
+  labels: {
+    button: string;
+    note: string;
+    description: string;
+    copy: string;
+    copied: string;
+    copyFailed: string;
+  };
 }) {
   const [state, setState] = useState<"idle" | "done" | "failed">("idle");
 
+  const [copyStatus, setCopyStatus] = useState("");
+  const details = calendarDetails(
+    { title, startsAt, endsAt, location, body },
+    locale,
+  );
   const ics = buildIcs({
     prodId: "-//Steppe//Exchange//EN",
     events: [
@@ -43,7 +50,7 @@ export function AddToCalendar({
         dtend: endsAt,
         summary: title,
         location,
-        description: labels.description,
+        description: [body, labels.description].filter(Boolean).join("\n\n"),
       },
     ],
   });
@@ -92,20 +99,38 @@ export function AddToCalendar({
         </svg>
         {labels.button}
       </button>
-      {state !== "idle" && (
-        <details
-          role="status"
-          open={state === "failed"}
-          className="mt-[11px] border bg-muted"
-        >
-          <summary className="cursor-pointer p-[13px] font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-            {labels.note}
-          </summary>
-          <pre className="select-text whitespace-pre-wrap px-[13px] pb-[13px] font-mono text-[11.5px] leading-[1.7] text-foreground">
-            {ics}
-          </pre>
-        </details>
+      <button
+        type="button"
+        className="mt-3 min-h-11 self-start underline focus-ring"
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(details);
+            setCopyStatus(labels.copied);
+          } catch {
+            setCopyStatus(labels.copyFailed);
+            setState("failed");
+          }
+        }}
+      >
+        {labels.copy}
+      </button>
+      {copyStatus && (
+        <p role="status" className="text-sm">
+          {copyStatus}
+        </p>
       )}
+      <details
+        role="status"
+        open={state === "failed"}
+        className="mt-[11px] border bg-muted"
+      >
+        <summary className="cursor-pointer p-[13px] font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+          {labels.note}
+        </summary>
+        <pre className="select-text whitespace-pre-wrap px-[13px] pb-[13px] font-mono text-[11.5px] leading-[1.7] text-foreground">
+          {details}
+        </pre>
+      </details>
     </div>
   );
 }

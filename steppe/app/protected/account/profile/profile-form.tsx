@@ -1,5 +1,6 @@
 "use client";
 
+import { DraftForm } from "@/components/draft-form";
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,8 +71,17 @@ function NameEditor({
   displayName: string;
   a: AccountDict;
 }) {
+  const [name, setName] = useState(displayName);
+  const [dirty, setDirty] = useState(false);
   const [state, action, pending] = useActionState<ProfileState, FormData>(
-    updateDisplayName,
+    async (previous, fd) => {
+      const result = await updateDisplayName(previous, fd);
+      if (result && "saved" in result) {
+        setName(String(fd.get("display_name") ?? "").trim());
+        setDirty(false);
+      }
+      return result;
+    },
     null,
   );
   const error =
@@ -84,12 +94,17 @@ function NameEditor({
       : null;
 
   return (
-    <form action={action} className="flex flex-col gap-2">
+    <DraftForm action={action} className="flex flex-col gap-2">
       <Label htmlFor="display_name">{a.nameLabel}</Label>
       <Input
         id="display_name"
         name="display_name"
-        defaultValue={displayName}
+        value={name}
+        onChange={(e) => {
+          setName(e.target.value);
+          setDirty(true);
+        }}
+        disabled={pending}
         maxLength={80}
         required
         aria-describedby="name-help"
@@ -98,10 +113,10 @@ function NameEditor({
         {a.nameHelp}
       </p>
       <div className="flex items-center gap-3">
-        <Button type="submit" size="sm" disabled={pending}>
+        <Button type="submit" size="sm" disabled={pending || !dirty}>
           {a.nameSave}
         </Button>
-        {state && "saved" in state && (
+        {state && "saved" in state && !dirty && (
           <span role="status" className="text-xs text-muted-foreground">
             {a.nameSaved}
           </span>
@@ -112,7 +127,7 @@ function NameEditor({
           </span>
         )}
       </div>
-    </form>
+    </DraftForm>
   );
 }
 
@@ -131,7 +146,7 @@ function VisibilityControl({
   // transition so the optimistic chip is instant (urgent), not deferred.
   const [pending, startTransition] = useTransition();
   const [result, setResult] = useState<ProfileState>(null);
-  // Controlled so the shown state can't drift from the server after a toggle.
+  // Stage the radio choice until Save; the status text always describes saved privacy.
   const [selected, setSelected] = useState<FieldVisibility>(field.visibility);
 
   // On a SETTLED error the write did not persist, so the chip must fall back to
@@ -156,7 +171,7 @@ function VisibilityControl({
   ];
 
   function toggle(next: FieldVisibility) {
-    if (next === selected || pending) return; // no redundant round-trips
+    if (next === field.visibility || pending) return; // no redundant round-trips
     setSelected(next); // urgent → the chip moves instantly (optimistic)
     const fd = new FormData();
     fd.set("field", field.field);
@@ -190,21 +205,20 @@ function VisibilityControl({
           {options.map((o) => (
             <label
               key={o.value}
-              // Highlight is driven by React `shown` (the SAME source as the
-              // helper text below), NOT by the DOM radio's :checked pseudo — a
-              // controlled radio's DOM checked can desync from React, which let
-              // the highlight sit on the un-saved value while the text showed the
-              // confirmed one. Deriving both from `shown` makes that impossible.
+              // The chip represents the draft; the status below remains server-confirmed.
               className={`cursor-pointer rounded-md border px-3 py-1.5 text-sm has-[:focus-visible]:ring-1 has-[:focus-visible]:ring-ring ${
                 shown === o.value ? "border-accent bg-accent/10" : ""
               }`}
             >
               <input
                 type="radio"
-                name="visibility"
+                name={`visibility-${field.field}`}
                 value={o.value}
                 checked={shown === o.value}
-                onChange={() => toggle(o.value)}
+                onChange={() => {
+                  setSelected(o.value);
+                  setResult(null);
+                }}
                 className="sr-only"
               />
               {o.label}
@@ -212,6 +226,23 @@ function VisibilityControl({
           ))}
         </div>
       </fieldset>
+      <Button
+        type="button"
+        size="sm"
+        className="self-start"
+        disabled={pending || selected === field.visibility}
+        onClick={() => toggle(selected)}
+      >
+        {a.saveChanges}
+      </Button>
+      {!pending && selected !== field.visibility && !failed && (
+        <p className="text-xs text-muted-foreground">{a.unsaved}</p>
+      )}
+      {result && "saved" in result && !pending && (
+        <p role="status" className="text-xs text-success">
+          {a.visibilitySaved}
+        </p>
+      )}
       {failed ? (
         // Visible failure: the member must KNOW it didn't save (role=alert), and
         // the chip above has already reverted to the confirmed value.
@@ -220,7 +251,9 @@ function VisibilityControl({
         </p>
       ) : (
         <p role="status" className="text-xs text-muted-foreground">
-          {shown === "members" ? a.visStateMembers : a.visStateHidden}
+          {field.visibility === "members"
+            ? a.visStateMembers
+            : a.visStateHidden}
         </p>
       )}
     </div>

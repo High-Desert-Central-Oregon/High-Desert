@@ -37,12 +37,19 @@ export const metadata = {
 /** The bundle's fixed six, in FILTER_ORDER (spec §1.1). */
 const CATS = ["need", "offer", "event", "aid", "job", "goods"] as const;
 
-type SearchParams = { f?: string; posted?: string; s?: string; q?: string };
+type SearchParams = {
+  f?: string;
+  posted?: string;
+  deleted?: string;
+  s?: string;
+  q?: string;
+};
 
 type PostItem = {
   id: string;
   author_id: string;
   category: PostCategory;
+  tags: PostCategory[];
   title: string;
   neighborhood_id: string | null;
   pinned_at: string | null;
@@ -169,6 +176,16 @@ function PinnedFeature({
               color={postCategoryMarker(post.category)}
               size={9}
             />
+            {post.tags
+              .filter((tag) => tag !== post.category)
+              .map((tag) => (
+                <MarkerChip
+                  key={tag}
+                  label={dict.exchange.cats[tag]}
+                  color={postCategoryMarker(tag)}
+                  size={9}
+                />
+              ))}
             <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               · {formatRedmondDateTime(post.created_at, locale)}
             </span>
@@ -272,12 +289,16 @@ async function BoardContent({
   let postQuery = supabase
     .from("posts")
     .select(
-      "id, author_id, category, title, neighborhood_id, pinned_at, created_at",
+      "id, author_id, category, tags, title, neighborhood_id, pinned_at, created_at",
     )
     .eq("group_id", everyone.id)
     .order("created_at", { ascending: false })
     .limit(100);
-  if (f) postQuery = postQuery.eq("category", f);
+  if (f)
+    postQuery =
+      f === "event"
+        ? postQuery.eq("category", f)
+        : postQuery.contains("tags", [f]);
   if (qPat)
     postQuery = postQuery.or(
       [
@@ -386,6 +407,17 @@ async function BoardContent({
   const catOf = new Map(
     (catsRes.data ?? []).map((c) => [c.id, { slug: c.slug, name: c.name }]),
   );
+  const { data: mine } = events.length
+    ? await supabase
+        .from("event_rsvps")
+        .select("event_id,status")
+        .eq("user_id", profile.id)
+        .in(
+          "event_id",
+          events.map((e) => e.id),
+        )
+    : { data: [] };
+  const myRsvps = new Map((mine ?? []).map((r) => [r.event_id, r.status]));
   const hood = (id: string | null) =>
     (id ? hoodOf.get(id) : null) ?? dict.events.allRedmond;
   const name = (id: string) => nameOf.get(id) ?? "·";
@@ -400,6 +432,11 @@ async function BoardContent({
         voice={dict.exchange.voice}
         flush
       />
+      {sp.deleted === "1" && (
+        <p role="status" className="text-sm text-success">
+          {dict.exchange.deleted}
+        </p>
+      )}
       <Fab href="/protected/exchange/new" label={dict.exchange.postNew} />
 
       {/* Board | Upcoming — the calendar is a view here, not a tab (§7.1). */}
@@ -478,6 +515,12 @@ async function BoardContent({
                 <li key={`p-${item.post.id}`}>
                   <PostRow
                     href={`/protected/exchange/${item.post.id}?from=${encodeURIComponent(returnTo)}`}
+                    extraTags={item.post.tags
+                      .filter((t) => t !== item.post.category)
+                      .map((tag) => ({
+                        label: dict.exchange.cats[tag],
+                        color: postCategoryMarker(tag),
+                      }))}
                     markerLabel={dict.exchange.cats[item.post.category]}
                     markerColor={postCategoryMarker(item.post.category)}
                     hood={hood(item.post.neighborhood_id)}
@@ -491,6 +534,13 @@ async function BoardContent({
                 <li key={`e-${item.event.id}`}>
                   <PostRow
                     href={`/protected/events/${item.event.id}`}
+                    statusTag={
+                      myRsvps.has(item.event.id)
+                        ? myRsvps.get(item.event.id) === "going"
+                          ? dict.rsvp.tagGoing
+                          : dict.rsvp.tagMaybe
+                        : undefined
+                    }
                     markerLabel={dict.exchange.cats.event}
                     markerColor={EVENT_MARKER}
                     hood={hood(item.event.neighborhood_id)}

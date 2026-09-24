@@ -15,6 +15,7 @@ export const en = {
   },
 
   common: {
+    characters: "characters",
     loadFailed: "This page could not be loaded. Please try again.",
     retry: "Try again",
     loading: "Loading…",
@@ -70,7 +71,8 @@ export const en = {
       "Too many tries from this connection just now. Please wait a little while.",
     errorSendFailed:
       "Your invitation worked, but we couldn't email the sign-in code. Try signing in with this address.",
-    errorNetwork: "We couldn't reach Steppe. Check your connection and try again.",
+    errorNetwork:
+      "We couldn't reach Steppe. Check your connection and try again.",
     privacyNote:
       "We use your email only to sign you in. There are no ads or trackers, and we never sell your information.",
     alreadyMember: "Already have an account?",
@@ -80,18 +82,20 @@ export const en = {
   // Minting and revoking invitations (/protected/invites). Moderator-only.
   invites: {
     title: "Invitations",
-    lead:
-      "An invitation is one code that lets a set number of people put their address on the list. Print it on a card, hand it out, and revoke it when the batch is done.",
+    lead: "An invitation is one code that lets a set number of people put their address on the list. Print it on a card, hand it out, and revoke it when the batch is done.",
     mintTitle: "Make a new invitation",
     capLabel: "How many people",
-    capHint: "The most this code can admit. Also what it costs you if the card is photographed.",
+    capHint:
+      "The most this code can admit. Also what it costs you if the card is photographed.",
     daysLabel: "Days until it expires",
-    daysHint: "Every invitation expires. Pick a date you'd be comfortable seeing on paper.",
+    daysHint:
+      "Every invitation expires. Pick a date you'd be comfortable seeing on paper.",
     labelLabel: "What is this for?",
     labelPlaceholder: "Counter cards, Fred Meyer",
     placeLabel: "Neighborhood (optional)",
     placeNone: "Anywhere (general purpose)",
-    placeHint: "Leave this alone for counter cards and press. Pick a neighborhood and the pledge page fills itself in.",
+    placeHint:
+      "Leave this alone for counter cards and press. Pick a neighborhood and the pledge page fills itself in.",
     mint: "Make the invitation",
     minting: "Making…",
     mintedTitle: "Made. Here's the link to print:",
@@ -112,7 +116,8 @@ export const en = {
     stateExpired: "Expired",
     stateExhausted: "All used",
     revoke: "Revoke",
-    revokeConfirm: "Revoke this invitation? Nobody else will be able to use the code.",
+    revokeConfirm:
+      "Revoke this invitation? Nobody else will be able to use the code.",
     revokeNotRetroactive:
       "People who already used it keep their place on the list, and anyone who already made an account keeps it. Revoking closes the door; it doesn't undo what came through it.",
     revokeConfirmButton: "Yes, revoke it",
@@ -135,7 +140,8 @@ export const en = {
     codeLabel: "6-digit code",
     codeVerify: "Sign in with the code",
     codeVerifying: "Checking…",
-    codeInvalid: "That doesn't look like a 6-digit code. Check the email and try again.",
+    codeInvalid:
+      "That doesn't look like a 6-digit code. Check the email and try again.",
     codeExpired:
       "That code didn't match or has expired. Request a new one and try again.",
     codeError: "We couldn't check that code. Please try again.",
@@ -228,12 +234,29 @@ export const en = {
   },
 
   exchange: {
+    edit: "Edit post",
+    save: "Save changes",
+    delete: "Delete post",
+    deleteConfirm: "Delete this post? This cannot be undone.",
+    keep: "Keep post",
+    deleted: "Post deleted.",
+    saved: "Changes saved.",
+    tagsHint: "Choose one or more tags. Events use a separate form.",
+    descriptions: {
+      need: "Ask for something you need, such as help, a skill, or an item.",
+      offer:
+        "Share something you can offer, such as your time, a skill, or an item.",
+      aid: "Coordinate practical support for a neighbor or the community.",
+      job: "Share paid work or a job opportunity.",
+      goods: "Offer or request physical items. Arrange exchanges directly.",
+    },
     // The Exchange (X1) — bundle strings verbatim (spec §2), except G-6:
     // the bundle's "stewards" is normalized to the app's moderator vocabulary
     // (DECISIONS.md 2026-07-12). Dateline drops the preview's fake date.
     title: "The Exchange",
     dateline: "Member-owned · No ads",
-    voice: "Posted by verified neighbors · newest first · nothing sorted for clicks.",
+    voice:
+      "Posted by verified neighbors · newest first · nothing sorted for clicks.",
     all: "All",
     cats: {
       need: "Need",
@@ -251,7 +274,7 @@ export const en = {
     searchSubmit: "Search",
     emptyTitle: "No posts in this category",
     emptySub: "Nothing in this filter yet. Check back, or post the first.",
-    categoryField: "Category",
+    categoryField: "Tags",
     titleField: "Title",
     titlePh: "A short, clear title",
     bodyField: "Details",
@@ -282,6 +305,26 @@ export const en = {
   },
 
   events: {
+    usedBefore: "Used in Steppe",
+    publicPlace: "Public place",
+    searching: "Finding places…",
+    locationUnavailable:
+      "Public search is unavailable. You can still enter a place and address.",
+    locationManual:
+      "No suggestions yet. You can enter a place and address yourself.",
+    locationPrivacy:
+      "Public place search uses Photon; only the search text is shared.",
+    timeZone:
+      "Pacific time (Redmond, Oregon). Daylight saving time is handled automatically.",
+    copyDetails: "Copy event details",
+    copied: "Event details copied.",
+    copyFailed: "Select and copy the text below.",
+    endLabel: "Ends",
+    fieldEnd: "End date and time (optional)",
+    locationHelp: "Include the venue name, street address, and meeting point.",
+    noAutoRsvp:
+      "Creating an event does not RSVP for you. Choose an RSVP on the event page.",
+    tooLong: "One or more fields exceed their character limit.",
     // Masthead grammar (preview vocabulary): mono dateline + italic voice.
     dateline: "Neighborhood gatherings · Soonest first",
     voice: "Real gatherings by verified neighbors. RSVP with one tap.",
@@ -306,8 +349,7 @@ export const en = {
     noLocation: "Location to be announced",
     backToEvents: "← All events",
     newTitle: "Create an event",
-    newIntro:
-      "Host a neighborhood gathering. Add a title, date, and place.",
+    newIntro: "Host a neighborhood gathering. Add a title, date, and place.",
     fieldTitle: "Title",
     fieldTitlePlaceholder: "e.g. Block cleanup at the park",
     fieldWhen: "Date and time",
@@ -322,7 +364,8 @@ export const en = {
     submit: "Create event",
     submitting: "Creating…",
     titleRequired: "Please add a title.",
-    whenRequired: "Please choose a date and time.",
+    whenRequired:
+      "Choose a valid Pacific date and time. The end must be after the start; the skipped spring-forward hour cannot be used.",
     errorGeneric: "We couldn't create the event. Please try again.",
     gateTitle: "Verify to join neighborhood events",
     gateBody:
@@ -336,7 +379,8 @@ export const en = {
     // three homes), composePrivacy (the composer), the two Message buttons.
     title: "Messages",
     dateline: "Verified neighbors · Private to the two of you",
-    voice: "Messages stay inside Steppe. They are never sent by SMS or email, and no one else can read them.",
+    voice:
+      "Messages stay inside Steppe. They are never sent by SMS or email, and no one else can read them.",
     msgInside: "Messages stay inside Steppe",
     composePrivacy:
       "Your contact stays inside Steppe. Neighbors reach you here, never by SMS or email.",
@@ -525,7 +569,8 @@ export const en = {
     confirmRemove: "Remove this member from the group?",
     confirmDemote: "Step this maintainer down to a regular member?",
     addTitle: "Add a member",
-    addIntro: "Add a verified member directly. This is useful for invite-only groups.",
+    addIntro:
+      "Add a verified member directly. This is useful for invite-only groups.",
     addEmpty: "No verified members match that name.",
     addSearchHint: "Search by name to add a verified member.",
     addSearching: "Searching…",
@@ -542,6 +587,10 @@ export const en = {
   },
 
   rsvp: {
+    cancelled: "RSVP cancelled.",
+    notSaved: "You have not RSVP’d. Choose Going or Maybe, then save.",
+    tagGoing: "Your RSVP: Going",
+    tagMaybe: "Your RSVP: Maybe",
     formHeading: "Will you come?",
     statusGoing: "I'm going",
     statusMaybe: "Maybe",
@@ -598,9 +647,11 @@ export const en = {
     },
     methodHints: {
       id: "A driver's license or state ID showing your Redmond address.",
-      utility_bill: "A recent water, power, gas, or internet bill in your name.",
+      utility_bill:
+        "A recent water, power, gas, or internet bill in your name.",
       voter_reg: "Your Oregon voter registration showing your address.",
-      property_record: "A property tax statement or deed for your Redmond home.",
+      property_record:
+        "A property tax statement or deed for your Redmond home.",
       postcard_code:
         "No document is needed. We mail a one-time code to your Redmond address, and a reviewer confirms it with you. This option is for anyone using a PO box or without standard paperwork.",
     },
@@ -614,7 +665,8 @@ export const en = {
     viewEvidence: "View evidence",
     opening: "Opening…",
     noEvidence: "No file (mailed-code request)",
-    evidenceError: "Couldn't open the evidence. The link may have expired. Try again.",
+    evidenceError:
+      "Couldn't open the evidence. The link may have expired. Try again.",
     approve: "Approve",
     reject: "Reject",
     deciding: "Saving…",
@@ -768,7 +820,8 @@ export const en = {
     noticesTitle: "Moderation notices",
     noticeEventRemoved: 'Your event "{title}" was removed by a moderator.',
     noticePostRemoved: 'Your post "{title}" was removed by a moderator.',
-    noticeProposalRemoved: 'Your proposal "{title}" was removed by a moderator.',
+    noticeProposalRemoved:
+      'Your proposal "{title}" was removed by a moderator.',
     noticeView: "View details and appeal",
     appealHeading: "Appeal this removal",
     appealPlaceholder: "Explain why this should be restored…",
@@ -817,6 +870,9 @@ export const en = {
     viewContent: "View",
   },
   account: {
+    saveChanges: "Save changes",
+    unsaved: "Unsaved changes",
+    visibilitySaved: "Visibility saved.",
     voice: "Your profile starts private. You choose what neighbors see.",
     title: "Your account",
     intro:
