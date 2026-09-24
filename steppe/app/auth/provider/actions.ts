@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isProvider } from "@/lib/member-pipelines/shared";
 import { providerEnabled } from "@/lib/member-pipelines/server";
-import { siteOrigin } from "@/lib/site-url";
+import { durableOrigin, siteOrigin } from "@/lib/site-url";
 export async function startProvider(provider: string, connect: boolean) {
   if (
     typeof connect !== "boolean" ||
@@ -30,7 +30,12 @@ export async function startProvider(provider: string, connect: boolean) {
     path: "/",
     maxAge: 600,
   });
-  const options = { redirectTo: `${siteOrigin()}/auth/callback` };
+  // Production must return to the stable app domain that owns the PKCE and
+  // intent cookies. VERCEL_URL is an isolated deployment host, not that domain.
+  // Keep previews/local development isolated when explicitly testing there.
+  const origin =
+    process.env.VERCEL_ENV === "production" ? durableOrigin() : siteOrigin();
+  const options = { redirectTo: `${origin}/auth/callback` };
   const result = connect
     ? await db.auth.linkIdentity({ provider, options })
     : await db.auth.signInWithOAuth({ provider, options });
