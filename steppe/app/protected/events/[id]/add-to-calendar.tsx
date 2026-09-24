@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { calendarDetails } from "@/lib/calendar-details";
+import { calendarDetails, calendarDetailFields } from "@/lib/calendar-details";
 import { buildIcs } from "@/lib/ics";
 
 /** Downloads an offline-compatible ICS file and offers copyable, Pacific-time
@@ -31,15 +31,36 @@ export function AddToCalendar({
     copy: string;
     copied: string;
     copyFailed: string;
+    copyField: string;
+    fieldCopied: string;
   };
 }) {
-  const [state, setState] = useState<"idle" | "done" | "failed">("idle");
+  const [detailsOpen, setDetailsOpen] = useState(true);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const [copyStatus, setCopyStatus] = useState("");
   const details = calendarDetails(
     { title, startsAt, endsAt, location, body },
     locale,
   );
+  const fields = calendarDetailFields(
+    { title, startsAt, endsAt, location, body },
+    locale,
+  );
+
+  async function copyText(text: string, id: string, message: string) {
+    setCopiedField(null);
+    setCopyStatus("");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(id);
+      setCopyStatus(message);
+    } catch {
+      setCopyStatus(labels.copyFailed);
+      setDetailsOpen(true);
+    }
+  }
+
   const ics = buildIcs({
     prodId: "-//Steppe//Exchange//EN",
     events: [
@@ -69,10 +90,9 @@ export function AddToCalendar({
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 1500);
-      setState("done");
     } catch {
       // No download — surface the copy panel expanded instead.
-      setState("failed");
+      setDetailsOpen(true);
     }
   };
 
@@ -102,34 +122,56 @@ export function AddToCalendar({
       <button
         type="button"
         className="mt-3 min-h-11 self-start underline focus-ring"
-        onClick={async () => {
-          try {
-            await navigator.clipboard.writeText(details);
-            setCopyStatus(labels.copied);
-          } catch {
-            setCopyStatus(labels.copyFailed);
-            setState("failed");
-          }
-        }}
+        onClick={() => copyText(details, "all", labels.copied)}
       >
         {labels.copy}
       </button>
-      {copyStatus && (
-        <p role="status" className="text-sm">
-          {copyStatus}
-        </p>
-      )}
-      <details
+      <p
         role="status"
-        open={state === "failed"}
+        aria-live="polite"
+        aria-atomic="true"
+        className="text-sm"
+      >
+        {copyStatus}
+      </p>
+      <details
+        open={detailsOpen}
+        onToggle={(event) => setDetailsOpen(event.currentTarget.open)}
         className="mt-[11px] border bg-muted"
       >
         <summary className="cursor-pointer p-[13px] font-mono text-[9px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
           {labels.note}
         </summary>
-        <pre className="select-text whitespace-pre-wrap px-[13px] pb-[13px] font-mono text-[11.5px] leading-[1.7] text-foreground">
-          {details}
-        </pre>
+        <dl className="divide-y border-t px-[13px]">
+          {fields.map((field) => (
+            <div key={field.id} className="py-3">
+              <dt className="text-xs font-semibold text-muted-foreground">
+                {field.label}
+              </dt>
+              <dd className="flex items-start gap-3">
+                <span className="min-w-0 flex-1 select-text whitespace-pre-wrap break-words pt-2 text-sm leading-relaxed">
+                  {field.value}
+                </span>
+                <button
+                  type="button"
+                  aria-label={`${copiedField === field.id ? labels.fieldCopied : labels.copyField}: ${field.label}`}
+                  className="min-h-11 shrink-0 px-2 text-sm underline focus-ring"
+                  onClick={() =>
+                    copyText(
+                      field.value,
+                      field.id,
+                      `${field.label}: ${labels.fieldCopied}`,
+                    )
+                  }
+                >
+                  {copiedField === field.id
+                    ? labels.fieldCopied
+                    : labels.copyField}
+                </button>
+              </dd>
+            </div>
+          ))}
+        </dl>
       </details>
     </div>
   );

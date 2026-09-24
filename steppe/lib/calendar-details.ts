@@ -1,7 +1,7 @@
 import { REDMOND_TZ } from "./time";
 
-/** Copyable prose; imported calendar files continue to use exact UTC instants. */
-export function calendarDetails(
+/** Display labels stay separate from values pasted into calendar fields. */
+export function calendarDetailFields(
   event: {
     title: string;
     startsAt: string;
@@ -24,16 +24,56 @@ export function calendarDetails(
       timeZoneName: "short",
     }).format(new Date(iso));
   return [
-    event.title,
-    `${es ? "Inicio" : "Starts"}: ${date(event.startsAt)}`,
-    event.endsAt ? `${es ? "Fin" : "Ends"}: ${date(event.endsAt)}` : null,
-    es
-      ? "Zona horaria: Pacífico (America/Los_Angeles)"
-      : "Time zone: Pacific (America/Los_Angeles)",
-    event.location ? `${es ? "Lugar" : "Location"}: ${event.location}` : null,
-    event.body,
-    es ? "Confirma tu asistencia en Steppe." : "RSVP in Steppe.",
-  ]
-    .filter(Boolean)
+    { id: "title", label: es ? "Título" : "Title", value: event.title },
+    {
+      id: "starts",
+      label: es ? "Inicio" : "Starts",
+      value: date(event.startsAt),
+    },
+    ...(event.endsAt
+      ? [{ id: "ends", label: es ? "Fin" : "Ends", value: date(event.endsAt) }]
+      : []),
+    {
+      id: "timezone",
+      label: es ? "Zona horaria" : "Time zone",
+      value: `${es ? "Pacífico" : "Pacific"} (${REDMOND_TZ})`,
+    },
+    ...(event.location
+      ? [
+          {
+            id: "location",
+            label: es ? "Lugar" : "Location",
+            value: event.location,
+          },
+        ]
+      : []),
+    ...(event.body
+      ? [
+          {
+            id: "description",
+            label: es ? "Descripción" : "Description",
+            value: event.body,
+          },
+        ]
+      : []),
+    {
+      id: "rsvp",
+      label: es ? "Asistencia" : "RSVP",
+      value: es ? "Confirma tu asistencia en Steppe." : "RSVP in Steppe.",
+    },
+  ];
+}
+
+/** Copyable prose; imported calendar files continue to use exact UTC instants. */
+export function calendarDetails(
+  event: Parameters<typeof calendarDetailFields>[0],
+  locale: string,
+) {
+  return calendarDetailFields(event, locale)
+    .map((field) =>
+      ["title", "description", "rsvp"].includes(field.id)
+        ? field.value
+        : `${field.label}: ${field.value}`,
+    )
     .join("\n");
 }

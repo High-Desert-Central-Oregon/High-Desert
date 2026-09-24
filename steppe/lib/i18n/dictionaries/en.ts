@@ -316,6 +316,8 @@ export const en = {
       "Public place search uses Photon; only the search text is shared.",
     timeZone:
       "Pacific time (Redmond, Oregon). Daylight saving time is handled automatically.",
+    copyField: "Copy",
+    fieldCopied: "Copied",
     copyDetails: "Copy event details",
     copied: "Event details copied.",
     copyFailed: "Select and copy the text below.",

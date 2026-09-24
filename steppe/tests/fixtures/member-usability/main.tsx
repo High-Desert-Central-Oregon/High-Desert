@@ -18,6 +18,21 @@ function App() {
     [writes, setWrites] = useState(0);
   const [visibility, setVisibility] = useState<"hidden" | "members">("hidden"),
     [rsvp, setRsvp] = useState<"going" | "maybe" | null>(null);
+  const [failCopy, setFailCopy] = useState(false);
+  const [copiedText, setCopiedText] = useState("");
+  useEffect(() => {
+    const clipboard = navigator.clipboard;
+    if (!clipboard) return;
+    const writeText = clipboard.writeText.bind(clipboard);
+    clipboard.writeText = async (text) => {
+      if (failCopy) throw new Error("Fixture clipboard failure");
+      await writeText(text);
+      setCopiedText(text);
+    };
+    return () => {
+      clipboard.writeText = writeText;
+    };
+  }, [failCopy]);
   const dict = lang === "en" ? en : es;
   useEffect(() => {
     const listener = (e: Event) => {
@@ -106,23 +121,43 @@ function App() {
           </>
         )}
         {screen === "calendar" && (
-          <AddToCalendar
-            eventId="sample"
-            title="Park gathering"
-            startsAt="2026-07-16T01:00:00Z"
-            endsAt="2026-07-16T02:00:00Z"
-            location="Sample Park, 12 Main Street"
-            body="Bring a blanket."
-            locale={lang}
-            labels={{
-              button: dict.events.addCal,
-              note: dict.events.icsNote,
-              description: dict.events.icsDescription,
-              copy: dict.events.copyDetails,
-              copied: dict.events.copied,
-              copyFailed: dict.events.copyFailed,
-            }}
-          />
+          <>
+            <label>
+              <input
+                type="checkbox"
+                checked={failCopy}
+                onChange={(event) => setFailCopy(event.target.checked)}
+              />{" "}
+              Fail clipboard
+            </label>
+            <label className="block">
+              Last copied text
+              <textarea
+                readOnly
+                value={copiedText}
+                className="block w-full border"
+              />
+            </label>
+            <AddToCalendar
+              eventId="sample"
+              title="Park gathering"
+              startsAt="2026-07-16T01:00:00Z"
+              endsAt="2026-07-16T02:00:00Z"
+              location="Sample Park, 12 Main Street"
+              body="Bring a blanket."
+              locale={lang}
+              labels={{
+                button: dict.events.addCal,
+                note: dict.events.icsNote,
+                description: dict.events.icsDescription,
+                copy: dict.events.copyDetails,
+                copied: dict.events.copied,
+                copyFailed: dict.events.copyFailed,
+                copyField: dict.events.copyField,
+                fieldCopied: dict.events.fieldCopied,
+              }}
+            />
+          </>
         )}
       </div>
     </main>
