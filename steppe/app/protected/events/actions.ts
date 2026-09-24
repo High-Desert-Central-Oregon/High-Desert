@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
-import { redmondWallTimeToUtcISO } from "@/lib/time";
+import { parseEventInput } from "@/lib/event-input";
 
 export type EventFormState = { error: string } | null;
 export type RsvpState = { ok: true } | { error: string } | null;
@@ -26,46 +26,15 @@ export async function createEvent(
   if (!profile) redirect("/auth/login");
   if (!profile.verified) return { error: "forbidden" };
 
-  const title = String(formData.get("title") ?? "").trim();
-  const startsAt = String(formData.get("starts_at") ?? "").trim();
-  const body = String(formData.get("body") ?? "").trim();
-  const location = String(formData.get("location") ?? "").trim();
-  const capacityRaw = String(formData.get("capacity") ?? "").trim();
-  const neighborhoodRaw = String(formData.get("neighborhood_id") ?? "").trim();
-
-  if (title.length > 140 || body.length > 2000 || location.length > 300)
-    return { error: "too-long" };
-  if (!title) return { error: "title-required" };
-  // The form sends a wall-clock value; interpret it as Redmond time, not the
-  // browser's or server's timezone (lib/time.ts).
-  const startsAtIso = redmondWallTimeToUtcISO(startsAt);
-  if (!startsAtIso) return { error: "when-required" };
-
-  const endsAtRaw = String(formData.get("ends_at") ?? "").trim();
-  const endsAt = endsAtRaw ? redmondWallTimeToUtcISO(endsAtRaw) : null;
-  if (endsAtRaw && (!endsAt || endsAt <= startsAtIso))
-    return { error: "when-required" };
-  const capacity = Number(capacityRaw);
-  if (
-    capacityRaw &&
-    (!Number.isInteger(capacity) || capacity < 1 || capacity > 10000)
-  )
-    return { error: "create-failed" };
-  const neighborhoodId =
-    neighborhoodRaw && neighborhoodRaw !== "all" ? neighborhoodRaw : null;
+  const parsed = parseEventInput(formData);
+  if ("error" in parsed) return parsed;
 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
     .insert({
       creator_id: profile.id,
-      neighborhood_id: neighborhoodId,
-      title,
-      body: body.length > 0 ? body : null,
-      starts_at: startsAtIso,
-      ends_at: endsAt,
-      location: location.length > 0 ? location : null,
-      capacity: Number.isInteger(capacity) && capacity > 0 ? capacity : null,
+      ...parsed.values,
     })
     .select("id")
     .single<{ id: string }>();
@@ -76,6 +45,71 @@ export async function createEvent(
   // The list surface events actually appear on is the Exchange board now.
   revalidatePath("/protected/exchange");
   redirect(`/protected/events/${data.id}`);
+}
+
+/** Invalidate every in-app projection; calendar feeds read current rows. */
+function refreshEvent(id: string) {
+  revalidatePath(`/protected/events/${id}`);
+  revalidatePath(`/protected/events/${id}/edit`);
+  revalidatePath("/protected/events");
+  revalidatePath("/protected/exchange");
+  revalidatePath("/protected/exchange/upcoming");
+  revalidatePath("/protected/account/calendar");
+  revalidatePath("/protected/groups", "layout");
+}
+
+/** The creator predicate applies even when the caller is a moderator. */
+export async function updateEvent(
+  id: string,
+  _prev: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
+  if (!profile.verified) return { error: "forbidden" };
+  const db = await createClient();
+  const { data: existing, error: readError } = await db
+    .from("events")
+    .select("starts_at, ends_at")
+    .eq("id", id)
+    .eq("creator_id", profile.id)
+    .maybeSingle<{ starts_at: string; ends_at: string | null }>();
+  if (readError || !existing) return { error: "update-failed" };
+  const parsed = parseEventInput(formData, existing);
+  if ("error" in parsed) return parsed;
+  const { data, error } = await db
+    .from("events")
+    .update(parsed.values)
+    .eq("id", id)
+    .eq("creator_id", profile.id)
+    .select("id")
+    .single();
+  if (error || !data) return { error: "update-failed" };
+  refreshEvent(id);
+  redirect(`/protected/events/${id}?saved=1`);
+}
+
+/** Database cascade removes RSVPs; moderation/audit history stays append-only. */
+export async function deleteEvent(
+  id: string,
+  _prev: EventFormState,
+  formData: FormData,
+): Promise<EventFormState> {
+  const profile = await getMyProfile();
+  if (!profile) redirect("/auth/login");
+  if (!profile.verified || formData.get("confirm") !== "delete")
+    return { error: "forbidden" };
+  const db = await createClient();
+  const { data, error } = await db
+    .from("events")
+    .delete()
+    .eq("id", id)
+    .eq("creator_id", profile.id)
+    .select("id")
+    .single();
+  if (error || !data) return { error: "delete-failed" };
+  refreshEvent(id);
+  redirect("/protected/exchange?eventDeleted=1");
 }
 
 /**

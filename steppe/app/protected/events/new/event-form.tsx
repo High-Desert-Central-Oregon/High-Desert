@@ -7,7 +7,9 @@ import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createEvent, type EventFormState } from "../actions";
+import { createEvent, updateEvent, type EventFormState } from "../actions";
+import { redmondInputValue } from "@/lib/time";
+import type { EventRow } from "@/lib/types/db";
 import type { Dictionary } from "@/lib/i18n";
 
 type Neighborhood = { id: string; name: string };
@@ -17,6 +19,8 @@ function errorMessage(state: EventFormState, dict: Dictionary): string | null {
   if (state.error === "too-long") return dict.events.tooLong;
   if (state.error === "title-required") return dict.events.titleRequired;
   if (state.error === "when-required") return dict.events.whenRequired;
+  if (state.error === "capacity-invalid") return dict.events.capacityInvalid;
+  if (state.error === "update-failed") return dict.events.updateError;
   return dict.events.errorGeneric;
 }
 
@@ -31,25 +35,41 @@ export function EventForm({
   neighborhoods,
   defaultNeighborhoodId,
   dict,
+  initial,
 }: {
   neighborhoods: Neighborhood[];
   defaultNeighborhoodId: string | null;
   dict: Dictionary;
+  initial?: Pick<
+    EventRow,
+    | "id"
+    | "title"
+    | "body"
+    | "starts_at"
+    | "ends_at"
+    | "location"
+    | "capacity"
+    | "neighborhood_id"
+  >;
 }) {
   const [state, action, isPending] = useActionState<EventFormState, FormData>(
-    createEvent,
+    initial ? updateEvent.bind(null, initial.id) : createEvent,
     null,
   );
   const error = errorMessage(state, dict);
   // Keep the draft when a form action returns a validation or save error.
   const [draft, setDraft] = useState({
-    title: "",
-    starts_at: "",
-    ends_at: "",
-    neighborhood_id: defaultNeighborhoodId ?? "all",
-    location: "",
-    capacity: "",
-    body: "",
+    title: initial?.title ?? "",
+    starts_at: initial ? redmondInputValue(new Date(initial.starts_at)) : "",
+    ends_at: initial?.ends_at
+      ? redmondInputValue(new Date(initial.ends_at))
+      : "",
+    neighborhood_id: initial
+      ? (initial.neighborhood_id ?? "all")
+      : (defaultNeighborhoodId ?? "all"),
+    location: initial?.location ?? "",
+    capacity: initial?.capacity != null ? String(initial.capacity) : "",
+    body: initial?.body ?? "",
   });
 
   return (
@@ -165,9 +185,17 @@ export function EventForm({
         </p>
       </div>
 
-      <p className="text-sm text-muted-foreground">{dict.events.noAutoRsvp}</p>
+      <p className="text-sm text-muted-foreground">
+        {initial ? dict.events.editNotice : dict.events.noAutoRsvp}
+      </p>
       <Button type="submit" disabled={isPending} className="self-start">
-        {isPending ? dict.events.submitting : dict.events.submit}
+        {isPending
+          ? initial
+            ? dict.events.saving
+            : dict.events.submitting
+          : initial
+            ? dict.events.save
+            : dict.events.submit}
       </Button>
     </DraftForm>
   );

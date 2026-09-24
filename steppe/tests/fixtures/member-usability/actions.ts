@@ -4,12 +4,13 @@ export function setFailure(value: boolean) {
 }
 async function save(kind: string, fd: FormData) {
   await new Promise((r) => setTimeout(r, 150));
-  if (fail) return { error: "generic" };
+  if (fail) return { error: kind === "edit-event" ? "update-failed" : "generic" };
   window.dispatchEvent(
     new CustomEvent("fixture-save", {
       detail: { kind, ...Object.fromEntries(fd) },
     }),
   );
+  if (kind === "edit-event" || kind === "delete-event") return null;
   return kind === "visibility" || kind === "name"
     ? { saved: true }
     : { ok: true };
@@ -25,3 +26,8 @@ export const updatePost = (_id: string, _: unknown, fd: FormData) =>
   save("edit", fd);
 export const deletePost = (_id: string, _: unknown, fd: FormData) =>
   save("delete", fd);
+
+export const updateEvent = (_id: string, _: unknown, fd: FormData) =>
+  save("edit-event", fd);
+export const deleteEvent = (_id: string, _: unknown, fd: FormData) =>
+  save("delete-event", fd);

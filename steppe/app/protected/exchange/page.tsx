@@ -41,6 +41,7 @@ type SearchParams = {
   f?: string;
   posted?: string;
   deleted?: string;
+  eventDeleted?: string;
   s?: string;
   q?: string;
 };
@@ -432,6 +433,7 @@ async function BoardContent({
         voice={dict.exchange.voice}
         flush
       />
+      {sp.eventDeleted === "1" && <p role="status">{dict.events.deleted}</p>}
       {sp.deleted === "1" && (
         <p role="status" className="text-sm text-success">
           {dict.exchange.deleted}

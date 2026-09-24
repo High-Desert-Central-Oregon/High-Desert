@@ -305,6 +305,26 @@ export const en = {
   },
 
   events: {
+    manage: "Manage your event",
+    edit: "Edit event",
+    backToEvent: "Back to event",
+    save: "Save changes",
+    saving: "Saving…",
+    saved: "Event changes saved.",
+    editNotice:
+      "Existing RSVPs will be kept. If the time or place changes, let attendees know.",
+    delete: "Delete event",
+    keep: "Keep event",
+    deleteConfirm:
+      "Delete this event and all its RSVPs? This cannot be undone.",
+    calendarNotice:
+      "This removes the event from Steppe. Calendar subscriptions update when the calendar app refreshes; previously imported copies may need to be removed manually.",
+    deleted: "Event deleted.",
+    deleteError: "The event could not be deleted. Refresh and try again.",
+    updateError: "Your changes could not be saved. Refresh and try again.",
+    capacityInvalid:
+      "Enter a whole-number capacity between 1 and 10,000, or leave it blank.",
+
     usedBefore: "Used in Steppe",
     publicPlace: "Public place",
     searching: "Finding places…",

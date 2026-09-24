@@ -316,6 +316,28 @@ export const es: Dictionary = {
   },
 
   events: {
+    manage: "Administrar tu evento",
+    edit: "Editar evento",
+    backToEvent: "Volver al evento",
+    save: "Guardar cambios",
+    saving: "Guardando…",
+    saved: "Cambios del evento guardados.",
+    editNotice:
+      "Se conservarán las confirmaciones de asistencia. Si cambia la hora o el lugar, avisa a los asistentes.",
+    delete: "Eliminar evento",
+    keep: "Conservar evento",
+    deleteConfirm:
+      "¿Eliminar este evento y todas sus confirmaciones de asistencia? Esta acción no se puede deshacer.",
+    calendarNotice:
+      "El evento se eliminará de Steppe. Las suscripciones se actualizan cuando la aplicación de calendario se sincroniza; las copias importadas pueden requerir eliminación manual.",
+    deleted: "Evento eliminado.",
+    deleteError:
+      "No se pudo eliminar el evento. Actualiza la página e inténtalo de nuevo.",
+    updateError:
+      "No se pudieron guardar los cambios. Actualiza la página e inténtalo de nuevo.",
+    capacityInvalid:
+      "Introduce un número entero entre 1 y 10 000, o deja el campo vacío.",
+
     usedBefore: "Usado en Steppe",
     publicPlace: "Lugar público",
     searching: "Buscando lugares…",
