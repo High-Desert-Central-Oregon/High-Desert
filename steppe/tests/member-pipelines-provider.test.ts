@@ -72,7 +72,9 @@ describe("provider initiation", () => {
     await expect(startProvider("google", false)).rejects.toThrow("redirect:");
     expect(m.oauth).toHaveBeenLastCalledWith({
       provider: "google",
-      options: { redirectTo: "https://isolated-preview.vercel.app/auth/callback" },
+      options: {
+        redirectTo: "https://isolated-preview.vercel.app/auth/callback",
+      },
     });
   });
   it("keeps unconfigured providers hidden at the server boundary", async () => {
@@ -108,5 +110,15 @@ describe("provider initiation", () => {
     );
     expect(m.link).not.toHaveBeenCalled();
     expect(m.set).not.toHaveBeenCalled();
+  });
+  it("explains an immediate linking conflict without starting a separate sign-in", async () => {
+    m.link.mockResolvedValue({
+      data: { url: null },
+      error: { code: "identity_already_exists" },
+    });
+    await expect(startProvider("google", true)).rejects.toThrow(
+      "redirect:/auth/login?issue=identity-linked",
+    );
+    expect(m.oauth).not.toHaveBeenCalled();
   });
 });

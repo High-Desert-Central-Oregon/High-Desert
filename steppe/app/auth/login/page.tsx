@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { Lockup } from "@/components/wordmark";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { ProviderButtons } from "@/components/member-pipelines/provider-buttons";
+import { AuthNotice } from "@/components/member-pipelines/auth-notice";
 import { pc } from "@/lib/member-pipelines/copy";
 import { pipelinesEnabled } from "@/lib/member-pipelines/server";
 
@@ -12,9 +13,13 @@ export const metadata = {
   title: "Sign in · Steppe",
 };
 
-async function LoginCard({searchParams}:{searchParams:Promise<{issue?:string}>}) {
+async function LoginCard({
+  searchParams,
+}: {
+  searchParams: Promise<{ issue?: string }>;
+}) {
   const { locale, dict } = await getServerDictionary();
-  const issue=(await searchParams).issue;
+  const issue = (await searchParams).issue;
   return (
     <main
       id="main"
@@ -33,16 +38,31 @@ async function LoginCard({searchParams}:{searchParams:Promise<{issue?:string}>})
           <LanguageSwitcher current={locale} />
         </div>
         <MagicLinkForm dict={dict} locale={locale} />
-        {pipelinesEnabled() && <><ProviderButtons locale={locale}/>{issue&&<p role="alert">{pc(locale,"authFailed")}</p>}<nav className="flex flex-wrap gap-4 text-sm"><Link className="underline" href="/join">{pc(locale,"joinList")}</Link><Link className="underline" href="/invite">{pc(locale,"acceptInvite")}</Link></nav></>}
+        {pipelinesEnabled() && (
+          <>
+            <ProviderButtons locale={locale} />
+            <AuthNotice key={issue} locale={locale} issue={issue} />
+            <nav className="flex flex-wrap gap-4 text-sm">
+              <Link className="underline" href="/join">
+                {pc(locale, "joinList")}
+              </Link>
+              <Link className="underline" href="/invite">
+                {pc(locale, "acceptInvite")}
+              </Link>
+            </nav>
+          </>
+        )}
       </div>
     </main>
   );
 }
 
-export default function LoginPage(props:{searchParams:Promise<{issue?:string}>}) {
+export default function LoginPage(props: {
+  searchParams: Promise<{ issue?: string }>;
+}) {
   return (
     <Suspense>
-      <LoginCard {...props}/>
+      <LoginCard {...props} />
     </Suspense>
   );
 }

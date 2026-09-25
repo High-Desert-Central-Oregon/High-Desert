@@ -74,4 +74,38 @@ describe("provider callback", () => {
     await GET(request());
     expect(m.exchange).not.toHaveBeenCalled();
   });
+  it("explains a returned identity conflict without exchanging a code or signing out", async () => {
+    const response = await GET(
+      new Request(
+        "https://steppe.example/auth/callback?error=server_error&error_code=identity_already_exists&error_description=private-detail",
+      ),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://steppe.example/auth/login?issue=identity-linked",
+    );
+    expect(m.exchange).not.toHaveBeenCalled();
+    expect(m.signOut).not.toHaveBeenCalled();
+    expect(m.delete).toHaveBeenCalledWith("steppe-auth-intent");
+  });
+  it("explains an exchange-time identity conflict without changing the current session", async () => {
+    m.exchange.mockResolvedValue({
+      data: { user: null },
+      error: { code: "identity_already_exists" },
+    });
+    expect((await GET(request())).headers.get("location")).toBe(
+      "https://steppe.example/auth/login?issue=identity-linked",
+    );
+    expect(m.signOut).not.toHaveBeenCalled();
+  });
+  it("does not reflect unknown provider errors or descriptions", async () => {
+    const response = await GET(
+      new Request(
+        "https://steppe.example/auth/callback?error_code=untrusted&error_description=private-detail",
+      ),
+    );
+    expect(response.headers.get("location")).toBe(
+      "https://steppe.example/auth/login?issue=provider",
+    );
+    expect(m.exchange).not.toHaveBeenCalled();
+  });
 });

@@ -181,6 +181,11 @@ const messages = {
     "Sign-in could not finish. Try your email code, or return to Sign-in methods to connect a provider.",
     "No se pudo completar el acceso. Prueba el código por correo o vuelve a Métodos de acceso para conectar un proveedor.",
   ],
+  authIdentityLinked: [
+    "That sign-in account is already connected to another Steppe account. To use it, sign out of Steppe first, then sign in with it. To keep using your current Steppe account, return to Sign-in methods and connect a different account. Your accounts have not been merged.",
+    "Esa cuenta de acceso ya está conectada a otra cuenta de Steppe. Para usarla, primero cierra sesión en Steppe y luego inicia sesión con ella. Para seguir usando tu cuenta actual de Steppe, vuelve a Métodos de acceso y conecta una cuenta diferente. Tus cuentas no se han combinado.",
+  ],
+  returnSignInMethods: ["Return to Sign-in methods", "Volver a Métodos de acceso"],
   connected: ["Connected methods", "Métodos conectados"],
   joinList: ["Join the beta list", "Unirme a la lista de la beta"],
   acceptInvite: ["Accept an invitation", "Aceptar una invitación"],

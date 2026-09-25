@@ -19,6 +19,12 @@ const config = {
     {
       name: "location-fixture",
       configureServer(server) {
+        // Exercise the browser's fragment inheritance across a server redirect.
+        server.middlewares.use("/auth-error-callback", (_req, res) => {
+          res.statusCode = 302;
+          res.setHeader("Location", "/?screen=auth-error&issue=provider");
+          res.end();
+        });
         server.middlewares.use("/api/event-locations", (_req, res) => {
           res.setHeader("Content-Type", "application/json");
           res.end(
