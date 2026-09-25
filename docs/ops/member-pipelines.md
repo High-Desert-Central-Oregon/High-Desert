@@ -4,7 +4,21 @@ Release runbook. Production activation was verified on 2026-09-17 as recorded
 below; untested delivery and provider flows are explicitly listed separately.
 The beta bug-report slice is documented in [beta-bug-reporting.md](beta-bug-reporting.md).
 
-## Production status — 2026-09-17
+## Beta sign-in scope — 2026-09-25
+
+- Beta sign-in uses **Google and email codes/sign-in links**. Email remains the
+  fallback, including for members using an iCloud email address.
+- **Sign in with Apple is planned for after beta.** Keep the Supabase Apple
+  provider disabled and `AUTH_APPLE_ENABLED=false`; its sign-in and connection
+  buttons stay hidden. The deployed Apple logo and integration code are ready
+  for later configuration, not evidence of an active provider.
+- Pursue an Apple nonprofit membership fee waiver before committing to paid
+  enrollment. Post-beta activation still requires provider configuration,
+  relay-email delivery, secret-renewal ownership, and live sign-in/linking tests.
+- This decision concerns authentication only. The normal invitation and
+  human-reviewed residency verification requirements remain in place.
+
+## Historical production status — 2026-09-17
 
 - PR58 merged as `6a49e76370c18184079b0649880178925adf2088` and deployed.
 - Migrations 0036 and 0037 applied through the owner SQL editor after the new
@@ -23,7 +37,7 @@ The beta bug-report slice is documented in [beta-bug-reporting.md](beta-bug-repo
 - Real invitation delivery and a new person's complete hosted signup remain an
   acceptance check awaiting the owner's chosen recipient. Hosted document upload,
   deletion/recovery and applicant notification checks are not claimed complete.
-  Google, Apple and SMS remain disabled.
+  Google, Apple and SMS were disabled at that release.
 
 ## Member and operator flows
 
@@ -50,8 +64,9 @@ The beta bug-report slice is documented in [beta-bug-reporting.md](beta-bug-repo
    recoverable case with the original choice. **Finish recorded decision**
    retries it; another reviewer cannot change that choice mid-cleanup. A retry
    after a lost success response does not duplicate the decision or audit entry.
-6. **You → Sign-in methods** connects Google or Apple to the same signed-in
-   account. First-time Apple users with a private relay address should first
+6. **You → Sign-in methods** connects Google to the same signed-in account
+   during beta. Apple is deferred until after beta. Once enabled, first-time
+   Apple users with a private relay address should first
    sign in through their invited email, then connect Apple. No app-side merge
    based on a typed email, name, or phone is performed.
 
@@ -137,7 +152,7 @@ the test harness, or synthetic consent/approval operations against production.
 - Configure Apple relay mail delivery and calendar ownership for the web OAuth
   secret's six-month rotation. Verify email-code fallback still works before
   enabling either provider. Use current provider branding assets for production
-  button approval; the local controls are plain labeled buttons.
+  button approval; PR71 added locally bundled Google and Apple logos.
 
 References: [Supabase identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking),
 [Google setup](https://supabase.com/docs/guides/auth/social-login/auth-google),
