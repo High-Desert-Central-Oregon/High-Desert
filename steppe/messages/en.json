@@ -269,12 +269,16 @@
     "leaveNoToken": "This removal link is missing its code. Use the link at the bottom of the email we sent you, and it will work."
   },
   "privacy": {
+    "googleSignInTitle": "Optional Google sign-in",
+    "googleSignInP1": "You can sign in with email or choose Google. When you choose Google, Google shares your account identifier, email address, and basic profile information, such as your name and profile picture when available, with Steppe through Supabase, our authentication provider. Supabase stores the linked sign-in identity so Steppe can recognize your account. We use this information to sign you in and manage the connection to your Steppe account. Your chosen Steppe display name remains separate from your Google profile.",
+    "googleSignInP2": "Steppe requests only basic identity, email, and profile permissions. Google sign-in does not give Steppe access to your Gmail messages, contacts, calendars, or Drive files. Google does not share your password with Steppe. We do not sell Google account information or use it for advertising or behavioral profiling.",
+    "googleSignInP3": "You can remove Steppe’s access in your Google Account’s third-party connections settings. Removing that access does not delete your Steppe account or its stored data. To request deletion of Steppe account data, contact hello@steppe.community; the full policy explains retention and deletion limits. Google’s own privacy policy applies to its handling of the sign-in process.",
     "bugReportsTitle": "Optional beta bug reports",
     "bugReportsDescription": "You choose whether to record technical steps for a bug report. Up to 100 events from the last 10 minutes stay in this page session until you choose to send them. These describe pages, actions, and errors without typed text, private messages, sign-in codes, or screen recordings. You can review or omit diagnostics. Submitted reports are private to designated Steppe support, expire after 30 days, and are deleted by scheduled cleanup. Reports sent while signed in are included in account export and deletion. Support email alerts contain a reference and sign-in link, without the report content. Downloaded copies and provider backups follow their own retention settings.",
     "heroEyebrow": "Privacy",
     "heroTitle": "We have <em>nothing to gain</em> from your data.",
     "heroLead": "Most platforms bury privacy in a menu. Steppe is building it into the beta: no ads, no behavioral trackers, and no business model that depends on your information.",
-    "updated": "Last updated August 2026",
+    "updated": "Last updated September 25, 2026",
     "commitEyebrow": "Our commitments",
     "commitTitle": "Six promises we keep.",
     "cAH": "We never sell your data",

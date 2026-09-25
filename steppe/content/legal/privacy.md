@@ -14,8 +14,8 @@
 
 ```
 Effective date:  On publication for the founding beta
-Version:         Draft v2
-Last updated:    September 16, 2026
+Version:         Draft v2.1
+Last updated:    September 25, 2026
 Status:          Draft (pending legal review)
 ```
 
@@ -43,6 +43,7 @@ enabled, a verified local community.
 | --- | --- | --- |
 | Beta interest | Email; optional first name and area response; explicit email consent | Send the one beta-readiness notice requested |
 | Account basics | Email, display name, language | Sign-in and member-to-member contact |
+| Optional Google sign-in | Google account identifier, email, and basic profile information supplied by Google | Authenticate and maintain the chosen sign-in connection |
 | Residency check | Proof of local address | Intended for one eligibility decision; collection remains closed until deletion and orphan cleanup are verified |
 | Member content | Listings, messages, group activity, votes | Provide the service the member requested |
 | Safety intake | A report and an excerpt a participant chooses to disclose | Let a human moderator review the report |
@@ -66,6 +67,27 @@ not stored in the app. Direct messages are readable in the app only by the two
 participants; moderators and administrators have no message-reader interface.
 Database operators can technically access plaintext stored in the database, but
 Steppe policy and ordinary tooling prohibit routine access.
+
+### Optional Google sign-in
+
+You can sign in with email or choose Google. When you choose Google, Google
+shares your account identifier, email address, and basic profile information,
+such as your name and profile picture when available, with Steppe through
+Supabase, our authentication provider. Supabase stores the linked sign-in
+identity so Steppe can recognize your account. We use this information to sign
+you in and manage the connection to your Steppe account. Your chosen Steppe
+display name remains separate from your Google profile.
+
+Steppe requests only basic identity, email, and profile permissions. Google
+sign-in does not give Steppe access to your Gmail messages, contacts, calendars,
+or Drive files. Google does not share your password with Steppe. We do not sell
+Google account information or use it for advertising or behavioral profiling.
+
+You can remove Steppe’s access in your Google Account’s third-party connections
+settings. Removing that access does not delete your Steppe account or its stored
+data. To request deletion of Steppe account data, contact
+hello@steppe.community; the full policy explains retention and deletion limits.
+Google’s own privacy policy applies to its handling of the sign-in process.
 
 ### Optional bug reports and crash monitoring
 
@@ -109,7 +131,8 @@ responsibility actually requires it, or when valid legal process requires it.
 
 | Recipient | Purpose | What they receive |
 | --- | --- | --- |
-| Supabase | Authentication, database, and private verification storage | Account and app data needed to provide those services |
+| Supabase | Authentication, database, and private verification storage | Account and app data needed to provide those services, including linked Google sign-in identity data |
+| Google | Optional sign-in identity provider | The sign-in request, processed under Google’s privacy policy |
 | Resend | Service email and contact-form delivery | Recipient email; contact content in transit; bug-report alerts contain only a reference and private review link, not the report description or diagnostics |
 | Sentry | Browser crash health and maintenance monitoring | Anonymous session health, sanitized error/code details and maintenance check-in status; no report descriptions or optional activity history |
 | Hosting/infrastructure providers | Run and secure the app | Requests and operational data needed to host it |
@@ -127,7 +150,7 @@ We do not keep member data merely because storage is available.
 | Data | Retention |
 | --- | --- |
 | Beta-interest email | Until the notice is sent or the person asks to be removed |
-| Account basics | While the account is active; intended to be removed or scrubbed on deletion after the deletion/session-revocation gate passes |
+| Account basics, including linked Google sign-in identity data | While the account is active; intended to be removed or scrubbed on deletion after the deletion/session-revocation gate passes |
 | Residency proof | Not collected until delete-after-review and orphan cleanup are verified end to end |
 | Messages | Intended to remain participant-only and to remove a person's sent messages on account deletion; both behavior and session revocation must pass the beta gate |
 | Safety reports | Until resolved or the reporter deletes their account; a participant-supplied excerpt may remain even if the source conversation is later deleted |

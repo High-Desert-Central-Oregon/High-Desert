@@ -149,6 +149,12 @@ export default async function PrivacyPage() {
               </div>
             </div>
           </div>
+          <div className="closing" aria-labelledby="google-sign-in-privacy">
+            <h3 id="google-sign-in-privacy">{t("googleSignInTitle")}</h3>
+            <p>{t("googleSignInP1")}</p>
+            <p>{t("googleSignInP2")}</p>
+            <p>{t("googleSignInP3")}</p>
+          </div>
         </div>
       </section>
 
