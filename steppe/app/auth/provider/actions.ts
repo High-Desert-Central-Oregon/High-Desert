@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isProvider } from "@/lib/member-pipelines/shared";
 import { providerEnabled } from "@/lib/member-pipelines/server";
 import { durableOrigin, siteOrigin } from "@/lib/site-url";
+import { providerIssue } from "@/lib/member-pipelines/auth-issue";
 export async function startProvider(provider: string, connect: boolean) {
   if (
     typeof connect !== "boolean" ||
@@ -39,6 +40,7 @@ export async function startProvider(provider: string, connect: boolean) {
   const result = connect
     ? await db.auth.linkIdentity({ provider, options })
     : await db.auth.signInWithOAuth({ provider, options });
-  if (result.error || !result.data.url) redirect("/auth/login?issue=provider");
+  if (result.error || !result.data.url)
+    redirect(`/auth/login?issue=${providerIssue(result.error?.code)}`);
   redirect(result.data.url);
 }

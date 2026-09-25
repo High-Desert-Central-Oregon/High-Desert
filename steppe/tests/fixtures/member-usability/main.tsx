@@ -12,9 +12,12 @@ import { AddToCalendar } from "../../../app/protected/events/[id]/add-to-calenda
 import { en } from "../../../lib/i18n/dictionaries/en";
 import { es } from "../../../lib/i18n/dictionaries/es";
 import { setFailure } from "./actions";
+import { AuthNotice } from "../../../components/member-pipelines/auth-notice";
 import "../../../app/globals.css";
 function App() {
-  const [screen, setScreen] = useState("events"),
+  const [screen, setScreen] = useState(
+      new URLSearchParams(location.search).get("screen") ?? "events",
+    ),
     [lang, setLang] = useState("en"),
     [writes, setWrites] = useState(0);
   const [visibility, setVisibility] = useState<"hidden" | "members">("hidden"),
@@ -61,6 +64,7 @@ function App() {
             "posts",
             "edit",
             "calendar",
+            "auth-error",
           ].map((s) => (
             <option key={s}>{s}</option>
           ))}
@@ -80,6 +84,14 @@ function App() {
       <p id="writes">Successful writes: {writes}</p>
       <hr className="my-5" />
       <div key={screen + lang}>
+        {screen === "auth-error" && (
+          <AuthNotice
+            locale={lang}
+            issue={
+              new URLSearchParams(location.search).get("issue") ?? "provider"
+            }
+          />
+        )}
         {screen === "events" && (
           <EventForm
             dict={dict}
