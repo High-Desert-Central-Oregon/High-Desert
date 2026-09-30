@@ -218,6 +218,49 @@ export const es: Dictionary = {
   },
 
   neighborhoods: {
+    map: {
+      overview: "Volver a la vista general",
+      title: "Encuentra tu vecindario en un mapa",
+      intro:
+        "Explora los nombres de las subdivisiones de Redmond y las calles cercanas, luego elige tu vecindario en la lista de abajo.",
+      date: "Mapa aéreo de referencia · 3 de abril de 2019",
+      coverage:
+        "Este mapa histórico no muestra todos los vecindarios. Sus nombres y contornos son una referencia, no límites verificados. Si tienes dudas, elige «Ninguno encaja» abajo.",
+      alt: "Mapa aéreo de subdivisiones de Redmond de 2019, con nombres de vecindarios, calles y límites de la ciudad.",
+      explore: "Explorar mapa (5 MB)",
+      loading: "Cargando mapa…",
+      error:
+        "No se pudo cargar el mapa interactivo. Usa la vista general o abre el mapa original abajo.",
+      original: "Abrir mapa original (PDF, 3,2 MB)",
+      credits: "Fuentes y créditos del mapa",
+      source:
+        "Preparado el 3 de abril de 2019 para Western Title Company por Fidelity National Title. Fuentes de datos: condado de Deschutes, estado de Oregón, Esri. Se omiten algunas subdivisiones. El mapa original no es un levantamiento topográfico.",
+      find: "Encuentra un vecindario en el mapa",
+      wholeMap: "Todo Redmond",
+      layers: "Vista del mapa",
+      aerial: "Vista aérea de 2019",
+      streets: "Mapa de calles",
+      compare: "Comparar",
+      help: "Arrastra para mover el mapa o usa las flechas del teclado cuando tenga el foco. Usa los botones de zoom o las teclas + y − para ver los nombres. En el teléfono, pellizca para acercar.",
+      located:
+        "Mostrando {name}. El marcador indica su nombre impreso, no sus límites.",
+      missing:
+        "No podemos relacionar con certeza {name} con un nombre en este mapa de 2019. Aún puedes elegirlo en la lista de abajo.",
+      streetPrivacy:
+        "El mapa de calles y Comparar cargan imágenes de OpenStreetMap. No se solicita la ubicación de tu dispositivo.",
+      streetError:
+        "No se pudieron cargar algunas imágenes de calles. Prueba la vista aérea de 2019 o el PDF original.",
+      region: "Mapa interactivo de referencia de los vecindarios de Redmond",
+      navigation: "Navegación del mapa",
+      zoomIn: "Acercar",
+      zoomOut: "Alejar",
+      reset: "Ver todo el mapa",
+      aerialCredit:
+        "Vista aérea de 2019: Western Title / Fidelity National Title; Esri y colaboradores de imágenes.",
+      contributors: "colaboradores",
+      selectionHint:
+        "Buscar un nombre aquí no cambia tu vecindario guardado. Elígelo en la lista de abajo y pulsa Guardar vecindario.",
+    },
     title: "Tu vecindario",
     intro:
       "Elige el vecindario de Redmond que consideras tu hogar. Puedes cambiarlo en cualquier momento.",
