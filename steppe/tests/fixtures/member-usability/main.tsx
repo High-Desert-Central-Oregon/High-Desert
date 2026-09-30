@@ -13,6 +13,8 @@ import { en } from "../../../lib/i18n/dictionaries/en";
 import { es } from "../../../lib/i18n/dictionaries/es";
 import { setFailure } from "./actions";
 import { AuthNotice } from "../../../components/member-pipelines/auth-notice";
+import { NeighborhoodForm } from "../../../app/protected/neighborhoods/neighborhood-form";
+import { getSavedNeighborhood } from "./actions";
 import "../../../app/globals.css";
 function App() {
   const [screen, setScreen] = useState(
@@ -65,6 +67,7 @@ function App() {
             "edit",
             "calendar",
             "auth-error",
+            "neighborhoods",
           ].map((s) => (
             <option key={s}>{s}</option>
           ))}
@@ -84,6 +87,7 @@ function App() {
       <p id="writes">Successful writes: {writes}</p>
       <hr className="my-5" />
       <div key={screen + lang}>
+        {screen === "neighborhoods" && <NeighborhoodFixture dict={dict} />}
         {screen === "auth-error" && (
           <AuthNotice
             locale={lang}
@@ -200,6 +204,31 @@ function App() {
         )}
       </div>
     </main>
+  );
+}
+function NeighborhoodFixture({ dict }: { dict: typeof en }) {
+  const [currentId, setCurrentId] = useState<string | null>(null);
+  const [revision, setRevision] = useState(0);
+  return (
+    <>
+      <button
+        onClick={() => {
+          setCurrentId(getSavedNeighborhood());
+          setRevision((n) => n + 1);
+        }}
+      >
+        Reload saved profile
+      </button>
+      <NeighborhoodForm
+        key={revision}
+        currentId={currentId}
+        neighborhoods={[
+          { id: "sample-a", name: "Sample neighborhood A" },
+          { id: "sample-b", name: "Sample neighborhood B" },
+        ]}
+        dict={dict}
+      />
+    </>
   );
 }
 createRoot(document.getElementById("root")!).render(<App />);

@@ -21,3 +21,24 @@ Sign-in methods, replace the raw fragment with `issue=identity-linked`, and reta
 the explanation after reload. Switch Language to Spanish and check keyboard focus
 on the recovery link at mobile width. Use `error=access_denied` instead to check
 generic feedback and fragment cleanup. No raw description should appear.
+
+## Neighborhood selection retention
+
+Open `http://127.0.0.1:8771/?screen=neighborhoods`. This renders the real picker
+with two synthetic neighborhoods and no database or email access. The local
+action deliberately leaves `currentId` unchanged until Reload saved profile, so
+the check also covers a delayed server refresh.
+
+- Starting at None of these fit, choose A and save. After the success message,
+  A must remain checked and the optional note must stay hidden. Before the fix,
+  the form's automatic native reset checked None while reporting success.
+- Save again without changing the choice, then choose B and save. B must stay
+  checked. Reload saved profile remounts with the last successful stored choice.
+- Turn on Fail saves, pick A and save. The error must restore the committed B
+  choice. A failed write must not increment Successful writes.
+- Turn off Fail saves and choose None. Saving must show the existing confirmation
+  card. Reload saved profile must select None and show the optional note.
+- Repeat in Spanish at mobile width and check radio arrow-key navigation.
+
+This proves browser form retention; hosted database persistence is still checked
+by the server action's read-back and the separately gated local Postgres suite.

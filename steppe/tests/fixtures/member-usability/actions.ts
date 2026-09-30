@@ -2,6 +2,18 @@ let fail = false;
 export function setFailure(value: boolean) {
   fail = value;
 }
+let savedNeighborhood: string | null = null;
+export const getSavedNeighborhood = () => savedNeighborhood;
+export async function setNeighborhood(_: unknown, fd: FormData) {
+  await new Promise((r) => setTimeout(r, 150));
+  if (fail) return { error: "save-failed" };
+  const choice = String(fd.get("neighborhood_id"));
+  savedNeighborhood = choice === "none" ? null : choice;
+  window.dispatchEvent(
+    new CustomEvent("fixture-save", { detail: { kind: "neighborhood" } }),
+  );
+  return { saved: true, cleared: savedNeighborhood === null };
+}
 async function save(kind: string, fd: FormData) {
   await new Promise((r) => setTimeout(r, 150));
   if (fail) return { error: kind === "edit-event" ? "update-failed" : "generic" };

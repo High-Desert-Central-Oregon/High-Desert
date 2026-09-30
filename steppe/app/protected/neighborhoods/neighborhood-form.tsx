@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { setNeighborhood, type NeighborhoodState } from "./actions";
@@ -72,7 +72,17 @@ export function NeighborhoodForm({
   }
 
   return (
-    <form action={action} className="flex flex-col gap-6">
+    <form
+      action={action}
+      onSubmit={(event) => {
+        // Dispatch explicitly so React doesn't reset the radios to their initial
+        // defaults after saving. Keep action for submission before hydration.
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        startTransition(() => action(formData));
+      }}
+      className="flex flex-col gap-6"
+    >
       {/* Success banner (normal pick) */}
       {state && "saved" in state && !state.cleared && (
         <p role="status" className="text-sm text-success">
