@@ -45,7 +45,8 @@ by the server action's read-back and the separately gated local Postgres suite.
 
 ## Redmond neighborhood map and address lookup
 
-Map opens first with the static overview; List searches full names and printed map
+Map opens first with streets beneath county outlines; the static overview remains
+available using Return to overview. List searches full names and printed map
 aliases (try `GLN`). Both modes contain the complete 334-choice catalog and share
 one selection. Verify saves, failed saves and Reload saved profile in both modes.
 Map browsing and address searches must leave Successful writes unchanged.
@@ -65,18 +66,18 @@ Use `&address-county=1` for a synthetic county address point. County attribution
 must appear, the selected label must fill the input, and selecting the marker
 must leave Successful writes unchanged. Check the bilingual provider disclosure.
 
-Explore map loads the GeoPDF-derived raster and Leaflet. Check the new Juniper
-labels, Braydon Park, Street map / Compare, zoom, arrows/+/- and Return to overview.
-Missing names such as Cinder Butte Village must remain selectable. Repeat at 390px
+The default street map loads Leaflet and county geometry. Choose 2019 aerial to
+load the GeoPDF-derived raster. Check Juniper Glen, Braydon Park, Street map / Compare,
+zoom, arrows/+/- and Return to overview. Names without outlines must remain selectable. Repeat at 390px
 in Spanish and inspect keyboard focus, wrapping and no horizontal overflow.
 
-Open `/?screen=neighborhoods&map-image-failure=1` and Explore to force a local
-503. The handler restores the overview with an alert, leaving List, the PDF link
-and chooser usable. This intentionally produces a failed-resource console entry.
-No database is contacted. OSM tiles load only after Street map / Compare.
+Open `/?screen=neighborhoods&map-image-failure=1` and choose 2019 aerial to force a
+local 503. The alert leaves county outlines, List, the PDF link and chooser usable;
+Return to overview restores the static image. This intentionally produces a failed-resource console entry.
+No database is contacted. OSM tiles load with the default interactive street view.
 
 ## County outline map
 
-Explore county outlines should load 551 paths without fetching street tiles or the historical raster. The native map name selector and polygon click inspect names; a name remains permanently labeled when focused. Choose 121 West must update the draft selection with Successful writes unchanged; only Save writes. Confirm retention after Map/List switching and Reload saved profile. Filter List by a county phase/replat alias and check that it finds the grouped choice. Address fixtures use synthetic points; check the containing-plat chips and no-match help without an automatic selection.
+The default map should load 551 paths over visible OpenStreetMap street tiles, without the historical raster. County outlines removes street tiles; Return to overview unmounts the interactive map. The native map name selector and polygon click inspect names; a name remains permanently labeled when focused. Choose 121 West must update the draft selection with Successful writes unchanged; only Save writes. Confirm retention after Map/List switching and Reload saved profile. Filter List by a county phase/replat alias and check that it finds the grouped choice. Address fixtures use synthetic points; check the containing-plat chips and no-match help without an automatic selection. At 320px and 390px, the search input must occupy its own row above the button, the short placeholder must fit, and the full selected label must wrap below the input in both languages.
 
 `&outline-failure=1` forces geometry failure; the alert, static overview, List and 2019 aerial must remain usable. `&map-image-failure=1` fails only the optional historical raster: county geometry remains displayed. Repeat at 390px in Spanish, including controls, status, selection and save/reload.

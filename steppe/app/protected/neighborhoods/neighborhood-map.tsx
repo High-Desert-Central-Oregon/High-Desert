@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import type { Dictionary } from "@/lib/i18n";
 import type { NeighborhoodMapView } from "./neighborhood-map-view";
 
-/** Map opens with a static county overview; detailed outlines load on request. */
+/** Streets and plats open together; a static overview remains available on slow connections. */
 export function NeighborhoodMap({
   dict,
   names,
@@ -102,7 +102,7 @@ export function NeighborhoodMap({
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  async function explore() {
+  const explore = useCallback(async () => {
     setLoading(true);
     setFailed(false);
     try {
@@ -113,7 +113,23 @@ export function NeighborhoodMap({
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    const connection = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string };
+      }
+    ).connection;
+    if (
+      !navigator.onLine ||
+      connection?.saveData ||
+      ["slow-2g", "2g"].includes(connection?.effectiveType ?? "")
+    ) {
+      return;
+    }
+    void explore();
+  }, [explore]);
 
   return (
     <section
@@ -124,6 +140,7 @@ export function NeighborhoodMap({
         {copy.title}
       </h2>
       <p className="text-sm text-muted-foreground">{copy.intro}</p>
+      <p className="text-xs text-muted-foreground">{copy.streetPrivacy}</p>
       <p className="text-sm font-medium">
         {copy.countyDate.replace("{date}", subdivisionCatalog.date)}
       </p>
@@ -139,7 +156,7 @@ export function NeighborhoodMap({
         <label htmlFor={addressId} className="text-sm font-medium">
           {copy.addressLabel}
         </label>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             id={addressId}
             type="search"
@@ -202,11 +219,11 @@ export function NeighborhoodMap({
                 else void search(query);
               }
             }}
-            className="min-h-11 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm"
+            className="min-h-11 w-full min-w-0 rounded-md border border-input bg-background px-3 text-base sm:flex-1 sm:text-sm"
           />
           <Button
             type="button"
-            className="min-h-11"
+            className="min-h-11 self-start sm:self-auto"
             disabled={query.trim().length < 3 || searchState === "loading"}
             onClick={() => void search(query)}
           >
@@ -277,11 +294,14 @@ export function NeighborhoodMap({
           </p>
         )}
         {address && (
-          <p role="status" className="text-sm">
-            {coveredByPickerMap(address)
-              ? copy.addressLocated
-              : copy.addressOutside}
-          </p>
+          <div role="status" className="space-y-1 text-sm">
+            <p className="break-words font-medium">{address.label}</p>
+            <p>
+              {coveredByPickerMap(address)
+                ? copy.addressLocated
+                : copy.addressOutside}
+            </p>
+          </div>
         )}
         <p className="text-sm text-muted-foreground">{copy.addressHint}</p>
         {!!query.length && (

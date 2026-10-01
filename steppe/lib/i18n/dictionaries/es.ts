@@ -227,7 +227,7 @@ export const es: Dictionary = {
     map: {
       searchLocale: "es",
       addressLabel: "Encuentra tu dirección en el mapa",
-      addressPlaceholder: "Empieza a escribir tu dirección o un lugar cercano",
+      addressPlaceholder: "Dirección o lugar",
       searchAddress: "Buscar dirección",
       searching: "Buscando…",
       addressPrivacy:
@@ -254,7 +254,7 @@ export const es: Dictionary = {
       coverage:
         "Los contornos muestran planos de subdivisiones registrados en el área de crecimiento urbano de Redmond, consultados el 1 de octubre de 2026. Las fases y los planos revisados pueden superponerse y los nombres de vecindarios más amplios pueden diferir. La imagen aérea sigue siendo de 2019. Si tienes dudas, elige «Ninguno encaja» abajo.",
       alt: "Mapa aéreo de subdivisiones de Redmond de 2019, con nombres de vecindarios, calles y límites de la ciudad.",
-      explore: "Explorar contornos del condado",
+      explore: "Abrir mapa de calles",
       loading: "Cargando mapa…",
       error:
         "No se pudo cargar el mapa interactivo. Usa la vista general o abre el mapa original abajo.",
@@ -274,7 +274,7 @@ export const es: Dictionary = {
       missing:
         "No hay un contorno del condado ni un nombre en el mapa histórico para {name}. Aún puedes elegirlo abajo.",
       streetPrivacy:
-        "El mapa de calles y Comparar cargan imágenes de OpenStreetMap. No se solicita la ubicación de tu dispositivo.",
+        "El mapa de calles carga mosaicos de OpenStreetMap debajo de los contornos del condado. Usa la vista general o Contornos del condado para consumir menos datos. No se solicita la ubicación de tu dispositivo.",
       streetError:
         "No se pudieron cargar algunas imágenes de calles. Los contornos, la vista aérea de 2019 y Lista siguen disponibles.",
       region: "Mapa interactivo de referencia de los vecindarios de Redmond",

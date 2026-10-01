@@ -71,7 +71,7 @@ export function NeighborhoodMapView({
   const errorRef = useRef(onError);
   errorRef.current = onError;
   const [ready, setReady] = useState(false);
-  const [mode, setMode] = useState<Mode>("outlines");
+  const [mode, setMode] = useState<Mode>("streets");
   const [focusName, setFocusName] = useState(selectedName ?? "");
   const [outlines, setOutlines] = useState<SubdivisionOutlines | null>(null);
   const [outlineError, setOutlineError] = useState(false);
@@ -113,7 +113,7 @@ export function NeighborhoodMapView({
           maxBoundsViscosity: 1,
         });
         map.attributionControl.setPrefix(false);
-        // Neither historical imagery nor external tiles load until explicitly chosen.
+        // Streets sit beneath the county plats by default; historical imagery is optional.
         const aerial = L.imageOverlay(
           "/maps/redmond-2019/aerial.webp",
           historical.bounds as [[number, number], [number, number]],
@@ -141,6 +141,7 @@ export function NeighborhoodMapView({
         >;
         live.current = ctx;
         map.fitBounds(pickerMapBounds, { padding: [8, 8], animate: false });
+        streets.addTo(map);
         resize = new ResizeObserver(() => map?.invalidateSize({ pan: false }));
         resize.observe(container.current);
         try {
@@ -168,7 +169,6 @@ export function NeighborhoodMapView({
         }
         if (!disposed) {
           setReady(true);
-          container.current?.focus({ preventScroll: true });
         }
       })
       .catch(() => {
@@ -369,9 +369,6 @@ export function NeighborhoodMapView({
           {copy.streetError}
         </p>
       )}
-      {mode === "streets" || mode === "compare" ? (
-        <p className="text-sm text-muted-foreground">{copy.streetPrivacy}</p>
-      ) : null}
       {address && outlines && (
         <div className="space-y-2 rounded border p-3">
           <p className="text-sm">

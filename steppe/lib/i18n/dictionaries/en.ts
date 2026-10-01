@@ -220,7 +220,7 @@ export const en = {
     map: {
       searchLocale: "en",
       addressLabel: "Find your address on the map",
-      addressPlaceholder: "Start typing your address or a nearby place",
+      addressPlaceholder: "Address or place",
       searchAddress: "Find address",
       searching: "Searching…",
       addressPrivacy:
@@ -246,7 +246,7 @@ export const en = {
       coverage:
         "County outlines show recorded subdivision plats in Redmond’s urban growth area, checked October 1, 2026. Phases and replats can overlap, and broader neighborhood names may differ. The aerial image remains from 2019. If you are unsure, choose “None of these fit” below.",
       alt: "2019 Redmond aerial subdivision map with labeled neighborhoods, roads, and city limits.",
-      explore: "Explore county outlines",
+      explore: "Open street map",
       loading: "Loading map…",
       error:
         "The interactive map could not load. Use the overview or open the original map below.",
@@ -266,7 +266,7 @@ export const en = {
       missing:
         "No county outline or historical map label is available for {name}. You can still choose it below.",
       streetPrivacy:
-        "Street map and Compare load tiles from OpenStreetMap. Your device location is not requested.",
+        "The street map loads OpenStreetMap tiles beneath the county outlines. Use the overview or County outlines for less data. Your device location is not requested.",
       streetError:
         "Some street tiles could not load. County outlines, the 2019 aerial view, and List remain available.",
       region: "Interactive Redmond neighborhood reference map",
