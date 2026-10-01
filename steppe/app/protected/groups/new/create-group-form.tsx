@@ -1,6 +1,7 @@
 "use client";
 
 import { DraftForm } from "@/components/draft-form";
+import { FormError } from "@/components/form-error";
 
 import { useActionState, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ function errorMessage(state: GroupFormState, dict: Dictionary): string | null {
 }
 
 const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+  "focus-ring h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base md:text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 /**
  * Create-group form. A preset picker sets the two real axes (visibility ×
@@ -99,11 +100,7 @@ export function CreateGroupForm({
 
   return (
     <DraftForm action={action} className="flex flex-col gap-5">
-      {error && (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <FormError message={error} pending={isPending} />}
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="name">{dict.groups.fieldName}</Label>
@@ -128,7 +125,7 @@ export function CreateGroupForm({
           rows={3}
           maxLength={2000}
           placeholder={dict.groups.fieldDescriptionPlaceholder}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="focus-ring w-full rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
 

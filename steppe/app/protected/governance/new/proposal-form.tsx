@@ -1,6 +1,7 @@
 "use client";
 
 import { DraftForm } from "@/components/draft-form";
+import { FormError } from "@/components/form-error";
 
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -53,11 +54,7 @@ export function ProposalForm({
 
   return (
     <DraftForm action={action} className="flex flex-col gap-5">
-      {error && (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
-          {error}
-        </p>
-      )}
+      {error && <FormError message={error} pending={isPending} />}
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="title">{dict.governance.fieldTitle}</Label>
@@ -79,7 +76,7 @@ export function ProposalForm({
           name="kind"
           value={draft.kind}
           onChange={(e) => setDraft({ ...draft, kind: e.target.value })}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="focus-ring h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base md:text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <option value="minor">{dict.governance.kinds.minor}</option>
           <option value="major">{dict.governance.kinds.major}</option>
@@ -100,7 +97,7 @@ export function ProposalForm({
           rows={5}
           maxLength={4000}
           placeholder={dict.governance.fieldBodyPlaceholder}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="focus-ring w-full rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
 

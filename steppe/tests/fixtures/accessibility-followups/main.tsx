@@ -9,6 +9,7 @@ import { EventForm } from "../../../app/protected/events/new/event-form";
 import { CreateGroupForm } from "../../../app/protected/groups/new/create-group-form";
 import { SettingsForm } from "../../../app/protected/groups/[slug]/manage/settings-form";
 import { ProposalForm } from "../../../app/protected/governance/new/proposal-form";
+import { VoteForm } from "../../../app/protected/governance/[id]/vote-form";
 import { ReviewControls } from "../../../app/protected/review/[id]/review-controls";
 import { ThreadMenu } from "../../../app/protected/messages/[id]/thread-menu";
 import { MonthView } from "../../../components/broadsheet/month-view";
@@ -40,6 +41,7 @@ function App() {
             "groups",
             "settings",
             "proposal",
+            "vote",
             "review",
             "messages",
             "calendar",
@@ -106,6 +108,9 @@ function App() {
         )}
         {mode === "proposal" && (
           <ProposalForm defaultOpens="2026-10-01T10:00" dict={dict} />
+        )}
+        {mode === "vote" && (
+          <VoteForm proposalId="synthetic" initialChoice="yes" dict={dict} />
         )}
         {mode === "review" && (
           <ReviewControls
