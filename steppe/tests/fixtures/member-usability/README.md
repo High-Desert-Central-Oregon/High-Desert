@@ -50,11 +50,16 @@ aliases (try `GLN`). Both modes contain the complete 267-choice catalog and shar
 one selection. Verify saves, failed saves and Reload saved profile in both modes.
 Map browsing and address searches must leave Successful writes unchanged.
 
-The address endpoint is a local fixture. Search any three-character query, then
-choose the fixed public-park result to load the raster and its marker. Enter
+The address endpoint is a local fixture. Type any three-character query and pause;
+suggestions should appear without clicking Find address. Use arrows and Enter or
+click the fixed public-park suggestion; its label must fill the input without a
+second search, and load the raster and its marker. Enter
 must search without saving. The second result is outside the 2019 image and must
 explain that limitation without an edge marker. Clear address removes the query,
 results and marker. Check `&address-empty=1` and `&address-failure=1` messages.
+Use `&address-slow=1`, type three characters, wait for Searching, then shorten the
+query to two characters. The old response must never populate suggestions. Repeat
+with Clear address or switching to List during the request.
 
 Explore map loads the GeoPDF-derived raster and Leaflet. Check the new Juniper
 labels, Braydon Park, Street map / Compare, zoom, arrows/+/- and Return to overview.

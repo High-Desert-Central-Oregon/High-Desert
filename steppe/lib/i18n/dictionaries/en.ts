@@ -220,11 +220,11 @@ export const en = {
     map: {
       searchLocale: "en",
       addressLabel: "Find your address on the map",
-      addressPlaceholder: "Street address or a nearby place, Redmond",
+      addressPlaceholder: "Start typing your address or a nearby place",
       searchAddress: "Find address",
       searching: "Searching…",
       addressPrivacy:
-        "Search sends the address or place you enter to Photon (OpenStreetMap). Steppe does not save it. Your device location is not requested.",
+        "Suggestions appear after three characters and a pause in typing. What you type is sent to Photon (OpenStreetMap). Steppe does not save it. Your device location is not requested.",
       pickAddress: "Choose a result to open the detailed map (5 MB).",
       noAddress:
         "No matching address found in the Redmond area. Try adding the street name and Redmond, or use List.",

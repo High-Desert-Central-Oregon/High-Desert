@@ -227,11 +227,11 @@ export const es: Dictionary = {
     map: {
       searchLocale: "es",
       addressLabel: "Encuentra tu dirección en el mapa",
-      addressPlaceholder: "Dirección o lugar cercano, Redmond",
+      addressPlaceholder: "Empieza a escribir tu dirección o un lugar cercano",
       searchAddress: "Buscar dirección",
       searching: "Buscando…",
       addressPrivacy:
-        "La búsqueda envía la dirección o el lugar que escribes a Photon (OpenStreetMap). Steppe no lo guarda. No se solicita la ubicación de tu dispositivo.",
+        "Las sugerencias aparecen después de tres caracteres y una pausa al escribir. Lo que escribes se envía a Photon (OpenStreetMap). Steppe no lo guarda. No se solicita la ubicación de tu dispositivo.",
       pickAddress: "Elige un resultado para abrir el mapa detallado (5 MB).",
       noAddress:
         "No se encontró una dirección en el área de Redmond. Añade el nombre de la calle y Redmond, o usa Lista.",
