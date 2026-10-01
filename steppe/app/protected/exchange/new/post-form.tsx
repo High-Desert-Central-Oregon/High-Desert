@@ -1,6 +1,7 @@
 "use client";
 
 import { DraftForm } from "@/components/draft-form";
+import { FormError } from "@/components/form-error";
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
@@ -66,11 +67,7 @@ export function PostForm({
 
   return (
     <DraftForm action={action} className="flex flex-col gap-5">
-      {error && (
-        <p role="alert" className="text-sm text-destructive">
-          {error}
-        </p>
-      )}
+      {error && <FormError message={error} pending={isPending} />}
 
       <fieldset className="flex flex-col gap-2">
         <legend className="pb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
@@ -85,7 +82,7 @@ export function PostForm({
                 key={c}
                 href="/protected/events/new"
                 aria-describedby="event-chip-hint"
-                className="flex items-center gap-[7px] border px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                className="focus-ring flex items-center gap-[7px] border px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <span
                   aria-hidden="true"
@@ -110,7 +107,7 @@ export function PostForm({
                         : [...draft.tags, c],
                     })
                   }
-                  className="peer sr-only"
+                  className="post-tag-input peer sr-only"
                 />
                 <label htmlFor={`cat-${c}`} className={chipClass}>
                   <span
@@ -119,6 +116,7 @@ export function PostForm({
                     style={{ background: postCategoryMarker(c) }}
                   />
                   {dict.exchange.cats[c]}
+                  {draft.tags.includes(c) && <span aria-hidden="true">✓</span>}
                 </label>
               </span>
             ),
@@ -175,7 +173,7 @@ export function PostForm({
           maxLength={4000}
           aria-describedby="body-count"
           placeholder={dict.exchange.bodyPh}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="focus-ring w-full rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
         <p id="body-count" className="text-xs text-muted-foreground">
           {draft.body.length} / 4000 {dict.common.characters}
@@ -189,7 +187,7 @@ export function PostForm({
           name="neighborhood_id"
           value={draft.neighborhood}
           onChange={(e) => setDraft({ ...draft, neighborhood: e.target.value })}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:w-72"
+          className="focus-ring h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base md:text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:w-72"
         >
           <option value="">{dict.events.allRedmond}</option>
           {neighborhoods.map((n) => (

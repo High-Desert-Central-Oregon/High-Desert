@@ -185,6 +185,7 @@
 /* After utilities so a legacy outline-none cannot erase an authored indicator.
    The offset separates focus from both dark fills and selected-card borders. */
 .focus-ring:focus-visible,
+.post-tag-input:focus-visible + label,
 .field-control:focus-visible,
 .choice-card:has(:focus-visible) {
   outline: 2px solid hsl(var(--ring));
@@ -193,6 +194,7 @@
 
 @media (forced-colors: active) {
   .focus-ring:focus-visible,
+  .post-tag-input:focus-visible + label,
   .field-control:focus-visible,
   .choice-card:has(:focus-visible) {
     outline-color: Highlight;
