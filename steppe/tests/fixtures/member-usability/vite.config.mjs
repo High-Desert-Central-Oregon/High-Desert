@@ -30,6 +30,15 @@ const config = {
             res.end("Synthetic map image failure");
           },
         );
+        server.middlewares.use(
+          "/maps/redmond-current/outlines.geojson",
+          (req, res, next) => {
+            if (!req.headers.referer?.includes("outline-failure=1"))
+              return next();
+            res.statusCode = 503;
+            res.end("Synthetic outline snapshot failure");
+          },
+        );
         server.middlewares.use("/api/neighborhood-address", (req, res) => {
           // Slow synthetic responses exercise cancellation after typing changes.
           if (req.headers.referer?.includes("address-slow=1")) {

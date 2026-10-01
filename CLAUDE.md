@@ -208,7 +208,7 @@ chosen, in writing.
 ## Key files
 
 - `schema.sql` — the database: tables, RLS, triggers, the `proposal_results` view, seeds
-  (267 neighborhood choices; placeholder Terms/Privacy rows). Run it first.
+  (334 neighborhood choices; placeholder Terms/Privacy rows). Run it first.
 - `SPEC.md` — the base build spec (scope, data model, RLS, per-feature implementation,
   sequence, locked decisions). For groups / calendar / the Exchange, the active companion
   is `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md` (see DECISIONS.md 2026-07-04).
