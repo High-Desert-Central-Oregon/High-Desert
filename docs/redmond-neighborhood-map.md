@@ -94,13 +94,24 @@ See [OSM tile policy](https://operations.osmfoundation.org/policies/tiles/).
 The external provider sees ordinary tile requests, not profile data or GPS.
 For traffic beyond the small beta, review provider capacity before expanding use.
 
-Address lookup uses the existing Photon provider through authenticated POST
+Address lookup uses Deschutes County's public E911 address points for numbered
+street addresses, with Photon for places and unmatched addresses, through authenticated POST
 `/api/neighborhood-address`. Unlike event-venue suggestions, it permits signed-in
 members before verification, because this is part of onboarding. Queries are
 limited to 200 characters / 1 KiB bodies and 30 requests per member per ten-minute
-server instance window. Only the query and language reach Photon, with a fixed
+server instance window. Only the query reaches the providers (plus language for Photon), with a fixed
 Redmond-area search box; identity, cookies, GPS and request headers do not. Response
 coordinates are checked, queries/results are uncached and are not stored or logged.
+County queries request only street address, postal community, state, ZIP and point
+geometry: no owner, taxlot or household fields. Common full-word directions and
+street suffixes are normalized to the county's abbreviations; partial addresses
+can return up to six suggestions. County results are preferred when present, with
+a three-second timeout and best-effort Photon fallback. Photon street centers and
+different house numbers are excluded, so they cannot masquerade as a located home.
+No new API key, dependency or database migration is required. Address-source
+coverage can still be incomplete; this does not update the historical 2019 map.
+[Deschutes County E911 address points](https://maps.deschutes.org/server/rest/services/Hosted/E911_Address_Points/FeatureServer)
+provides the public address locations; availability has no guarantee in this app.
 The UI describes the provider before submission. Typed address values and markers
 are cleared on leaving Map or clearing the search. Outside-image results produce
 an explicit coverage message, with no misleading marker at the map's edge.

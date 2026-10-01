@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import {
   coveredByNeighborhoodMap,
   photonAddresses,
+  countyAddressUrl,
+  countyAddresses,
 } from "@/lib/neighborhood-address";
 const m = vi.hoisted(() => ({ user: vi.fn(), limit: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ getCurrentUser: m.user }));
@@ -18,6 +20,18 @@ const request = (q: unknown = "Sam Johnson Park", locale = "en") =>
     body: JSON.stringify({ q, locale }),
   });
 const fetcher = vi.fn();
+const countyFeature = (
+  address = "123 NW SAMPLE ST",
+  coordinates = [-121.18, 44.27],
+) => ({
+  attributes: {
+    address,
+    postal_community: "REDMOND",
+    state: "OR",
+    zipcode: "97756",
+  },
+  geometry: { x: coordinates[0], y: coordinates[1] },
+});
 beforeEach(() => {
   vi.clearAllMocks();
   m.user.mockResolvedValue({
@@ -73,6 +87,117 @@ it("fails closed when Photon is offline or returns an error", async () => {
   expect((await POST(request())).status).toBe(503);
   fetcher.mockResolvedValueOnce({ ok: false });
   expect((await (await POST(request())).json()).unavailable).toBe(true);
+});
+it("normalizes partial/full street addresses and constrains the county query without SQL wildcards from input", () => {
+  const url = countyAddressUrl(
+    "123 Northwest Sample Street, Redmond, OR 97756",
+  )!;
+  expect(url.searchParams.get("where")).toBe(
+    "postal_community = 'REDMOND' AND address LIKE '123 NW SAMPLE ST%'",
+  );
+  expect(countyAddressUrl("123 NW Sam")!.searchParams.get("where")).toContain(
+    "'123 NW SAM%'",
+  );
+  expect(
+    countyAddressUrl("123 NW O'Brien St")!.searchParams.get("where"),
+  ).toContain("O''BRIEN");
+  expect(countyAddressUrl("123%' OR 1=1 --")).toBeUndefined();
+  expect(countyAddressUrl("123_%")).toBeUndefined();
+  expect(countyAddressUrl("Sam Johnson Park")).toBeUndefined();
+  expect(
+    countyAddressUrl("123 NW North Street")!.searchParams.get("where"),
+  ).toContain("123 NW NORTH ST");
+  expect(url.searchParams.get("outFields")).toBe(
+    "address,postal_community,state,zipcode",
+  );
+  expect(url.searchParams.get("outSR")).toBe("4326");
+  expect(url.searchParams.get("resultRecordCount")).toBe("6");
+});
+it("uses real county points first without identity, caching, or a second provider request", async () => {
+  fetcher.mockResolvedValueOnce({
+    ok: true,
+    json: async () => ({ features: [countyFeature()] }),
+  });
+  const response = await POST(request("123 NW Sample St"));
+  expect((await response.json()).results).toEqual([
+    {
+      label: "123 NW SAMPLE ST, Redmond, OR, 97756",
+      lat: 44.27,
+      lng: -121.18,
+      source: "county",
+    },
+  ]);
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  const [url, options] = fetcher.mock.calls[0];
+  expect(url.origin).toBe("https://maps.deschutes.org");
+  expect(url.toString()).not.toMatch(/member-id|private|email/);
+  expect(options.headers).toBeUndefined();
+  expect(options.cache).toBe("no-store");
+});
+it.each(["offline", "empty", "service-error"])(
+  "falls back safely when county search is %s, rejecting wrong house numbers and street centers",
+  async (failure) => {
+    if (failure === "offline")
+      fetcher.mockRejectedValueOnce(new Error("offline"));
+    else
+      fetcher.mockResolvedValueOnce({
+        ok: true,
+        json: async () =>
+          failure === "empty" ? { features: [] } : { error: { code: 500 } },
+      });
+    fetcher.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        features: [
+          {
+            ...feature([-121.18, 44.27]),
+            properties: { type: "street", name: "NW Sample St" },
+          },
+          {
+            ...feature([-121.18, 44.27]),
+            properties: {
+              housenumber: "124",
+              street: "NW Sample St",
+              city: "Redmond",
+            },
+          },
+          {
+            ...feature([-121.18, 44.27]),
+            properties: {
+              housenumber: "123",
+              street: "NW Sample St",
+              city: "Redmond",
+            },
+          },
+        ],
+      }),
+    });
+    const response = await POST(request("123 NW Sample St"));
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(body.results).toHaveLength(1);
+    expect(body.results[0].label).toContain("123 NW Sample St");
+    expect(body.results[0].source).toBe("photon");
+  },
+);
+it("rejects invalid, duplicate, non-Redmond and outside-area county points", () => {
+  expect(
+    countyAddresses({
+      features: [
+        null,
+        countyFeature(),
+        countyFeature(),
+        countyFeature("124 NW SAMPLE ST", [NaN, 44.27]),
+        countyFeature("125 NW SAMPLE ST", [-122, 44.27]),
+        {
+          ...countyFeature(),
+          attributes: { address: "123 SW SAMPLE ST", postal_community: "BEND" },
+        },
+      ],
+    }),
+  ).toHaveLength(1);
+  expect(countyAddresses({ error: { code: 500 } })).toEqual([]);
 });
 it("validates coordinates and retains an outside-map result without pretending it has a boundary match", () => {
   const found = photonAddresses({

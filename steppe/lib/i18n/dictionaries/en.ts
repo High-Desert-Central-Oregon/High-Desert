@@ -224,7 +224,7 @@ export const en = {
       searchAddress: "Find address",
       searching: "Searching…",
       addressPrivacy:
-        "Suggestions appear after three characters and a pause in typing. What you type is sent to Photon (OpenStreetMap). Steppe does not save it. Your device location is not requested.",
+        "Suggestions appear after three characters and a pause in typing. Street addresses are searched in Deschutes County’s address data. Places and unmatched addresses are searched with Photon (OpenStreetMap). These services receive what you type; Steppe does not save it or request your device location.",
       pickAddress: "Choose a result to open the detailed map (5 MB).",
       noAddress:
         "No matching address found in the Redmond area. Try adding the street name and Redmond, or use List.",

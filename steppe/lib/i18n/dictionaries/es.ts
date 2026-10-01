@@ -231,7 +231,7 @@ export const es: Dictionary = {
       searchAddress: "Buscar dirección",
       searching: "Buscando…",
       addressPrivacy:
-        "Las sugerencias aparecen después de tres caracteres y una pausa al escribir. Lo que escribes se envía a Photon (OpenStreetMap). Steppe no lo guarda. No se solicita la ubicación de tu dispositivo.",
+        "Las sugerencias aparecen después de tres caracteres y una pausa al escribir. Las direcciones se buscan en los datos del condado de Deschutes. Los lugares y las direcciones sin coincidencia se buscan con Photon (OpenStreetMap). Estos servicios reciben lo que escribes; Steppe no lo guarda ni solicita la ubicación de tu dispositivo.",
       pickAddress: "Elige un resultado para abrir el mapa detallado (5 MB).",
       noAddress:
         "No se encontró una dirección en el área de Redmond. Añade el nombre de la calle y Redmond, o usa Lista.",

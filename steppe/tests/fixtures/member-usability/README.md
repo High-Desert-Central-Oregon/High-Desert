@@ -61,6 +61,10 @@ Use `&address-slow=1`, type three characters, wait for Searching, then shorten t
 query to two characters. The old response must never populate suggestions. Repeat
 with Clear address or switching to List during the request.
 
+Use `&address-county=1` for a synthetic county address point. County attribution
+must appear, the selected label must fill the input, and selecting the marker
+must leave Successful writes unchanged. Check the bilingual provider disclosure.
+
 Explore map loads the GeoPDF-derived raster and Leaflet. Check the new Juniper
 labels, Braydon Park, Street map / Compare, zoom, arrows/+/- and Return to overview.
 Missing names such as Cinder Butte Village must remain selectable. Repeat at 390px

@@ -34,13 +34,21 @@ const config = {
           // Slow synthetic responses exercise cancellation after typing changes.
           if (req.headers.referer?.includes("address-slow=1")) {
             res.setHeader("Content-Type", "application/json");
-            setTimeout(() => res.end(JSON.stringify({
-              results: [{
-                label: "Sam Johnson Park, Redmond, Oregon",
-                lat: 44.2733078,
-                lng: -121.1854115,
-              }],
-            })), 1500);
+            setTimeout(
+              () =>
+                res.end(
+                  JSON.stringify({
+                    results: [
+                      {
+                        label: "Sam Johnson Park, Redmond, Oregon",
+                        lat: 44.2733078,
+                        lng: -121.1854115,
+                      },
+                    ],
+                  }),
+                ),
+              1500,
+            );
             return;
           }
           res.setHeader("Content-Type", "application/json");
@@ -50,6 +58,19 @@ const config = {
           }
           if (req.headers.referer?.includes("address-empty=1"))
             return res.end(JSON.stringify({ results: [] }));
+          if (req.headers.referer?.includes("address-county=1"))
+            return res.end(
+              JSON.stringify({
+                results: [
+                  {
+                    label: "123 NW SAMPLE ST, Redmond, OR, 97756",
+                    lat: 44.2733078,
+                    lng: -121.1854115,
+                    source: "county",
+                  },
+                ],
+              }),
+            );
           res.end(
             JSON.stringify({
               results: [

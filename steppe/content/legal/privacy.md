@@ -128,6 +128,9 @@ operating a secure community service.
 We do not sell or rent member information. We disclose the minimum needed to
 service providers operating under contract, to Ignite when a sponsored
 responsibility actually requires it, or when valid legal process requires it.
+Optional address/place searches also send the typed query to public lookup
+services, as described beside the search field. Choosing Street map or Compare
+loads map tiles from OpenStreetMap.
 
 | Recipient | Purpose | What they receive |
 | --- | --- | --- |
@@ -135,6 +138,9 @@ responsibility actually requires it, or when valid legal process requires it.
 | Google | Optional sign-in identity provider | The sign-in request, processed under Google’s privacy policy |
 | Resend | Service email and contact-form delivery | Recipient email; contact content in transit; bug-report alerts contain only a reference and private review link, not the report description or diagnostics |
 | Sentry | Browser crash health and maintenance monitoring | Anonymous session health, sanitized error/code details and maintenance check-in status; no report descriptions or optional activity history |
+| Deschutes County | Optional neighborhood address lookup using public E911 address points | The typed street-address query and a fixed Redmond search area; no account identity, cookies or device GPS |
+| Photon (OpenStreetMap search) | Optional place search and fallback neighborhood address lookup | The typed query, chosen language and a fixed Redmond search area; no account identity, cookies or device GPS |
+| OpenStreetMap tile service | Optional street-map display | Ordinary browser tile requests, including network address and browser request headers |
 | Hosting/infrastructure providers | Run and secure the app | Requests and operational data needed to host it |
 | Ignite Empowerment Foundation | Administer sponsored funds and responsibilities | Only information needed for the applicable sponsored matter; no routine membership-database access |
 | A future payment provider | Process member subscriptions after beta | Payment and transaction data entered with that provider |
@@ -142,6 +148,10 @@ responsibility actually requires it, or when valid legal process requires it.
 The future payment provider will be named before paid membership data is
 collected. A contract handled by Ignite or Gregory Chism will identify that party
 rather than treating “Steppe” as an unspecified legal entity.
+
+Steppe does not save or log neighborhood address-search queries or results.
+Search markers are temporary and do not automatically update a profile or decide
+residency verification. External services may maintain their own request logs.
 
 ## 5. Retention and Account Deletion
 
