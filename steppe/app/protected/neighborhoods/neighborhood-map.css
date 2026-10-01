@@ -1,0 +1,31 @@
+/* Scope Leaflet's visual rules to the optional neighborhood map. */
+.neighborhood-map .map-canvas {
+  background: hsl(var(--muted));
+  z-index: 0;
+  font-family: inherit;
+}
+.neighborhood-map .map-canvas:focus-visible {
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+.neighborhood-map .leaflet-tooltip {
+  color: #172c45;
+  background: #fff;
+  border: 1px solid #172c45;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  width: max-content;
+  max-width: 240px;
+  white-space: normal;
+}
+
+.neighborhood-map .leaflet-control-attribution {
+  color: #172c45;
+  background: #fff;
+  font-size: 11px;
+}
+.neighborhood-map .leaflet-control-attribution a {
+  color: #16467a;
+  text-decoration: underline;
+}

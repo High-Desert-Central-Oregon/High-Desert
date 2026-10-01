@@ -211,6 +211,49 @@ export const en = {
   },
 
   neighborhoods: {
+    map: {
+      overview: "Return to overview",
+      title: "Find your neighborhood on a map",
+      intro:
+        "Explore Redmond’s subdivision names and nearby streets, then choose your neighborhood from the list below.",
+      date: "Aerial reference map · April 3, 2019",
+      coverage:
+        "This historical map does not show every neighborhood. Its labels and outlines are a reference, not verified boundaries. If you are unsure, choose “None of these fit” below.",
+      alt: "2019 Redmond aerial subdivision map with labeled neighborhoods, roads, and city limits.",
+      explore: "Explore map (5 MB)",
+      loading: "Loading map…",
+      error:
+        "The interactive map could not load. Use the overview or open the original map below.",
+      original: "Open original map (PDF, 3.2 MB)",
+      credits: "Map sources and credits",
+      source:
+        "Prepared April 3, 2019 for Western Title Company by Fidelity National Title. Data sources: Deschutes County, State of Oregon, Esri. Some plats are omitted. The source map is not a survey.",
+      find: "Find a neighborhood on the map",
+      wholeMap: "All of Redmond",
+      layers: "Map view",
+      aerial: "2019 aerial",
+      streets: "Street map",
+      compare: "Compare",
+      help: "Drag to move the map or use arrow keys while it is focused. Use the zoom buttons or + and − keys to see the labels. On a phone, pinch to zoom.",
+      located:
+        "Showing {name}. The marker locates its printed label, not its boundary.",
+      missing:
+        "We cannot confidently match {name} to a label on this 2019 map. You can still choose it in the list below.",
+      streetPrivacy:
+        "Street map and Compare load tiles from OpenStreetMap. Your device location is not requested.",
+      streetError:
+        "Some street tiles could not load. Try the 2019 aerial view or the original PDF.",
+      region: "Interactive Redmond neighborhood reference map",
+      navigation: "Map navigation",
+      zoomIn: "Zoom in",
+      zoomOut: "Zoom out",
+      reset: "Show whole map",
+      aerialCredit:
+        "2019 aerial: Western Title / Fidelity National Title; Esri and imagery contributors.",
+      contributors: "contributors",
+      selectionHint:
+        "Finding a name here does not change your saved neighborhood. Choose it in the list below, then Save neighborhood.",
+    },
     title: "Your neighborhood",
     intro:
       "Pick the Redmond neighborhood you call home. You can change this any time.",

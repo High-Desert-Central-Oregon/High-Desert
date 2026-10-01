@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState, useEffect, useState } from "react";
 import Link from "next/link";
+import { NeighborhoodMap } from "./neighborhood-map";
 import { Button } from "@/components/ui/button";
 import { setNeighborhood, type NeighborhoodState } from "./actions";
 import type { Dictionary } from "@/lib/i18n";
@@ -95,6 +96,12 @@ export function NeighborhoodForm({
           {dict.neighborhoods.errorGeneric}
         </p>
       )}
+
+      <NeighborhoodMap
+        dict={dict}
+        names={neighborhoods.map((nb) => nb.name)}
+        selectedName={neighborhoods.find((nb) => nb.id === selected)?.name}
+      />
 
       <fieldset>
         <legend className="mb-3 text-sm font-medium">

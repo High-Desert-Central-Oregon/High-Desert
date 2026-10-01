@@ -225,6 +225,11 @@ function NeighborhoodFixture({ dict }: { dict: typeof en }) {
         neighborhoods={[
           { id: "sample-a", name: "Sample neighborhood A" },
           { id: "sample-b", name: "Sample neighborhood B" },
+          { id: "braydon", name: "Braydon Park" },
+          { id: "diamond", name: "Diamond Bar Ranch" },
+          { id: "greens", name: "Greens at Redmond" },
+          { id: "cinder", name: "Cinder Butte Village" },
+          { id: "eagle", name: "Eagle Crest" },
         ]}
         dict={dict}
       />

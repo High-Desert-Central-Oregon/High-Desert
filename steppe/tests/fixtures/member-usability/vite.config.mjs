@@ -7,6 +7,7 @@ const root = fileURLToPath(new URL("../../../", import.meta.url));
 const here = fileURLToPath(new URL("./", import.meta.url));
 const config = {
   root: here,
+  publicDir: root + "public",
   define: { "process.env": {} },
   resolve: {
     alias: {
@@ -19,6 +20,12 @@ const config = {
     {
       name: "location-fixture",
       configureServer(server) {
+        // A real image error exercises the production map fallback; no hosted writes.
+        server.middlewares.use("/maps/redmond-2019/aerial.webp", (req, res, next) => {
+          if (!req.headers.referer?.includes("map-image-failure=1")) return next();
+          res.statusCode = 503;
+          res.end("Synthetic map image failure");
+        });
         // Exercise the browser's fragment inheritance across a server redirect.
         server.middlewares.use("/auth-error-callback", (_req, res) => {
           res.statusCode = 302;

@@ -42,3 +42,21 @@ the check also covers a delayed server refresh.
 
 This proves browser form retention; hosted database persistence is still checked
 by the server action's read-back and the separately gated local Postgres suite.
+
+## Redmond neighborhood map
+
+The neighborhood fixture serves the real local map assets. Expand the native map
+disclosure to see the static overview, then Explore map to load the detailed
+GeoPDF-derived image and Leaflet. Check Braydon Park, Diamond Bar Ranch and Greens
+at Redmond label markers, Street map / Compare, named zoom controls, keyboard
+arrows and +/−, Show whole map, and Return to overview. Missing names such as
+Cinder Butte Village and Eagle Crest must display the no-confident-match message.
+Browsing must leave Successful writes unchanged and the radio choice unchanged.
+Selecting a radio can locate its label, but only Save neighborhood may write.
+Repeat at 390px in Spanish and check focus, wrapping and no horizontal overflow.
+
+Open `/?screen=neighborhoods&map-image-failure=1` and Explore to force a local
+503 for the detailed raster. The real error handler must restore the static
+overview, show an alert, and leave the PDF link and picker usable. This intentionally
+produces one failed-resource console entry. No database is contacted. Street tiles
+are external and load only on a deliberate Street map / Compare choice.
