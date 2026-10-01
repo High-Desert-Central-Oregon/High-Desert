@@ -1,6 +1,9 @@
 # Redmond neighborhood reference map
 
-The neighborhood picker opens in **Map** mode with a lightweight static overview.
+The neighborhood picker opens in **Map** mode with OpenStreetMap streets beneath
+the county outlines. A lightweight static overview appears while the map library
+loads and remains the initial view when the browser reports offline, Save-Data,
+or a 2G connection. Members can also return to it at any time.
 **List** is an equally visible alternative, with alphabetical radios and search by
 full names, county plat names, or the PDF's abbreviated labels. Both modes share one selection and the
 same explicit Save neighborhood action. The compact chooser beneath Map uses the
@@ -10,9 +13,11 @@ Address suggestions appear after three characters and a 650ms pause in typing;
 Find address or Enter can also search immediately. Selecting a result fills the
 address field, cancels pending searches and closes the suggestions. Arrow keys and
 Enter choose a result, while Escape dismisses suggestions. Selecting a covered
-result loads Leaflet and the self-hosted county outlines with an address marker.
-Explore county outlines also loads them on request. Street tiles and the detailed
-2019 raster load only after choosing their backgrounds. Address search is a visual reference: it never infers membership in a
+result opens the street map and self-hosted county outlines with an address marker.
+Open street map also loads them on request from the static overview. The detailed
+2019 raster loads only after choosing its background. On phones, the address field
+uses its own full-width row with a short placeholder; the selected address also
+appears in full as wrapping text below it. Address search is a visual reference: it never infers membership in a
 boundary, assigns a neighborhood, verifies residency, or persists a home address.
 
 ## County outline source and catalog
@@ -105,14 +110,16 @@ Generated files in `steppe/public/maps/redmond-2019/`:
 
 ## Network, accessibility, and maintenance
 
-The picker initially loads no Leaflet JavaScript, detailed raster, or street tiles.
+The normal Map view loads Leaflet, county geometry and visible street tiles.
+Browsers reporting offline, Save-Data or a 2G connection initially use only the
+static overview; unsupported connection hints cannot identify every slow network.
 A native chooser, readable form list, static image alt text, and PDF link
 remain useful without the interactive library. Loading failures return to the
 static overview; outline-file failure also leaves the historical background and list usable. English and Spanish ship together. Native select, named zoom
 buttons, arrow-key panning, pinch zoom, visible focus, and non-color status text
 provide alternate controls. Scroll-wheel zoom is off to avoid trapping page scroll.
 
-Street/Compare explicitly request `https://tile.openstreetmap.org/{z}/{x}/{y}.png`
+The default Street map and optional Compare request `https://tile.openstreetmap.org/{z}/{x}/{y}.png`
 with visible copyright attribution and a normal browser referrer. Browser HTTP
 caching is unchanged; idle updates and zero extra tile buffer minimize requests.
 No prefetch, bulk download, service-worker tile caching, or offline tile pack.
@@ -159,8 +166,10 @@ polygon/name inspection, explicit Choose then Save, failed saves, reload, keyboa
 390px. Address Enter must search without submitting the neighborhood form. Choosing
 a result must add a marker without a write; clearing removes it. Check the
 outside-map result, `&outline-failure=1`, `&address-empty=1`, `&address-failure=1`, and
-`&map-image-failure=1` fallbacks. Street tiles are external and load only on explicit
-Street map / Compare choice.
+`&map-image-failure=1` fallbacks. Street tiles are external and load with the default
+interactive view. County outlines removes the street layer, and Return to overview
+unmounts the interactive map. Check full-width address input and wrapping selected
+labels at both 320px and 390px in English and Spanish.
 
 Run the source-text coverage check with pypdf installed:
 
