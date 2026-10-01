@@ -12,6 +12,22 @@ Use Screen/Language to switch views and Fail saves to exercise errors. Successfu
 
 Local database proof uses a disposable loopback database named `steppe_pipelines_test`. First run `tests/fixtures/account-removal-database.mjs`, then `tests/fixtures/post-tags-local.mjs`, both with `MEMBER_PIPELINE_TEST_DB_URL` pointing at that empty local database. Both reject non-loopback URLs. Never use a hosted database.
 
+## Mobile form error and focus checks
+
+At 320px and 390px, test posts and edit-event with Fail saves enabled.
+After submitting, the error must receive focus and be visible without scrolling
+back to the top. Repeat the same failed submission: focus must return to the
+error again. Tab from the event error reaches Title; Tab from the post error
+reaches the first tag. Title, Details, dates, venue, and selected tags must stay
+intact and Successful writes must not increase. Repeat in Spanish.
+
+Details and neighborhood controls use 16px text below the desktop breakpoint.
+Use Space to toggle post tags: selected tags show checkmarks in addition to
+color. In browser forced-colors mode, verify an outline on the focused tag,
+text field, Details, neighborhood selector, and submit button. These checks are
+desktop browser emulation; physical Safari, software keyboard, browser zoom,
+and screen-reader speech need separate acceptance checks.
+
 ## Provider error recovery
 
 Open `http://127.0.0.1:8771/auth-error-callback#error=server_error&error_code=identity_already_exists&error_description=do-not-display`.
