@@ -560,3 +560,22 @@ resolved after following up out-of-band (invariant 5 — a human decides; the
 platform only surfaces). One open request per member (partial unique index);
 resolved rows are kept as light history. RLS: member opens/reads own; moderators
 read all and resolve. See `migrations/0001_neighborhood_requests.sql`.
+
+
+## 2026-09-30 — Map-first neighborhood picker and complete source catalog
+
+The picker offers Map and List, opening Map with a lightweight overview. The
+supplied April 3, 2019 Redmond GeoPDF contributes all 263 printed plat labels;
+four existing choices absent from that map remain, for 267 options. Migration
+0040 adds the 232 missing slugs while preserving all original IDs and references.
+Full names and printed abbreviations are searchable. Historical plat labels,
+including named nonresidential plats, are reference choices, not authoritative
+boundaries or a residency eligibility decision.
+
+Address search reuses Photon/OpenStreetMap behind an authenticated, bounded POST
+endpoint and is available before verification. Only a submitted query and language
+leave Steppe. Addresses and results live in the mounted picker, are uncached and
+are not logged or stored. A selected address can locate a point on the map; the
+member still chooses a neighborhood and explicitly saves it. Outside-map and
+provider-failure paths retain the list and human None-fits workflow. See
+`docs/redmond-neighborhood-map.md` for source checks and the owner migration gate.

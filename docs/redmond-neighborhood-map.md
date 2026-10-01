@@ -1,10 +1,16 @@
 # Redmond neighborhood reference map
 
-The neighborhood picker offers a native disclosure with a static overview and the
-original PDF. Explore map loads a self-hosted detailed raster and Leaflet 1.9.4.
-The member can pan/zoom, find a printed label, or explicitly choose Street map or
-Compare to load OpenStreetMap tiles. Browsing does not save a neighborhood; the
-existing radio list and Save neighborhood remain the only selection workflow.
+The neighborhood picker opens in **Map** mode with a lightweight static overview.
+**List** is an equally visible alternative, with alphabetical radios and search by
+full names or the PDF's abbreviated labels. Both modes share one selection and the
+same explicit Save neighborhood action. The compact chooser beneath Map uses the
+same database rows as List. Browsing the map never saves a choice.
+
+Find address submits a street address or public place only when the member presses
+the button or Enter. Selecting a covered result loads Leaflet and the detailed
+self-hosted raster, with a labeled address marker. Explore map also loads it on
+request. Address search is a visual reference: it never infers membership in a
+boundary, assigns a neighborhood, verifies residency, or persists a home address.
 
 ## Source and limits
 
@@ -16,13 +22,32 @@ existing radio list and Save neighborhood remain the only selection workflow.
   GIS User Community. The original footer and full credit text remain available.
 - This is historical subdivision reference imagery, not a current boundary
   authority or survey. Plats were omitted in the source; labels can be abbreviated.
-- 31 manually checked label centers are matched to the seeded names. They are
-  reference points, not polygon centroids, boundaries, or inferred residences.
-  Cinder Butte Village, Eagle Crest, Rimrock West Estate, and Village at Ridgeview
-  have no confident source-label match. The UI says so and leaves them selectable.
-  Eagle Crest remains in the seed; this map covers central Redmond only.
-- No migration, address lookup, device location, member marker, or automatic
-  neighborhood assignment is involved.
+- All **263 printed subdivision/plat labels** are accounted for in
+  `steppe/scripts/maps/source-labels.json`. Each row retains the printed alias,
+  expanded display name, stable slug and PDF label center. This includes the
+  source's named nonresidential plats; it is a catalog of that map's labels, not
+  a promise of present-day neighborhood boundaries or residential eligibility.
+- Cinder Butte Village, Eagle Crest, Rimrock West Estate, and Village at Ridgeview
+  have no confident source-label match. They remain selectable, giving **267 total
+  choices**. Existing IDs, names and member references are preserved, including
+  Eagle Crest outside city limits. Marker points locate printed labels, not
+  polygon centroids or boundaries.
+
+## Release order
+
+Apply `migrations/0040_redmond_map_neighborhoods.sql` in the owner's production SQL
+editor **before merging the app release**. It inserts the 232 missing rows and
+ignores existing slugs; a repeat applies no additional rows. It changes no RLS,
+trust columns, profiles, or existing neighborhood IDs. The production application
+always reads the database catalog; until this migration is applied it continues
+to show the existing 35 choices. Fresh local databases receive all 267 in schema.sql.
+
+After applying it, this read-only check should show 267 (or more if additional
+neighborhoods were deliberately added):
+
+```sql
+select count(*) as neighborhood_options from public.neighborhoods;
+```
 
 ## Georeferencing and rebuilding
 
@@ -48,12 +73,12 @@ Generated files in `steppe/public/maps/redmond-2019/`:
 - `aerial.webp`: 4609 × 6000 transparent-edge Web Mercator raster (~5 MiB),
   loaded only after Explore map. This preserves legible small subdivision labels.
 - `source.pdf`: unchanged original (~3.1 MiB), opened only from its link.
-- `map.json`: source SHA-256, date, bounds, transform residual, label locations.
+- `map.json`: source SHA-256, date, bounds, transform residual, all label locations and aliases.
 
 ## Network, accessibility, and maintenance
 
 The picker initially loads no Leaflet JavaScript, detailed raster, or street tiles.
-A native details element, readable form list, static image alt text, and PDF link
+A native chooser, readable form list, static image alt text, and PDF link
 remain useful without the interactive library. Loading failures return to the
 static overview. English and Spanish ship together. Native select, named zoom
 buttons, arrow-key panning, pinch zoom, visible focus, and non-color status text
@@ -67,15 +92,48 @@ See [OSM tile policy](https://operations.osmfoundation.org/policies/tiles/).
 The external provider sees ordinary tile requests, not profile data or GPS.
 For traffic beyond the small beta, review provider capacity before expanding use.
 
+Address lookup uses the existing Photon provider through authenticated POST
+`/api/neighborhood-address`. Unlike event-venue suggestions, it permits signed-in
+members before verification, because this is part of onboarding. Queries are
+limited to 200 characters / 1 KiB bodies and 30 requests per member per ten-minute
+server instance window. Only the query and language reach Photon, with a fixed
+Redmond-area search box; identity, cookies, GPS and request headers do not. Response
+coordinates are checked, queries/results are uncached and are not stored or logged.
+The UI describes the provider before submission. Typed address values and markers
+are cleared on leaving Map or clearing the search. Outside-image results produce
+an explicit coverage message, with no misleading marker at the map's edge.
+[Photon API documentation](https://github.com/komoot/photon/blob/master/docs/api-v1.md)
+supports search, location bias and bounding-box filtering. Its public instance is
+best-effort and may throttle; provider failures leave Map/List usable. For a wider
+release, review geocoder capacity alongside the tile provider.
+
 The supplied map's printed text remains in its source language; surrounding UI and
 status/help text are translated. Map browsing is optional and never replaces the
 accessible list or the human follow-up for None of these fit.
 
 ## Verification
 
-Use the real-component local fixture at `/?screen=neighborhoods`; it includes
-confident labels plus absent names without contacting a database. Verify the
-closed disclosure and overview, Explore, label lookup, layer comparison, missing
-labels, keyboard navigation, Spanish/mobile, and save retention. Inspect alignment
-at the US 97 / Highland Avenue interchange and the northern US 97 interchange;
-label markers should land on the corresponding printed words.
+Use the real-component local fixture at `/?screen=neighborhoods`; it supplies
+all catalog rows and synthetic address results without a hosted database. Check
+Map first, List filtering (including `GLN`), selection retention across modes,
+explicit save from each mode, failed saves, reload, keyboard access and Spanish at
+390px. Address Enter must search without submitting the neighborhood form. Choosing
+a result must add a marker without a write; clearing removes it. Check the
+outside-map result, `&address-empty=1`, `&address-failure=1`, and
+`&map-image-failure=1` fallbacks. Street tiles are external and load only on explicit
+Street map / Compare choice.
+
+Run the source-text coverage check with pypdf installed:
+
+```sh
+python scripts/maps/verify-source-labels.py
+```
+
+It checks all 263 individual subdivision text blocks (excluding road text and
+credits) against the catalog's preserved printed labels and source hash. Metadata
+can be regenerated without re-rendering the raster by adding `--metadata-only` to
+the builder command. The source raster/PDF remain unchanged in the catalog release.
+The route/parser tests exercise authentication, bounds, payload limits, provider
+failure, privacy and catalog/seed/migration parity. A disposable local Postgres
+migration check confirms 232 first inserts, zero on replay, 267 final rows and
+unchanged IDs/names/member references for all original 35 choices.

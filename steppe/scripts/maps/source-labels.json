@@ -1,0 +1,2369 @@
+[
+  {
+    "printed": "27 ELM",
+    "pdfPoint": [
+      577.96,
+      552.81
+    ],
+    "name": "27 Elm",
+    "slug": "27-elm"
+  },
+  {
+    "printed": "27TH PARK",
+    "pdfPoint": [
+      550.54,
+      1072.29
+    ],
+    "name": "27th Park",
+    "slug": "27th-park"
+  },
+  {
+    "printed": "ALDER GLN",
+    "pdfPoint": [
+      490.84,
+      1164.01
+    ],
+    "name": "Alder Glen",
+    "slug": "alder-glen"
+  },
+  {
+    "printed": "AMBER SPGS",
+    "pdfPoint": [
+      672.44,
+      434.31
+    ],
+    "name": "Amber Springs",
+    "slug": "amber-springs"
+  },
+  {
+    "printed": "ANTLER XING",
+    "pdfPoint": [
+      518.25,
+      644.9
+    ],
+    "name": "Antler Crossing",
+    "slug": "antler-crossing"
+  },
+  {
+    "printed": "ANTLER PT",
+    "pdfPoint": [
+      506.43,
+      631.33
+    ],
+    "name": "Antler Point",
+    "slug": "antler-point"
+  },
+  {
+    "printed": "ANTLER RDG",
+    "pdfPoint": [
+      434.13,
+      690.93
+    ],
+    "name": "Antler Ridge",
+    "slug": "antler-ridge"
+  },
+  {
+    "printed": "ARNETT",
+    "pdfPoint": [
+      752.86,
+      1018.65
+    ],
+    "name": "Arnett",
+    "slug": "arnett"
+  },
+  {
+    "printed": "ASPEN CRK",
+    "pdfPoint": [
+      596.93,
+      880.99
+    ],
+    "name": "Aspen Creek",
+    "slug": "aspen-creek"
+  },
+  {
+    "printed": "ASPEN VLY",
+    "pdfPoint": [
+      93.49,
+      898.64
+    ],
+    "name": "Aspen Valley",
+    "slug": "aspen-valley"
+  },
+  {
+    "printed": "ASPEN WINDS",
+    "pdfPoint": [
+      577.86,
+      672.92
+    ],
+    "name": "Aspen Winds",
+    "slug": "aspen-winds"
+  },
+  {
+    "printed": "ATOP THE SMT",
+    "pdfPoint": [
+      350.91,
+      1087.72
+    ],
+    "name": "Atop the Summit",
+    "slug": "atop-the-summit"
+  },
+  {
+    "printed": "AUTUMNGLEN",
+    "pdfPoint": [
+      464.57,
+      1116.11
+    ],
+    "name": "Autumnglen",
+    "slug": "autumnglen"
+  },
+  {
+    "printed": "AYRES AC",
+    "pdfPoint": [
+      1120.85,
+      317.43
+    ],
+    "name": "Ayres Acres",
+    "slug": "ayres-acres"
+  },
+  {
+    "printed": "BAKER PARK",
+    "pdfPoint": [
+      762.56,
+      954.22
+    ],
+    "name": "Baker Park",
+    "slug": "baker-park"
+  },
+  {
+    "printed": "BALLPARK VIEW",
+    "pdfPoint": [
+      512.59,
+      1153.18
+    ],
+    "name": "Ballpark View",
+    "slug": "ballpark-view"
+  },
+  {
+    "printed": "BANTA AC",
+    "pdfPoint": [
+      754.36,
+      887.69
+    ],
+    "name": "Banta Acres",
+    "slug": "banta-acres"
+  },
+  {
+    "printed": "BARTEL",
+    "pdfPoint": [
+      826.64,
+      614.83
+    ],
+    "name": "Bartel",
+    "slug": "bartel"
+  },
+  {
+    "printed": "BASKING RDG",
+    "pdfPoint": [
+      831.14,
+      945.06
+    ],
+    "name": "Basking Ridge",
+    "slug": "basking-ridge"
+  },
+  {
+    "printed": "BELLA SERA",
+    "pdfPoint": [
+      835.82,
+      157.89
+    ],
+    "name": "Bella Sera",
+    "slug": "bella-sera"
+  },
+  {
+    "printed": "BELLA VISTA",
+    "pdfPoint": [
+      836.32,
+      204.01
+    ],
+    "name": "Bella Vista",
+    "slug": "bella-vista"
+  },
+  {
+    "printed": "BENTWOOD ESTS",
+    "pdfPoint": [
+      306.09,
+      1206.48
+    ],
+    "name": "Bentwood Estates",
+    "slug": "bentwood-estates"
+  },
+  {
+    "printed": "BERNI'S SUBD",
+    "pdfPoint": [
+      656.25,
+      846.04
+    ],
+    "name": "Berni's Subdivision",
+    "slug": "berni-s-subdivision"
+  },
+  {
+    "printed": "BLACK HAWK",
+    "pdfPoint": [
+      511.35,
+      908.43
+    ],
+    "name": "Black Hawk",
+    "slug": "black-hawk"
+  },
+  {
+    "printed": "BLUE SKY ADTN",
+    "pdfPoint": [
+      885.82,
+      459.08
+    ],
+    "name": "Blue Sky Addition",
+    "slug": "blue-sky-addition"
+  },
+  {
+    "printed": "BOULDER BRK",
+    "pdfPoint": [
+      733.78,
+      600.01
+    ],
+    "name": "Boulder Brook",
+    "slug": "boulder-brook"
+  },
+  {
+    "printed": "BOULDER BRK CONDOS",
+    "pdfPoint": [
+      731.32,
+      586.21
+    ],
+    "name": "Boulder Brook Condos",
+    "slug": "boulder-brook-condos"
+  },
+  {
+    "printed": "BRAYDON PARK",
+    "pdfPoint": [
+      667.55,
+      446.85
+    ],
+    "name": "Braydon Park",
+    "slug": "braydon-park"
+  },
+  {
+    "printed": "BRIERWOOD",
+    "pdfPoint": [
+      646.58,
+      1035.52
+    ],
+    "name": "Brierwood",
+    "slug": "brierwood"
+  },
+  {
+    "printed": "BROOKTREE",
+    "pdfPoint": [
+      1017.42,
+      267.94
+    ],
+    "name": "Brooktree",
+    "slug": "brooktree"
+  },
+  {
+    "printed": "BROWN'S ADDITIONS",
+    "pdfPoint": [
+      574.9,
+      1242.97
+    ],
+    "name": "Brown's Additions",
+    "slug": "brown-s-additions"
+  },
+  {
+    "printed": "BUCKNER",
+    "pdfPoint": [
+      784.04,
+      403.2
+    ],
+    "name": "Buckner",
+    "slug": "buckner"
+  },
+  {
+    "printed": "CYN XING",
+    "pdfPoint": [
+      878.31,
+      301.25
+    ],
+    "name": "Canyon Crossing",
+    "slug": "canyon-crossing"
+  },
+  {
+    "printed": "CYN PT EAST",
+    "pdfPoint": [
+      796.22,
+      212.61
+    ],
+    "name": "Canyon Point East",
+    "slug": "canyon-point-east"
+  },
+  {
+    "printed": "CYN PT ESTS",
+    "pdfPoint": [
+      753.54,
+      168.08
+    ],
+    "name": "Canyon Point Estates",
+    "slug": "canyon-point-estates"
+  },
+  {
+    "printed": "CYN RNCH",
+    "pdfPoint": [
+      313.33,
+      149.58
+    ],
+    "name": "Canyon Ranch",
+    "slug": "canyon-ranch"
+  },
+  {
+    "printed": "CYN RIM VLG",
+    "pdfPoint": [
+      756.82,
+      483.14
+    ],
+    "name": "Canyon Rim Village",
+    "slug": "canyon-rim-village"
+  },
+  {
+    "printed": "CYN VIEW",
+    "pdfPoint": [
+      713.67,
+      881.74
+    ],
+    "name": "Canyon View",
+    "slug": "canyon-view"
+  },
+  {
+    "printed": "CYN VILLAS",
+    "pdfPoint": [
+      728.61,
+      1068.45
+    ],
+    "name": "Canyon Villas",
+    "slug": "canyon-villas"
+  },
+  {
+    "printed": "CARLY MDWS",
+    "pdfPoint": [
+      465.93,
+      953.74
+    ],
+    "name": "Carly Meadows",
+    "slug": "carly-meadows"
+  },
+  {
+    "printed": "CASCADE VIEW ALLOTMENT",
+    "pdfPoint": [
+      813.26,
+      634.63
+    ],
+    "name": "Cascade View Allotment",
+    "slug": "cascade-view-allotment"
+  },
+  {
+    "printed": "CASCADE VIEW ESTS",
+    "pdfPoint": [
+      371.42,
+      1264.38
+    ],
+    "name": "Cascade View Estates",
+    "slug": "cascade-view-estates"
+  },
+  {
+    "printed": "CASCADE WEST",
+    "pdfPoint": [
+      621.78,
+      321.65
+    ],
+    "name": "Cascade West",
+    "slug": "cascade-west"
+  },
+  {
+    "printed": "CASPER MOBILE AC",
+    "pdfPoint": [
+      1103.95,
+      686.96
+    ],
+    "name": "Casper Mobile Acres",
+    "slug": "casper-mobile-acres"
+  },
+  {
+    "printed": "CEDAR CRK VLG CONDOS",
+    "pdfPoint": [
+      651.7,
+      1174.41
+    ],
+    "name": "Cedar Creek Village Condos",
+    "slug": "cedar-creek-village-condos"
+  },
+  {
+    "printed": "CEDAR VLG",
+    "pdfPoint": [
+      685.06,
+      595.89
+    ],
+    "name": "Cedar Village",
+    "slug": "cedar-village"
+  },
+  {
+    "printed": "CENTURY ESTS",
+    "pdfPoint": [
+      485.93,
+      1085.63
+    ],
+    "name": "Century Estates",
+    "slug": "century-estates"
+  },
+  {
+    "printed": "CHELSEA SQ",
+    "pdfPoint": [
+      851.59,
+      804.47
+    ],
+    "name": "Chelsea Square",
+    "slug": "chelsea-square"
+  },
+  {
+    "printed": "CLFS",
+    "pdfPoint": [
+      726.99,
+      319.51
+    ],
+    "name": "Cliffs",
+    "slug": "cliffs"
+  },
+  {
+    "printed": "COHO XING",
+    "pdfPoint": [
+      642.7,
+      1077.2
+    ],
+    "name": "Coho Crossing",
+    "slug": "coho-crossing"
+  },
+  {
+    "printed": "COHO RUN",
+    "pdfPoint": [
+      1118.8,
+      390.25
+    ],
+    "name": "Coho Run",
+    "slug": "coho-run"
+  },
+  {
+    "printed": "COLLINS ADTN",
+    "pdfPoint": [
+      884.52,
+      563.45
+    ],
+    "name": "Collins Addition",
+    "slug": "collins-addition"
+  },
+  {
+    "printed": "COOK XING CONDO",
+    "pdfPoint": [
+      844.84,
+      905.29
+    ],
+    "name": "Cook Crossing Condo",
+    "slug": "cook-crossing-condo"
+  },
+  {
+    "printed": "COPPER RDG",
+    "pdfPoint": [
+      358.0,
+      1020.77
+    ],
+    "name": "Copper Ridge",
+    "slug": "copper-ridge"
+  },
+  {
+    "printed": "CORKS WESTSIDE",
+    "pdfPoint": [
+      553.86,
+      694.27
+    ],
+    "name": "Corks Westside",
+    "slug": "corks-westside"
+  },
+  {
+    "printed": "CORKS WESTSIDE ADTN",
+    "pdfPoint": [
+      603.96,
+      712.48
+    ],
+    "name": "Corks Westside Addition",
+    "slug": "corks-westside-addition"
+  },
+  {
+    "printed": "COUNTRY PARK",
+    "pdfPoint": [
+      518.25,
+      1186.3
+    ],
+    "name": "Country Park",
+    "slug": "country-park"
+  },
+  {
+    "printed": "CRANE MDW",
+    "pdfPoint": [
+      669.31,
+      418.53
+    ],
+    "name": "Crane Meadow",
+    "slug": "crane-meadow"
+  },
+  {
+    "printed": "CREDENDA",
+    "pdfPoint": [
+      660.42,
+      390.58
+    ],
+    "name": "Credenda",
+    "slug": "credenda"
+  },
+  {
+    "printed": "CREDENDA SUBD",
+    "pdfPoint": [
+      621.64,
+      375.98
+    ],
+    "name": "Credenda Subdivision",
+    "slug": "credenda-subdivision"
+  },
+  {
+    "printed": "CROSSINGS AT METOLIUS",
+    "pdfPoint": [
+      423.36,
+      867.45
+    ],
+    "name": "Crossings at Metolius",
+    "slug": "crossings-at-metolius"
+  },
+  {
+    "printed": "CURRY ADTN",
+    "pdfPoint": [
+      870.52,
+      441.14
+    ],
+    "name": "Curry Addition",
+    "slug": "curry-addition"
+  },
+  {
+    "printed": "DANA-BUTLER",
+    "pdfPoint": [
+      586.02,
+      1187.24
+    ],
+    "name": "Dana-Butler",
+    "slug": "dana-butler"
+  },
+  {
+    "printed": "DEER XING",
+    "pdfPoint": [
+      507.6,
+      670.13
+    ],
+    "name": "Deer Crossing",
+    "slug": "deer-crossing"
+  },
+  {
+    "printed": "DEHMC ACRE",
+    "pdfPoint": [
+      548.7,
+      722.2
+    ],
+    "name": "Dehmc Acre",
+    "slug": "dehmc-acre"
+  },
+  {
+    "printed": "DESERT VLY",
+    "pdfPoint": [
+      728.62,
+      1053.83
+    ],
+    "name": "Desert Valley",
+    "slug": "desert-valley"
+  },
+  {
+    "printed": "DESERT VLY EAST",
+    "pdfPoint": [
+      698.78,
+      1055.34
+    ],
+    "name": "Desert Valley East",
+    "slug": "desert-valley-east"
+  },
+  {
+    "printed": "DIAMOND BAR RNCH",
+    "pdfPoint": [
+      1100.85,
+      196.69
+    ],
+    "name": "Diamond Bar Ranch",
+    "slug": "diamond-bar-ranch"
+  },
+  {
+    "printed": "DOBSON-SLOCUM ACREAGE",
+    "pdfPoint": [
+      737.28,
+      693.69
+    ],
+    "name": "Dobson-Slocum Acreage",
+    "slug": "dobson-slocum-acreage"
+  },
+  {
+    "printed": "DORSCH AC",
+    "pdfPoint": [
+      866.38,
+      420.6
+    ],
+    "name": "Dorsch Acres",
+    "slug": "dorsch-acres"
+  },
+  {
+    "printed": "DOVE MDW",
+    "pdfPoint": [
+      744.63,
+      439.36
+    ],
+    "name": "Dove Meadow",
+    "slug": "dove-meadow"
+  },
+  {
+    "printed": "EAGLE PARK",
+    "pdfPoint": [
+      554.43,
+      1091.59
+    ],
+    "name": "Eagle Park",
+    "slug": "eagle-park"
+  },
+  {
+    "printed": "EAST RIM",
+    "pdfPoint": [
+      836.42,
+      310.94
+    ],
+    "name": "East Rim",
+    "slug": "east-rim"
+  },
+  {
+    "printed": "EASTSIDE CITY",
+    "pdfPoint": [
+      995.6,
+      390.76
+    ],
+    "name": "Eastside City",
+    "slug": "eastside-city"
+  },
+  {
+    "printed": "ECHO RIM",
+    "pdfPoint": [
+      661.04,
+      143.1
+    ],
+    "name": "Echo Rim Estates",
+    "slug": "echo-rim-estates"
+  },
+  {
+    "printed": "EHRET'S FIRST ADTN",
+    "pdfPoint": [
+      960.6,
+      651.27
+    ],
+    "name": "Ehret's First Addition",
+    "slug": "ehret-s-first-addition"
+  },
+  {
+    "printed": "ELLINGER'S ADTN",
+    "pdfPoint": [
+      882.31,
+      627.89
+    ],
+    "name": "Ellinger's Addition",
+    "slug": "ellinger-s-addition"
+  },
+  {
+    "printed": "EMERALD VIEW ESTS",
+    "pdfPoint": [
+      237.51,
+      1127.15
+    ],
+    "name": "Emerald View Estates",
+    "slug": "emerald-view-estates"
+  },
+  {
+    "printed": "EMERALD VILLA",
+    "pdfPoint": [
+      701.12,
+      373.73
+    ],
+    "name": "Emerald Villa",
+    "slug": "emerald-villa"
+  },
+  {
+    "printed": "EMILY ESTS",
+    "pdfPoint": [
+      721.44,
+      536.79
+    ],
+    "name": "Emily Estates",
+    "slug": "emily-estates"
+  },
+  {
+    "printed": "EVANSVILLE",
+    "pdfPoint": [
+      687.32,
+      332.22
+    ],
+    "name": "Evansville",
+    "slug": "evansville"
+  },
+  {
+    "printed": "FAIR AC",
+    "pdfPoint": [
+      968.21,
+      569.91
+    ],
+    "name": "Fair Acres",
+    "slug": "fair-acres"
+  },
+  {
+    "printed": "FAIR AC ADTN",
+    "pdfPoint": [
+      952.38,
+      523.95
+    ],
+    "name": "Fair Acres Addition",
+    "slug": "fair-acres-addition"
+  },
+  {
+    "printed": "FAIRGROUNDS CONDO PLAZA",
+    "pdfPoint": [
+      657.72,
+      1451.27
+    ],
+    "name": "Fairgrounds Condo Plaza",
+    "slug": "fairgrounds-condo-plaza"
+  },
+  {
+    "printed": "FAIRHAVEN",
+    "pdfPoint": [
+      607.47,
+      630.31
+    ],
+    "name": "Fairhaven",
+    "slug": "fairhaven"
+  },
+  {
+    "printed": "FAIRHAVEN XING",
+    "pdfPoint": [
+      632.99,
+      576.92
+    ],
+    "name": "Fairhaven Crossing",
+    "slug": "fairhaven-crossing"
+  },
+  {
+    "printed": "FAIRHAVEN VISTA",
+    "pdfPoint": [
+      616.4,
+      600.45
+    ],
+    "name": "Fairhaven Vista",
+    "slug": "fairhaven-vista"
+  },
+  {
+    "printed": "FAIRHAVEN VISTA P.U.D.",
+    "pdfPoint": [
+      591.65,
+      616.65
+    ],
+    "name": "Fairhaven Vista P.U.D.",
+    "slug": "fairhaven-vista-p-u-d"
+  },
+  {
+    "printed": "FIELDSTONE",
+    "pdfPoint": [
+      593.96,
+      1199.21
+    ],
+    "name": "Fieldstone",
+    "slug": "fieldstone"
+  },
+  {
+    "printed": "FIELDSTONE XING",
+    "pdfPoint": [
+      519.8,
+      615.04
+    ],
+    "name": "Fieldstone Crossing",
+    "slug": "fieldstone-crossing"
+  },
+  {
+    "printed": "FIELDSTONE SOUTH",
+    "pdfPoint": [
+      604.38,
+      1218.72
+    ],
+    "name": "Fieldstone South",
+    "slug": "fieldstone-south"
+  },
+  {
+    "printed": "FORKED HORN BUTTE",
+    "pdfPoint": [
+      212.6,
+      1306.45
+    ],
+    "name": "Forked Horn Butte",
+    "slug": "forked-horn-butte"
+  },
+  {
+    "printed": "FORREST CMNS",
+    "pdfPoint": [
+      736.98,
+      428.78
+    ],
+    "name": "Forrest Commons",
+    "slug": "forrest-commons"
+  },
+  {
+    "printed": "FRANK'S LNDG",
+    "pdfPoint": [
+      654.01,
+      1359.79
+    ],
+    "name": "Frank's Landing",
+    "slug": "frank-s-landing"
+  },
+  {
+    "printed": "GOODRICH SUBD",
+    "pdfPoint": [
+      234.14,
+      1209.97
+    ],
+    "name": "Goodrich Subdivision",
+    "slug": "goodrich-subdivision"
+  },
+  {
+    "printed": "GRAY BUTTE ESTS",
+    "pdfPoint": [
+      1078.5,
+      413.94
+    ],
+    "name": "Gray Butte Estates",
+    "slug": "gray-butte-estates"
+  },
+  {
+    "printed": "GRNS AT REDMOND",
+    "pdfPoint": [
+      523.73,
+      1390.75
+    ],
+    "name": "Greens at Redmond",
+    "slug": "greens-at-redmond"
+  },
+  {
+    "printed": "GUY'S AC",
+    "pdfPoint": [
+      1115.55,
+      410.56
+    ],
+    "name": "Guy's Acres",
+    "slug": "guy-s-acres"
+  },
+  {
+    "printed": "HALL",
+    "pdfPoint": [
+      614.83,
+      1161.32
+    ],
+    "name": "Hall",
+    "slug": "hall"
+  },
+  {
+    "printed": "HAROLD'S ADTN",
+    "pdfPoint": [
+      807.17,
+      922.36
+    ],
+    "name": "Harold's Addition",
+    "slug": "harold-s-addition"
+  },
+  {
+    "printed": "HARRY RNCH ESTS",
+    "pdfPoint": [
+      52.07,
+      1284.37
+    ],
+    "name": "Harry Ranch Estates",
+    "slug": "harry-ranch-estates"
+  },
+  {
+    "printed": "HAWLEY ESTS",
+    "pdfPoint": [
+      444.82,
+      649.34
+    ],
+    "name": "Hawley Estates",
+    "slug": "hawley-estates"
+  },
+  {
+    "printed": "HAYDEN AC",
+    "pdfPoint": [
+      889.67,
+      192.34
+    ],
+    "name": "Hayden Acres",
+    "slug": "hayden-acres"
+  },
+  {
+    "printed": "HAYDEN RNCH ESTS",
+    "pdfPoint": [
+      1044.03,
+      414.77
+    ],
+    "name": "Hayden Ranch Estates",
+    "slug": "hayden-ranch-estates"
+  },
+  {
+    "printed": "HAYDEN SQ",
+    "pdfPoint": [
+      712.22,
+      1033.61
+    ],
+    "name": "Hayden Square",
+    "slug": "hayden-square"
+  },
+  {
+    "printed": "HAYDEN VIEW",
+    "pdfPoint": [
+      489.23,
+      866.9
+    ],
+    "name": "Hayden View",
+    "slug": "hayden-view"
+  },
+  {
+    "printed": "HAYDEN VLG",
+    "pdfPoint": [
+      448.24,
+      1048.44
+    ],
+    "name": "Hayden Village",
+    "slug": "hayden-village"
+  },
+  {
+    "printed": "HEIERMAN",
+    "pdfPoint": [
+      622.63,
+      670.81
+    ],
+    "name": "Heierman",
+    "slug": "heierman"
+  },
+  {
+    "printed": "HEIERMAN-MCCORMICK",
+    "pdfPoint": [
+      736.99,
+      981.02
+    ],
+    "name": "Heierman-McCormick",
+    "slug": "heierman-mccormick"
+  },
+  {
+    "printed": "HERITAGE RNCH",
+    "pdfPoint": [
+      853.23,
+      240.9
+    ],
+    "name": "Heritage Ranch",
+    "slug": "heritage-ranch"
+  },
+  {
+    "printed": "HESTER",
+    "pdfPoint": [
+      294.98,
+      1380.91
+    ],
+    "name": "Hester",
+    "slug": "hester"
+  },
+  {
+    "printed": "HI-COUNTRY ESTS",
+    "pdfPoint": [
+      541.51,
+      1216.76
+    ],
+    "name": "Hi-Country Estates",
+    "slug": "hi-country-estates"
+  },
+  {
+    "printed": "HIDDEN VLY MOBILE ESTS",
+    "pdfPoint": [
+      383.34,
+      198.64
+    ],
+    "name": "Hidden Valley Mobile Estates",
+    "slug": "hidden-valley-mobile-estates"
+  },
+  {
+    "printed": "HILL CRST",
+    "pdfPoint": [
+      392.46,
+      1118.77
+    ],
+    "name": "Hill Crest",
+    "slug": "hill-crest"
+  },
+  {
+    "printed": "HOME DEPOT STATION",
+    "pdfPoint": [
+      954.31,
+      244.44
+    ],
+    "name": "Home Depot Station",
+    "slug": "home-depot-station"
+  },
+  {
+    "printed": "HOWELL AC",
+    "pdfPoint": [
+      41.87,
+      427.67
+    ],
+    "name": "Howell Acres",
+    "slug": "howell-acres"
+  },
+  {
+    "printed": "HOWELL'S HILL TOP AC",
+    "pdfPoint": [
+      126.17,
+      476.65
+    ],
+    "name": "Howell's Hill Top Acres",
+    "slug": "howell-s-hill-top-acres"
+  },
+  {
+    "printed": "HOWELL'S RIV RIM",
+    "pdfPoint": [
+      78.95,
+      332.22
+    ],
+    "name": "Howell's River Rim",
+    "slug": "howell-s-river-rim"
+  },
+  {
+    "printed": "HUNT'S THREE SISTERS VIEW",
+    "pdfPoint": [
+      235.22,
+      1261.29
+    ],
+    "name": "Hunt's Three Sisters View",
+    "slug": "hunt-s-three-sisters-view"
+  },
+  {
+    "printed": "INNOVATION PARK",
+    "pdfPoint": [
+      937.35,
+      1150.45
+    ],
+    "name": "Innovation Park",
+    "slug": "innovation-park"
+  },
+  {
+    "printed": "JEAN MDWS",
+    "pdfPoint": [
+      638.95,
+      952.39
+    ],
+    "name": "Jean Meadows",
+    "slug": "jean-meadows"
+  },
+  {
+    "printed": "JEFFERSON VIEW ALLOTMENT",
+    "pdfPoint": [
+      798.19,
+      598.41
+    ],
+    "name": "Jefferson View Allotment",
+    "slug": "jefferson-view-allotment"
+  },
+  {
+    "printed": "JENSEN TRACTS",
+    "pdfPoint": [
+      639.09,
+      1127.06
+    ],
+    "name": "Jensen Tracts",
+    "slug": "jensen-tracts"
+  },
+  {
+    "printed": "JOHNSON AC",
+    "pdfPoint": [
+      58.99,
+      542.34
+    ],
+    "name": "Johnson Acres",
+    "slug": "johnson-acres"
+  },
+  {
+    "printed": "JULINA PARK",
+    "pdfPoint": [
+      586.47,
+      851.12
+    ],
+    "name": "Julina Park",
+    "slug": "julina-park"
+  },
+  {
+    "printed": "JUNIPER GLN",
+    "pdfPoint": [
+      514.9,
+      836.06
+    ],
+    "name": "Juniper Glen",
+    "slug": "juniper-glen"
+  },
+  {
+    "printed": "JUNIPER GLN NORTH",
+    "pdfPoint": [
+      518.06,
+      813.66
+    ],
+    "name": "Juniper Glen North",
+    "slug": "juniper-glen-north"
+  },
+  {
+    "printed": "JUNIPER HILL",
+    "pdfPoint": [
+      300.04,
+      1063.25
+    ],
+    "name": "Juniper Hill",
+    "slug": "juniper-hill"
+  },
+  {
+    "printed": "JUNIPER MDWS",
+    "pdfPoint": [
+      281.35,
+      1021.52
+    ],
+    "name": "Juniper Meadows",
+    "slug": "juniper-meadows"
+  },
+  {
+    "printed": "JUNIPER VISTA",
+    "pdfPoint": [
+      428.04,
+      1238.99
+    ],
+    "name": "Juniper Vista",
+    "slug": "juniper-vista"
+  },
+  {
+    "printed": "JUSTIN GLN",
+    "pdfPoint": [
+      873.34,
+      269.4
+    ],
+    "name": "Justin Glen",
+    "slug": "justin-glen"
+  },
+  {
+    "printed": "KAYLA VLG",
+    "pdfPoint": [
+      454.52,
+      1187.77
+    ],
+    "name": "Kayla Village",
+    "slug": "kayla-village"
+  },
+  {
+    "printed": "KENYONS ACREAGE",
+    "pdfPoint": [
+      881.27,
+      549.26
+    ],
+    "name": "Kenyons Acreage",
+    "slug": "kenyons-acreage"
+  },
+  {
+    "printed": "KIAN CYN",
+    "pdfPoint": [
+      432.82,
+      1177.38
+    ],
+    "name": "Kian Canyon",
+    "slug": "kian-canyon"
+  },
+  {
+    "printed": "KIAN WEST",
+    "pdfPoint": [
+      430.2,
+      1163.14
+    ],
+    "name": "Kian West",
+    "slug": "kian-west"
+  },
+  {
+    "printed": "LARCH MDWS",
+    "pdfPoint": [
+      729.56,
+      420.86
+    ],
+    "name": "Larch Meadows",
+    "slug": "larch-meadows"
+  },
+  {
+    "printed": "LAWSON XING",
+    "pdfPoint": [
+      391.05,
+      606.85
+    ],
+    "name": "Lawson Crossing",
+    "slug": "lawson-crossing"
+  },
+  {
+    "printed": "LONE JUNIPER ESTS",
+    "pdfPoint": [
+      658.27,
+      1224.95
+    ],
+    "name": "Lone Juniper Estates",
+    "slug": "lone-juniper-estates"
+  },
+  {
+    "printed": "MAJESTIC RDG",
+    "pdfPoint": [
+      309.0,
+      1101.37
+    ],
+    "name": "Majestic Ridge",
+    "slug": "majestic-ridge"
+  },
+  {
+    "printed": "MAKENA VIEW ESTS",
+    "pdfPoint": [
+      258.47,
+      1175.88
+    ],
+    "name": "Makena View Estates",
+    "slug": "makena-view-estates"
+  },
+  {
+    "printed": "MAPLE MDWS",
+    "pdfPoint": [
+      598.94,
+      483.34
+    ],
+    "name": "Maple Meadows",
+    "slug": "maple-meadows"
+  },
+  {
+    "printed": "MAPLEWOOD",
+    "pdfPoint": [
+      778.97,
+      193.94
+    ],
+    "name": "Maplewood",
+    "slug": "maplewood"
+  },
+  {
+    "printed": "MCKENZIE RIM ESTS",
+    "pdfPoint": [
+      699.03,
+      222.73
+    ],
+    "name": "McKenzie Rim Estates",
+    "slug": "mckenzie-rim-estates"
+  },
+  {
+    "printed": "MCKENZIE'S MDW",
+    "pdfPoint": [
+      798.86,
+      423.52
+    ],
+    "name": "McKenzie's Meadow",
+    "slug": "mckenzie-s-meadow"
+  },
+  {
+    "printed": "MEADOWBROOK ESTS",
+    "pdfPoint": [
+      476.55,
+      756.02
+    ],
+    "name": "Meadowbrook Estates",
+    "slug": "meadowbrook-estates"
+  },
+  {
+    "printed": "MEADOWLARK ESTS",
+    "pdfPoint": [
+      617.65,
+      360.48
+    ],
+    "name": "Meadowlark Estates",
+    "slug": "meadowlark-estates"
+  },
+  {
+    "printed": "MEGAN PARK",
+    "pdfPoint": [
+      596.75,
+      531.63
+    ],
+    "name": "Megan Park",
+    "slug": "megan-park"
+  },
+  {
+    "printed": "MELROSE PARK",
+    "pdfPoint": [
+      809.5,
+      868.51
+    ],
+    "name": "Melrose Park",
+    "slug": "melrose-park"
+  },
+  {
+    "printed": "METTS SUBD",
+    "pdfPoint": [
+      524.07,
+      1124.53
+    ],
+    "name": "Metts Subdivision",
+    "slug": "metts-subdivision"
+  },
+  {
+    "printed": "MIDA ADTN",
+    "pdfPoint": [
+      687.24,
+      566.57
+    ],
+    "name": "Mida Addition",
+    "slug": "mida-addition"
+  },
+  {
+    "printed": "MTN GDNS",
+    "pdfPoint": [
+      645.23,
+      987.49
+    ],
+    "name": "Mountain Gardens",
+    "slug": "mountain-gardens"
+  },
+  {
+    "printed": "MTN GLENN",
+    "pdfPoint": [
+      653.79,
+      217.26
+    ],
+    "name": "Mountain Glenn",
+    "slug": "mountain-glenn"
+  },
+  {
+    "printed": "MTN VIEW ADTN",
+    "pdfPoint": [
+      807.19,
+      760.8
+    ],
+    "name": "Mountain View Addition",
+    "slug": "mountain-view-addition"
+  },
+  {
+    "printed": "MYERS ACREAGE",
+    "pdfPoint": [
+      956.27,
+      535.92
+    ],
+    "name": "Myers Acreage",
+    "slug": "myers-acreage"
+  },
+  {
+    "printed": "NEGUS VILLAS",
+    "pdfPoint": [
+      1066.48,
+      388.64
+    ],
+    "name": "Negus Villas",
+    "slug": "negus-villas"
+  },
+  {
+    "printed": "NEWBERRY VLG",
+    "pdfPoint": [
+      754.88,
+      903.47
+    ],
+    "name": "Newberry Village",
+    "slug": "newberry-village"
+  },
+  {
+    "printed": "NI-LAH-SHA",
+    "pdfPoint": [
+      1099.97,
+      267.47
+    ],
+    "name": "Ni-Lah-Sha",
+    "slug": "ni-lah-sha"
+  },
+  {
+    "printed": "NOLAN'S ADTN",
+    "pdfPoint": [
+      594.53,
+      751.75
+    ],
+    "name": "Nolan's Addition",
+    "slug": "nolan-s-addition"
+  },
+  {
+    "printed": "NORTH CYN ESTS",
+    "pdfPoint": [
+      764.08,
+      255.37
+    ],
+    "name": "North Canyon Estates",
+    "slug": "north-canyon-estates"
+  },
+  {
+    "printed": "NORTH RIM",
+    "pdfPoint": [
+      815.38,
+      266.01
+    ],
+    "name": "North Rim",
+    "slug": "north-rim"
+  },
+  {
+    "printed": "OAK HILLS",
+    "pdfPoint": [
+      832.96,
+      189.0
+    ],
+    "name": "Oak Hills",
+    "slug": "oak-hills"
+  },
+  {
+    "printed": "OBSIDIAN ESTS",
+    "pdfPoint": [
+      516.55,
+      979.99
+    ],
+    "name": "Obsidian Estates",
+    "slug": "obsidian-estates"
+  },
+  {
+    "printed": "OBSIDIAN MDWS",
+    "pdfPoint": [
+      445.23,
+      907.37
+    ],
+    "name": "Obsidian Meadows",
+    "slug": "obsidian-meadows"
+  },
+  {
+    "printed": "OBSIDIAN TRAILS",
+    "pdfPoint": [
+      380.22,
+      976.35
+    ],
+    "name": "Obsidian Trails",
+    "slug": "obsidian-trails"
+  },
+  {
+    "printed": "ORCH KNOLL",
+    "pdfPoint": [
+      828.35,
+      229.26
+    ],
+    "name": "Orchard Knoll",
+    "slug": "orchard-knoll"
+  },
+  {
+    "printed": "OREGON TRUNK ADTN",
+    "pdfPoint": [
+      1024.97,
+      652.56
+    ],
+    "name": "Oregon Trunk Addition",
+    "slug": "oregon-trunk-addition"
+  },
+  {
+    "printed": "P.R.I.D.E. ESTS",
+    "pdfPoint": [
+      41.06,
+      785.89
+    ],
+    "name": "P.R.I.D.E. Estates",
+    "slug": "p-r-i-d-e-estates"
+  },
+  {
+    "printed": "PARK PL ESTS",
+    "pdfPoint": [
+      517.68,
+      1197.85
+    ],
+    "name": "Park Place Estates",
+    "slug": "park-place-estates"
+  },
+  {
+    "printed": "PARKLAND",
+    "pdfPoint": [
+      533.01,
+      1287.14
+    ],
+    "name": "Parkland",
+    "slug": "parkland"
+  },
+  {
+    "printed": "PARKLAND TOWNHOMES",
+    "pdfPoint": [
+      510.65,
+      1254.86
+    ],
+    "name": "Parkland Townhomes",
+    "slug": "parkland-townhomes"
+  },
+  {
+    "printed": "PKWY ADTN",
+    "pdfPoint": [
+      732.42,
+      778.55
+    ],
+    "name": "Parkway Addition",
+    "slug": "parkway-addition"
+  },
+  {
+    "printed": "PINE TREE MDWS",
+    "pdfPoint": [
+      882.34,
+      118.71
+    ],
+    "name": "Pine Tree Meadows",
+    "slug": "pine-tree-meadows"
+  },
+  {
+    "printed": "PLANERVILLE",
+    "pdfPoint": [
+      819.51,
+      1052.1
+    ],
+    "name": "Planerville",
+    "slug": "planerville"
+  },
+  {
+    "printed": "PLEASANT VIEW",
+    "pdfPoint": [
+      696.63,
+      342.78
+    ],
+    "name": "Pleasant View",
+    "slug": "pleasant-view"
+  },
+  {
+    "printed": "POCO BELLA",
+    "pdfPoint": [
+      820.56,
+      176.59
+    ],
+    "name": "Poco Bella",
+    "slug": "poco-bella"
+  },
+  {
+    "printed": "PRAIRIE XING",
+    "pdfPoint": [
+      295.04,
+      1420.12
+    ],
+    "name": "Prairie Crossing",
+    "slug": "prairie-crossing"
+  },
+  {
+    "printed": "QUARTZ CYN TRACTS",
+    "pdfPoint": [
+      699.92,
+      998.95
+    ],
+    "name": "Quartz Canyon Tracts",
+    "slug": "quartz-canyon-tracts"
+  },
+  {
+    "printed": "QUINCE AVE",
+    "pdfPoint": [
+      887.17,
+      215.0
+    ],
+    "name": "Quince Avenue",
+    "slug": "quince-avenue"
+  },
+  {
+    "printed": "RAILEY'S PL",
+    "pdfPoint": [
+      610.08,
+      687.77
+    ],
+    "name": "Railey's Place",
+    "slug": "railey-s-place"
+  },
+  {
+    "printed": "RAILWAY ADTN",
+    "pdfPoint": [
+      1041.07,
+      712.2
+    ],
+    "name": "Railway Addition",
+    "slug": "railway-addition"
+  },
+  {
+    "printed": "RNCH WAY AC",
+    "pdfPoint": [
+      592.04,
+      978.16
+    ],
+    "name": "Ranch Way Acres",
+    "slug": "ranch-way-acres"
+  },
+  {
+    "printed": "RANCHETTE VIEW ESTS",
+    "pdfPoint": [
+      45.51,
+      1329.47
+    ],
+    "name": "Ranchette View Estates",
+    "slug": "ranchette-view-estates"
+  },
+  {
+    "printed": "RED HAWK",
+    "pdfPoint": [
+      667.76,
+      487.35
+    ],
+    "name": "Red Hawk",
+    "slug": "red-hawk"
+  },
+  {
+    "printed": "RED-BAR ESTS",
+    "pdfPoint": [
+      1105.12,
+      344.29
+    ],
+    "name": "Red-Bar Estates",
+    "slug": "red-bar-estates"
+  },
+  {
+    "printed": "REDMOND AC",
+    "pdfPoint": [
+      1096.75,
+      587.9
+    ],
+    "name": "Redmond Acres",
+    "slug": "redmond-acres"
+  },
+  {
+    "printed": "REDMOND ADTN",
+    "pdfPoint": [
+      739.04,
+      852.61
+    ],
+    "name": "Redmond Addition",
+    "slug": "redmond-addition"
+  },
+  {
+    "printed": "REDMOND HTS",
+    "pdfPoint": [
+      450.34,
+      1195.42
+    ],
+    "name": "Redmond Heights",
+    "slug": "redmond-heights"
+  },
+  {
+    "printed": "REDMOND TOWN CTR",
+    "pdfPoint": [
+      867.77,
+      833.42
+    ],
+    "name": "Redmond Town Center",
+    "slug": "redmond-town-center"
+  },
+  {
+    "printed": "REDSIDE",
+    "pdfPoint": [
+      569.31,
+      644.46
+    ],
+    "name": "Redside",
+    "slug": "redside"
+  },
+  {
+    "printed": "REDTAIL RDG",
+    "pdfPoint": [
+      197.7,
+      1358.55
+    ],
+    "name": "Redtail Ridge",
+    "slug": "redtail-ridge"
+  },
+  {
+    "printed": "REINDEER WOODS",
+    "pdfPoint": [
+      678.06,
+      1017.86
+    ],
+    "name": "Reindeer Woods",
+    "slug": "reindeer-woods"
+  },
+  {
+    "printed": "REMINGTON ARMS",
+    "pdfPoint": [
+      741.81,
+      568.96
+    ],
+    "name": "Remington Arms",
+    "slug": "remington-arms"
+  },
+  {
+    "printed": "RENNOLDS AC",
+    "pdfPoint": [
+      952.78,
+      407.98
+    ],
+    "name": "Rennolds Acres",
+    "slug": "rennolds-acres"
+  },
+  {
+    "printed": "RIDGEPOINTE",
+    "pdfPoint": [
+      395.31,
+      1072.36
+    ],
+    "name": "Ridgepointe",
+    "slug": "ridgepointe"
+  },
+  {
+    "printed": "RIM ROCK AC",
+    "pdfPoint": [
+      854.23,
+      577.23
+    ],
+    "name": "Rim Rock Acres",
+    "slug": "rim-rock-acres"
+  },
+  {
+    "printed": "RIM VIEW SUBD",
+    "pdfPoint": [
+      738.97,
+      626.6
+    ],
+    "name": "Rim View Subdivision",
+    "slug": "rim-view-subdivision"
+  },
+  {
+    "printed": "RIMROCK ESTS",
+    "pdfPoint": [
+      786.57,
+      353.01
+    ],
+    "name": "Rimrock Estates",
+    "slug": "rimrock-estates"
+  },
+  {
+    "printed": "ROBERTS ADTN",
+    "pdfPoint": [
+      879.73,
+      530.53
+    ],
+    "name": "Roberts Addition",
+    "slug": "roberts-addition"
+  },
+  {
+    "printed": "ROCK CRST",
+    "pdfPoint": [
+      828.58,
+      388.99
+    ],
+    "name": "Rock Crest",
+    "slug": "rock-crest"
+  },
+  {
+    "printed": "SAGE TOWNHOMES CONDO",
+    "pdfPoint": [
+      750.18,
+      939.3
+    ],
+    "name": "Sage Townhomes Condo",
+    "slug": "sage-townhomes-condo"
+  },
+  {
+    "printed": "SALMON PARK",
+    "pdfPoint": [
+      744.66,
+      1081.44
+    ],
+    "name": "Salmon Park",
+    "slug": "salmon-park"
+  },
+  {
+    "printed": "SALMON RUN",
+    "pdfPoint": [
+      421.97,
+      1091.29
+    ],
+    "name": "Salmon Run",
+    "slug": "salmon-run"
+  },
+  {
+    "printed": "SARASODA CT",
+    "pdfPoint": [
+      641.95,
+      966.87
+    ],
+    "name": "Sarasoda Court",
+    "slug": "sarasoda-court"
+  },
+  {
+    "printed": "SAVANNAH ESTS",
+    "pdfPoint": [
+      420.69,
+      1105.27
+    ],
+    "name": "Savannah Estates",
+    "slug": "savannah-estates"
+  },
+  {
+    "printed": "SHADOW GLN ESTS",
+    "pdfPoint": [
+      740.72,
+      647.46
+    ],
+    "name": "Shadow Glen Estates",
+    "slug": "shadow-glen-estates"
+  },
+  {
+    "printed": "SIERRA VISTA",
+    "pdfPoint": [
+      733.48,
+      392.07
+    ],
+    "name": "Sierra Vista",
+    "slug": "sierra-vista"
+  },
+  {
+    "printed": "SISTERS VIEW ESTS",
+    "pdfPoint": [
+      893.4,
+      390.29
+    ],
+    "name": "Sisters View Estates",
+    "slug": "sisters-view-estates"
+  },
+  {
+    "printed": "SIX PEAKS",
+    "pdfPoint": [
+      526.47,
+      854.13
+    ],
+    "name": "Six Peaks",
+    "slug": "six-peaks"
+  },
+  {
+    "printed": "SKIDMORE'S SUBD",
+    "pdfPoint": [
+      304.46,
+      1248.05
+    ],
+    "name": "Skidmore's Subdivision",
+    "slug": "skidmore-s-subdivision"
+  },
+  {
+    "printed": "SKYLINE RDG",
+    "pdfPoint": [
+      667.86,
+      539.21
+    ],
+    "name": "Skyline Ridge",
+    "slug": "skyline-ridge"
+  },
+  {
+    "printed": "SOTHMAN'S ADTN",
+    "pdfPoint": [
+      943.32,
+      623.58
+    ],
+    "name": "Sothman's Addition",
+    "slug": "sothman-s-addition"
+  },
+  {
+    "printed": "SOUTH GATE ESTS",
+    "pdfPoint": [
+      669.32,
+      1264.8
+    ],
+    "name": "South Gate Estates",
+    "slug": "south-gate-estates"
+  },
+  {
+    "printed": "SOUTH HTS ADTN",
+    "pdfPoint": [
+      445.51,
+      1325.5
+    ],
+    "name": "South Heights Addition",
+    "slug": "south-heights-addition"
+  },
+  {
+    "printed": "SOUTH MORELAND AC",
+    "pdfPoint": [
+      737.52,
+      835.45
+    ],
+    "name": "South Moreland Acres",
+    "slug": "south-moreland-acres"
+  },
+  {
+    "printed": "SOUTH-END ACREAGE",
+    "pdfPoint": [
+      821.03,
+      963.67
+    ],
+    "name": "South-End Acreage",
+    "slug": "south-end-acreage"
+  },
+  {
+    "printed": "STEELHEAD ESTS",
+    "pdfPoint": [
+      639.94,
+      1004.47
+    ],
+    "name": "Steelhead Estates",
+    "slug": "steelhead-estates"
+  },
+  {
+    "printed": "STERLING POINTE",
+    "pdfPoint": [
+      665.83,
+      186.8
+    ],
+    "name": "Sterling Pointe",
+    "slug": "sterling-pointe"
+  },
+  {
+    "printed": "STONEHEDGE ON THE RIM",
+    "pdfPoint": [
+      658.7,
+      936.19
+    ],
+    "name": "Stonehedge on the Rim",
+    "slug": "stonehedge-on-the-rim"
+  },
+  {
+    "printed": "STONEHEDGE SOUTH PHASE ONE",
+    "pdfPoint": [
+      703.26,
+      962.66
+    ],
+    "name": "Stonehedge South Phase One",
+    "slug": "stonehedge-south-phase-one"
+  },
+  {
+    "printed": "STONEHEDGE WEST",
+    "pdfPoint": [
+      606.64,
+      821.0
+    ],
+    "name": "Stonehedge West",
+    "slug": "stonehedge-west"
+  },
+  {
+    "printed": "SUMMER CRK",
+    "pdfPoint": [
+      508.21,
+      1327.8
+    ],
+    "name": "Summer Creek",
+    "slug": "summer-creek"
+  },
+  {
+    "printed": "SUMMERFIELD",
+    "pdfPoint": [
+      518.39,
+      1047.75
+    ],
+    "name": "Summerfield",
+    "slug": "summerfield"
+  },
+  {
+    "printed": "SUMMERHAVEN",
+    "pdfPoint": [
+      326.42,
+      1074.8
+    ],
+    "name": "Summerhaven",
+    "slug": "summerhaven"
+  },
+  {
+    "printed": "SMT",
+    "pdfPoint": [
+      359.32,
+      1101.53
+    ],
+    "name": "Summit",
+    "slug": "summit"
+  },
+  {
+    "printed": "SMT CRST",
+    "pdfPoint": [
+      159.61,
+      1189.07
+    ],
+    "name": "Summit Crest",
+    "slug": "summit-crest"
+  },
+  {
+    "printed": "SUNNYSIDE",
+    "pdfPoint": [
+      860.75,
+      502.61
+    ],
+    "name": "Sunnyside",
+    "slug": "sunnyside"
+  },
+  {
+    "printed": "SUNNYSIDE ADTN",
+    "pdfPoint": [
+      872.44,
+      480.47
+    ],
+    "name": "Sunnyside Addition",
+    "slug": "sunnyside-addition"
+  },
+  {
+    "printed": "SUNSCAPE",
+    "pdfPoint": [
+      554.24,
+      635.53
+    ],
+    "name": "Sunscape",
+    "slug": "sunscape"
+  },
+  {
+    "printed": "SUNSET SMT",
+    "pdfPoint": [
+      311.61,
+      1142.01
+    ],
+    "name": "Sunset Summit",
+    "slug": "sunset-summit"
+  },
+  {
+    "printed": "SUNSHINE",
+    "pdfPoint": [
+      494.73,
+      1369.55
+    ],
+    "name": "Sunshine",
+    "slug": "sunshine"
+  },
+  {
+    "printed": "SUNSHINE ADTN",
+    "pdfPoint": [
+      569.75,
+      1308.07
+    ],
+    "name": "Sunshine Addition",
+    "slug": "sunshine-addition"
+  },
+  {
+    "printed": "TAYLOR'S ADTN",
+    "pdfPoint": [
+      809.3,
+      833.34
+    ],
+    "name": "Taylor's Addition",
+    "slug": "taylor-s-addition"
+  },
+  {
+    "printed": "THE MDWS",
+    "pdfPoint": [
+      876.09,
+      336.32
+    ],
+    "name": "The Meadows",
+    "slug": "the-meadows"
+  },
+  {
+    "printed": "SAGE (THE)",
+    "pdfPoint": [
+      757.52,
+      932.17
+    ],
+    "name": "The Sage",
+    "slug": "the-sage"
+  },
+  {
+    "printed": "TIMBER AC",
+    "pdfPoint": [
+      702.23,
+      1130.82
+    ],
+    "name": "Timber Acres",
+    "slug": "timber-acres"
+  },
+  {
+    "printed": "TIMBER ESTS",
+    "pdfPoint": [
+      500.36,
+      1103.1
+    ],
+    "name": "Timber Estates",
+    "slug": "timber-estates"
+  },
+  {
+    "printed": "TIMBER FLATS",
+    "pdfPoint": [
+      582.11,
+      1112.45
+    ],
+    "name": "Timber Flats",
+    "slug": "timber-flats"
+  },
+  {
+    "printed": "TIMBER VIEW CONDOS",
+    "pdfPoint": [
+      643.12,
+      1146.0
+    ],
+    "name": "Timber View Condos",
+    "slug": "timber-view-condos"
+  },
+  {
+    "printed": "TIMBERS",
+    "pdfPoint": [
+      640.8,
+      1110.41
+    ],
+    "name": "Timbers",
+    "slug": "timbers"
+  },
+  {
+    "printed": "TORRYN'S ADTN",
+    "pdfPoint": [
+      630.97,
+      1064.34
+    ],
+    "name": "Torryn's Addition",
+    "slug": "torryn-s-addition"
+  },
+  {
+    "printed": "TOWNHOMES AT QUINCE VLG",
+    "pdfPoint": [
+      935.97,
+      227.69
+    ],
+    "name": "Townhomes at Quince Village",
+    "slug": "townhomes-at-quince-village"
+  },
+  {
+    "printed": "TRIPLE RDG",
+    "pdfPoint": [
+      375.53,
+      1467.94
+    ],
+    "name": "Triple Ridge",
+    "slug": "triple-ridge"
+  },
+  {
+    "printed": "TWO BAR ESTS",
+    "pdfPoint": [
+      678.19,
+      400.12
+    ],
+    "name": "Two Bar Estates",
+    "slug": "two-bar-estates"
+  },
+  {
+    "printed": "UMATILLA HTS",
+    "pdfPoint": [
+      492.12,
+      1137.1
+    ],
+    "name": "Umatilla Heights",
+    "slug": "umatilla-heights"
+  },
+  {
+    "printed": "UMATILLA VILLA",
+    "pdfPoint": [
+      576.23,
+      1161.75
+    ],
+    "name": "Umatilla Villa",
+    "slug": "umatilla-villa"
+  },
+  {
+    "printed": "VALLEYVIEW",
+    "pdfPoint": [
+      428.66,
+      1132.31
+    ],
+    "name": "Valleyview",
+    "slug": "valleyview"
+  },
+  {
+    "printed": "VIEW AC",
+    "pdfPoint": [
+      585.91,
+      1124.53
+    ],
+    "name": "View Acres",
+    "slug": "view-acres"
+  },
+  {
+    "printed": "VLG POINTE",
+    "pdfPoint": [
+      493.46,
+      700.13
+    ],
+    "name": "Village Pointe",
+    "slug": "village-pointe"
+  },
+  {
+    "printed": "VLG SQ",
+    "pdfPoint": [
+      687.89,
+      1093.76
+    ],
+    "name": "Village Square",
+    "slug": "village-square"
+  },
+  {
+    "printed": "VISTA DORADO",
+    "pdfPoint": [
+      1037.29,
+      197.9
+    ],
+    "name": "Vista Dorado",
+    "slug": "vista-dorado"
+  },
+  {
+    "printed": "VISTA MDWS",
+    "pdfPoint": [
+      761.02,
+      113.04
+    ],
+    "name": "Vista Meadows",
+    "slug": "vista-meadows"
+  },
+  {
+    "printed": "VOLCANO PL",
+    "pdfPoint": [
+      496.34,
+      1175.36
+    ],
+    "name": "Volcano Place",
+    "slug": "volcano-place"
+  },
+  {
+    "printed": "VOLCANO SUBD",
+    "pdfPoint": [
+      589.21,
+      1177.47
+    ],
+    "name": "Volcano Subdivision",
+    "slug": "volcano-subdivision"
+  },
+  {
+    "printed": "WATERWAY ADTN TO REDMOND",
+    "pdfPoint": [
+      842.23,
+      992.4
+    ],
+    "name": "Waterway Addition to Redmond",
+    "slug": "waterway-addition-to-redmond"
+  },
+  {
+    "printed": "WAVERLY",
+    "pdfPoint": [
+      513.22,
+      526.58
+    ],
+    "name": "Waverly",
+    "slug": "waverly"
+  },
+  {
+    "printed": "WECKERLE HTS",
+    "pdfPoint": [
+      862.09,
+      351.37
+    ],
+    "name": "Weckerle Heights",
+    "slug": "weckerle-heights"
+  },
+  {
+    "printed": "WEST CYN ESTS",
+    "pdfPoint": [
+      672.2,
+      282.76
+    ],
+    "name": "West Canyon Estates",
+    "slug": "west-canyon-estates"
+  },
+  {
+    "printed": "WHITEHORSE",
+    "pdfPoint": [
+      383.99,
+      1036.29
+    ],
+    "name": "Whitehorse",
+    "slug": "whitehorse"
+  },
+  {
+    "printed": "WILDFLOWER",
+    "pdfPoint": [
+      702.47,
+      357.03
+    ],
+    "name": "Wildflower",
+    "slug": "wildflower"
+  },
+  {
+    "printed": "WILLOW SPGS",
+    "pdfPoint": [
+      453.84,
+      841.57
+    ],
+    "name": "Willow Springs",
+    "slug": "willow-springs"
+  },
+  {
+    "printed": "WINDHAVEN PARK",
+    "pdfPoint": [
+      1011.2,
+      343.82
+    ],
+    "name": "Windhaven Park",
+    "slug": "windhaven-park"
+  },
+  {
+    "printed": "WINDROW AC",
+    "pdfPoint": [
+      635.94,
+      1241.32
+    ],
+    "name": "Windrow Acres",
+    "slug": "windrow-acres"
+  },
+  {
+    "printed": "WINDSONG",
+    "pdfPoint": [
+      687.63,
+      312.86
+    ],
+    "name": "Windsong",
+    "slug": "windsong"
+  }
+]

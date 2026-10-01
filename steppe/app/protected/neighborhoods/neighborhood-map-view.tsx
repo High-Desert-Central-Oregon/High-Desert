@@ -6,6 +6,10 @@ import "leaflet/dist/leaflet.css";
 import "./neighborhood-map.css";
 import { Button } from "@/components/ui/button";
 import { t, type Dictionary } from "@/lib/i18n";
+import {
+  coveredByNeighborhoodMap,
+  type AddressPoint,
+} from "@/lib/neighborhood-address";
 import data from "../../../public/maps/redmond-2019/map.json";
 
 type Mode = "aerial" | "streets" | "compare";
@@ -15,16 +19,18 @@ const anchors: Record<string, Leaflet.LatLngTuple> = Object.fromEntries(
 );
 const bounds = data.bounds as [[number, number], [number, number]];
 
-/** This component is imported only after Explore; no location/GPS or geocoding. */
+/** Loaded on request; address coordinates live only in this mounted picker. */
 export function NeighborhoodMapView({
   copy,
   names,
   selectedName,
+  address,
   onError,
 }: {
   copy: Copy;
   names: string[];
   selectedName?: string;
+  address?: AddressPoint;
   onError: () => void;
 }) {
   const container = useRef<HTMLDivElement>(null);
@@ -34,6 +40,7 @@ export function NeighborhoodMapView({
     streets: Leaflet.TileLayer;
     L: typeof Leaflet;
     marker?: Leaflet.CircleMarker;
+    addressMarker?: Leaflet.CircleMarker;
   } | null>(null);
   const errorRef = useRef(onError);
   errorRef.current = onError;
@@ -145,6 +152,34 @@ export function NeighborhoodMapView({
     });
     ctx.map.setView(point, 15, { animate: false });
   }, [focusName, ready]);
+
+  useEffect(() => {
+    const ctx = live.current;
+    if (!ctx || !ready) return;
+    ctx.addressMarker?.remove();
+    ctx.addressMarker = undefined;
+    if (!address) return;
+    if (!coveredByNeighborhoodMap(address)) {
+      ctx.map.fitBounds(bounds, { padding: [8, 8], animate: false });
+      return;
+    }
+    const point: Leaflet.LatLngTuple = [address.lat, address.lng];
+    ctx.addressMarker = ctx.L.circleMarker(point, {
+      radius: 9,
+      color: "#172c45",
+      weight: 3,
+      fillColor: "#fff",
+      fillOpacity: 1,
+    }).addTo(ctx.map);
+    const label = document.createElement("span");
+    label.textContent = address.label;
+    ctx.addressMarker.bindTooltip(label, {
+      direction: "top",
+      permanent: true,
+      offset: [0, -10],
+    });
+    ctx.map.setView(point, 15, { animate: false });
+  }, [address, ready]);
 
   function changeMode(next: Mode) {
     const ctx = live.current;

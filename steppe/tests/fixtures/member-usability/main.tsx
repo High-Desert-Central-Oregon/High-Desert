@@ -14,6 +14,7 @@ import { es } from "../../../lib/i18n/dictionaries/es";
 import { setFailure } from "./actions";
 import { AuthNotice } from "../../../components/member-pipelines/auth-notice";
 import { NeighborhoodForm } from "../../../app/protected/neighborhoods/neighborhood-form";
+import catalog from "../../../scripts/maps/source-labels.json";
 import { getSavedNeighborhood } from "./actions";
 import "../../../app/globals.css";
 function App() {
@@ -223,14 +224,15 @@ function NeighborhoodFixture({ dict }: { dict: typeof en }) {
         key={revision}
         currentId={currentId}
         neighborhoods={[
-          { id: "sample-a", name: "Sample neighborhood A" },
-          { id: "sample-b", name: "Sample neighborhood B" },
-          { id: "braydon", name: "Braydon Park" },
-          { id: "diamond", name: "Diamond Bar Ranch" },
-          { id: "greens", name: "Greens at Redmond" },
+          ...catalog.map((row) => ({
+            id: row.slug === "braydon-park" ? "braydon" : row.slug,
+            name: row.name,
+          })),
           { id: "cinder", name: "Cinder Butte Village" },
           { id: "eagle", name: "Eagle Crest" },
-        ]}
+          { id: "rimrock-west", name: "Rimrock West Estate" },
+          { id: "ridgeview", name: "Village at Ridgeview" },
+        ].sort((a, b) => a.name.localeCompare(b.name))}
         dict={dict}
       />
     </>

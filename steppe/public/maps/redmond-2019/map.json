@@ -15,129 +15,1322 @@
   "height": 6000,
   "georeferenceResidualMeters": 0.331,
   "anchors": {
+    "27 Elm": [
+      44.2817047,
+      -121.1978423
+    ],
+    "27th Park": [
+      44.2553079,
+      -121.1994737
+    ],
+    "Alder Glen": [
+      44.2506237,
+      -121.2036384
+    ],
+    "Amber Springs": [
+      44.2877636,
+      -121.1912314
+    ],
+    "Antler Crossing": [
+      44.2770018,
+      -121.2020094
+    ],
+    "Antler Point": [
+      44.277686,
+      -121.2028531
+    ],
+    "Antler Ridge": [
+      44.2746276,
+      -121.207929
+    ],
+    "Arnett": [
+      44.258118,
+      -121.1852061
+    ],
+    "Aspen Creek": [
+      44.2650441,
+      -121.1963078
+    ],
+    "Aspen Valley": [
+      44.2639279,
+      -121.2318823
+    ],
+    "Aspen Winds": [
+      44.2756041,
+      -121.1977785
+    ],
+    "Atop the Summit": [
+      44.254438,
+      -121.2135729
+    ],
+    "Autumnglen": [
+      44.2530453,
+      -121.2055234
+    ],
+    "Ayres Acres": [
+      44.2938852,
+      -121.1595887
+    ],
+    "Baker Park": [
+      44.2613946,
+      -121.1845579
+    ],
+    "Ballpark View": [
+      44.2511831,
+      -121.2021078
+    ],
+    "Banta Acres": [
+      44.2647703,
+      -121.185176
+    ],
+    "Bartel": [
+      44.2786594,
+      -121.1802238
+    ],
+    "Basking Ridge": [
+      44.2618884,
+      -121.1797158
+    ],
+    "Bella Sera": [
+      44.3018716,
+      -121.1798375
+    ],
+    "Bella Vista": [
+      44.2995294,
+      -121.1797756
+    ],
+    "Bentwood Estates": [
+      44.2483863,
+      -121.2166685
+    ],
+    "Berni's Subdivision": [
+      44.2668445,
+      -121.1921352
+    ],
+    "Black Hawk": [
+      44.2636138,
+      -121.2023407
+    ],
+    "Blue Sky Addition": [
+      44.2865947,
+      -121.1761288
+    ],
+    "Boulder Brook": [
+      44.2793733,
+      -121.1867977
+    ],
+    "Boulder Brook Condos": [
+      44.2800732,
+      -121.1869796
+    ],
     "Braydon Park": [
-      44.2871155,
-      -121.1918208
+      44.2871246,
+      -121.1915699
+    ],
+    "Brierwood": [
+      44.2572164,
+      -121.1927078
+    ],
+    "Brooktree": [
+      44.2963569,
+      -121.1669311
+    ],
+    "Brown's Additions": [
+      44.2466492,
+      -121.1976515
+    ],
+    "Buckner": [
+      44.2893906,
+      -121.183358
     ],
     "Canyon Crossing": [
-      44.2945688,
-      -121.1769131
+      44.2946079,
+      -121.1767501
+    ],
+    "Canyon Point East": [
+      44.2990759,
+      -121.1826067
+    ],
+    "Canyon Point Estates": [
+      44.3013197,
+      -121.1856511
+    ],
+    "Canyon Ranch": [
+      44.3020706,
+      -121.2167972
     ],
     "Canyon Rim Village": [
-      44.2852732,
-      -121.1855768
+      44.2853189,
+      -121.1852365
+    ],
+    "Canyon View": [
+      44.2650554,
+      -121.1880556
+    ],
+    "Canyon Villas": [
+      44.2555784,
+      -121.1868911
+    ],
+    "Carly Meadows": [
+      44.2612929,
+      -121.2055241
+    ],
+    "Cascade View Allotment": [
+      44.2776482,
+      -121.1811584
     ],
     "Cascade View Estates": [
-      44.2454415,
-      -121.2121878
+      44.245474,
+      -121.2120171
     ],
     "Cascade West": [
-      44.2934461,
-      -121.1949348
+      44.2934642,
+      -121.1948799
+    ],
+    "Casper Mobile Acres": [
+      44.2751095,
+      -121.1605774
+    ],
+    "Cedar Creek Village Condos": [
+      44.2501641,
+      -121.1922647
+    ],
+    "Cedar Village": [
+      44.2795621,
+      -121.1902447
+    ],
+    "Century Estates": [
+      44.2546026,
+      -121.204032
+    ],
+    "Chelsea Square": [
+      44.2690377,
+      -121.178351
+    ],
+    "Cliffs": [
+      44.2936173,
+      -121.1874408
+    ],
+    "Coho Crossing": [
+      44.2550977,
+      -121.1929576
+    ],
+    "Coho Run": [
+      44.2901858,
+      -121.1596931
+    ],
+    "Collins Addition": [
+      44.2812931,
+      -121.176161
+    ],
+    "Cook Crossing Condo": [
+      44.2639141,
+      -121.1787703
+    ],
+    "Copper Ridge": [
+      44.2578416,
+      -121.2131122
+    ],
+    "Corks Westside": [
+      44.2745095,
+      -121.1994626
+    ],
+    "Corks Westside Addition": [
+      44.273606,
+      -121.19591
+    ],
+    "Country Park": [
+      44.2495033,
+      -121.2016882
+    ],
+    "Crane Meadow": [
+      44.2885637,
+      -121.191462
+    ],
+    "Credenda": [
+      44.2899796,
+      -121.192107
+    ],
+    "Credenda Subdivision": [
+      44.2907047,
+      -121.1948578
+    ],
+    "Crossings at Metolius": [
+      44.2656573,
+      -121.2085847
+    ],
+    "Curry Addition": [
+      44.2874995,
+      -121.1772209
+    ],
+    "Dana-Butler": [
+      44.2494845,
+      -121.1968985
     ],
     "Deer Crossing": [
-      44.275673,
-      -121.2025065
+      44.2757158,
+      -121.2027473
+    ],
+    "Dehmc Acre": [
+      44.2730887,
+      -121.1998109
+    ],
+    "Desert Valley": [
+      44.256321,
+      -121.1868989
+    ],
+    "Desert Valley East": [
+      44.2562317,
+      -121.189007
     ],
     "Diamond Bar Ranch": [
-      44.2998919,
-      -121.1611294
+      44.3000096,
+      -121.1610706
+    ],
+    "Dobson-Slocum Acreage": [
+      44.2746167,
+      -121.1864959
+    ],
+    "Dorsch Acres": [
+      44.2885411,
+      -121.1775254
+    ],
+    "Dove Meadow": [
+      44.2875375,
+      -121.1861238
+    ],
+    "Eagle Park": [
+      44.2543293,
+      -121.1991874
+    ],
+    "East Rim": [
+      44.2940984,
+      -121.179707
+    ],
+    "Eastside City": [
+      44.2901098,
+      -121.1684048
     ],
     "Echo Rim Estates": [
-      44.3025033,
-      -121.192281
+      44.3025495,
+      -121.192208
+    ],
+    "Ehret's First Addition": [
+      44.2768639,
+      -121.170732
+    ],
+    "Ellinger's Addition": [
+      44.2780192,
+      -121.1762804
     ],
     "Emerald View Estates": [
-      44.2523925,
-      -121.2216699
+      44.2523855,
+      -121.2215631
+    ],
+    "Emerald Villa": [
+      44.2908526,
+      -121.1892387
+    ],
+    "Emily Estates": [
+      44.2825792,
+      -121.1877069
     ],
     "Evansville": [
-      44.2929149,
-      -121.1903317
+      44.2929551,
+      -121.1902388
+    ],
+    "Fair Acres": [
+      44.2809994,
+      -121.1702401
+    ],
+    "Fair Acres Addition": [
+      44.2833273,
+      -121.1713855
+    ],
+    "Fairgrounds Condo Plaza": [
+      44.2361043,
+      -121.1916774
+    ],
+    "Fairhaven": [
+      44.277781,
+      -121.1957102
+    ],
+    "Fairhaven Crossing": [
+      44.2805035,
+      -121.1939373
+    ],
+    "Fairhaven Vista": [
+      44.2793014,
+      -121.1950964
+    ],
+    "Fairhaven Vista P.U.D.": [
+      44.278468,
+      -121.1968367
     ],
     "Fieldstone": [
-      44.2488415,
-      -121.1960444
+      44.2488799,
+      -121.1963304
+    ],
+    "Fieldstone Crossing": [
+      44.2785191,
+      -121.2019175
+    ],
+    "Fieldstone South": [
+      44.2478934,
+      -121.1955826
+    ],
+    "Forked Horn Butte": [
+      44.2432675,
+      -121.2232139
+    ],
+    "Forrest Commons": [
+      44.2880716,
+      -121.1866709
+    ],
+    "Frank's Landing": [
+      44.2407492,
+      -121.191993
+    ],
+    "Goodrich Subdivision": [
+      44.2481775,
+      -121.2217508
+    ],
+    "Gray Butte Estates": [
+      44.2889662,
+      -121.1625296
     ],
     "Greens at Redmond": [
-      44.2391099,
-      -121.2009486
+      44.2391212,
+      -121.2011797
+    ],
+    "Guy's Acres": [
+      44.2891529,
+      -121.1599115
+    ],
+    "Hall": [
+      44.2508133,
+      -121.1948778
+    ],
+    "Harold's Addition": [
+      44.2630314,
+      -121.1814231
+    ],
+    "Harry Ranch Estates": [
+      44.2443175,
+      -121.2345705
+    ],
+    "Hawley Estates": [
+      44.2767447,
+      -121.2071982
+    ],
+    "Hayden Acres": [
+      44.3001442,
+      -121.176009
+    ],
+    "Hayden Ranch Estates": [
+      44.2889101,
+      -121.1649666
+    ],
+    "Hayden Square": [
+      44.2573411,
+      -121.1880697
+    ],
+    "Hayden View": [
+      44.2657137,
+      -121.2039289
+    ],
+    "Hayden Village": [
+      44.2564753,
+      -121.2067179
+    ],
+    "Heierman": [
+      44.2757304,
+      -121.1946146
+    ],
+    "Heierman-McCormick": [
+      44.2600226,
+      -121.1863496
+    ],
+    "Heritage Ranch": [
+      44.2976627,
+      -121.1785584
+    ],
+    "Hester": [
+      44.2395218,
+      -121.2173479
+    ],
+    "Hi-Country Estates": [
+      44.2479661,
+      -121.2000264
+    ],
+    "Hidden Valley Mobile Estates": [
+      44.2996094,
+      -121.211816
+    ],
+    "Hill Crest": [
+      44.252879,
+      -121.2106179
+    ],
+    "Home Depot Station": [
+      44.2975246,
+      -121.1714077
+    ],
+    "Howell Acres": [
+      44.2878258,
+      -121.235824
+    ],
+    "Howell's Hill Top Acres": [
+      44.2853758,
+      -121.2298328
+    ],
+    "Howell's River Rim": [
+      44.2926904,
+      -121.2332612
+    ],
+    "Hunt's Three Sisters View": [
+      44.2455713,
+      -121.2216432
+    ],
+    "Innovation Park": [
+      44.2515002,
+      -121.1720921
+    ],
+    "Jean Meadows": [
+      44.2614355,
+      -121.1932958
+    ],
+    "Jefferson View Allotment": [
+      44.2794816,
+      -121.1822447
+    ],
+    "Jensen Tracts": [
+      44.2525637,
+      -121.1931835
+    ],
+    "Johnson Acres": [
+      44.2820093,
+      -121.2345421
+    ],
+    "Julina Park": [
+      44.2665568,
+      -121.1970648
+    ],
+    "Juniper Glen": [
+      44.2672911,
+      -121.2021327
+    ],
+    "Juniper Glen North": [
+      44.2684302,
+      -121.2019227
+    ],
+    "Juniper Hill": [
+      44.2556586,
+      -121.2171829
+    ],
+    "Juniper Meadows": [
+      44.2577699,
+      -121.2185291
+    ],
+    "Juniper Vista": [
+      44.2467882,
+      -121.2080315
+    ],
+    "Justin Glen": [
+      44.2962235,
+      -121.1771199
+    ],
+    "Kayla Village": [
+      44.2494012,
+      -121.2061909
+    ],
+    "Kenyons Acreage": [
+      44.2820124,
+      -121.1763989
+    ],
+    "Kian Canyon": [
+      44.2499196,
+      -121.2077305
+    ],
+    "Kian West": [
+      44.2506417,
+      -121.2079242
+    ],
+    "Larch Meadows": [
+      44.2884708,
+      -121.1872002
+    ],
+    "Lawson Crossing": [
+      44.2788795,
+      -121.2110252
+    ],
+    "Lone Juniper Estates": [
+      44.2475998,
+      -121.1917708
+    ],
+    "Majestic Ridge": [
+      44.2537263,
+      -121.2165266
+    ],
+    "Makena View Estates": [
+      44.2499197,
+      -121.2200522
     ],
     "Maple Meadows": [
-      44.2852107,
-      -121.1960417
+      44.2852421,
+      -121.1963998
     ],
     "Maplewood": [
-      44.3000139,
-      -121.1838354
+      44.3000169,
+      -121.1838375
     ],
     "McKenzie Rim Estates": [
-      44.2985586,
-      -121.1894064
+      44.2985211,
+      -121.1894746
+    ],
+    "McKenzie's Meadow": [
+      44.2883647,
+      -121.1822983
     ],
     "Meadowbrook Estates": [
-      44.2714419,
-      -121.2050021
+      44.27134,
+      -121.2048913
+    ],
+    "Meadowlark Estates": [
+      44.2914902,
+      -121.1951491
     ],
     "Megan Park": [
-      44.2827723,
-      -121.1960841
+      44.2827885,
+      -121.1965262
+    ],
+    "Melrose Park": [
+      44.2657675,
+      -121.1812895
+    ],
+    "Metts Subdivision": [
+      44.2526432,
+      -121.2013135
+    ],
+    "Mida Addition": [
+      44.2810522,
+      -121.1901077
+    ],
+    "Mountain Gardens": [
+      44.2596553,
+      -121.1928313
     ],
     "Mountain Glenn": [
-      44.2987406,
-      -121.1929449
+      44.2987798,
+      -121.1926773
+    ],
+    "Mountain View Addition": [
+      44.2712373,
+      -121.1815148
+    ],
+    "Myers Acreage": [
+      44.2827209,
+      -121.1711036
+    ],
+    "Negus Villas": [
+      44.2902464,
+      -121.1633937
+    ],
+    "Newberry Village": [
+      44.263969,
+      -121.1851301
+    ],
+    "Ni-Lah-Sha": [
+      44.2964143,
+      -121.1610933
+    ],
+    "Nolan's Addition": [
+      44.2716074,
+      -121.1965535
+    ],
+    "North Canyon Estates": [
+      44.2968906,
+      -121.184855
     ],
     "North Rim": [
-      44.2963212,
-      -121.1812471
+      44.2963716,
+      -121.1812208
+    ],
+    "Oak Hills": [
+      44.3002903,
+      -121.1800219
+    ],
+    "Obsidian Estates": [
+      44.2599814,
+      -121.2019307
+    ],
+    "Obsidian Meadows": [
+      44.2636392,
+      -121.2070149
     ],
     "Obsidian Trails": [
-      44.2600747,
-      -121.211513
+      44.2601074,
+      -121.2115685
+    ],
+    "Orchard Knoll": [
+      44.2982436,
+      -121.1803247
+    ],
+    "Oregon Trunk Addition": [
+      44.2768247,
+      -121.1661804
+    ],
+    "P.R.I.D.E. Estates": [
+      44.2696311,
+      -121.2356584
+    ],
+    "Park Place Estates": [
+      44.2489164,
+      -121.2017216
+    ],
+    "Parkland": [
+      44.2443878,
+      -121.2005854
+    ],
+    "Parkland Townhomes": [
+      44.2460177,
+      -121.2021845
+    ],
+    "Parkway Addition": [
+      44.2703045,
+      -121.1867902
     ],
     "Pine Tree Meadows": [
-      44.3038144,
-      -121.1767344
+      44.3038809,
+      -121.1765696
+    ],
+    "Planerville": [
+      44.2564469,
+      -121.1804763
     ],
     "Pleasant View": [
-      44.2924112,
-      -121.1896187
+      44.2924227,
+      -121.1895743
+    ],
+    "Poco Bella": [
+      44.3009155,
+      -121.180906
+    ],
+    "Prairie Crossing": [
+      44.2375303,
+      -121.2173199
+    ],
+    "Quartz Canyon Tracts": [
+      44.2590964,
+      -121.1889592
+    ],
+    "Quince Avenue": [
+      44.2989923,
+      -121.1761729
+    ],
+    "Railey's Place": [
+      44.2748636,
+      -121.1954919
+    ],
+    "Railway Addition": [
+      44.2738021,
+      -121.1650086
+    ],
+    "Ranch Way Acres": [
+      44.2601066,
+      -121.1965962
+    ],
+    "Ranchette View Estates": [
+      44.2420239,
+      -121.235006
     ],
     "Red Hawk": [
-      44.2850364,
-      -121.1912311
+      44.2850676,
+      -121.1915313
     ],
     "Red-Bar Estates": [
-      44.2924797,
-      -121.1604821
+      44.2925146,
+      -121.1606861
+    ],
+    "Redmond Acres": [
+      44.280138,
+      -121.1611418
+    ],
+    "Redmond Addition": [
+      44.2665456,
+      -121.1862792
+    ],
+    "Redmond Heights": [
+      44.2490108,
+      -121.2064817
+    ],
+    "Redmond Town Center": [
+      44.267574,
+      -121.1771907
+    ],
+    "Redside": [
+      44.277046,
+      -121.1983998
+    ],
+    "Redtail Ridge": [
+      44.2406147,
+      -121.2242349
+    ],
+    "Reindeer Woods": [
+      44.2581267,
+      -121.1904932
+    ],
+    "Remington Arms": [
+      44.2809538,
+      -121.186248
+    ],
+    "Rennolds Acres": [
+      44.2892177,
+      -121.171423
+    ],
+    "Ridgepointe": [
+      44.2552374,
+      -121.2104443
+    ],
+    "Rim Rock Acres": [
+      44.2805806,
+      -121.1782947
+    ],
+    "Rim View Subdivision": [
+      44.278025,
+      -121.1864153
+    ],
+    "Rimrock Estates": [
+      44.2919408,
+      -121.1832081
+    ],
+    "Roberts Addition": [
+      44.2829631,
+      -121.1765185
+    ],
+    "Rock Crest": [
+      44.2901309,
+      -121.1802166
+    ],
+    "Sage Townhomes Condo": [
+      44.2621472,
+      -121.1854415
+    ],
+    "Salmon Park": [
+      44.2549254,
+      -121.1857493
+    ],
+    "Salmon Run": [
+      44.2542875,
+      -121.2085488
+    ],
+    "Sarasoda Court": [
+      44.2607013,
+      -121.1930752
+    ],
+    "Savannah Estates": [
+      44.2535769,
+      -121.2086309
+    ],
+    "Shadow Glen Estates": [
+      44.2769662,
+      -121.1862795
+    ],
+    "Sierra Vista": [
+      44.2899347,
+      -121.1869397
+    ],
+    "Sisters View Estates": [
+      44.2900917,
+      -121.1756321
+    ],
+    "Six Peaks": [
+      44.2663783,
+      -121.2013042
+    ],
+    "Skidmore's Subdivision": [
+      44.2462742,
+      -121.2167585
+    ],
+    "Skyline Ridge": [
+      44.2824336,
+      -121.1914939
+    ],
+    "Sothman's Addition": [
+      44.2782632,
+      -121.1719694
+    ],
+    "South Gate Estates": [
+      44.2455804,
+      -121.1909667
+    ],
+    "South Heights Addition": [
+      44.2424017,
+      -121.2067453
+    ],
+    "South Moreland Acres": [
+      44.2674166,
+      -121.1863966
+    ],
+    "South-End Acreage": [
+      44.260939,
+      -121.1804197
+    ],
+    "Steelhead Estates": [
+      44.2587907,
+      -121.1931953
     ],
     "Sterling Pointe": [
-      44.3003223,
-      -121.1917608
+      44.300332,
+      -121.1918436
+    ],
+    "Stonehedge on the Rim": [
+      44.2622666,
+      -121.1919093
+    ],
+    "Stonehedge South Phase One": [
+      44.260941,
+      -121.1887443
+    ],
+    "Stonehedge West": [
+      44.2680952,
+      -121.1956567
+    ],
+    "Summer Creek": [
+      44.2423119,
+      -121.2023137
+    ],
+    "Summerfield": [
+      44.2565406,
+      -121.2017604
+    ],
+    "Summerhaven": [
+      44.2550835,
+      -121.2153115
+    ],
+    "Summit": [
+      44.2537402,
+      -121.2129703
     ],
     "Summit Crest": [
-      44.2491598,
-      -121.2268608
+      44.249206,
+      -121.2270303
+    ],
+    "Sunnyside": [
+      44.2843734,
+      -121.1778765
+    ],
+    "Sunnyside Addition": [
+      44.2855027,
+      -121.1770626
+    ],
+    "Sunscape": [
+      44.2774931,
+      -121.1994705
+    ],
+    "Sunset Summit": [
+      44.2516633,
+      -121.2163175
+    ],
+    "Sunshine": [
+      44.2401856,
+      -121.2032413
+    ],
+    "Sunshine Addition": [
+      44.2433404,
+      -121.197977
+    ],
+    "Taylor's Addition": [
+      44.2675538,
+      -121.1813239
+    ],
+    "The Meadows": [
+      44.2928257,
+      -121.1768871
+    ],
+    "The Sage": [
+      44.2625124,
+      -121.1849269
+    ],
+    "Timber Acres": [
+      44.2523994,
+      -121.1887192
+    ],
+    "Timber Estates": [
+      44.2537215,
+      -121.2030018
+    ],
+    "Timber Flats": [
+      44.2532816,
+      -121.1972189
+    ],
+    "Timber View Condos": [
+      44.2516034,
+      -121.1928876
+    ],
+    "Timbers": [
+      44.2534101,
+      -121.1930724
+    ],
+    "Torryn's Addition": [
+      44.2557459,
+      -121.1937941
+    ],
+    "Townhomes at Quince Village": [
+      44.2983678,
+      -121.1727143
     ],
     "Triple Ridge": [
-      44.2351359,
-      -121.2112178
+      44.2351366,
+      -121.2116043
+    ],
+    "Two Bar Estates": [
+      44.2895025,
+      -121.1908448
+    ],
+    "Umatilla Heights": [
+      44.251991,
+      -121.2035639
+    ],
+    "Umatilla Villa": [
+      44.250775,
+      -121.1976054
+    ],
+    "Valleyview": [
+      44.2522069,
+      -121.2080515
+    ],
+    "View Acres": [
+      44.2526696,
+      -121.1969432
+    ],
+    "Village Pointe": [
+      44.274186,
+      -121.2037291
+    ],
+    "Village Square": [
+      44.2542757,
+      -121.1897542
+    ],
+    "Vista Dorado": [
+      44.2999224,
+      -121.1655653
     ],
     "Vista Meadows": [
-      44.3040688,
-      -121.1852963
+      44.3041184,
+      -121.1851539
+    ],
+    "Volcano Place": [
+      44.2500496,
+      -121.203243
+    ],
+    "Volcano Subdivision": [
+      44.2499821,
+      -121.1966789
+    ],
+    "Waterway Addition to Redmond": [
+      44.2594886,
+      -121.1789048
+    ],
+    "Waverly": [
+      44.2830092,
+      -121.2024353
+    ],
+    "Weckerle Heights": [
+      44.2920555,
+      -121.1778685
     ],
     "West Canyon Estates": [
-      44.2954494,
-      -121.1912095
+      44.2954608,
+      -121.191337
+    ],
+    "Whitehorse": [
+      44.2570646,
+      -121.211266
     ],
     "Wildflower": [
-      44.291651,
-      -121.1893271
+      44.2917013,
+      -121.189153
+    ],
+    "Willow Springs": [
+      44.266985,
+      -121.2064456
+    ],
+    "Windhaven Park": [
+      44.2925003,
+      -121.1673282
+    ],
+    "Windrow Acres": [
+      44.2467589,
+      -121.1933392
     ],
     "Windsong": [
-      44.2939316,
-      -121.1902019
+      44.2939385,
+      -121.1902282
     ]
+  },
+  "aliases": {
+    "27 Elm": "27 ELM",
+    "27th Park": "27TH PARK",
+    "Alder Glen": "ALDER GLN",
+    "Amber Springs": "AMBER SPGS",
+    "Antler Crossing": "ANTLER XING",
+    "Antler Point": "ANTLER PT",
+    "Antler Ridge": "ANTLER RDG",
+    "Arnett": "ARNETT",
+    "Aspen Creek": "ASPEN CRK",
+    "Aspen Valley": "ASPEN VLY",
+    "Aspen Winds": "ASPEN WINDS",
+    "Atop the Summit": "ATOP THE SMT",
+    "Autumnglen": "AUTUMNGLEN",
+    "Ayres Acres": "AYRES AC",
+    "Baker Park": "BAKER PARK",
+    "Ballpark View": "BALLPARK VIEW",
+    "Banta Acres": "BANTA AC",
+    "Bartel": "BARTEL",
+    "Basking Ridge": "BASKING RDG",
+    "Bella Sera": "BELLA SERA",
+    "Bella Vista": "BELLA VISTA",
+    "Bentwood Estates": "BENTWOOD ESTS",
+    "Berni's Subdivision": "BERNI'S SUBD",
+    "Black Hawk": "BLACK HAWK",
+    "Blue Sky Addition": "BLUE SKY ADTN",
+    "Boulder Brook": "BOULDER BRK",
+    "Boulder Brook Condos": "BOULDER BRK CONDOS",
+    "Braydon Park": "BRAYDON PARK",
+    "Brierwood": "BRIERWOOD",
+    "Brooktree": "BROOKTREE",
+    "Brown's Additions": "BROWN'S ADDITIONS",
+    "Buckner": "BUCKNER",
+    "Canyon Crossing": "CYN XING",
+    "Canyon Point East": "CYN PT EAST",
+    "Canyon Point Estates": "CYN PT ESTS",
+    "Canyon Ranch": "CYN RNCH",
+    "Canyon Rim Village": "CYN RIM VLG",
+    "Canyon View": "CYN VIEW",
+    "Canyon Villas": "CYN VILLAS",
+    "Carly Meadows": "CARLY MDWS",
+    "Cascade View Allotment": "CASCADE VIEW ALLOTMENT",
+    "Cascade View Estates": "CASCADE VIEW ESTS",
+    "Cascade West": "CASCADE WEST",
+    "Casper Mobile Acres": "CASPER MOBILE AC",
+    "Cedar Creek Village Condos": "CEDAR CRK VLG CONDOS",
+    "Cedar Village": "CEDAR VLG",
+    "Century Estates": "CENTURY ESTS",
+    "Chelsea Square": "CHELSEA SQ",
+    "Cliffs": "CLFS",
+    "Coho Crossing": "COHO XING",
+    "Coho Run": "COHO RUN",
+    "Collins Addition": "COLLINS ADTN",
+    "Cook Crossing Condo": "COOK XING CONDO",
+    "Copper Ridge": "COPPER RDG",
+    "Corks Westside": "CORKS WESTSIDE",
+    "Corks Westside Addition": "CORKS WESTSIDE ADTN",
+    "Country Park": "COUNTRY PARK",
+    "Crane Meadow": "CRANE MDW",
+    "Credenda": "CREDENDA",
+    "Credenda Subdivision": "CREDENDA SUBD",
+    "Crossings at Metolius": "CROSSINGS AT METOLIUS",
+    "Curry Addition": "CURRY ADTN",
+    "Dana-Butler": "DANA-BUTLER",
+    "Deer Crossing": "DEER XING",
+    "Dehmc Acre": "DEHMC ACRE",
+    "Desert Valley": "DESERT VLY",
+    "Desert Valley East": "DESERT VLY EAST",
+    "Diamond Bar Ranch": "DIAMOND BAR RNCH",
+    "Dobson-Slocum Acreage": "DOBSON-SLOCUM ACREAGE",
+    "Dorsch Acres": "DORSCH AC",
+    "Dove Meadow": "DOVE MDW",
+    "Eagle Park": "EAGLE PARK",
+    "East Rim": "EAST RIM",
+    "Eastside City": "EASTSIDE CITY",
+    "Echo Rim Estates": "ECHO RIM",
+    "Ehret's First Addition": "EHRET'S FIRST ADTN",
+    "Ellinger's Addition": "ELLINGER'S ADTN",
+    "Emerald View Estates": "EMERALD VIEW ESTS",
+    "Emerald Villa": "EMERALD VILLA",
+    "Emily Estates": "EMILY ESTS",
+    "Evansville": "EVANSVILLE",
+    "Fair Acres": "FAIR AC",
+    "Fair Acres Addition": "FAIR AC ADTN",
+    "Fairgrounds Condo Plaza": "FAIRGROUNDS CONDO PLAZA",
+    "Fairhaven": "FAIRHAVEN",
+    "Fairhaven Crossing": "FAIRHAVEN XING",
+    "Fairhaven Vista": "FAIRHAVEN VISTA",
+    "Fairhaven Vista P.U.D.": "FAIRHAVEN VISTA P.U.D.",
+    "Fieldstone": "FIELDSTONE",
+    "Fieldstone Crossing": "FIELDSTONE XING",
+    "Fieldstone South": "FIELDSTONE SOUTH",
+    "Forked Horn Butte": "FORKED HORN BUTTE",
+    "Forrest Commons": "FORREST CMNS",
+    "Frank's Landing": "FRANK'S LNDG",
+    "Goodrich Subdivision": "GOODRICH SUBD",
+    "Gray Butte Estates": "GRAY BUTTE ESTS",
+    "Greens at Redmond": "GRNS AT REDMOND",
+    "Guy's Acres": "GUY'S AC",
+    "Hall": "HALL",
+    "Harold's Addition": "HAROLD'S ADTN",
+    "Harry Ranch Estates": "HARRY RNCH ESTS",
+    "Hawley Estates": "HAWLEY ESTS",
+    "Hayden Acres": "HAYDEN AC",
+    "Hayden Ranch Estates": "HAYDEN RNCH ESTS",
+    "Hayden Square": "HAYDEN SQ",
+    "Hayden View": "HAYDEN VIEW",
+    "Hayden Village": "HAYDEN VLG",
+    "Heierman": "HEIERMAN",
+    "Heierman-McCormick": "HEIERMAN-MCCORMICK",
+    "Heritage Ranch": "HERITAGE RNCH",
+    "Hester": "HESTER",
+    "Hi-Country Estates": "HI-COUNTRY ESTS",
+    "Hidden Valley Mobile Estates": "HIDDEN VLY MOBILE ESTS",
+    "Hill Crest": "HILL CRST",
+    "Home Depot Station": "HOME DEPOT STATION",
+    "Howell Acres": "HOWELL AC",
+    "Howell's Hill Top Acres": "HOWELL'S HILL TOP AC",
+    "Howell's River Rim": "HOWELL'S RIV RIM",
+    "Hunt's Three Sisters View": "HUNT'S THREE SISTERS VIEW",
+    "Innovation Park": "INNOVATION PARK",
+    "Jean Meadows": "JEAN MDWS",
+    "Jefferson View Allotment": "JEFFERSON VIEW ALLOTMENT",
+    "Jensen Tracts": "JENSEN TRACTS",
+    "Johnson Acres": "JOHNSON AC",
+    "Julina Park": "JULINA PARK",
+    "Juniper Glen": "JUNIPER GLN",
+    "Juniper Glen North": "JUNIPER GLN NORTH",
+    "Juniper Hill": "JUNIPER HILL",
+    "Juniper Meadows": "JUNIPER MDWS",
+    "Juniper Vista": "JUNIPER VISTA",
+    "Justin Glen": "JUSTIN GLN",
+    "Kayla Village": "KAYLA VLG",
+    "Kenyons Acreage": "KENYONS ACREAGE",
+    "Kian Canyon": "KIAN CYN",
+    "Kian West": "KIAN WEST",
+    "Larch Meadows": "LARCH MDWS",
+    "Lawson Crossing": "LAWSON XING",
+    "Lone Juniper Estates": "LONE JUNIPER ESTS",
+    "Majestic Ridge": "MAJESTIC RDG",
+    "Makena View Estates": "MAKENA VIEW ESTS",
+    "Maple Meadows": "MAPLE MDWS",
+    "Maplewood": "MAPLEWOOD",
+    "McKenzie Rim Estates": "MCKENZIE RIM ESTS",
+    "McKenzie's Meadow": "MCKENZIE'S MDW",
+    "Meadowbrook Estates": "MEADOWBROOK ESTS",
+    "Meadowlark Estates": "MEADOWLARK ESTS",
+    "Megan Park": "MEGAN PARK",
+    "Melrose Park": "MELROSE PARK",
+    "Metts Subdivision": "METTS SUBD",
+    "Mida Addition": "MIDA ADTN",
+    "Mountain Gardens": "MTN GDNS",
+    "Mountain Glenn": "MTN GLENN",
+    "Mountain View Addition": "MTN VIEW ADTN",
+    "Myers Acreage": "MYERS ACREAGE",
+    "Negus Villas": "NEGUS VILLAS",
+    "Newberry Village": "NEWBERRY VLG",
+    "Ni-Lah-Sha": "NI-LAH-SHA",
+    "Nolan's Addition": "NOLAN'S ADTN",
+    "North Canyon Estates": "NORTH CYN ESTS",
+    "North Rim": "NORTH RIM",
+    "Oak Hills": "OAK HILLS",
+    "Obsidian Estates": "OBSIDIAN ESTS",
+    "Obsidian Meadows": "OBSIDIAN MDWS",
+    "Obsidian Trails": "OBSIDIAN TRAILS",
+    "Orchard Knoll": "ORCH KNOLL",
+    "Oregon Trunk Addition": "OREGON TRUNK ADTN",
+    "P.R.I.D.E. Estates": "P.R.I.D.E. ESTS",
+    "Park Place Estates": "PARK PL ESTS",
+    "Parkland": "PARKLAND",
+    "Parkland Townhomes": "PARKLAND TOWNHOMES",
+    "Parkway Addition": "PKWY ADTN",
+    "Pine Tree Meadows": "PINE TREE MDWS",
+    "Planerville": "PLANERVILLE",
+    "Pleasant View": "PLEASANT VIEW",
+    "Poco Bella": "POCO BELLA",
+    "Prairie Crossing": "PRAIRIE XING",
+    "Quartz Canyon Tracts": "QUARTZ CYN TRACTS",
+    "Quince Avenue": "QUINCE AVE",
+    "Railey's Place": "RAILEY'S PL",
+    "Railway Addition": "RAILWAY ADTN",
+    "Ranch Way Acres": "RNCH WAY AC",
+    "Ranchette View Estates": "RANCHETTE VIEW ESTS",
+    "Red Hawk": "RED HAWK",
+    "Red-Bar Estates": "RED-BAR ESTS",
+    "Redmond Acres": "REDMOND AC",
+    "Redmond Addition": "REDMOND ADTN",
+    "Redmond Heights": "REDMOND HTS",
+    "Redmond Town Center": "REDMOND TOWN CTR",
+    "Redside": "REDSIDE",
+    "Redtail Ridge": "REDTAIL RDG",
+    "Reindeer Woods": "REINDEER WOODS",
+    "Remington Arms": "REMINGTON ARMS",
+    "Rennolds Acres": "RENNOLDS AC",
+    "Ridgepointe": "RIDGEPOINTE",
+    "Rim Rock Acres": "RIM ROCK AC",
+    "Rim View Subdivision": "RIM VIEW SUBD",
+    "Rimrock Estates": "RIMROCK ESTS",
+    "Roberts Addition": "ROBERTS ADTN",
+    "Rock Crest": "ROCK CRST",
+    "Sage Townhomes Condo": "SAGE TOWNHOMES CONDO",
+    "Salmon Park": "SALMON PARK",
+    "Salmon Run": "SALMON RUN",
+    "Sarasoda Court": "SARASODA CT",
+    "Savannah Estates": "SAVANNAH ESTS",
+    "Shadow Glen Estates": "SHADOW GLN ESTS",
+    "Sierra Vista": "SIERRA VISTA",
+    "Sisters View Estates": "SISTERS VIEW ESTS",
+    "Six Peaks": "SIX PEAKS",
+    "Skidmore's Subdivision": "SKIDMORE'S SUBD",
+    "Skyline Ridge": "SKYLINE RDG",
+    "Sothman's Addition": "SOTHMAN'S ADTN",
+    "South Gate Estates": "SOUTH GATE ESTS",
+    "South Heights Addition": "SOUTH HTS ADTN",
+    "South Moreland Acres": "SOUTH MORELAND AC",
+    "South-End Acreage": "SOUTH-END ACREAGE",
+    "Steelhead Estates": "STEELHEAD ESTS",
+    "Sterling Pointe": "STERLING POINTE",
+    "Stonehedge on the Rim": "STONEHEDGE ON THE RIM",
+    "Stonehedge South Phase One": "STONEHEDGE SOUTH PHASE ONE",
+    "Stonehedge West": "STONEHEDGE WEST",
+    "Summer Creek": "SUMMER CRK",
+    "Summerfield": "SUMMERFIELD",
+    "Summerhaven": "SUMMERHAVEN",
+    "Summit": "SMT",
+    "Summit Crest": "SMT CRST",
+    "Sunnyside": "SUNNYSIDE",
+    "Sunnyside Addition": "SUNNYSIDE ADTN",
+    "Sunscape": "SUNSCAPE",
+    "Sunset Summit": "SUNSET SMT",
+    "Sunshine": "SUNSHINE",
+    "Sunshine Addition": "SUNSHINE ADTN",
+    "Taylor's Addition": "TAYLOR'S ADTN",
+    "The Meadows": "THE MDWS",
+    "The Sage": "SAGE (THE)",
+    "Timber Acres": "TIMBER AC",
+    "Timber Estates": "TIMBER ESTS",
+    "Timber Flats": "TIMBER FLATS",
+    "Timber View Condos": "TIMBER VIEW CONDOS",
+    "Timbers": "TIMBERS",
+    "Torryn's Addition": "TORRYN'S ADTN",
+    "Townhomes at Quince Village": "TOWNHOMES AT QUINCE VLG",
+    "Triple Ridge": "TRIPLE RDG",
+    "Two Bar Estates": "TWO BAR ESTS",
+    "Umatilla Heights": "UMATILLA HTS",
+    "Umatilla Villa": "UMATILLA VILLA",
+    "Valleyview": "VALLEYVIEW",
+    "View Acres": "VIEW AC",
+    "Village Pointe": "VLG POINTE",
+    "Village Square": "VLG SQ",
+    "Vista Dorado": "VISTA DORADO",
+    "Vista Meadows": "VISTA MDWS",
+    "Volcano Place": "VOLCANO PL",
+    "Volcano Subdivision": "VOLCANO SUBD",
+    "Waterway Addition to Redmond": "WATERWAY ADTN TO REDMOND",
+    "Waverly": "WAVERLY",
+    "Weckerle Heights": "WECKERLE HTS",
+    "West Canyon Estates": "WEST CYN ESTS",
+    "Whitehorse": "WHITEHORSE",
+    "Wildflower": "WILDFLOWER",
+    "Willow Springs": "WILLOW SPGS",
+    "Windhaven Park": "WINDHAVEN PARK",
+    "Windrow Acres": "WINDROW AC",
+    "Windsong": "WINDSONG"
   }
 }
