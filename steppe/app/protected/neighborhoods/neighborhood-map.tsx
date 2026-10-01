@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import {
   coveredByNeighborhoodMap,
   type AddressPoint,
@@ -23,40 +23,76 @@ export function NeighborhoodMap({
   const titleId = useId();
   const addressId = useId();
   const privacyId = useId();
+  const resultsId = useId();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<AddressPoint[]>([]);
   const [address, setAddress] = useState<AddressPoint | undefined>();
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const [composing, setComposing] = useState(false);
   const [searchState, setSearchState] = useState<
     "idle" | "loading" | "done" | "failed"
   >("idle");
   const request = useRef<AbortController | null>(null);
-  useEffect(() => () => request.current?.abort(), []);
+  const debounce = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  async function search() {
-    if (query.trim().length < 3) return;
+  const search = useCallback(
+    async (value: string) => {
+      clearTimeout(debounce.current);
+      if (value.trim().length < 3) return;
+      request.current?.abort();
+      const controller = new AbortController();
+      request.current = controller;
+      setSearchState("loading");
+      setResults([]);
+      setActive(-1);
+      setOpen(true);
+      try {
+        const response = await fetch("/api/neighborhood-address", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ q: value.trim(), locale: copy.searchLocale }),
+          signal: controller.signal,
+          cache: "no-store",
+        });
+        const body = await response.json();
+        if (controller.signal.aborted) return;
+        if (!response.ok || body.unavailable)
+          throw new Error("Address search unavailable");
+        setResults(body.results);
+        setSearchState("done");
+      } catch {
+        if (!controller.signal.aborted) setSearchState("failed");
+      }
+    },
+    [copy.searchLocale],
+  );
+
+  useEffect(() => {
+    if (composing || query.trim().length < 3 || query === address?.label) return;
+    // Wait for a pause in typing; cancel both the timer and any stale response.
+    debounce.current = setTimeout(() => void search(query), 650);
+    return () => {
+      clearTimeout(debounce.current);
+      request.current?.abort();
+    };
+  }, [query, address?.label, composing, search]);
+  useEffect(
+    () => () => {
+      clearTimeout(debounce.current);
+      request.current?.abort();
+    },
+    [],
+  );
+
+  function chooseAddress(result: AddressPoint) {
+    clearTimeout(debounce.current);
     request.current?.abort();
-    const controller = new AbortController();
-    request.current = controller;
-    setSearchState("loading");
-    setResults([]);
-    setAddress(undefined);
-    try {
-      const response = await fetch("/api/neighborhood-address", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ q: query.trim(), locale: copy.searchLocale }),
-        signal: controller.signal,
-        cache: "no-store",
-      });
-      const body = await response.json();
-      if (controller.signal.aborted) return;
-      if (!response.ok || body.unavailable)
-        throw new Error("Address search unavailable");
-      setResults(body.results);
-      setSearchState("done");
-    } catch {
-      if (!controller.signal.aborted) setSearchState("failed");
-    }
+    setQuery(result.label);
+    setAddress(result);
+    setOpen(false);
+    setActive(-1);
+    if (!View && coveredByNeighborhoodMap(result)) void explore();
   }
   const [View, setView] = useState<typeof NeighborhoodMapView | null>(null);
   const [loading, setLoading] = useState(false);
@@ -85,7 +121,15 @@ export function NeighborhoodMap({
       </h2>
       <p className="text-sm text-muted-foreground">{copy.intro}</p>
       <p className="text-sm font-medium">{copy.date}</p>
-      <div className="space-y-2">
+      <div
+        className="space-y-2"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) {
+            setOpen(false);
+            setActive(-1);
+          }
+        }}
+      >
         <label htmlFor={addressId} className="text-sm font-medium">
           {copy.addressLabel}
         </label>
@@ -93,22 +137,57 @@ export function NeighborhoodMap({
           <input
             id={addressId}
             type="search"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-expanded={open && results.length > 0}
+            aria-controls={resultsId}
+            aria-activedescendant={
+              open && active >= 0 ? `${resultsId}-${active}` : undefined
+            }
             autoComplete="off"
             maxLength={200}
             value={query}
             aria-describedby={privacyId}
             placeholder={copy.addressPlaceholder}
+            onFocus={() => setOpen(true)}
+            onCompositionStart={() => setComposing(true)}
+            onCompositionEnd={() => setComposing(false)}
             onChange={(event) => {
+              clearTimeout(debounce.current);
               request.current?.abort();
               setQuery(event.target.value);
               setResults([]);
               setAddress(undefined);
               setSearchState("idle");
+              setActive(-1);
+              setOpen(true);
             }}
             onKeyDown={(event) => {
+              if (event.nativeEvent.isComposing) return;
+              if (event.key === "Escape") {
+                event.preventDefault();
+                clearTimeout(debounce.current);
+                request.current?.abort();
+                setSearchState("idle");
+                setOpen(false);
+                setActive(-1);
+              }
+              if (
+                open && results.length &&
+                ["ArrowDown", "ArrowUp"].includes(event.key)
+              ) {
+                event.preventDefault();
+                setActive((previous) =>
+                  previous < 0
+                    ? event.key === "ArrowDown" ? 0 : results.length - 1
+                    : (previous + (event.key === "ArrowDown" ? 1 : -1) + results.length) % results.length,
+                );
+              }
               if (event.key === "Enter") {
                 event.preventDefault();
-                void search();
+                if (open && active >= 0 && results[active])
+                  chooseAddress(results[active]);
+                else void search(query);
               }
             }}
             className="min-h-11 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm"
@@ -117,7 +196,7 @@ export function NeighborhoodMap({
             type="button"
             className="min-h-11"
             disabled={query.trim().length < 3 || searchState === "loading"}
-            onClick={() => void search()}
+            onClick={() => void search(query)}
           >
             {searchState === "loading" ? copy.searching : copy.searchAddress}
           </Button>
@@ -130,24 +209,27 @@ export function NeighborhoodMap({
             {copy.addressError}
           </p>
         )}
-        {searchState === "done" && (
+        {open && searchState === "done" && (
           <p role="status" className="text-sm">
             {results.length ? copy.pickAddress : copy.noAddress}
           </p>
         )}
-        {!!results.length && (
-          <ul className="space-y-1">
+        {open && !!results.length && (
+          <ul
+            id={resultsId}
+            role="listbox"
+            aria-label={copy.addressLabel}
+            className="space-y-1"
+          >
             {results.map((result, index) => (
-              <li key={index}>
+              <li key={index} role="none">
                 <button
                   type="button"
-                  className="min-h-11 w-full rounded border px-3 py-2 text-left text-sm hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
-                  aria-pressed={address === result}
-                  onClick={() => {
-                    setAddress(result);
-                    if (!View && coveredByNeighborhoodMap(result))
-                      void explore();
-                  }}
+                  id={`${resultsId}-${index}`}
+                  role="option"
+                  className={`min-h-11 w-full rounded border px-3 py-2 text-left text-sm hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${active === index ? "bg-muted" : ""}`}
+                  aria-selected={active === index}
+                  onClick={() => chooseAddress(result)}
                 >
                   {result.label}
                 </button>
@@ -177,18 +259,21 @@ export function NeighborhoodMap({
           </p>
         )}
         <p className="text-sm text-muted-foreground">{copy.addressHint}</p>
-        {searchState !== "idle" && (
+        {!!query.length && (
           <Button
             type="button"
             variant="outline"
             size="sm"
             className="min-h-11"
             onClick={() => {
+              clearTimeout(debounce.current);
               request.current?.abort();
               setQuery("");
               setResults([]);
               setAddress(undefined);
               setSearchState("idle");
+              setOpen(false);
+              setActive(-1);
             }}
           >
             {copy.clearAddress}

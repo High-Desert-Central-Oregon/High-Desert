@@ -6,8 +6,10 @@ full names or the PDF's abbreviated labels. Both modes share one selection and t
 same explicit Save neighborhood action. The compact chooser beneath Map uses the
 same database rows as List. Browsing the map never saves a choice.
 
-Find address submits a street address or public place only when the member presses
-the button or Enter. Selecting a covered result loads Leaflet and the detailed
+Address suggestions appear after three characters and a 650ms pause in typing;
+Find address or Enter can also search immediately. Selecting a result fills the
+address field, cancels pending searches and closes the suggestions. Arrow keys and
+Enter choose a result, while Escape dismisses suggestions. Selecting a covered result loads Leaflet and the detailed
 self-hosted raster, with a labeled address marker. Explore map also loads it on
 request. Address search is a visual reference: it never infers membership in a
 boundary, assigns a neighborhood, verifies residency, or persists a home address.

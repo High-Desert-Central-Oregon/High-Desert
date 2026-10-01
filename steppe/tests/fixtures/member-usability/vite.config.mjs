@@ -31,6 +31,18 @@ const config = {
           },
         );
         server.middlewares.use("/api/neighborhood-address", (req, res) => {
+          // Slow synthetic responses exercise cancellation after typing changes.
+          if (req.headers.referer?.includes("address-slow=1")) {
+            res.setHeader("Content-Type", "application/json");
+            setTimeout(() => res.end(JSON.stringify({
+              results: [{
+                label: "Sam Johnson Park, Redmond, Oregon",
+                lat: 44.2733078,
+                lng: -121.1854115,
+              }],
+            })), 1500);
+            return;
+          }
           res.setHeader("Content-Type", "application/json");
           if (req.headers.referer?.includes("address-failure=1")) {
             res.statusCode = 503;
