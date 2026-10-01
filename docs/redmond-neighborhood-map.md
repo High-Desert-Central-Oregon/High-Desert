@@ -2,19 +2,38 @@
 
 The neighborhood picker opens in **Map** mode with a lightweight static overview.
 **List** is an equally visible alternative, with alphabetical radios and search by
-full names or the PDF's abbreviated labels. Both modes share one selection and the
+full names, county plat names, or the PDF's abbreviated labels. Both modes share one selection and the
 same explicit Save neighborhood action. The compact chooser beneath Map uses the
 same database rows as List. Browsing the map never saves a choice.
 
 Address suggestions appear after three characters and a 650ms pause in typing;
 Find address or Enter can also search immediately. Selecting a result fills the
 address field, cancels pending searches and closes the suggestions. Arrow keys and
-Enter choose a result, while Escape dismisses suggestions. Selecting a covered result loads Leaflet and the detailed
-self-hosted raster, with a labeled address marker. Explore map also loads it on
-request. Address search is a visual reference: it never infers membership in a
+Enter choose a result, while Escape dismisses suggestions. Selecting a covered
+result loads Leaflet and the self-hosted county outlines with an address marker.
+Explore county outlines also loads them on request. Street tiles and the detailed
+2019 raster load only after choosing their backgrounds. Address search is a visual reference: it never infers membership in a
 boundary, assigns a neighborhood, verifies residency, or persists a home address.
 
-## Source and limits
+## County outline source and catalog
+
+- [Deschutes County Surveyor’s Office subdivision polygons](https://maps.deschutes.org/server/rest/services/Hosted/Subdivisions/FeatureServer/0), fetched October 1, 2026. The query includes survey types 1 (Subdivision Plat), 3 (Condo Plat) and 7 (Subdivision PM), intersecting the county's [Redmond urban growth boundary](https://maps.deschutes.org/server/rest/services/Hosted/Urban_Growth_Boundary/FeatureServer/0). Records include plats recorded in 2026. This is a dated snapshot, not a continuously refreshed feed.
+- **551 source records**, grouped into **319 displayed names**. Phase/replat records retain their full source labels and IDs. Conservative suffix handling and the reviewed `county-name-aliases.json` map spelling variants to existing choices; no fuzzy spatial/name matching changes an existing neighborhood ID.
+- **67 additional choices**, for **334 total choices** including all 267 existing names. Broader/outside-area choices such as Eagle Crest stay selectable even without a polygon. Named nonresidential plats remain represented, just as in the original reference catalog.
+- The county layer contains recorded plat boundaries, including overlapping phases/replats and vacation records. It does not establish Steppe membership or residency eligibility. The member chooses their neighborhood; a human reviews verification.
+- Clicking a polygon or using the native name selector inspects the group. **Choose {name}** updates only the unsaved form choice; Save neighborhood remains explicit. Selected outlines use thicker strokes, a permanent label and text status. Map and List share that choice.
+- Address matches are computed in browser memory against the polygons, including holes and multipolygons. All overlapping names are offered for inspection, with duplicates by phase collapsed. No containing plat produces a clear message; no nearest-boundary guess or automatic profile change is made.
+- `public/maps/redmond-current/overview.svg` is a static 204 KiB overview. `outlines.geojson` is 474 KiB before HTTP compression (much smaller than the 5 MiB aerial), loaded on request. `catalog.json` records date, scope, source, IDs, aliases and geometry SHA-256. The client requests a hash-versioned geometry URL and validates the complete snapshot; no external county request is made while browsing outlines.
+
+Refresh from the public source with Python standard library only:
+
+```sh
+python3 steppe/scripts/maps/build-county-outlines.py
+```
+
+The script uses fixed public sources and no member address, login or database. It fails on incomplete downloads, unexpected geometry/coordinates or name collisions, leaving existing outputs intact. Review the new source names and aliases, generated geometry and catalog diff. It prints proposed missing choices; it does not update the database or generate/apply a migration. Update the dated UI text and coverage tests deliberately with each reviewed snapshot. The source SVG is generated from numeric geometry only. Public plat names are rendered with textContent in Leaflet tooltips.
+
+## Historical aerial source and limits
 
 - Source: `aerial_redmond_april2019.pdf`, prepared April 3, 2019 for Western Title
   Company by Fidelity National Title; supplied for this feature. The same map is
@@ -31,18 +50,25 @@ boundary, assigns a neighborhood, verifies residency, or persists a home address
   a promise of present-day neighborhood boundaries or residential eligibility.
 - Cinder Butte Village, Eagle Crest, Rimrock West Estate, and Village at Ridgeview
   have no confident source-label match. They remain selectable, giving **267 total
-  choices**. Existing IDs, names and member references are preserved, including
+  historical choices**. Existing IDs, names and member references are preserved, including
   Eagle Crest outside city limits. Marker points locate printed labels, not
   polygon centroids or boundaries.
 
 ## Release order
 
-Apply `migrations/0040_redmond_map_neighborhoods.sql` in the owner's production SQL
+For this outline release, apply `migrations/0041_current_subdivision_neighborhoods.sql` in the owner's production SQL editor **before merging**. It adds 67 names with `ON CONFLICT (slug) DO NOTHING`; all existing IDs/names, profiles, RLS and trust columns are untouched. After application, the total should be at least 334 (custom additions may increase it). A fresh database receives all 334 from schema.sql. Local Postgres proof confirms the 267 existing IDs/names and a saved profile remain unchanged and a second application adds nothing. An unavailable database choice can still be inspected on the map but cannot be silently selected/saved through the map button.
+
+```sql
+select count(*) as neighborhood_options from public.neighborhoods;
+-- Expect at least 334 after 0040 and 0041.
+```
+
+Historical prerequisite (already introduced with the map/list release): apply `migrations/0040_redmond_map_neighborhoods.sql` in the owner's production SQL
 editor **before merging the app release**. It inserts the 232 missing rows and
 ignores existing slugs; a repeat applies no additional rows. It changes no RLS,
 trust columns, profiles, or existing neighborhood IDs. The production application
 always reads the database catalog; until this migration is applied it continues
-to show the existing 35 choices. Fresh local databases receive all 267 in schema.sql.
+to show the existing 35 choices. That earlier release seeded 267 choices; the current schema adds the 67 county choices.
 
 After applying it, this read-only check should show 267 (or more if additional
 neighborhoods were deliberately added):
@@ -73,7 +99,7 @@ Generated files in `steppe/public/maps/redmond-2019/`:
 
 - `overview.webp`: full-page static overview (~193 KiB), lazy-loaded when visible.
 - `aerial.webp`: 4609 × 6000 transparent-edge Web Mercator raster (~5 MiB),
-  loaded only after Explore map. This preserves legible small subdivision labels.
+  loaded only after choosing 2019 aerial or Compare. This preserves legible small subdivision labels.
 - `source.pdf`: unchanged original (~3.1 MiB), opened only from its link.
 - `map.json`: source SHA-256, date, bounds, transform residual, all label locations and aliases.
 
@@ -82,7 +108,7 @@ Generated files in `steppe/public/maps/redmond-2019/`:
 The picker initially loads no Leaflet JavaScript, detailed raster, or street tiles.
 A native chooser, readable form list, static image alt text, and PDF link
 remain useful without the interactive library. Loading failures return to the
-static overview. English and Spanish ship together. Native select, named zoom
+static overview; outline-file failure also leaves the historical background and list usable. English and Spanish ship together. Native select, named zoom
 buttons, arrow-key panning, pinch zoom, visible focus, and non-color status text
 provide alternate controls. Scroll-wheel zoom is off to avoid trapping page scroll.
 
@@ -109,11 +135,11 @@ can return up to six suggestions. County results are preferred when present, wit
 a three-second timeout and best-effort Photon fallback. Photon street centers and
 different house numbers are excluded, so they cannot masquerade as a located home.
 No new API key, dependency or database migration is required. Address-source
-coverage can still be incomplete; this does not update the historical 2019 map.
+coverage can still be incomplete; the address service does not refresh either map source.
 [Deschutes County E911 address points](https://maps.deschutes.org/server/rest/services/Hosted/E911_Address_Points/FeatureServer)
 provides the public address locations; availability has no guarantee in this app.
 The UI describes the provider before submission. Typed address values and markers
-are cleared on leaving Map or clearing the search. Outside-image results produce
+are cleared on leaving Map or clearing the search. Outside-coverage results produce
 an explicit coverage message, with no misleading marker at the map's edge.
 [Photon API documentation](https://github.com/komoot/photon/blob/master/docs/api-v1.md)
 supports search, location bias and bounding-box filtering. Its public instance is
@@ -127,12 +153,12 @@ accessible list or the human follow-up for None of these fit.
 ## Verification
 
 Use the real-component local fixture at `/?screen=neighborhoods`; it supplies
-all catalog rows and synthetic address results without a hosted database. Check
+all 334 catalog rows, the actual public county geometry and synthetic address results without a hosted database. Check
 Map first, List filtering (including `GLN`), selection retention across modes,
-explicit save from each mode, failed saves, reload, keyboard access and Spanish at
+polygon/name inspection, explicit Choose then Save, failed saves, reload, keyboard access and Spanish at
 390px. Address Enter must search without submitting the neighborhood form. Choosing
 a result must add a marker without a write; clearing removes it. Check the
-outside-map result, `&address-empty=1`, `&address-failure=1`, and
+outside-map result, `&outline-failure=1`, `&address-empty=1`, `&address-failure=1`, and
 `&map-image-failure=1` fallbacks. Street tiles are external and load only on explicit
 Street map / Compare choice.
 
@@ -150,3 +176,13 @@ The route/parser tests exercise authentication, bounds, payload limits, provider
 failure, privacy and catalog/seed/migration parity. A disposable local Postgres
 migration check confirms 232 first inserts, zero on replay, 267 final rows and
 unchanged IDs/names/member references for all original 35 choices.
+
+## Local catalog migration proof
+
+Create an empty disposable loopback database named `steppe_outlines_test`, then from `steppe/` run:
+
+```sh
+SUBDIVISION_TEST_DB_URL=postgresql://localhost/steppe_outlines_test node tests/fixtures/subdivision-catalog-local.mjs
+```
+
+The script refuses hosted/non-disposable databases and existing neighborhood tables. It uses a rolled-back transaction, the real neighborhood table definition and the actual migration SQL, verifies all source names, checks old IDs/names and the saved profile, and applies the INSERT twice to prove idempotence. It does not replace the separately gated local Supabase/RLS action tests or hosted acceptance.

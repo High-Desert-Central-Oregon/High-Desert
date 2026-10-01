@@ -1,23 +1,26 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { type AddressPoint } from "@/lib/neighborhood-address";
 import {
-  coveredByNeighborhoodMap,
-  type AddressPoint,
-} from "@/lib/neighborhood-address";
+  coveredByPickerMap,
+  subdivisionCatalog,
+} from "@/lib/subdivision-outlines";
 import { Button } from "@/components/ui/button";
 import type { Dictionary } from "@/lib/i18n";
 import type { NeighborhoodMapView } from "./neighborhood-map-view";
 
-/** Map is visible first with a lightweight overview. The library and detailed raster load on request. */
+/** Map opens with a static county overview; detailed outlines load on request. */
 export function NeighborhoodMap({
   dict,
   names,
   selectedName,
+  onChooseName,
 }: {
   dict: Dictionary;
   names: string[];
   selectedName?: string;
+  onChooseName: (name: string) => void;
 }) {
   const copy = dict.neighborhoods.map;
   const titleId = useId();
@@ -69,7 +72,8 @@ export function NeighborhoodMap({
   );
 
   useEffect(() => {
-    if (composing || query.trim().length < 3 || query === address?.label) return;
+    if (composing || query.trim().length < 3 || query === address?.label)
+      return;
     // Wait for a pause in typing; cancel both the timer and any stale response.
     debounce.current = setTimeout(() => void search(query), 650);
     return () => {
@@ -92,7 +96,7 @@ export function NeighborhoodMap({
     setAddress(result);
     setOpen(false);
     setActive(-1);
-    if (!View && coveredByNeighborhoodMap(result)) void explore();
+    if (!View && coveredByPickerMap(result)) void explore();
   }
   const [View, setView] = useState<typeof NeighborhoodMapView | null>(null);
   const [loading, setLoading] = useState(false);
@@ -120,7 +124,9 @@ export function NeighborhoodMap({
         {copy.title}
       </h2>
       <p className="text-sm text-muted-foreground">{copy.intro}</p>
-      <p className="text-sm font-medium">{copy.date}</p>
+      <p className="text-sm font-medium">
+        {copy.countyDate.replace("{date}", subdivisionCatalog.date)}
+      </p>
       <div
         className="space-y-2"
         onBlur={(event) => {
@@ -173,14 +179,20 @@ export function NeighborhoodMap({
                 setActive(-1);
               }
               if (
-                open && results.length &&
+                open &&
+                results.length &&
                 ["ArrowDown", "ArrowUp"].includes(event.key)
               ) {
                 event.preventDefault();
                 setActive((previous) =>
                   previous < 0
-                    ? event.key === "ArrowDown" ? 0 : results.length - 1
-                    : (previous + (event.key === "ArrowDown" ? 1 : -1) + results.length) % results.length,
+                    ? event.key === "ArrowDown"
+                      ? 0
+                      : results.length - 1
+                    : (previous +
+                        (event.key === "ArrowDown" ? 1 : -1) +
+                        results.length) %
+                      results.length,
                 );
               }
               if (event.key === "Enter") {
@@ -266,7 +278,7 @@ export function NeighborhoodMap({
         )}
         {address && (
           <p role="status" className="text-sm">
-            {coveredByNeighborhoodMap(address)
+            {coveredByPickerMap(address)
               ? copy.addressLocated
               : copy.addressOutside}
           </p>
@@ -313,6 +325,7 @@ export function NeighborhoodMap({
             copy={copy}
             names={names}
             selectedName={selectedName}
+            onChooseName={onChooseName}
             address={address}
             onError={() => {
               setFailed(true);
@@ -322,13 +335,13 @@ export function NeighborhoodMap({
         </>
       ) : (
         <>
-          {/* The source labels are raster text; the form below is the accessible chooser. */}
+          {/* Static county outlines remain usable without loading the interactive map. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/maps/redmond-2019/overview.webp"
-            alt={copy.alt}
+            src="/maps/redmond-current/overview.svg"
+            alt={copy.countyAlt}
             width={720}
-            height={932}
+            height={860}
             loading="lazy"
             className="mx-auto max-h-96 w-full rounded border object-contain bg-muted"
           />

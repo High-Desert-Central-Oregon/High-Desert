@@ -1,0 +1,6827 @@
+{
+  "date": "2026-10-01",
+  "source": "https://maps.deschutes.org/server/rest/services/Hosted/Subdivisions/FeatureServer/0",
+  "copyright": "Deschutes County \u2014 Surveyor\u2019s Office",
+  "scope": "Plats intersecting Redmond's urban growth boundary; survey types 1, 3, 7",
+  "sourceFeatureCount": 551,
+  "geometrySha256": "c825a942d573e52ccce6c461f19a6e948575fb604c6de87befec7bbdf40e682c",
+  "bounds": [
+    [
+      44.232994,
+      -121.239506
+    ],
+    [
+      44.316328,
+      -121.148733
+    ]
+  ],
+  "neighborhoods": [
+    {
+      "name": "121 West",
+      "slug": "121-west",
+      "platNames": [
+        "121 West Phases 1 and 2 711-21-000260-SUB",
+        "121 West, Phases 3-6 711-21-000260-SUB"
+      ],
+      "sourceIds": [
+        3133,
+        3178
+      ],
+      "bounds": [
+        44.305382,
+        -121.176435,
+        44.310855,
+        -121.172424
+      ]
+    },
+    {
+      "name": "21st Street Condominiums",
+      "slug": "21st-street-condominiums",
+      "platNames": [
+        "21ST STREET CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        1075
+      ],
+      "bounds": [
+        44.23398,
+        -121.191179,
+        44.234472,
+        -121.19024
+      ]
+    },
+    {
+      "printed": "27 ELM",
+      "pdfPoint": [
+        577.96,
+        552.81
+      ],
+      "name": "27 Elm",
+      "slug": "27-elm",
+      "platNames": [
+        "27 ELM, PHASE 1",
+        "27 ELM, PHASE 2"
+      ],
+      "sourceIds": [
+        2797,
+        2862
+      ],
+      "bounds": [
+        44.28016,
+        -121.199251,
+        44.281896,
+        -121.195959
+      ]
+    },
+    {
+      "printed": "27TH PARK",
+      "pdfPoint": [
+        550.54,
+        1072.29
+      ],
+      "name": "27th Park",
+      "slug": "27th-park",
+      "platNames": [
+        "27TH PARK"
+      ],
+      "sourceIds": [
+        1753
+      ],
+      "bounds": [
+        44.25481,
+        -121.199204,
+        44.255628,
+        -121.198627
+      ]
+    },
+    {
+      "name": "3-T Industrial Park",
+      "slug": "3-t-industrial-park",
+      "platNames": [
+        "3-T INDUSTRIAL PARK",
+        "3-T INDUSTRIAL PARK PHASE TWO"
+      ],
+      "sourceIds": [
+        2561,
+        2562
+      ],
+      "bounds": [
+        44.280218,
+        -121.158824,
+        44.283719,
+        -121.153847
+      ]
+    },
+    {
+      "name": "44 North Estates",
+      "slug": "44-north-estates",
+      "platNames": [
+        "44 NORTH ESTATES"
+      ],
+      "sourceIds": [
+        2925
+      ],
+      "bounds": [
+        44.251756,
+        -121.22445,
+        44.253609,
+        -121.223743
+      ]
+    },
+    {
+      "name": "Airport Business Center",
+      "slug": "airport-business-center",
+      "platNames": [
+        "AIRPORT BUSINESS CENTER PHASE 1",
+        "AIRPORT BUSINESS CENTER PHASE 2",
+        "AIRPORT BUSINESS CENTER PHASE 3",
+        "AIRPORT BUSINESS CENTER PHASE 4"
+      ],
+      "sourceIds": [
+        1123,
+        1817,
+        2331,
+        2332
+      ],
+      "bounds": [
+        44.247467,
+        -121.17623,
+        44.253856,
+        -121.168601
+      ]
+    },
+    {
+      "name": "Airport Industrial Park-West",
+      "slug": "airport-industrial-park-west",
+      "platNames": [
+        "AIRPORT INDUSTRIAL PARK-WEST"
+      ],
+      "sourceIds": [
+        1819
+      ],
+      "bounds": [
+        44.258431,
+        -121.172311,
+        44.260431,
+        -121.168991
+      ]
+    },
+    {
+      "printed": "ALDER GLN",
+      "pdfPoint": [
+        490.84,
+        1164.01
+      ],
+      "name": "Alder Glen",
+      "slug": "alder-glen",
+      "platNames": [
+        "ALDER GLEN"
+      ],
+      "sourceIds": [
+        2287
+      ],
+      "bounds": [
+        44.250311,
+        -121.206166,
+        44.25101,
+        -121.204435
+      ]
+    },
+    {
+      "printed": "AMBER SPGS",
+      "pdfPoint": [
+        672.44,
+        434.31
+      ],
+      "name": "Amber Springs",
+      "slug": "amber-springs",
+      "platNames": [
+        "AMBER SPRINGS"
+      ],
+      "sourceIds": [
+        2043
+      ],
+      "bounds": [
+        44.287326,
+        -121.193626,
+        44.288231,
+        -121.189278
+      ]
+    },
+    {
+      "name": "Antelope Flatts",
+      "slug": "antelope-flatts",
+      "platNames": [
+        "Antelope Flatts, Phase 1"
+      ],
+      "sourceIds": [
+        3222
+      ],
+      "bounds": [
+        44.240307,
+        -121.229412,
+        44.241231,
+        -121.224481
+      ]
+    },
+    {
+      "printed": "ANTLER XING",
+      "pdfPoint": [
+        518.25,
+        644.9
+      ],
+      "name": "Antler Crossing",
+      "slug": "antler-crossing",
+      "platNames": [
+        "ANTLER CROSSING"
+      ],
+      "sourceIds": [
+        2056
+      ],
+      "bounds": [
+        44.276503,
+        -121.202342,
+        44.27827,
+        -121.201858
+      ]
+    },
+    {
+      "name": "Antler Meadows",
+      "slug": "antler-meadows",
+      "platNames": [
+        "Antler Meadows 711-24-000089-PLNG"
+      ],
+      "sourceIds": [
+        3167
+      ],
+      "bounds": [
+        44.27658,
+        -121.187081,
+        44.27859,
+        -121.1859
+      ]
+    },
+    {
+      "printed": "ANTLER PT",
+      "pdfPoint": [
+        506.43,
+        631.33
+      ],
+      "name": "Antler Point",
+      "slug": "antler-point",
+      "platNames": [
+        "ANTLER POINT"
+      ],
+      "sourceIds": [
+        1791
+      ],
+      "bounds": [
+        44.276889,
+        -121.201695,
+        44.278257,
+        -121.201103
+      ]
+    },
+    {
+      "printed": "ANTLER RDG",
+      "pdfPoint": [
+        434.13,
+        690.93
+      ],
+      "name": "Antler Ridge",
+      "slug": "antler-ridge",
+      "platNames": [
+        "ANTLER RIDGE PHASE 1",
+        "ANTLER RIDGE PHASE 2"
+      ],
+      "sourceIds": [
+        2214,
+        2215
+      ],
+      "bounds": [
+        44.272809,
+        -121.209427,
+        44.276373,
+        -121.206319
+      ]
+    },
+    {
+      "printed": "ARNETT",
+      "pdfPoint": [
+        752.86,
+        1018.65
+      ],
+      "name": "Arnett",
+      "slug": "arnett",
+      "platNames": [
+        "ARNETT ADDITION NO. 1"
+      ],
+      "sourceIds": [
+        2305
+      ],
+      "bounds": [
+        44.255883,
+        -121.186438,
+        44.258342,
+        -121.183654
+      ]
+    },
+    {
+      "printed": "ASPEN CRK",
+      "pdfPoint": [
+        596.93,
+        880.99
+      ],
+      "name": "Aspen Creek",
+      "slug": "aspen-creek",
+      "platNames": [
+        "ASPEN CREEK MANUFACTURED HOME SUBDIVISION"
+      ],
+      "sourceIds": [
+        2235
+      ],
+      "bounds": [
+        44.264135,
+        -121.199403,
+        44.266287,
+        -121.19439
+      ]
+    },
+    {
+      "printed": "ASPEN WINDS",
+      "pdfPoint": [
+        577.86,
+        672.92
+      ],
+      "name": "Aspen Winds",
+      "slug": "aspen-winds",
+      "platNames": [
+        "ASPEN WINDS PHASE 1",
+        "ASPEN WINDS PHASE 2"
+      ],
+      "sourceIds": [
+        2206,
+        2208
+      ],
+      "bounds": [
+        44.274667,
+        -121.199211,
+        44.276432,
+        -121.196888
+      ]
+    },
+    {
+      "printed": "ATOP THE SMT",
+      "pdfPoint": [
+        350.91,
+        1087.72
+      ],
+      "name": "Atop the Summit",
+      "slug": "atop-the-summit",
+      "platNames": [
+        "ATOP THE SUMMIT PHASES 1 AND 2"
+      ],
+      "sourceIds": [
+        2253
+      ],
+      "bounds": [
+        44.252485,
+        -121.214359,
+        44.254665,
+        -121.213138
+      ]
+    },
+    {
+      "printed": "AUTUMNGLEN",
+      "pdfPoint": [
+        464.57,
+        1116.11
+      ],
+      "name": "Autumnglen",
+      "slug": "autumnglen",
+      "platNames": [
+        "AUTUMNGLEN SUBDIVISION PHASE I"
+      ],
+      "sourceIds": [
+        1759
+      ],
+      "bounds": [
+        44.252887,
+        -121.204919,
+        44.254617,
+        -121.204396
+      ]
+    },
+    {
+      "printed": "AYRES AC",
+      "pdfPoint": [
+        1120.85,
+        317.43
+      ],
+      "name": "Ayres Acres",
+      "slug": "ayres-acres",
+      "platNames": [
+        "AYRES ACRES"
+      ],
+      "sourceIds": [
+        2074
+      ],
+      "bounds": [
+        44.29349,
+        -121.160825,
+        44.29464,
+        -121.158823
+      ]
+    },
+    {
+      "printed": "BAKER PARK",
+      "pdfPoint": [
+        762.56,
+        954.22
+      ],
+      "name": "Baker Park",
+      "slug": "baker-park",
+      "platNames": [
+        "BAKER PARK ADDITION"
+      ],
+      "sourceIds": [
+        2304
+      ],
+      "bounds": [
+        44.261146,
+        -121.187175,
+        44.262056,
+        -121.185329
+      ]
+    },
+    {
+      "printed": "BALLPARK VIEW",
+      "pdfPoint": [
+        512.59,
+        1153.18
+      ],
+      "name": "Ballpark View",
+      "slug": "ballpark-view",
+      "platNames": [
+        "BALLPARK VIEW"
+      ],
+      "sourceIds": [
+        1955
+      ],
+      "bounds": [
+        44.251176,
+        -121.204227,
+        44.251721,
+        -121.203176
+      ]
+    },
+    {
+      "printed": "BANTA AC",
+      "pdfPoint": [
+        754.36,
+        887.69
+      ],
+      "name": "Banta Acres",
+      "slug": "banta-acres",
+      "platNames": [
+        "BANTA ACRES"
+      ],
+      "sourceIds": [
+        2191
+      ],
+      "bounds": [
+        44.264381,
+        -121.186576,
+        44.265652,
+        -121.184202
+      ]
+    },
+    {
+      "printed": "BARTEL",
+      "pdfPoint": [
+        826.64,
+        614.83
+      ],
+      "name": "Bartel",
+      "slug": "bartel",
+      "platNames": [
+        "BARTEL ADDITION"
+      ],
+      "sourceIds": [
+        2113
+      ],
+      "bounds": [
+        44.277034,
+        -121.181721,
+        44.27931,
+        -121.179075
+      ]
+    },
+    {
+      "printed": "BASKING RDG",
+      "pdfPoint": [
+        831.14,
+        945.06
+      ],
+      "name": "Basking Ridge",
+      "slug": "basking-ridge",
+      "platNames": [
+        "BASKING RIDGE PHASE I"
+      ],
+      "sourceIds": [
+        2301
+      ],
+      "bounds": [
+        44.261676,
+        -121.182527,
+        44.262085,
+        -121.180607
+      ]
+    },
+    {
+      "printed": "BELLA SERA",
+      "pdfPoint": [
+        835.82,
+        157.89
+      ],
+      "name": "Bella Sera",
+      "slug": "bella-sera",
+      "platNames": [
+        "BELLA SERA"
+      ],
+      "sourceIds": [
+        1996
+      ],
+      "bounds": [
+        44.301247,
+        -121.181581,
+        44.302829,
+        -121.178865
+      ]
+    },
+    {
+      "printed": "BELLA VISTA",
+      "pdfPoint": [
+        836.32,
+        204.01
+      ],
+      "name": "Bella Vista",
+      "slug": "bella-vista",
+      "platNames": [
+        "BELLA VISTA"
+      ],
+      "sourceIds": [
+        1998
+      ],
+      "bounds": [
+        44.299105,
+        -121.181422,
+        44.300008,
+        -121.179022
+      ]
+    },
+    {
+      "printed": "BENTWOOD ESTS",
+      "pdfPoint": [
+        306.09,
+        1206.48
+      ],
+      "name": "Bentwood Estates",
+      "slug": "bentwood-estates",
+      "platNames": [
+        "BENTWOOD ESTATES"
+      ],
+      "sourceIds": [
+        2258
+      ],
+      "bounds": [
+        44.247454,
+        -121.219435,
+        44.251022,
+        -121.214404
+      ]
+    },
+    {
+      "printed": "BERNI'S SUBD",
+      "pdfPoint": [
+        656.25,
+        846.04
+      ],
+      "name": "Berni's Subdivision",
+      "slug": "berni-s-subdivision",
+      "platNames": [
+        "BERNI'S SUBDIVISION"
+      ],
+      "sourceIds": [
+        2231
+      ],
+      "bounds": [
+        44.265619,
+        -121.190716,
+        44.269219,
+        -121.189177
+      ]
+    },
+    {
+      "printed": "BLACK HAWK",
+      "pdfPoint": [
+        511.35,
+        908.43
+      ],
+      "name": "Black Hawk",
+      "slug": "black-hawk",
+      "platNames": [
+        "BLACK HAWK PHASE ONE",
+        "BLACK HAWK PHASE TWO"
+      ],
+      "sourceIds": [
+        1663,
+        2230
+      ],
+      "bounds": [
+        44.261902,
+        -121.204469,
+        44.265569,
+        -121.200666
+      ]
+    },
+    {
+      "name": "Blairs Lot 3 Subdivision",
+      "slug": "blairs-lot-3-subdivision",
+      "platNames": [
+        "BLAIRS LOT 3 SUBDIVISION"
+      ],
+      "sourceIds": [
+        1750
+      ],
+      "bounds": [
+        44.251629,
+        -121.195303,
+        44.252045,
+        -121.194269
+      ]
+    },
+    {
+      "printed": "BLUE SKY ADTN",
+      "pdfPoint": [
+        885.82,
+        459.08
+      ],
+      "name": "Blue Sky Addition",
+      "slug": "blue-sky-addition",
+      "platNames": [
+        "BLUE SKY ADDITION"
+      ],
+      "sourceIds": [
+        1540
+      ],
+      "bounds": [
+        44.286057,
+        -121.177521,
+        44.287372,
+        -121.175288
+      ]
+    },
+    {
+      "printed": "BOULDER BRK",
+      "pdfPoint": [
+        733.78,
+        600.01
+      ],
+      "name": "Boulder Brook",
+      "slug": "boulder-brook",
+      "platNames": [
+        "BOULDER BROOK PHASE 1",
+        "BOULDER BROOK PHASE 1 REPLAT LOTS 17 THROUGH 20",
+        "BOULDER BROOK PHASE 4",
+        "BOULDER BROOK PHASE 5",
+        "BOULDER BROOK PHASES 2 & 3"
+      ],
+      "sourceIds": [
+        2160,
+        2171,
+        2172,
+        2173,
+        2174
+      ],
+      "bounds": [
+        44.278449,
+        -121.189108,
+        44.280093,
+        -121.187072
+      ]
+    },
+    {
+      "printed": "BOULDER BRK CONDOS",
+      "pdfPoint": [
+        731.32,
+        586.21
+      ],
+      "name": "Boulder Brook Condos",
+      "slug": "boulder-brook-condos",
+      "platNames": [
+        "BOULDER BROOK CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        2170
+      ],
+      "bounds": [
+        44.279606,
+        -121.189102,
+        44.280093,
+        -121.187072
+      ]
+    },
+    {
+      "printed": "BRAYDON PARK",
+      "pdfPoint": [
+        667.55,
+        446.85
+      ],
+      "name": "Braydon Park",
+      "slug": "braydon-park",
+      "platNames": [
+        "BRAYDON PARK"
+      ],
+      "sourceIds": [
+        2044
+      ],
+      "bounds": [
+        44.28643,
+        -121.194206,
+        44.287344,
+        -121.189286
+      ]
+    },
+    {
+      "printed": "BRIERWOOD",
+      "pdfPoint": [
+        646.58,
+        1035.52
+      ],
+      "name": "Brierwood",
+      "slug": "brierwood",
+      "platNames": [
+        "BRIERWOOD"
+      ],
+      "sourceIds": [
+        1742
+      ],
+      "bounds": [
+        44.256171,
+        -121.194107,
+        44.25829,
+        -121.19294
+      ]
+    },
+    {
+      "printed": "BROOKTREE",
+      "pdfPoint": [
+        1017.42,
+        267.94
+      ],
+      "name": "Brooktree",
+      "slug": "brooktree",
+      "platNames": [
+        "BROOKTREE"
+      ],
+      "sourceIds": [
+        2801
+      ],
+      "bounds": [
+        44.29463,
+        -121.165876,
+        44.298244,
+        -121.163887
+      ]
+    },
+    {
+      "printed": "BROWN'S ADDITIONS",
+      "pdfPoint": [
+        574.9,
+        1242.97
+      ],
+      "name": "Brown's Additions",
+      "slug": "brown-s-additions",
+      "platNames": [
+        "BROWN'S ADDITIONS"
+      ],
+      "sourceIds": [
+        2343
+      ],
+      "bounds": [
+        44.244394,
+        -121.199139,
+        44.25116,
+        -121.190637
+      ]
+    },
+    {
+      "printed": "BUCKNER",
+      "pdfPoint": [
+        784.04,
+        403.2
+      ],
+      "name": "Buckner",
+      "slug": "buckner",
+      "platNames": [
+        "BUCKNER ADDITION"
+      ],
+      "sourceIds": [
+        2088
+      ],
+      "bounds": [
+        44.28735,
+        -121.184121,
+        44.290979,
+        -121.182332
+      ]
+    },
+    {
+      "printed": "CYN XING",
+      "pdfPoint": [
+        878.31,
+        301.25
+      ],
+      "name": "Canyon Crossing",
+      "slug": "canyon-crossing",
+      "platNames": [
+        "CANYON CROSSING PHASE 1",
+        "Canyon Crossing Phase 2"
+      ],
+      "sourceIds": [
+        2875,
+        2969
+      ],
+      "bounds": [
+        44.2937,
+        -121.178888,
+        44.294606,
+        -121.175751
+      ]
+    },
+    {
+      "printed": "CYN PT EAST",
+      "pdfPoint": [
+        796.22,
+        212.61
+      ],
+      "name": "Canyon Point East",
+      "slug": "canyon-point-east",
+      "platNames": [
+        "CANYON POINT EAST PHASE 1"
+      ],
+      "sourceIds": [
+        1995
+      ],
+      "bounds": [
+        44.298292,
+        -121.183858,
+        44.301818,
+        -121.178887
+      ]
+    },
+    {
+      "printed": "CYN PT ESTS",
+      "pdfPoint": [
+        753.54,
+        168.08
+      ],
+      "name": "Canyon Point Estates",
+      "slug": "canyon-point-estates",
+      "platNames": [
+        "CANYON POINT ESTATES PHASE 1",
+        "CANYON POINT ESTATES PHASE 2",
+        "CANYON POINT ESTATES PHASE 3",
+        "CANYON POINT ESTATES PHASE 4",
+        "CANYON POINT ESTATES PHASE 5",
+        "CANYON POINT ESTATES PHASE 6"
+      ],
+      "sourceIds": [
+        1146,
+        2018,
+        2021,
+        2022,
+        2023,
+        2024
+      ],
+      "bounds": [
+        44.298207,
+        -121.188557,
+        44.304056,
+        -121.183506
+      ]
+    },
+    {
+      "name": "Canyon Ridge",
+      "slug": "canyon-ridge",
+      "platNames": [
+        "CANYON RIDGE, PHASE 3",
+        "CANYON RIDGE, PHASES 1 AND 2",
+        "Canyon Ridge, Phase 2A",
+        "Canyon Ridge, Phase 4 711-18-000032-SUB",
+        "Canyon Ridge, Phase 5 and 5A",
+        "Canyon Ridge, Phase 6 711-18-000032-SUB"
+      ],
+      "sourceIds": [
+        2951,
+        2963,
+        3018,
+        3058,
+        3094,
+        3124
+      ],
+      "bounds": [
+        44.305467,
+        -121.188894,
+        44.31012,
+        -121.180302
+      ]
+    },
+    {
+      "printed": "CYN RIM VLG",
+      "pdfPoint": [
+        756.82,
+        483.14
+      ],
+      "name": "Canyon Rim Village",
+      "slug": "canyon-rim-village",
+      "platNames": [
+        "CANYON RIM VILLAGE PHASE 1",
+        "CANYON RIM VILLAGE PHASE 2",
+        "CANYON RIM VILLAGE PHASE 3",
+        "CANYON RIM VILLAGE PHASE 4",
+        "CANYON RIM VILLAGE PHASE 5",
+        "CANYON RIM VILLAGE PHASE 6",
+        "CANYON RIM VILLAGE PHASE 7",
+        "CANYON RIM VILLAGE, PHASE 8",
+        "CANYON RIM VILLAGE, PHASE 9",
+        "Canyon Rim Village , Phase 11 711-21-000087-PLNG , 711-21-000088-PLNG",
+        "Canyon Rim Village Phase 10"
+      ],
+      "sourceIds": [
+        874,
+        2102,
+        2103,
+        2104,
+        2105,
+        2106,
+        2155,
+        2807,
+        2879,
+        2995,
+        3074
+      ],
+      "bounds": [
+        44.280097,
+        -121.189084,
+        44.287357,
+        -121.181412
+      ]
+    },
+    {
+      "name": "Canyon Trails",
+      "slug": "canyon-trails",
+      "platNames": [
+        "Canyon Trails Phase 1 711-21-000194-SUB",
+        "Canyon Trails Phase 2 711-21-000194-SUB"
+      ],
+      "sourceIds": [
+        3093,
+        3131
+      ],
+      "bounds": [
+        44.307208,
+        -121.182446,
+        44.310752,
+        -121.178872
+      ]
+    },
+    {
+      "printed": "CYN VIEW",
+      "pdfPoint": [
+        713.67,
+        881.74
+      ],
+      "name": "Canyon View",
+      "slug": "canyon-view",
+      "platNames": [
+        "CANYON VIEW"
+      ],
+      "sourceIds": [
+        1635
+      ],
+      "bounds": [
+        44.262022,
+        -121.190239,
+        44.26564,
+        -121.186451
+      ]
+    },
+    {
+      "printed": "CYN VILLAS",
+      "pdfPoint": [
+        728.61,
+        1068.45
+      ],
+      "name": "Canyon Villas",
+      "slug": "canyon-villas",
+      "platNames": [
+        "CANYON VILLAS"
+      ],
+      "sourceIds": [
+        2307
+      ],
+      "bounds": [
+        44.25488,
+        -121.187177,
+        44.256517,
+        -121.186553
+      ]
+    },
+    {
+      "printed": "CARLY MDWS",
+      "pdfPoint": [
+        465.93,
+        953.74
+      ],
+      "name": "Carly Meadows",
+      "slug": "carly-meadows",
+      "platNames": [
+        "CARLY MEADOWS PHASE 1",
+        "CARLY MEADOWS PHASE 2"
+      ],
+      "sourceIds": [
+        2271,
+        2724
+      ],
+      "bounds": [
+        44.260117,
+        -121.206978,
+        44.261839,
+        -121.204445
+      ]
+    },
+    {
+      "printed": "CASCADE VIEW ALLOTMENT",
+      "pdfPoint": [
+        813.26,
+        634.63
+      ],
+      "name": "Cascade View Allotment",
+      "slug": "cascade-view-allotment",
+      "platNames": [
+        "CASCADE VIEW ALLOTMENT"
+      ],
+      "sourceIds": [
+        2114
+      ],
+      "bounds": [
+        44.276492,
+        -121.183372,
+        44.279299,
+        -121.180618
+      ]
+    },
+    {
+      "printed": "CASCADE VIEW ESTS",
+      "pdfPoint": [
+        371.42,
+        1264.38
+      ],
+      "name": "Cascade View Estates",
+      "slug": "cascade-view-estates",
+      "platNames": [
+        "CASCADE VIEW ESTATES PHASE 1",
+        "CASCADE VIEW ESTATES PHASE 2",
+        "CASCADE VIEW ESTATES PHASE 2A",
+        "CASCADE VIEW ESTATES PHASE 3",
+        "CASCADE VIEW ESTATES PHASE 4",
+        "CASCADE VIEW ESTATES PHASE 5",
+        "CASCADE VIEW ESTATES PHASE 6",
+        "CASCADE VIEW ESTATES PHASE 7",
+        "CASCADE VIEW ESTATES PHASE 8",
+        "CASCADE VIEW ESTATES PHASE 9"
+      ],
+      "sourceIds": [
+        1726,
+        1728,
+        1785,
+        1786,
+        2259,
+        2260,
+        2261,
+        2262,
+        2263,
+        2611
+      ],
+      "bounds": [
+        44.240267,
+        -121.214446,
+        44.25102,
+        -121.206802
+      ]
+    },
+    {
+      "printed": "CASCADE WEST",
+      "pdfPoint": [
+        621.78,
+        321.65
+      ],
+      "name": "Cascade West",
+      "slug": "cascade-west",
+      "platNames": [
+        "CASCADE WEST"
+      ],
+      "sourceIds": [
+        2038
+      ],
+      "bounds": [
+        44.292336,
+        -121.194143,
+        44.294589,
+        -121.192954
+      ]
+    },
+    {
+      "printed": "CASPER MOBILE AC",
+      "pdfPoint": [
+        1103.95,
+        686.96
+      ],
+      "name": "Casper Mobile Acres",
+      "slug": "casper-mobile-acres",
+      "platNames": [
+        "CASPER MOBILE ACRES"
+      ],
+      "sourceIds": [
+        2482
+      ],
+      "bounds": [
+        44.272947,
+        -121.163849,
+        44.276533,
+        -121.158833
+      ]
+    },
+    {
+      "printed": "CEDAR CRK VLG CONDOS",
+      "pdfPoint": [
+        651.7,
+        1174.41
+      ],
+      "name": "Cedar Creek Village Condos",
+      "slug": "cedar-creek-village-condos",
+      "platNames": [
+        "CEDAR CREEK VILLAGE CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        1016
+      ],
+      "bounds": [
+        44.249969,
+        -121.193036,
+        44.250522,
+        -121.19185
+      ]
+    },
+    {
+      "printed": "CEDAR VLG",
+      "pdfPoint": [
+        685.06,
+        595.89
+      ],
+      "name": "Cedar Village",
+      "slug": "cedar-village",
+      "platNames": [
+        "CEDAR VILLAGE PHASES 1, 2 AND 3"
+      ],
+      "sourceIds": [
+        2070
+      ],
+      "bounds": [
+        44.278271,
+        -121.191753,
+        44.280085,
+        -121.189345
+      ]
+    },
+    {
+      "name": "Central Cascade Business Park Condominiums",
+      "slug": "central-cascade-business-park-condominiums",
+      "platNames": [
+        "CENTRAL CASCADE BUSINESS PARK CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        2329
+      ],
+      "bounds": [
+        44.252226,
+        -121.168866,
+        44.252908,
+        -121.167914
+      ]
+    },
+    {
+      "printed": "CENTURY ESTS",
+      "pdfPoint": [
+        485.93,
+        1085.63
+      ],
+      "name": "Century Estates",
+      "slug": "century-estates",
+      "platNames": [
+        "CENTURY ESTATES"
+      ],
+      "sourceIds": [
+        1954
+      ],
+      "bounds": [
+        44.252988,
+        -121.202997,
+        44.254603,
+        -121.201932
+      ]
+    },
+    {
+      "printed": "CHELSEA SQ",
+      "pdfPoint": [
+        851.59,
+        804.47
+      ],
+      "name": "Chelsea Square",
+      "slug": "chelsea-square",
+      "platNames": [
+        "CHELSEA SQUARE"
+      ],
+      "sourceIds": [
+        2881
+      ],
+      "bounds": [
+        44.268272,
+        -121.179509,
+        44.269505,
+        -121.177641
+      ]
+    },
+    {
+      "slug": "cinder-butte-village",
+      "name": "Cinder Butte Village",
+      "platNames": [
+        "Cinder Butte Village Phase 4 711-19-000217-SUB",
+        "Cinder Butte Village, Phase 1",
+        "Cinder Butte Village, Phase 2",
+        "Cinder Butte Village, Phase 3"
+      ],
+      "sourceIds": [
+        3001,
+        3016,
+        3038,
+        3073
+      ],
+      "bounds": [
+        44.304555,
+        -121.178725,
+        44.30983,
+        -121.176379
+      ]
+    },
+    {
+      "printed": "CLFS",
+      "pdfPoint": [
+        726.99,
+        319.51
+      ],
+      "name": "Cliffs",
+      "slug": "cliffs",
+      "platNames": [
+        "CLIFFS"
+      ],
+      "sourceIds": [
+        1147
+      ],
+      "bounds": [
+        44.292353,
+        -121.188926,
+        44.296326,
+        -121.184127
+      ]
+    },
+    {
+      "printed": "COHO XING",
+      "pdfPoint": [
+        642.7,
+        1077.2
+      ],
+      "name": "Coho Crossing",
+      "slug": "coho-crossing",
+      "platNames": [
+        "COHO CROSSING",
+        "COHO CROSSING REPLAT"
+      ],
+      "sourceIds": [
+        2267,
+        2268
+      ],
+      "bounds": [
+        44.254756,
+        -121.194196,
+        44.255502,
+        -121.193016
+      ]
+    },
+    {
+      "printed": "COHO RUN",
+      "pdfPoint": [
+        1118.8,
+        390.25
+      ],
+      "name": "Coho Run",
+      "slug": "coho-run",
+      "platNames": [
+        "COHO RUN"
+      ],
+      "sourceIds": [
+        2127
+      ],
+      "bounds": [
+        44.289642,
+        -121.161064,
+        44.290898,
+        -121.158873
+      ]
+    },
+    {
+      "printed": "COLLINS ADTN",
+      "pdfPoint": [
+        884.52,
+        563.45
+      ],
+      "name": "Collins Addition",
+      "slug": "collins-addition",
+      "platNames": [
+        "COLLINS ADDITION (THE)",
+        "COLLINS ADDITION VACATION PLAT"
+      ],
+      "sourceIds": [
+        2008,
+        2009
+      ],
+      "bounds": [
+        44.280133,
+        -121.179081,
+        44.283762,
+        -121.174242
+      ]
+    },
+    {
+      "printed": "COOK XING CONDO",
+      "pdfPoint": [
+        844.84,
+        905.29
+      ],
+      "name": "Cook Crossing Condo",
+      "slug": "cook-crossing-condo",
+      "platNames": [
+        "COOK CROSSING CONDOMINIUM"
+      ],
+      "sourceIds": [
+        2784
+      ],
+      "bounds": [
+        44.264009,
+        -121.179408,
+        44.26555,
+        -121.17901
+      ]
+    },
+    {
+      "printed": "COPPER RDG",
+      "pdfPoint": [
+        358.0,
+        1020.77
+      ],
+      "name": "Copper Ridge",
+      "slug": "copper-ridge",
+      "platNames": [
+        "COPPER RIDGE PHASE 1",
+        "COPPER RIDGE PHASES 2, 3 & 4",
+        "Copper Ridge, Phase 5"
+      ],
+      "sourceIds": [
+        2246,
+        2247,
+        3017
+      ],
+      "bounds": [
+        44.254711,
+        -121.214508,
+        44.25835,
+        -121.211963
+      ]
+    },
+    {
+      "printed": "CORKS WESTSIDE ADTN",
+      "pdfPoint": [
+        603.96,
+        712.48
+      ],
+      "name": "Corks Westside Addition",
+      "slug": "corks-westside-addition",
+      "platNames": [
+        "CORK'S WESTSIDE ADDITION",
+        "CORK'S WESTSIDE ADDITION REPLAT BLOCK 2-4"
+      ],
+      "sourceIds": [
+        1646,
+        1652
+      ],
+      "bounds": [
+        44.27282,
+        -121.199226,
+        44.27522,
+        -121.194297
+      ]
+    },
+    {
+      "name": "Cornerstone Professional Park",
+      "slug": "cornerstone-professional-park",
+      "platNames": [
+        "CORNERSTONE PROFESSIONAL PARK"
+      ],
+      "sourceIds": [
+        1649
+      ],
+      "bounds": [
+        44.269404,
+        -121.196281,
+        44.269787,
+        -121.194466
+      ]
+    },
+    {
+      "printed": "COUNTRY PARK",
+      "pdfPoint": [
+        518.25,
+        1186.3
+      ],
+      "name": "Country Park",
+      "slug": "country-park",
+      "platNames": [
+        "COUNTRY PARK PHASE I",
+        "COUNTRY PARK PHASE II",
+        "COUNTRY PARK PHASE III"
+      ],
+      "sourceIds": [
+        384,
+        1784,
+        2520
+      ],
+      "bounds": [
+        44.249169,
+        -121.201653,
+        44.251584,
+        -121.199257
+      ]
+    },
+    {
+      "printed": "CRANE MDW",
+      "pdfPoint": [
+        669.31,
+        418.53
+      ],
+      "name": "Crane Meadow",
+      "slug": "crane-meadow",
+      "platNames": [
+        "CRANE MEADOW"
+      ],
+      "sourceIds": [
+        2042
+      ],
+      "bounds": [
+        44.288244,
+        -121.193596,
+        44.289069,
+        -121.189278
+      ]
+    },
+    {
+      "printed": "CREDENDA SUBD",
+      "pdfPoint": [
+        621.64,
+        375.98
+      ],
+      "name": "Credenda Subdivision",
+      "slug": "credenda-subdivision",
+      "platNames": [
+        "CREDENDA SUBDIVISION",
+        "CREDENDA SUBDIVISION PHASE 2"
+      ],
+      "sourceIds": [
+        997,
+        2039
+      ],
+      "bounds": [
+        44.290056,
+        -121.194175,
+        44.290846,
+        -121.191507
+      ]
+    },
+    {
+      "printed": "CROSSINGS AT METOLIUS",
+      "pdfPoint": [
+        423.36,
+        867.45
+      ],
+      "name": "Crossings at Metolius",
+      "slug": "crossings-at-metolius",
+      "platNames": [
+        "CROSSINGS AT METOLIUS",
+        "CROSSINGS AT METOLIUS PHASE 2",
+        "Crossings At Metolius, Phase 4",
+        "Crossings at Metolius, Phase 3 711-20-000063-PLNG"
+      ],
+      "sourceIds": [
+        2811,
+        2918,
+        2997,
+        3117
+      ],
+      "bounds": [
+        44.262018,
+        -121.214541,
+        44.2656,
+        -121.209487
+      ]
+    },
+    {
+      "name": "Culley",
+      "slug": "culley",
+      "platNames": [
+        "CULLEY"
+      ],
+      "sourceIds": [
+        1744
+      ],
+      "bounds": [
+        44.253444,
+        -121.196619,
+        44.253844,
+        -121.195468
+      ]
+    },
+    {
+      "printed": "CURRY ADTN",
+      "pdfPoint": [
+        870.52,
+        441.14
+      ],
+      "name": "Curry Addition",
+      "slug": "curry-addition",
+      "platNames": [
+        "CURRY ADDITION"
+      ],
+      "sourceIds": [
+        1539
+      ],
+      "bounds": [
+        44.287367,
+        -121.177857,
+        44.288276,
+        -121.174137
+      ]
+    },
+    {
+      "printed": "DANA-BUTLER",
+      "pdfPoint": [
+        586.02,
+        1187.24
+      ],
+      "name": "Dana-Butler",
+      "slug": "dana-butler",
+      "platNames": [
+        "DANA-BUTLER",
+        "DANA-BUTLER REPLAT BLOCK 1 LOT 2"
+      ],
+      "sourceIds": [
+        382,
+        1959
+      ],
+      "bounds": [
+        44.247504,
+        -121.199232,
+        44.251141,
+        -121.19412
+      ]
+    },
+    {
+      "printed": "DEER XING",
+      "pdfPoint": [
+        507.6,
+        670.13
+      ],
+      "name": "Deer Crossing",
+      "slug": "deer-crossing",
+      "platNames": [
+        "DEER CROSSING PHASE 1"
+      ],
+      "sourceIds": [
+        2210
+      ],
+      "bounds": [
+        44.274847,
+        -121.20437,
+        44.276374,
+        -121.203015
+      ]
+    },
+    {
+      "printed": "DEHMC ACRE",
+      "pdfPoint": [
+        548.7,
+        722.2
+      ],
+      "name": "Dehmc Acre",
+      "slug": "dehmc-acre",
+      "platNames": [
+        "DEHMC ACRE"
+      ],
+      "sourceIds": [
+        1647
+      ],
+      "bounds": [
+        44.272826,
+        -121.200631,
+        44.273307,
+        -121.199489
+      ]
+    },
+    {
+      "name": "Desert Rise Industrial Park",
+      "slug": "desert-rise-industrial-park",
+      "platNames": [
+        "DESERT RISE INDUSTRIAL PARK PHASE 1",
+        "DESERT RISE INDUSTRIAL PARK PHASE 2"
+      ],
+      "sourceIds": [
+        2132,
+        2560
+      ],
+      "bounds": [
+        44.281273,
+        -121.153688,
+        44.287426,
+        -121.148733
+      ]
+    },
+    {
+      "printed": "DESERT VLY",
+      "pdfPoint": [
+        728.62,
+        1053.83
+      ],
+      "name": "Desert Valley",
+      "slug": "desert-valley",
+      "platNames": [
+        "DESERT VALLEY"
+      ],
+      "sourceIds": [
+        380
+      ],
+      "bounds": [
+        44.2554,
+        -121.188961,
+        44.256516,
+        -121.18733
+      ]
+    },
+    {
+      "printed": "DESERT VLY EAST",
+      "pdfPoint": [
+        698.78,
+        1055.34
+      ],
+      "name": "Desert Valley East",
+      "slug": "desert-valley-east",
+      "platNames": [
+        "DESERT VALLEY EAST PHASE 1",
+        "DESERT VALLEY EAST PHASE 2"
+      ],
+      "sourceIds": [
+        2308,
+        2309
+      ],
+      "bounds": [
+        44.2554,
+        -121.188579,
+        44.256516,
+        -121.18733
+      ]
+    },
+    {
+      "printed": "DIAMOND BAR RNCH",
+      "pdfPoint": [
+        1100.85,
+        196.69
+      ],
+      "name": "Diamond Bar Ranch",
+      "slug": "diamond-bar-ranch",
+      "platNames": [
+        "DIAMOND BAR RANCH PHASE 1",
+        "DIAMOND BAR RANCH PHASE 2",
+        "DIAMOND BAR RANCH PHASE 3",
+        "DIAMOND BAR RANCH PHASE 4"
+      ],
+      "sourceIds": [
+        905,
+        965,
+        1035,
+        1122
+      ],
+      "bounds": [
+        44.298244,
+        -121.163811,
+        44.301874,
+        -121.15872
+      ]
+    },
+    {
+      "printed": "DOBSON-SLOCUM ACREAGE",
+      "pdfPoint": [
+        737.28,
+        693.69
+      ],
+      "name": "Dobson-Slocum Acreage",
+      "slug": "dobson-slocum-acreage",
+      "platNames": [
+        "DOBSON-SLOCUM ACREAGE"
+      ],
+      "sourceIds": [
+        2187
+      ],
+      "bounds": [
+        44.272839,
+        -121.189264,
+        44.276485,
+        -121.18416
+      ]
+    },
+    {
+      "printed": "DORSCH AC",
+      "pdfPoint": [
+        866.38,
+        420.6
+      ],
+      "name": "Dorsch Acres",
+      "slug": "dorsch-acres",
+      "platNames": [
+        "DORSCH ACRES"
+      ],
+      "sourceIds": [
+        1620
+      ],
+      "bounds": [
+        44.288284,
+        -121.179063,
+        44.289172,
+        -121.176315
+      ]
+    },
+    {
+      "printed": "DOVE MDW",
+      "pdfPoint": [
+        744.63,
+        439.36
+      ],
+      "name": "Dove Meadow",
+      "slug": "dove-meadow",
+      "platNames": [
+        "DOVE MEADOW"
+      ],
+      "sourceIds": [
+        2143
+      ],
+      "bounds": [
+        44.287428,
+        -121.185687,
+        44.288219,
+        -121.184707
+      ]
+    },
+    {
+      "name": "Dry Canyon",
+      "slug": "dry-canyon",
+      "platNames": [
+        "DRY CANYON, PHASE 1 NORTH",
+        "DRY CANYON, PHASE 1 SOUTH",
+        "DRY CANYON, PHASE 3 NORTH",
+        "Dry Canyon Phase 2 South 711-17-000134-SUB",
+        "Dry Canyon Phase 2B South 711-17-000134-SUB",
+        "Dry Canyon Phase 3 South 711-17-000134-SUB",
+        "Dry Canyon, Phase II North 711-17-000134-SUB , 711-17-000150-PUD"
+      ],
+      "sourceIds": [
+        2950,
+        2957,
+        3067,
+        3106,
+        3177,
+        3202,
+        3216
+      ],
+      "bounds": [
+        44.298237,
+        -121.198941,
+        44.305497,
+        -121.193943
+      ]
+    },
+    {
+      "printed": "EAGLE PARK",
+      "pdfPoint": [
+        554.43,
+        1091.59
+      ],
+      "name": "Eagle Park",
+      "slug": "eagle-park",
+      "platNames": [
+        "EAGLE PARK"
+      ],
+      "sourceIds": [
+        2518
+      ],
+      "bounds": [
+        44.253825,
+        -121.20171,
+        44.254625,
+        -121.200579
+      ]
+    },
+    {
+      "printed": "EAST RIM",
+      "pdfPoint": [
+        836.42,
+        310.94
+      ],
+      "name": "East Rim",
+      "slug": "east-rim",
+      "platNames": [
+        "EAST RIM"
+      ],
+      "sourceIds": [
+        1999
+      ],
+      "bounds": [
+        44.290985,
+        -121.181652,
+        44.294603,
+        -121.179013
+      ]
+    },
+    {
+      "printed": "EASTSIDE CITY",
+      "pdfPoint": [
+        995.6,
+        390.76
+      ],
+      "name": "Eastside City",
+      "slug": "eastside-city",
+      "platNames": [
+        "EASTSIDE CITY"
+      ],
+      "sourceIds": [
+        2667
+      ],
+      "bounds": [
+        44.289302,
+        -121.168996,
+        44.290943,
+        -121.168158
+      ]
+    },
+    {
+      "printed": "ECHO RIM",
+      "pdfPoint": [
+        661.04,
+        143.1
+      ],
+      "name": "Echo Rim Estates",
+      "slug": "echo-rim-estates",
+      "platNames": [
+        "ECHO RIM SUBDIVISION PHASES I & II"
+      ],
+      "sourceIds": [
+        892
+      ],
+      "bounds": [
+        44.301823,
+        -121.193986,
+        44.30461,
+        -121.190781
+      ]
+    },
+    {
+      "printed": "EHRET'S FIRST ADTN",
+      "pdfPoint": [
+        960.6,
+        651.27
+      ],
+      "name": "Ehret's First Addition",
+      "slug": "ehret-s-first-addition",
+      "platNames": [
+        "EHRET'S FIRST ADDITION"
+      ],
+      "sourceIds": [
+        391
+      ],
+      "bounds": [
+        44.276605,
+        -121.173117,
+        44.277352,
+        -121.169124
+      ]
+    },
+    {
+      "printed": "ELLINGER'S ADTN",
+      "pdfPoint": [
+        882.31,
+        627.89
+      ],
+      "name": "Ellinger's Addition",
+      "slug": "ellinger-s-addition",
+      "platNames": [
+        "ELLINGER'S ADDITION",
+        "ELLINGER'S ADDITION VACATION PLAT"
+      ],
+      "sourceIds": [
+        317,
+        2118
+      ],
+      "bounds": [
+        44.276512,
+        -121.179083,
+        44.280137,
+        -121.17329
+      ]
+    },
+    {
+      "name": "Elm Park",
+      "slug": "elm-park",
+      "platNames": [
+        "ELM PARK"
+      ],
+      "sourceIds": [
+        2938
+      ],
+      "bounds": [
+        44.28011,
+        -121.203168,
+        44.28095,
+        -121.200728
+      ]
+    },
+    {
+      "printed": "EMERALD VIEW ESTS",
+      "pdfPoint": [
+        237.51,
+        1127.15
+      ],
+      "name": "Emerald View Estates",
+      "slug": "emerald-view-estates",
+      "platNames": [
+        "EMERALD VIEW ESTATES, PHASE 1",
+        "EMERALD VIEW ESTATES, PHASE 2",
+        "EMERALD VIEW ESTATES, PHASE 3"
+      ],
+      "sourceIds": [
+        2818,
+        2850,
+        2910
+      ],
+      "bounds": [
+        44.251139,
+        -121.223888,
+        44.25435,
+        -121.21943
+      ]
+    },
+    {
+      "printed": "EMERALD VILLA",
+      "pdfPoint": [
+        701.12,
+        373.73
+      ],
+      "name": "Emerald Villa",
+      "slug": "emerald-villa",
+      "platNames": [
+        "EMERALD VILLA"
+      ],
+      "sourceIds": [
+        2040
+      ],
+      "bounds": [
+        44.290056,
+        -121.19075,
+        44.290825,
+        -121.189246
+      ]
+    },
+    {
+      "printed": "EMILY ESTS",
+      "pdfPoint": [
+        721.44,
+        536.79
+      ],
+      "name": "Emily Estates",
+      "slug": "emily-estates",
+      "platNames": [
+        "EMILY ESTATES"
+      ],
+      "sourceIds": [
+        2157
+      ],
+      "bounds": [
+        44.281744,
+        -121.189102,
+        44.283636,
+        -121.186758
+      ]
+    },
+    {
+      "printed": "EVANSVILLE",
+      "pdfPoint": [
+        687.32,
+        332.22
+      ],
+      "name": "Evansville",
+      "slug": "evansville",
+      "platNames": [
+        "EVANSVILLE"
+      ],
+      "sourceIds": [
+        395
+      ],
+      "bounds": [
+        44.292536,
+        -121.191865,
+        44.293385,
+        -121.189088
+      ]
+    },
+    {
+      "printed": "FAIR AC ADTN",
+      "pdfPoint": [
+        952.38,
+        523.95
+      ],
+      "name": "Fair Acres Addition",
+      "slug": "fair-acres-addition",
+      "platNames": [
+        "FAIR ACRES ADDITION",
+        "FAIR ACRES ADDITION LOT 17 REPLAT"
+      ],
+      "sourceIds": [
+        392,
+        2011
+      ],
+      "bounds": [
+        44.280139,
+        -121.174218,
+        44.283771,
+        -121.168942
+      ]
+    },
+    {
+      "name": "Fair Acres II",
+      "slug": "fair-acres-ii",
+      "platNames": [
+        "FAIR ACRES II"
+      ],
+      "sourceIds": [
+        2117
+      ],
+      "bounds": [
+        44.282938,
+        -121.172073,
+        44.283763,
+        -121.170732
+      ]
+    },
+    {
+      "name": "Fairgrounds Business Park",
+      "slug": "fairgrounds-business-park",
+      "platNames": [
+        "FAIRGROUNDS BUSINESS PARK PHASE 1",
+        "FAIRGROUNDS BUSINESS PARK PHASES 2 & 3"
+      ],
+      "sourceIds": [
+        2516,
+        2517
+      ],
+      "bounds": [
+        44.233907,
+        -121.194092,
+        44.23836,
+        -121.189215
+      ]
+    },
+    {
+      "printed": "FAIRGROUNDS CONDO PLAZA",
+      "pdfPoint": [
+        657.72,
+        1451.27
+      ],
+      "name": "Fairgrounds Condo Plaza",
+      "slug": "fairgrounds-condo-plaza",
+      "platNames": [
+        "FAIRGROUNDS CONDOMINIUM PLAZA"
+      ],
+      "sourceIds": [
+        1053
+      ],
+      "bounds": [
+        44.23555,
+        -121.192338,
+        44.236882,
+        -121.191445
+      ]
+    },
+    {
+      "printed": "FAIRHAVEN",
+      "pdfPoint": [
+        607.47,
+        630.31
+      ],
+      "name": "Fairhaven",
+      "slug": "fairhaven",
+      "platNames": [
+        "FAIRHAVEN PHASE I",
+        "FAIRHAVEN PHASE II",
+        "FAIRHAVEN PHASE III",
+        "FAIRHAVEN PHASE IV",
+        "FAIRHAVEN PHASE V",
+        "FAIRHAVEN PHASE VI",
+        "FAIRHAVEN PHASE X",
+        "FAIRHAVEN PHASE XI",
+        "FAIRHAVEN PHASES VII, VIII AND IX"
+      ],
+      "sourceIds": [
+        2051,
+        2052,
+        2060,
+        2061,
+        2062,
+        2064,
+        2068,
+        2069,
+        2071
+      ],
+      "bounds": [
+        44.276423,
+        -121.201802,
+        44.283694,
+        -121.191739
+      ]
+    },
+    {
+      "printed": "FAIRHAVEN XING",
+      "pdfPoint": [
+        632.99,
+        576.92
+      ],
+      "name": "Fairhaven Crossing",
+      "slug": "fairhaven-crossing",
+      "platNames": [
+        "FAIRHAVEN CROSSING PHASES I AND II"
+      ],
+      "sourceIds": [
+        949
+      ],
+      "bounds": [
+        44.279961,
+        -121.195786,
+        44.280564,
+        -121.19437
+      ]
+    },
+    {
+      "printed": "FAIRHAVEN VISTA",
+      "pdfPoint": [
+        616.4,
+        600.45
+      ],
+      "name": "Fairhaven Vista",
+      "slug": "fairhaven-vista",
+      "platNames": [
+        "FAIRHAVEN VISTA P.U.D PHASE 7",
+        "FAIRHAVEN VISTA P.U.D. PHASE V",
+        "FAIRHAVEN VISTA P.U.D. PHASE VI",
+        "FAIRHAVEN VISTA PHASES 1 & 2",
+        "FAIRHAVEN VISTA PHASES 3 & 4"
+      ],
+      "sourceIds": [
+        2063,
+        2065,
+        2066,
+        2793,
+        2884
+      ],
+      "bounds": [
+        44.278415,
+        -121.199147,
+        44.280001,
+        -121.196833
+      ]
+    },
+    {
+      "name": "Feather Ridge",
+      "slug": "feather-ridge",
+      "platNames": [
+        "Feather Ridge Phases 2A and 2B 711-21-000230-SUB",
+        "Feather Ridge Phases 3A and 3B 711-21-000230-PLNG-SUB",
+        "Feather Ridge, Phase 1 711-21-000230-SUB"
+      ],
+      "sourceIds": [
+        3161,
+        3197,
+        3221
+      ],
+      "bounds": [
+        44.258472,
+        -121.21957,
+        44.261896,
+        -121.214529
+      ]
+    },
+    {
+      "printed": "FIELDSTONE",
+      "pdfPoint": [
+        593.96,
+        1199.21
+      ],
+      "name": "Fieldstone",
+      "slug": "fieldstone",
+      "platNames": [
+        "FIELDSTONE"
+      ],
+      "sourceIds": [
+        1960
+      ],
+      "bounds": [
+        44.248419,
+        -121.196556,
+        44.249251,
+        -121.194242
+      ]
+    },
+    {
+      "printed": "FIELDSTONE XING",
+      "pdfPoint": [
+        519.8,
+        615.04
+      ],
+      "name": "Fieldstone Crossing",
+      "slug": "fieldstone-crossing",
+      "platNames": [
+        "FIELDSTONE CROSSING P.U.D. PHASE I",
+        "FIELDSTONE CROSSING P.U.D. PHASE II",
+        "FIELDSTONE CROSSING P.U.D. PHASES III AND IV"
+      ],
+      "sourceIds": [
+        2054,
+        2055,
+        2057
+      ],
+      "bounds": [
+        44.276423,
+        -121.204372,
+        44.280104,
+        -121.199288
+      ]
+    },
+    {
+      "printed": "FIELDSTONE SOUTH",
+      "pdfPoint": [
+        604.38,
+        1218.72
+      ],
+      "name": "Fieldstone South",
+      "slug": "fieldstone-south",
+      "platNames": [
+        "FIELDSTONE SOUTH"
+      ],
+      "sourceIds": [
+        1961
+      ],
+      "bounds": [
+        44.247598,
+        -121.196545,
+        44.248426,
+        -121.194753
+      ]
+    },
+    {
+      "printed": "FORKED HORN BUTTE",
+      "pdfPoint": [
+        212.6,
+        1306.45
+      ],
+      "name": "Forked Horn Butte",
+      "slug": "forked-horn-butte",
+      "platNames": [
+        "FORKED HORN BUTTE"
+      ],
+      "sourceIds": [
+        2349
+      ],
+      "bounds": [
+        44.240298,
+        -121.225587,
+        44.243911,
+        -121.221005
+      ]
+    },
+    {
+      "printed": "FORREST CMNS",
+      "pdfPoint": [
+        736.98,
+        428.78
+      ],
+      "name": "Forrest Commons",
+      "slug": "forrest-commons",
+      "platNames": [
+        "FORREST COMMONS"
+      ],
+      "sourceIds": [
+        837
+      ],
+      "bounds": [
+        44.287337,
+        -121.18905,
+        44.289081,
+        -121.18663
+      ]
+    },
+    {
+      "printed": "FRANK'S LNDG",
+      "pdfPoint": [
+        654.01,
+        1359.79
+      ],
+      "name": "Frank's Landing",
+      "slug": "frank-s-landing",
+      "platNames": [
+        "FRANK'S LANDING"
+      ],
+      "sourceIds": [
+        378
+      ],
+      "bounds": [
+        44.240282,
+        -121.194609,
+        44.241592,
+        -121.19096
+      ]
+    },
+    {
+      "printed": "GOODRICH SUBD",
+      "pdfPoint": [
+        234.14,
+        1209.97
+      ],
+      "name": "Goodrich Subdivision",
+      "slug": "goodrich-subdivision",
+      "platNames": [
+        "GOODRICH SUBDIVISION"
+      ],
+      "sourceIds": [
+        1723
+      ],
+      "bounds": [
+        44.247464,
+        -121.224471,
+        44.248856,
+        -121.219416
+      ]
+    },
+    {
+      "printed": "GRAY BUTTE ESTS",
+      "pdfPoint": [
+        1078.5,
+        413.94
+      ],
+      "name": "Gray Butte Estates",
+      "slug": "gray-butte-estates",
+      "platNames": [
+        "GRAY BUTTE ESTATES PHASE 1",
+        "GRAY BUTTE ESTATES PHASE 2"
+      ],
+      "sourceIds": [
+        2128,
+        2129
+      ],
+      "bounds": [
+        44.28885,
+        -121.163717,
+        44.289641,
+        -121.161385
+      ]
+    },
+    {
+      "printed": "GRNS AT REDMOND",
+      "pdfPoint": [
+        523.73,
+        1390.75
+      ],
+      "name": "Greens at Redmond",
+      "slug": "greens-at-redmond",
+      "platNames": [
+        "GREENS AT REDMOND (THE) PHASE 1 & 2",
+        "GREENS AT REDMOND (THE) PHASE 1 & 2 REPLAT LOTS 3-8",
+        "GREENS AT REDMOND (THE) PHASE 3A",
+        "GREENS AT REDMOND (THE) PHASE 3B",
+        "GREENS AT REDMOND (THE) PHASE 3C",
+        "GREENS AT REDMOND (THE) PHASE 6",
+        "GREENS AT REDMOND PHASE 6A",
+        "GREENS AT REDMOND PHASES 4 AND 5"
+      ],
+      "sourceIds": [
+        372,
+        374,
+        375,
+        376,
+        377,
+        2582,
+        2594,
+        2595
+      ],
+      "bounds": [
+        44.235391,
+        -121.208888,
+        44.243819,
+        -121.19497
+      ]
+    },
+    {
+      "printed": "GUY'S AC",
+      "pdfPoint": [
+        1115.55,
+        410.56
+      ],
+      "name": "Guy's Acres",
+      "slug": "guy-s-acres",
+      "platNames": [
+        "GUY'S ACRES"
+      ],
+      "sourceIds": [
+        2130
+      ],
+      "bounds": [
+        44.288855,
+        -121.161398,
+        44.28965,
+        -121.158862
+      ]
+    },
+    {
+      "printed": "HALL",
+      "pdfPoint": [
+        614.83,
+        1161.32
+      ],
+      "name": "Hall",
+      "slug": "hall",
+      "platNames": [
+        "HALL"
+      ],
+      "sourceIds": [
+        1958
+      ],
+      "bounds": [
+        44.250226,
+        -121.196581,
+        44.251058,
+        -121.194254
+      ]
+    },
+    {
+      "name": "Hammerstone Industrial Park",
+      "slug": "hammerstone-industrial-park",
+      "platNames": [
+        "HAMMERSTONE INDUSTRIAL PARK"
+      ],
+      "sourceIds": [
+        1639
+      ],
+      "bounds": [
+        44.266294,
+        -121.166149,
+        44.269408,
+        -121.163885
+      ]
+    },
+    {
+      "printed": "HAROLD'S ADTN",
+      "pdfPoint": [
+        807.17,
+        922.36
+      ],
+      "name": "Harold's Addition",
+      "slug": "harold-s-addition",
+      "platNames": [
+        "HAROLD'S ADDITION"
+      ],
+      "sourceIds": [
+        2204
+      ],
+      "bounds": [
+        44.262065,
+        -121.184091,
+        44.265677,
+        -121.178979
+      ]
+    },
+    {
+      "printed": "HARRY RNCH ESTS",
+      "pdfPoint": [
+        52.07,
+        1284.37
+      ],
+      "name": "Harry Ranch Estates",
+      "slug": "harry-ranch-estates",
+      "platNames": [
+        "HARRY RANCH ESTATES"
+      ],
+      "sourceIds": [
+        1950
+      ],
+      "bounds": [
+        44.243929,
+        -121.239506,
+        44.247467,
+        -121.229489
+      ]
+    },
+    {
+      "printed": "HAWLEY ESTS",
+      "pdfPoint": [
+        444.82,
+        649.34
+      ],
+      "name": "Hawley Estates",
+      "slug": "hawley-estates",
+      "platNames": [
+        "HAWLEY ESTATES"
+      ],
+      "sourceIds": [
+        2596
+      ],
+      "bounds": [
+        44.276506,
+        -121.209286,
+        44.279249,
+        -121.206152
+      ]
+    },
+    {
+      "printed": "HAYDEN AC",
+      "pdfPoint": [
+        889.67,
+        192.34
+      ],
+      "name": "Hayden Acres",
+      "slug": "hayden-acres",
+      "platNames": [
+        "HAYDEN ACRES PHASE 2",
+        "HAYDEN ACRES PHASE 3",
+        "HAYDEN ACRES PHASE 4",
+        "HAYDEN ACRES PHASE 5",
+        "HAYDEN ACRES PHASE I"
+      ],
+      "sourceIds": [
+        1559,
+        1560,
+        1561,
+        2017,
+        2076
+      ],
+      "bounds": [
+        44.298239,
+        -121.17893,
+        44.301848,
+        -121.173831
+      ]
+    },
+    {
+      "printed": "HAYDEN RNCH ESTS",
+      "pdfPoint": [
+        1044.03,
+        414.77
+      ],
+      "name": "Hayden Ranch Estates",
+      "slug": "hayden-ranch-estates",
+      "platNames": [
+        "HAYDEN RANCH ESTATES PHASE 1",
+        "HAYDEN RANCH ESTATES PHASES 2 AND 3"
+      ],
+      "sourceIds": [
+        2180,
+        2181
+      ],
+      "bounds": [
+        44.28739,
+        -121.166683,
+        44.2909,
+        -121.163907
+      ]
+    },
+    {
+      "printed": "HAYDEN SQ",
+      "pdfPoint": [
+        712.22,
+        1033.61
+      ],
+      "name": "Hayden Square",
+      "slug": "hayden-square",
+      "platNames": [
+        "HAYDEN SQUARE"
+      ],
+      "sourceIds": [
+        1734
+      ],
+      "bounds": [
+        44.256697,
+        -121.188941,
+        44.258303,
+        -121.187687
+      ]
+    },
+    {
+      "printed": "HAYDEN VIEW",
+      "pdfPoint": [
+        489.23,
+        866.9
+      ],
+      "name": "Hayden View",
+      "slug": "hayden-view",
+      "platNames": [
+        "HAYDEN VIEW PHASE ONE",
+        "HAYDEN VIEW PHASE THREE",
+        "HAYDEN VIEW PHASE TWO"
+      ],
+      "sourceIds": [
+        1756,
+        2224,
+        2229
+      ],
+      "bounds": [
+        44.261921,
+        -121.20795,
+        44.266163,
+        -121.200653
+      ]
+    },
+    {
+      "printed": "HAYDEN VLG",
+      "pdfPoint": [
+        448.24,
+        1048.44
+      ],
+      "name": "Hayden Village",
+      "slug": "hayden-village",
+      "platNames": [
+        "HAYDEN VILLAGE PHASE I",
+        "HAYDEN VILLAGE PHASE II",
+        "HAYDEN VILLAGE PHASE III",
+        "HAYDEN VILLAGE PHASE IV",
+        "HAYDEN VILLAGE PHASE IX",
+        "HAYDEN VILLAGE PHASE V",
+        "HAYDEN VILLAGE PHASE VI",
+        "HAYDEN VILLAGE PHASE VII",
+        "HAYDEN VILLAGE PHASE VIII"
+      ],
+      "sourceIds": [
+        2272,
+        2273,
+        2274,
+        2275,
+        2276,
+        2277,
+        2278,
+        2279,
+        2280,
+        2281
+      ],
+      "bounds": [
+        44.254303,
+        -121.209506,
+        44.261949,
+        -121.204404
+      ]
+    },
+    {
+      "name": "Hearthstone",
+      "slug": "hearthstone",
+      "platNames": [
+        "Hearthstone Phase 1"
+      ],
+      "sourceIds": [
+        3200
+      ],
+      "bounds": [
+        44.298216,
+        -121.204367,
+        44.305448,
+        -121.199094
+      ]
+    },
+    {
+      "printed": "HEIERMAN",
+      "pdfPoint": [
+        622.63,
+        670.81
+      ],
+      "name": "Heierman",
+      "slug": "heierman",
+      "platNames": [
+        "HEIERMAN"
+      ],
+      "sourceIds": [
+        2207
+      ],
+      "bounds": [
+        44.275406,
+        -121.19524,
+        44.276357,
+        -121.194406
+      ]
+    },
+    {
+      "printed": "HEIERMAN-MCCORMICK",
+      "pdfPoint": [
+        736.99,
+        981.02
+      ],
+      "name": "Heierman-McCormick",
+      "slug": "heierman-mccormick",
+      "platNames": [
+        "HEIERMAN-MCCORMICK ADDITION",
+        "HEIERMAN-MCCORMICK SECOND ADDITION"
+      ],
+      "sourceIds": [
+        2194,
+        2303
+      ],
+      "bounds": [
+        44.25841,
+        -121.189091,
+        44.263258,
+        -121.184031
+      ]
+    },
+    {
+      "printed": "HERITAGE RNCH",
+      "pdfPoint": [
+        853.23,
+        240.9
+      ],
+      "name": "Heritage Ranch",
+      "slug": "heritage-ranch",
+      "platNames": [
+        "HERITAGE RANCH"
+      ],
+      "sourceIds": [
+        2026
+      ],
+      "bounds": [
+        44.297316,
+        -121.178874,
+        44.298222,
+        -121.176428
+      ]
+    },
+    {
+      "printed": "HESTER",
+      "pdfPoint": [
+        294.98,
+        1380.91
+      ],
+      "name": "Hester",
+      "slug": "hester",
+      "platNames": [
+        "HESTER"
+      ],
+      "sourceIds": [
+        2350
+      ],
+      "bounds": [
+        44.238735,
+        -121.219456,
+        44.240286,
+        -121.215456
+      ]
+    },
+    {
+      "printed": "HI-COUNTRY ESTS",
+      "pdfPoint": [
+        541.51,
+        1216.76
+      ],
+      "name": "Hi-Country Estates",
+      "slug": "hi-country-estates",
+      "platNames": [
+        "HI-COUNTRY ESTATES"
+      ],
+      "sourceIds": [
+        1766
+      ],
+      "bounds": [
+        44.247567,
+        -121.201186,
+        44.24917,
+        -121.199205
+      ]
+    },
+    {
+      "printed": "HIDDEN VLY MOBILE ESTS",
+      "pdfPoint": [
+        383.34,
+        198.64
+      ],
+      "name": "Hidden Valley Mobile Estates",
+      "slug": "hidden-valley-mobile-estates",
+      "platNames": [
+        "HIDDEN VALLEY MOBILE ESTATES NO. 1"
+      ],
+      "sourceIds": [
+        2123
+      ],
+      "bounds": [
+        44.294614,
+        -121.216018,
+        44.301897,
+        -121.209126
+      ]
+    },
+    {
+      "printed": "HILL CRST",
+      "pdfPoint": [
+        392.46,
+        1118.77
+      ],
+      "name": "Hill Crest",
+      "slug": "hill-crest",
+      "platNames": [
+        "HILL CREST"
+      ],
+      "sourceIds": [
+        2255
+      ],
+      "bounds": [
+        44.25107,
+        -121.214474,
+        44.254936,
+        -121.205568
+      ]
+    },
+    {
+      "printed": "HOME DEPOT STATION",
+      "pdfPoint": [
+        954.31,
+        244.44
+      ],
+      "name": "Home Depot Station",
+      "slug": "home-depot-station",
+      "platNames": [
+        "HOME DEPOT STATION"
+      ],
+      "sourceIds": [
+        1519
+      ],
+      "bounds": [
+        44.29641,
+        -121.173715,
+        44.300112,
+        -121.169688
+      ]
+    },
+    {
+      "printed": "HUNT'S THREE SISTERS VIEW",
+      "pdfPoint": [
+        235.22,
+        1261.29
+      ],
+      "name": "Hunt's Three Sisters View",
+      "slug": "hunt-s-three-sisters-view",
+      "platNames": [
+        "HUNT'S THREE SISTERS VIEW TRACTS",
+        "HUNT'S THREE SISTERS VIEW TRACTS BLOCK 2"
+      ],
+      "sourceIds": [
+        2347,
+        2348
+      ],
+      "bounds": [
+        44.24387,
+        -121.224486,
+        44.247503,
+        -121.219435
+      ]
+    },
+    {
+      "printed": "INNOVATION PARK",
+      "pdfPoint": [
+        937.35,
+        1150.45
+      ],
+      "name": "Innovation Park",
+      "slug": "innovation-park",
+      "platNames": [
+        "INNOVATION PARK"
+      ],
+      "sourceIds": [
+        399
+      ],
+      "bounds": [
+        44.247467,
+        -121.17623,
+        44.253859,
+        -121.165047
+      ]
+    },
+    {
+      "printed": "JEAN MDWS",
+      "pdfPoint": [
+        638.95,
+        952.39
+      ],
+      "name": "Jean Meadows",
+      "slug": "jean-meadows",
+      "platNames": [
+        "JEAN MEADOWS"
+      ],
+      "sourceIds": [
+        1730
+      ],
+      "bounds": [
+        44.261106,
+        -121.193627,
+        44.261869,
+        -121.192718
+      ]
+    },
+    {
+      "printed": "JEFFERSON VIEW ALLOTMENT",
+      "pdfPoint": [
+        798.19,
+        598.41
+      ],
+      "name": "Jefferson View Allotment",
+      "slug": "jefferson-view-allotment",
+      "platNames": [
+        "JEFFERSON VIEW ALLOTMENT"
+      ],
+      "sourceIds": [
+        2112
+      ],
+      "bounds": [
+        44.279299,
+        -121.181803,
+        44.280126,
+        -121.180113
+      ]
+    },
+    {
+      "printed": "JENSEN TRACTS",
+      "pdfPoint": [
+        639.09,
+        1127.06
+      ],
+      "name": "Jensen Tracts",
+      "slug": "jensen-tracts",
+      "platNames": [
+        "JENSEN TRACTS"
+      ],
+      "sourceIds": [
+        383
+      ],
+      "bounds": [
+        44.251773,
+        -121.194053,
+        44.25287,
+        -121.192591
+      ]
+    },
+    {
+      "name": "Josie Meadows",
+      "slug": "josie-meadows",
+      "platNames": [
+        "Josie Meadows, Phase 1",
+        "Josie Meadows, Phase 2"
+      ],
+      "sourceIds": [
+        2939,
+        2991
+      ],
+      "bounds": [
+        44.241206,
+        -121.229507,
+        44.242133,
+        -121.224473
+      ]
+    },
+    {
+      "printed": "JULINA PARK",
+      "pdfPoint": [
+        586.47,
+        851.12
+      ],
+      "name": "Julina Park",
+      "slug": "julina-park",
+      "platNames": [
+        "JULINA PARK"
+      ],
+      "sourceIds": [
+        2233
+      ],
+      "bounds": [
+        44.265308,
+        -121.20011,
+        44.267703,
+        -121.194407
+      ]
+    },
+    {
+      "name": "Junegrass Meadows",
+      "slug": "junegrass-meadows",
+      "platNames": [
+        "JUNEGRASS MEADOWS"
+      ],
+      "sourceIds": [
+        3139
+      ],
+      "bounds": [
+        44.305466,
+        -121.180807,
+        44.3068,
+        -121.178959
+      ]
+    },
+    {
+      "name": "Juniper Canyon Living",
+      "slug": "juniper-canyon-living",
+      "platNames": [
+        "Juniper Canyon Living, 711-20-000041-SUB"
+      ],
+      "sourceIds": [
+        3030
+      ],
+      "bounds": [
+        44.301913,
+        -121.175326,
+        44.30458,
+        -121.173336
+      ]
+    },
+    {
+      "printed": "JUNIPER GLN",
+      "pdfPoint": [
+        514.9,
+        836.06
+      ],
+      "name": "Juniper Glen",
+      "slug": "juniper-glen",
+      "platNames": [
+        "JUNIPER GLEN"
+      ],
+      "sourceIds": [
+        1694
+      ],
+      "bounds": [
+        44.266932,
+        -121.204313,
+        44.267896,
+        -121.200132
+      ]
+    },
+    {
+      "printed": "JUNIPER GLN NORTH",
+      "pdfPoint": [
+        518.06,
+        813.66
+      ],
+      "name": "Juniper Glen North",
+      "slug": "juniper-glen-north",
+      "platNames": [
+        "JUNIPER GLEN NORTH"
+      ],
+      "sourceIds": [
+        1695
+      ],
+      "bounds": [
+        44.266926,
+        -121.204306,
+        44.269093,
+        -121.19954
+      ]
+    },
+    {
+      "printed": "JUNIPER HILL",
+      "pdfPoint": [
+        300.04,
+        1063.25
+      ],
+      "name": "Juniper Hill",
+      "slug": "juniper-hill",
+      "platNames": [
+        "JUNIPER HILL PHASE 1",
+        "JUNIPER HILL PHASE 2"
+      ],
+      "sourceIds": [
+        1687,
+        1704
+      ],
+      "bounds": [
+        44.254771,
+        -121.219433,
+        44.258354,
+        -121.216984
+      ]
+    },
+    {
+      "name": "Juniper Lane",
+      "slug": "juniper-lane",
+      "platNames": [
+        "JUNIPER LANE"
+      ],
+      "sourceIds": [
+        1664
+      ],
+      "bounds": [
+        44.267042,
+        -121.199235,
+        44.267688,
+        -121.198739
+      ]
+    },
+    {
+      "printed": "JUNIPER MDWS",
+      "pdfPoint": [
+        281.35,
+        1021.52
+      ],
+      "name": "Juniper Meadows",
+      "slug": "juniper-meadows",
+      "platNames": [
+        "JUNIPER MEADOWS"
+      ],
+      "sourceIds": [
+        1686
+      ],
+      "bounds": [
+        44.257324,
+        -121.219267,
+        44.258275,
+        -121.218249
+      ]
+    },
+    {
+      "printed": "JUNIPER VISTA",
+      "pdfPoint": [
+        428.04,
+        1238.99
+      ],
+      "name": "Juniper Vista",
+      "slug": "juniper-vista",
+      "platNames": [
+        "JUNIPER VISTA"
+      ],
+      "sourceIds": [
+        1787
+      ],
+      "bounds": [
+        44.245796,
+        -121.214478,
+        44.247474,
+        -121.204294
+      ]
+    },
+    {
+      "printed": "JUSTIN GLN",
+      "pdfPoint": [
+        873.34,
+        269.4
+      ],
+      "name": "Justin Glen",
+      "slug": "justin-glen",
+      "platNames": [
+        "JUSTIN GLEN PHASE I",
+        "JUSTIN GLEN PHASE II",
+        "JUSTIN GLEN PHASE III"
+      ],
+      "sourceIds": [
+        2027,
+        2028,
+        2029
+      ],
+      "bounds": [
+        44.294603,
+        -121.179013,
+        44.297302,
+        -121.175737
+      ]
+    },
+    {
+      "name": "Kalama Park",
+      "slug": "kalama-park",
+      "platNames": [
+        "KALAMA PARK"
+      ],
+      "sourceIds": [
+        2575
+      ],
+      "bounds": [
+        44.266221,
+        -121.187607,
+        44.266801,
+        -121.186816
+      ]
+    },
+    {
+      "name": "Kampstra",
+      "slug": "kampstra",
+      "platNames": [
+        "KAMPSTRA REPLAT OF PARCEL 3 PLAT. NO. 2002-61"
+      ],
+      "sourceIds": [
+        2908
+      ],
+      "bounds": [
+        44.238781,
+        -121.219333,
+        44.239263,
+        -121.21744
+      ]
+    },
+    {
+      "printed": "KAYLA VLG",
+      "pdfPoint": [
+        454.52,
+        1187.77
+      ],
+      "name": "Kayla Village",
+      "slug": "kayla-village",
+      "platNames": [
+        "KAYLA VILLAGE"
+      ],
+      "sourceIds": [
+        2792
+      ],
+      "bounds": [
+        44.249361,
+        -121.206151,
+        44.250306,
+        -121.205421
+      ]
+    },
+    {
+      "name": "Kelley",
+      "slug": "kelley",
+      "platNames": [
+        "KELLEY"
+      ],
+      "sourceIds": [
+        385
+      ],
+      "bounds": [
+        44.248448,
+        -121.208186,
+        44.249195,
+        -121.207388
+      ]
+    },
+    {
+      "name": "Kenai Business Park",
+      "slug": "kenai-business-park",
+      "platNames": [
+        "KENAI BUSINESS PARK"
+      ],
+      "sourceIds": [
+        2863
+      ],
+      "bounds": [
+        44.238796,
+        -121.195551,
+        44.240299,
+        -121.191389
+      ]
+    },
+    {
+      "printed": "KENYONS ACREAGE",
+      "pdfPoint": [
+        881.27,
+        549.26
+      ],
+      "name": "Kenyons Acreage",
+      "slug": "kenyons-acreage",
+      "platNames": [
+        "KENYONS ACREAGE",
+        "KENYONS ACREAGE VACATION PLAT"
+      ],
+      "sourceIds": [
+        2006,
+        2007
+      ],
+      "bounds": [
+        44.280115,
+        -121.179069,
+        44.283766,
+        -121.174262
+      ]
+    },
+    {
+      "printed": "KIAN CYN",
+      "pdfPoint": [
+        432.82,
+        1177.38
+      ],
+      "name": "Kian Canyon",
+      "slug": "kian-canyon",
+      "platNames": [
+        "KIAN CANYON"
+      ],
+      "sourceIds": [
+        1021
+      ],
+      "bounds": [
+        44.249931,
+        -121.207188,
+        44.251001,
+        -121.20638
+      ]
+    },
+    {
+      "printed": "KIAN WEST",
+      "pdfPoint": [
+        430.2,
+        1163.14
+      ],
+      "name": "Kian West",
+      "slug": "kian-west",
+      "platNames": [
+        "KIAN WEST"
+      ],
+      "sourceIds": [
+        2713
+      ],
+      "bounds": [
+        44.249989,
+        -121.208202,
+        44.250991,
+        -121.207414
+      ]
+    },
+    {
+      "name": "Kingwood Crossing",
+      "slug": "kingwood-crossing",
+      "platNames": [
+        "KINGWOOD CROSSING"
+      ],
+      "sourceIds": [
+        2154
+      ],
+      "bounds": [
+        44.286788,
+        -121.189055,
+        44.287339,
+        -121.188263
+      ]
+    },
+    {
+      "name": "Korbin Meadows",
+      "slug": "korbin-meadows",
+      "platNames": [
+        "Korbin Meadows Phase 1 711-21-000108-SUB",
+        "Korbin Meadows, Phase 2 711-21-000108-SUB"
+      ],
+      "sourceIds": [
+        3075,
+        3114
+      ],
+      "bounds": [
+        44.242108,
+        -121.22953,
+        44.243034,
+        -121.224502
+      ]
+    },
+    {
+      "printed": "LARCH MDWS",
+      "pdfPoint": [
+        729.56,
+        420.86
+      ],
+      "name": "Larch Meadows",
+      "slug": "larch-meadows",
+      "platNames": [
+        "LARCH MEADOWS"
+      ],
+      "sourceIds": [
+        2140
+      ],
+      "bounds": [
+        44.288215,
+        -121.186522,
+        44.289053,
+        -121.184799
+      ]
+    },
+    {
+      "name": "Lavawood",
+      "slug": "lavawood",
+      "platNames": [
+        "LAVAWOOD 711-20-000163-SUB"
+      ],
+      "sourceIds": [
+        3072
+      ],
+      "bounds": [
+        44.25834,
+        -121.214525,
+        44.260162,
+        -121.213252
+      ]
+    },
+    {
+      "printed": "LAWSON XING",
+      "pdfPoint": [
+        391.05,
+        606.85
+      ],
+      "name": "Lawson Crossing",
+      "slug": "lawson-crossing",
+      "platNames": [
+        "LAWSON CROSSING"
+      ],
+      "sourceIds": [
+        2671
+      ],
+      "bounds": [
+        44.27843,
+        -121.209239,
+        44.279204,
+        -121.206932
+      ]
+    },
+    {
+      "name": "Leeanne Acres",
+      "slug": "leeanne-acres",
+      "platNames": [
+        "LEEANNE ACRES"
+      ],
+      "sourceIds": [
+        1820
+      ],
+      "bounds": [
+        44.25925,
+        -121.196674,
+        44.259643,
+        -121.195576
+      ]
+    },
+    {
+      "name": "Lindsay Industrial Park",
+      "slug": "lindsay-industrial-park",
+      "platNames": [
+        "LINDSAY INDUSTRIAL PARK LOT 9 OF MURPHY INDUSTRIAL TRACTS PHASE 1"
+      ],
+      "sourceIds": [
+        3031
+      ],
+      "bounds": [
+        44.25479,
+        -121.17381,
+        44.25701,
+        -121.171195
+      ]
+    },
+    {
+      "name": "Links Condominiums at the Greens",
+      "slug": "links-condominiums-at-the-greens",
+      "platNames": [
+        "LINKS CONDOMINIUMS AT THE GREENS",
+        "LINKS CONDOMINIUMS AT THE GREENS, Supplemental Plat No. 1; Annexation of Stage 2"
+      ],
+      "sourceIds": [
+        2935,
+        3147
+      ],
+      "bounds": [
+        44.242085,
+        -121.201265,
+        44.242669,
+        -121.199515
+      ]
+    },
+    {
+      "printed": "LONE JUNIPER ESTS",
+      "pdfPoint": [
+        658.27,
+        1224.95
+      ],
+      "name": "Lone Juniper Estates",
+      "slug": "lone-juniper-estates",
+      "platNames": [
+        "LONE JUNIPER ESTATES"
+      ],
+      "sourceIds": [
+        1818
+      ],
+      "bounds": [
+        44.246447,
+        -121.193194,
+        44.248765,
+        -121.19086
+      ]
+    },
+    {
+      "printed": "MAJESTIC RDG",
+      "pdfPoint": [
+        309.0,
+        1101.37
+      ],
+      "name": "Majestic Ridge",
+      "slug": "majestic-ridge",
+      "platNames": [
+        "MAJESTIC RIDGE PHASE 3",
+        "MAJESTIC RIDGE PHASES 1 AND 2"
+      ],
+      "sourceIds": [
+        389,
+        1724
+      ],
+      "bounds": [
+        44.251181,
+        -121.220075,
+        44.25469,
+        -121.214563
+      ]
+    },
+    {
+      "printed": "MAKENA VIEW ESTS",
+      "pdfPoint": [
+        258.47,
+        1175.88
+      ],
+      "name": "Makena View Estates",
+      "slug": "makena-view-estates",
+      "platNames": [
+        "MAKENA VIEW ESTATES"
+      ],
+      "sourceIds": [
+        2816
+      ],
+      "bounds": [
+        44.250045,
+        -121.219431,
+        44.251032,
+        -121.217358
+      ]
+    },
+    {
+      "printed": "MAPLE MDWS",
+      "pdfPoint": [
+        598.94,
+        483.34
+      ],
+      "name": "Maple Meadows",
+      "slug": "maple-meadows",
+      "platNames": [
+        "MAPLE MEADOWS, PHASE 1",
+        "MAPLE MEADOWS, PHASE 2",
+        "MAPLE MEADOWS, PHASE 3",
+        "MAPLE MEADOWS, PHASES 4 AND 5",
+        "Maple Meadows, Phase 6"
+      ],
+      "sourceIds": [
+        2824,
+        2848,
+        2903,
+        2936,
+        2982
+      ],
+      "bounds": [
+        44.283782,
+        -121.199259,
+        44.288059,
+        -121.194192
+      ]
+    },
+    {
+      "printed": "MAPLEWOOD",
+      "pdfPoint": [
+        778.97,
+        193.94
+      ],
+      "name": "Maplewood",
+      "slug": "maplewood",
+      "platNames": [
+        "MAPLEWOOD PHASE 2",
+        "MAPLEWOOD PHASE 3"
+      ],
+      "sourceIds": [
+        1993,
+        1994
+      ],
+      "bounds": [
+        44.298293,
+        -121.18382,
+        44.301735,
+        -121.181412
+      ]
+    },
+    {
+      "printed": "MCKENZIE RIM ESTS",
+      "pdfPoint": [
+        699.03,
+        222.73
+      ],
+      "name": "McKenzie Rim Estates",
+      "slug": "mckenzie-rim-estates",
+      "platNames": [
+        "MCKENZIE RIM ESTATES"
+      ],
+      "sourceIds": [
+        1096
+      ],
+      "bounds": [
+        44.298202,
+        -121.191102,
+        44.299291,
+        -121.18831
+      ]
+    },
+    {
+      "printed": "MCKENZIE'S MDW",
+      "pdfPoint": [
+        798.86,
+        423.52
+      ],
+      "name": "McKenzie's Meadow",
+      "slug": "mckenzie-s-meadow",
+      "platNames": [
+        "MCKENZIE'S MEADOW"
+      ],
+      "sourceIds": [
+        2142
+      ],
+      "bounds": [
+        44.287432,
+        -121.184799,
+        44.289055,
+        -121.184113
+      ]
+    },
+    {
+      "printed": "MEADOWBROOK ESTS",
+      "pdfPoint": [
+        476.55,
+        756.02
+      ],
+      "name": "Meadowbrook Estates",
+      "slug": "meadowbrook-estates",
+      "platNames": [
+        "MEADOWBROOK ESTATES",
+        "MEADOWBROOK ESTATES PHASE II"
+      ],
+      "sourceIds": [
+        1789,
+        2216
+      ],
+      "bounds": [
+        44.26934,
+        -121.209465,
+        44.272815,
+        -121.199343
+      ]
+    },
+    {
+      "printed": "MEADOWLARK ESTS",
+      "pdfPoint": [
+        617.65,
+        360.48
+      ],
+      "name": "Meadowlark Estates",
+      "slug": "meadowlark-estates",
+      "platNames": [
+        "MEADOWLARK ESTATES"
+      ],
+      "sourceIds": [
+        397
+      ],
+      "bounds": [
+        44.291057,
+        -121.19365,
+        44.292336,
+        -121.192996
+      ]
+    },
+    {
+      "printed": "MEGAN PARK",
+      "pdfPoint": [
+        596.75,
+        531.63
+      ],
+      "name": "Megan Park",
+      "slug": "megan-park",
+      "platNames": [
+        "MEGAN PARK PHASE 1",
+        "MEGAN PARK, PHASE 2",
+        "MEGAN PARK, PHASE 3"
+      ],
+      "sourceIds": [
+        2059,
+        2843,
+        2917
+      ],
+      "bounds": [
+        44.281908,
+        -121.199283,
+        44.283743,
+        -121.194229
+      ]
+    },
+    {
+      "printed": "MELROSE PARK",
+      "pdfPoint": [
+        809.5,
+        868.51
+      ],
+      "name": "Melrose Park",
+      "slug": "melrose-park",
+      "platNames": [
+        "MELROSE PARK ADDITION",
+        "MELROSE PARK VACATION PLAT"
+      ],
+      "sourceIds": [
+        2487,
+        2488,
+        2489,
+        2490
+      ],
+      "bounds": [
+        44.262066,
+        -121.184119,
+        44.269512,
+        -121.178946
+      ]
+    },
+    {
+      "printed": "METTS SUBD",
+      "pdfPoint": [
+        524.07,
+        1124.53
+      ],
+      "name": "Metts Subdivision",
+      "slug": "metts-subdivision",
+      "platNames": [
+        "METTS SUBDIVISION"
+      ],
+      "sourceIds": [
+        1953
+      ],
+      "bounds": [
+        44.251093,
+        -121.204386,
+        44.254727,
+        -121.199243
+      ]
+    },
+    {
+      "printed": "MIDA ADTN",
+      "pdfPoint": [
+        687.24,
+        566.57
+      ],
+      "name": "Mida Addition",
+      "slug": "mida-addition",
+      "platNames": [
+        "MIDA ADDITION"
+      ],
+      "sourceIds": [
+        2158
+      ],
+      "bounds": [
+        44.28009,
+        -121.189114,
+        44.281038,
+        -121.186804
+      ]
+    },
+    {
+      "name": "Mirage",
+      "slug": "mirage",
+      "platNames": [
+        "MIRAGE"
+      ],
+      "sourceIds": [
+        2929
+      ],
+      "bounds": [
+        44.262041,
+        -121.199125,
+        44.264164,
+        -121.194409
+      ]
+    },
+    {
+      "printed": "MTN GDNS",
+      "pdfPoint": [
+        645.23,
+        987.49
+      ],
+      "name": "Mountain Gardens",
+      "slug": "mountain-gardens",
+      "platNames": [
+        "MOUNTAIN GARDENS"
+      ],
+      "sourceIds": [
+        1735
+      ],
+      "bounds": [
+        44.259337,
+        -121.194125,
+        44.260111,
+        -121.191829
+      ]
+    },
+    {
+      "printed": "MTN GLENN",
+      "pdfPoint": [
+        653.79,
+        217.26
+      ],
+      "name": "Mountain Glenn",
+      "slug": "mountain-glenn",
+      "platNames": [
+        "MOUNTAIN GLENN PHASE 3",
+        "MOUNTAIN GLENN PHASE ONE",
+        "MOUNTAIN GLENN PHASE TWO"
+      ],
+      "sourceIds": [
+        398,
+        1149,
+        1150
+      ],
+      "bounds": [
+        44.296419,
+        -121.194045,
+        44.299254,
+        -121.189002
+      ]
+    },
+    {
+      "printed": "MTN VIEW ADTN",
+      "pdfPoint": [
+        807.19,
+        760.8
+      ],
+      "name": "Mountain View Addition",
+      "slug": "mountain-view-addition",
+      "platNames": [
+        "MOUNTAIN VIEW ADDITION",
+        "MOUNTAIN VIEW ADDITION BLOCK 8 ALLEY VACATION"
+      ],
+      "sourceIds": [
+        311,
+        2484
+      ],
+      "bounds": [
+        44.269719,
+        -121.184131,
+        44.272865,
+        -121.179079
+      ]
+    },
+    {
+      "name": "Murphy Industrial Tracts",
+      "slug": "murphy-industrial-tracts",
+      "platNames": [
+        "MURPHY INDUSTRIAL TRACTS PHASE 1"
+      ],
+      "sourceIds": [
+        2328
+      ],
+      "bounds": [
+        44.254871,
+        -121.173834,
+        44.257008,
+        -121.170186
+      ]
+    },
+    {
+      "printed": "MYERS ACREAGE",
+      "pdfPoint": [
+        956.27,
+        535.92
+      ],
+      "name": "Myers Acreage",
+      "slug": "myers-acreage",
+      "platNames": [
+        "MYERS ACREAGE",
+        "MYERS ACREAGE VACATION PLAT"
+      ],
+      "sourceIds": [
+        2115,
+        2116
+      ],
+      "bounds": [
+        44.280138,
+        -121.174218,
+        44.283771,
+        -121.16894
+      ]
+    },
+    {
+      "printed": "NEGUS VILLAS",
+      "pdfPoint": [
+        1066.48,
+        388.64
+      ],
+      "name": "Negus Villas",
+      "slug": "negus-villas",
+      "platNames": [
+        "NEGUS VILLAS"
+      ],
+      "sourceIds": [
+        2126
+      ],
+      "bounds": [
+        44.289637,
+        -121.163738,
+        44.290909,
+        -121.162192
+      ]
+    },
+    {
+      "printed": "NEWBERRY VLG",
+      "pdfPoint": [
+        754.88,
+        903.47
+      ],
+      "name": "Newberry Village",
+      "slug": "newberry-village",
+      "platNames": [
+        "NEWBERRY VILLAGE"
+      ],
+      "sourceIds": [
+        1628
+      ],
+      "bounds": [
+        44.263697,
+        -121.185941,
+        44.26439,
+        -121.184762
+      ]
+    },
+    {
+      "printed": "NI-LAH-SHA",
+      "pdfPoint": [
+        1099.97,
+        267.47
+      ],
+      "name": "Ni-Lah-Sha",
+      "slug": "ni-lah-sha",
+      "platNames": [
+        "NI-LAH-SHA",
+        "NI-LAH-SHA PHASES 2 AND 3"
+      ],
+      "sourceIds": [
+        2005,
+        2077
+      ],
+      "bounds": [
+        44.291015,
+        -121.16392,
+        44.298269,
+        -121.158777
+      ]
+    },
+    {
+      "printed": "NOLAN'S ADTN",
+      "pdfPoint": [
+        594.53,
+        751.75
+      ],
+      "name": "Nolan's Addition",
+      "slug": "nolan-s-addition",
+      "platNames": [
+        "NOLAN'S ADDITION",
+        "NOLAN'S ADDITION PHASE III"
+      ],
+      "sourceIds": [
+        390,
+        1648
+      ],
+      "bounds": [
+        44.26937,
+        -121.199342,
+        44.272826,
+        -121.194309
+      ]
+    },
+    {
+      "printed": "NORTH CYN ESTS",
+      "pdfPoint": [
+        764.08,
+        255.37
+      ],
+      "name": "North Canyon Estates",
+      "slug": "north-canyon-estates",
+      "platNames": [
+        "NORTH CANYON ESTATES"
+      ],
+      "sourceIds": [
+        1148,
+        1161
+      ],
+      "bounds": [
+        44.294907,
+        -121.186089,
+        44.298208,
+        -121.183997
+      ]
+    },
+    {
+      "printed": "NORTH RIM",
+      "pdfPoint": [
+        815.38,
+        266.01
+      ],
+      "name": "North Rim",
+      "slug": "north-rim",
+      "platNames": [
+        "NORTH RIM"
+      ],
+      "sourceIds": [
+        2236
+      ],
+      "bounds": [
+        44.294593,
+        -121.18404,
+        44.298218,
+        -121.17895
+      ]
+    },
+    {
+      "name": "North Trailside",
+      "slug": "north-trailside",
+      "platNames": [
+        "North Trailside 711-20-000129-MD, 711-20-000130-ZMA, 711-20-000131-SUB"
+      ],
+      "sourceIds": [
+        3080
+      ],
+      "bounds": [
+        44.236657,
+        -121.224486,
+        44.240304,
+        -121.221894
+      ]
+    },
+    {
+      "printed": "OAK HILLS",
+      "pdfPoint": [
+        832.96,
+        189.0
+      ],
+      "name": "Oak Hills",
+      "slug": "oak-hills",
+      "platNames": [
+        "OAK HILLS",
+        "OAK HILLS PHASE 2"
+      ],
+      "sourceIds": [
+        994,
+        1997
+      ],
+      "bounds": [
+        44.300015,
+        -121.181422,
+        44.300632,
+        -121.179047
+      ]
+    },
+    {
+      "printed": "OBSIDIAN ESTS",
+      "pdfPoint": [
+        516.55,
+        979.99
+      ],
+      "name": "Obsidian Estates",
+      "slug": "obsidian-estates",
+      "platNames": [
+        "OBSIDIAN ESTATES",
+        "OBSIDIAN ESTATES NO. 2",
+        "OBSIDIAN ESTATES NO. 3",
+        "OBSIDIAN ESTATES NO. 4"
+      ],
+      "sourceIds": [
+        1661,
+        1740,
+        1741,
+        1752
+      ],
+      "bounds": [
+        44.258327,
+        -121.204464,
+        44.261928,
+        -121.199364
+      ]
+    },
+    {
+      "name": "Obsidian Lofts",
+      "slug": "obsidian-lofts",
+      "platNames": [
+        "Obsidian Lofts"
+      ],
+      "sourceIds": [
+        3101
+      ],
+      "bounds": [
+        44.261725,
+        -121.183927,
+        44.262078,
+        -121.182519
+      ]
+    },
+    {
+      "printed": "OBSIDIAN MDWS",
+      "pdfPoint": [
+        445.23,
+        907.37
+      ],
+      "name": "Obsidian Meadows",
+      "slug": "obsidian-meadows",
+      "platNames": [
+        "OBSIDIAN MEADOWS"
+      ],
+      "sourceIds": [
+        2228
+      ],
+      "bounds": [
+        44.262036,
+        -121.209753,
+        44.265792,
+        -121.207396
+      ]
+    },
+    {
+      "printed": "OBSIDIAN TRAILS",
+      "pdfPoint": [
+        380.22,
+        976.35
+      ],
+      "name": "Obsidian Trails",
+      "slug": "obsidian-trails",
+      "platNames": [
+        "OBSIDIAN TRAILS PHASE 1",
+        "OBSIDIAN TRAILS PHASE 2",
+        "OBSIDIAN TRAILS, PHASE 3",
+        "OBSIDIAN TRAILS, PHASE 4",
+        "OBSIDIAN TRAILS, PHASE 5"
+      ],
+      "sourceIds": [
+        2764,
+        2798,
+        2849,
+        2920,
+        2954
+      ],
+      "bounds": [
+        44.258422,
+        -121.214529,
+        44.261889,
+        -121.209592
+      ]
+    },
+    {
+      "printed": "ORCH KNOLL",
+      "pdfPoint": [
+        828.35,
+        229.26
+      ],
+      "name": "Orchard Knoll",
+      "slug": "orchard-knoll",
+      "platNames": [
+        "ORCHARD KNOLL"
+      ],
+      "sourceIds": [
+        2776
+      ],
+      "bounds": [
+        44.298298,
+        -121.178859,
+        44.29879,
+        -121.177344
+      ]
+    },
+    {
+      "printed": "OREGON TRUNK ADTN",
+      "pdfPoint": [
+        1024.97,
+        652.56
+      ],
+      "name": "Oregon Trunk Addition",
+      "slug": "oregon-trunk-addition",
+      "platNames": [
+        "OREGON TRUNK ADDITION"
+      ],
+      "sourceIds": [
+        2440
+      ],
+      "bounds": [
+        44.269298,
+        -121.16894,
+        44.28016,
+        -121.16385
+      ]
+    },
+    {
+      "name": "Owen Ridge",
+      "slug": "owen-ridge",
+      "platNames": [
+        "Owen Ridge Phase 3 A Replat of Tracts Y & Z of Owen Ridge Phase 1 & 2 711-22-000209-PLNG",
+        "Owen Ridge Phases 1 and 2 711-22-000209-PLNG SUB"
+      ],
+      "sourceIds": [
+        3163,
+        3205
+      ],
+      "bounds": [
+        44.238284,
+        -121.215458,
+        44.24518,
+        -121.210892
+      ]
+    },
+    {
+      "printed": "PARK PL ESTS",
+      "pdfPoint": [
+        517.68,
+        1197.85
+      ],
+      "name": "Park Place Estates",
+      "slug": "park-place-estates",
+      "platNames": [
+        "PARK PLACE ESTATES"
+      ],
+      "sourceIds": [
+        1765
+      ],
+      "bounds": [
+        44.247602,
+        -121.203696,
+        44.249682,
+        -121.201175
+      ]
+    },
+    {
+      "name": "Parker's Place",
+      "slug": "parker-s-place",
+      "platNames": [
+        "PARKER'S PLACE"
+      ],
+      "sourceIds": [
+        2266
+      ],
+      "bounds": [
+        44.255499,
+        -121.193618,
+        44.256162,
+        -121.193029
+      ]
+    },
+    {
+      "printed": "PARKLAND",
+      "pdfPoint": [
+        533.01,
+        1287.14
+      ],
+      "name": "Parkland",
+      "slug": "parkland",
+      "platNames": [
+        "PARKLAND"
+      ],
+      "sourceIds": [
+        2345
+      ],
+      "bounds": [
+        44.243877,
+        -121.202995,
+        44.24751,
+        -121.199176
+      ]
+    },
+    {
+      "printed": "PARKLAND TOWNHOMES",
+      "pdfPoint": [
+        510.65,
+        1254.86
+      ],
+      "name": "Parkland Townhomes",
+      "slug": "parkland-townhomes",
+      "platNames": [
+        "PARKLAND TOWNHOMES"
+      ],
+      "sourceIds": [
+        2696
+      ],
+      "bounds": [
+        44.243882,
+        -121.202968,
+        44.247358,
+        -121.200238
+      ]
+    },
+    {
+      "printed": "PKWY ADTN",
+      "pdfPoint": [
+        732.42,
+        778.55
+      ],
+      "name": "Parkway Addition",
+      "slug": "parkway-addition",
+      "platNames": [
+        "PARKWAY ADDITION"
+      ],
+      "sourceIds": [
+        1656
+      ],
+      "bounds": [
+        44.269502,
+        -121.189253,
+        44.271049,
+        -121.184532
+      ]
+    },
+    {
+      "name": "Pasco Industrial Park",
+      "slug": "pasco-industrial-park",
+      "platNames": [
+        "PASCO INDUSTRIAL PARK"
+      ],
+      "sourceIds": [
+        2882
+      ],
+      "bounds": [
+        44.236896,
+        -121.193901,
+        44.238566,
+        -121.19031
+      ]
+    },
+    {
+      "printed": "PINE TREE MDWS",
+      "pdfPoint": [
+        882.34,
+        118.71
+      ],
+      "name": "Pine Tree Meadows",
+      "slug": "pine-tree-meadows",
+      "platNames": [
+        "PINE TREE MEADOWS PHASE 1",
+        "PINE TREE MEADOWS PHASE 2"
+      ],
+      "sourceIds": [
+        2015,
+        2016
+      ],
+      "bounds": [
+        44.301819,
+        -121.178772,
+        44.304572,
+        -121.17528
+      ]
+    },
+    {
+      "name": "Pioneer Business Park",
+      "slug": "pioneer-business-park",
+      "platNames": [
+        "PIONEER BUSINESS PARK PHASE 1"
+      ],
+      "sourceIds": [
+        1703
+      ],
+      "bounds": [
+        44.283843,
+        -121.163915,
+        44.286501,
+        -121.159035
+      ]
+    },
+    {
+      "name": "Pioneer Park Industrial Condominiums",
+      "slug": "pioneer-park-industrial-condominiums",
+      "platNames": [
+        "PIONEER PARK INDUSTRIAL CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        1580
+      ],
+      "bounds": [
+        44.283871,
+        -121.163668,
+        44.284413,
+        -121.161375
+      ]
+    },
+    {
+      "printed": "PLANERVILLE",
+      "pdfPoint": [
+        819.51,
+        1052.1
+      ],
+      "name": "Planerville",
+      "slug": "planerville",
+      "platNames": [
+        "PLANERVILLE"
+      ],
+      "sourceIds": [
+        381
+      ],
+      "bounds": [
+        44.254786,
+        -121.184027,
+        44.258441,
+        -121.178938
+      ]
+    },
+    {
+      "printed": "PLEASANT VIEW",
+      "pdfPoint": [
+        696.63,
+        342.78
+      ],
+      "name": "Pleasant View",
+      "slug": "pleasant-view",
+      "platNames": [
+        "PLEASANT VIEW PHASE 1",
+        "PLEASANT VIEW PHASE 2"
+      ],
+      "sourceIds": [
+        396,
+        842
+      ],
+      "bounds": [
+        44.291057,
+        -121.192788,
+        44.293342,
+        -121.191507
+      ]
+    },
+    {
+      "printed": "POCO BELLA",
+      "pdfPoint": [
+        820.56,
+        176.59
+      ],
+      "name": "Poco Bella",
+      "slug": "poco-bella",
+      "platNames": [
+        "POCO BELLA"
+      ],
+      "sourceIds": [
+        2073
+      ],
+      "bounds": [
+        44.300388,
+        -121.181421,
+        44.301235,
+        -121.179038
+      ]
+    },
+    {
+      "printed": "PRAIRIE XING",
+      "pdfPoint": [
+        295.04,
+        1420.12
+      ],
+      "name": "Prairie Crossing",
+      "slug": "prairie-crossing",
+      "platNames": [
+        "PRAIRIE CROSSING P.U.D., PHASES I, II AND III",
+        "PRAIRIE CROSSING, PHASES 4 & 5",
+        "Prairie Crossing, Phase 1A"
+      ],
+      "sourceIds": [
+        2846,
+        2962,
+        2984
+      ],
+      "bounds": [
+        44.236638,
+        -121.222326,
+        44.238951,
+        -121.215296
+      ]
+    },
+    {
+      "name": "Prairie Crossing East",
+      "slug": "prairie-crossing-east",
+      "platNames": [
+        "Prairie Crossing East - Phase 1",
+        "Prairie Crossing East - Phase 2"
+      ],
+      "sourceIds": [
+        3052,
+        3062
+      ],
+      "bounds": [
+        44.236635,
+        -121.215554,
+        44.238564,
+        -121.214218
+      ]
+    },
+    {
+      "printed": "QUARTZ CYN TRACTS",
+      "pdfPoint": [
+        699.92,
+        998.95
+      ],
+      "name": "Quartz Canyon Tracts",
+      "slug": "quartz-canyon-tracts",
+      "platNames": [
+        "QUARTZ CANYON TRACTS"
+      ],
+      "sourceIds": [
+        388
+      ],
+      "bounds": [
+        44.258468,
+        -121.191548,
+        44.26014,
+        -121.189196
+      ]
+    },
+    {
+      "printed": "QUINCE AVE",
+      "pdfPoint": [
+        887.17,
+        215.0
+      ],
+      "name": "Quince Avenue",
+      "slug": "quince-avenue",
+      "platNames": [
+        "QUINCE AVENUE"
+      ],
+      "sourceIds": [
+        2570
+      ],
+      "bounds": [
+        44.298305,
+        -121.177344,
+        44.298762,
+        -121.175808
+      ]
+    },
+    {
+      "printed": "RAILEY'S PL",
+      "pdfPoint": [
+        610.08,
+        687.77
+      ],
+      "name": "Railey's Place",
+      "slug": "railey-s-place",
+      "platNames": [
+        "RAILEY'S PLACE"
+      ],
+      "sourceIds": [
+        2467
+      ],
+      "bounds": [
+        44.274419,
+        -121.197359,
+        44.276351,
+        -121.195886
+      ]
+    },
+    {
+      "printed": "RAILWAY ADTN",
+      "pdfPoint": [
+        1041.07,
+        712.2
+      ],
+      "name": "Railway Addition",
+      "slug": "railway-addition",
+      "platNames": [
+        "RAILWAY ADDITION"
+      ],
+      "sourceIds": [
+        2483
+      ],
+      "bounds": [
+        44.272664,
+        -121.16803,
+        44.27646,
+        -121.163837
+      ]
+    },
+    {
+      "printed": "RNCH WAY AC",
+      "pdfPoint": [
+        592.04,
+        978.16
+      ],
+      "name": "Ranch Way Acres",
+      "slug": "ranch-way-acres",
+      "platNames": [
+        "RANCH WAY ACRES",
+        "RANCH WAY ACRES 1ST ADDITION",
+        "RANCH WAY ACRES AMENDED PLAT"
+      ],
+      "sourceIds": [
+        1839,
+        2264,
+        2265
+      ],
+      "bounds": [
+        44.254727,
+        -121.199424,
+        44.261965,
+        -121.194187
+      ]
+    },
+    {
+      "printed": "RED HAWK",
+      "pdfPoint": [
+        667.76,
+        487.35
+      ],
+      "name": "Red Hawk",
+      "slug": "red-hawk",
+      "platNames": [
+        "RED HAWK UNIT FIVE",
+        "RED HAWK UNIT FOUR",
+        "RED HAWK UNIT ONE",
+        "RED HAWK UNIT SIX",
+        "RED HAWK UNIT THREE",
+        "RED HAWK UNIT TWO"
+      ],
+      "sourceIds": [
+        2045,
+        2046,
+        2047,
+        2048,
+        2049,
+        2050
+      ],
+      "bounds": [
+        44.283705,
+        -121.194232,
+        44.28644,
+        -121.189177
+      ]
+    },
+    {
+      "printed": "RED-BAR ESTS",
+      "pdfPoint": [
+        1105.12,
+        344.29
+      ],
+      "name": "Red-Bar Estates",
+      "slug": "red-bar-estates",
+      "platNames": [
+        "RED-BAR ESTATES PHASE 1",
+        "RED-BAR ESTATES PHASE 2",
+        "RED-BAR ESTATES PHASE 3"
+      ],
+      "sourceIds": [
+        2012,
+        2013,
+        2014
+      ],
+      "bounds": [
+        44.291097,
+        -121.162641,
+        44.294636,
+        -121.158839
+      ]
+    },
+    {
+      "printed": "REDMOND AC",
+      "pdfPoint": [
+        1096.75,
+        587.9
+      ],
+      "name": "Redmond Acres",
+      "slug": "redmond-acres",
+      "platNames": [
+        "REDMOND ACRES",
+        "REDMOND ACRES ADDITION",
+        "REDMOND ACRES VACATION PLAT"
+      ],
+      "sourceIds": [
+        1599,
+        1600,
+        2182,
+        2183
+      ],
+      "bounds": [
+        44.276546,
+        -121.163912,
+        44.283787,
+        -121.158821
+      ]
+    },
+    {
+      "printed": "REDMOND ADTN",
+      "pdfPoint": [
+        739.04,
+        852.61
+      ],
+      "name": "Redmond Addition",
+      "slug": "redmond-addition",
+      "platNames": [
+        "REDMOND 1ST ADDITION",
+        "REDMOND 2ND ADDITION"
+      ],
+      "sourceIds": [
+        1812,
+        2186,
+        2486
+      ],
+      "bounds": [
+        44.262057,
+        -121.189249,
+        44.276512,
+        -121.168953
+      ]
+    },
+    {
+      "name": "Redmond Business Park",
+      "slug": "redmond-business-park",
+      "platNames": [
+        "REDMOND BUSINESS PARK"
+      ],
+      "sourceIds": [
+        2330
+      ],
+      "bounds": [
+        44.251525,
+        -121.168875,
+        44.253861,
+        -121.165044
+      ]
+    },
+    {
+      "printed": "REDMOND HTS",
+      "pdfPoint": [
+        450.34,
+        1195.42
+      ],
+      "name": "Redmond Heights",
+      "slug": "redmond-heights",
+      "platNames": [
+        "REDMOND HEIGHTS"
+      ],
+      "sourceIds": [
+        2286
+      ],
+      "bounds": [
+        44.247469,
+        -121.209421,
+        44.251093,
+        -121.204278
+      ]
+    },
+    {
+      "name": "Redmond Retail Park",
+      "slug": "redmond-retail-park",
+      "platNames": [
+        "REDMOND RETAIL PARK PHASE 1",
+        "REDMOND RETAIL PARK PHASE II",
+        "REDMOND RETAIL PARK PHASE III"
+      ],
+      "sourceIds": [
+        1816,
+        2318,
+        2319
+      ],
+      "bounds": [
+        44.248795,
+        -121.189057,
+        44.251166,
+        -121.1864
+      ]
+    },
+    {
+      "printed": "REDMOND TOWN CTR",
+      "pdfPoint": [
+        867.77,
+        833.42
+      ],
+      "name": "Redmond Town Center",
+      "slug": "redmond-town-center",
+      "platNames": [
+        "REDMOND TOWN CENTER"
+      ],
+      "sourceIds": [
+        2205
+      ],
+      "bounds": [
+        44.266063,
+        -121.179503,
+        44.269511,
+        -121.175446
+      ]
+    },
+    {
+      "name": "Redmond Townsite",
+      "slug": "redmond-townsite",
+      "platNames": [
+        "REDMOND TOWNSITE",
+        "REDMOND TOWNSITE (VACATION PLAT)",
+        "REDMOND VACATION ALLEY BLOCKS 1 & 20"
+      ],
+      "sourceIds": [
+        1447,
+        1872,
+        2456
+      ],
+      "bounds": [
+        44.269259,
+        -121.179083,
+        44.27653,
+        -121.168872
+      ]
+    },
+    {
+      "name": "Redmond Townsite First Addition",
+      "slug": "redmond-townsite-first-addition",
+      "platNames": [
+        "REDMOND TOWNSITE FIRST ADDITION REPLAT",
+        "REDMOND TOWNSITE FIRST ADDITION VACATION"
+      ],
+      "sourceIds": [
+        2185,
+        2485
+      ],
+      "bounds": [
+        44.272862,
+        -121.184173,
+        44.2765,
+        -121.180762
+      ]
+    },
+    {
+      "printed": "REDSIDE",
+      "pdfPoint": [
+        569.31,
+        644.46
+      ],
+      "name": "Redside",
+      "slug": "redside",
+      "platNames": [
+        "REDSIDE"
+      ],
+      "sourceIds": [
+        2067
+      ],
+      "bounds": [
+        44.276483,
+        -121.199165,
+        44.278253,
+        -121.198043
+      ]
+    },
+    {
+      "printed": "REDTAIL RDG",
+      "pdfPoint": [
+        197.7,
+        1358.55
+      ],
+      "name": "Redtail Ridge",
+      "slug": "redtail-ridge",
+      "platNames": [
+        "REDTAIL RIDGE, PHASE 1",
+        "REDTAIL RIDGE, PHASE 2",
+        "Redtail Ridge, Phases 3 & 4"
+      ],
+      "sourceIds": [
+        2883,
+        2940,
+        2975
+      ],
+      "bounds": [
+        44.24029,
+        -121.22307,
+        44.243803,
+        -121.219444
+      ]
+    },
+    {
+      "printed": "REINDEER WOODS",
+      "pdfPoint": [
+        678.06,
+        1017.86
+      ],
+      "name": "Reindeer Woods",
+      "slug": "reindeer-woods",
+      "platNames": [
+        "REINDEER WOODS"
+      ],
+      "sourceIds": [
+        2270
+      ],
+      "bounds": [
+        44.256593,
+        -121.190982,
+        44.25841,
+        -121.18908
+      ]
+    },
+    {
+      "printed": "REMINGTON ARMS",
+      "pdfPoint": [
+        741.81,
+        568.96
+      ],
+      "name": "Remington Arms",
+      "slug": "remington-arms",
+      "platNames": [
+        "REMINGTON ARMS (THE)"
+      ],
+      "sourceIds": [
+        2159
+      ],
+      "bounds": [
+        44.280094,
+        -121.189108,
+        44.281756,
+        -121.184149
+      ]
+    },
+    {
+      "printed": "RENNOLDS AC",
+      "pdfPoint": [
+        952.78,
+        407.98
+      ],
+      "name": "Rennolds Acres",
+      "slug": "rennolds-acres",
+      "platNames": [
+        "RENNOLDS ACRES"
+      ],
+      "sourceIds": [
+        1406
+      ],
+      "bounds": [
+        44.287458,
+        -121.173939,
+        44.29094,
+        -121.169041
+      ]
+    },
+    {
+      "printed": "RIDGEPOINTE",
+      "pdfPoint": [
+        395.31,
+        1072.36
+      ],
+      "name": "Ridgepointe",
+      "slug": "ridgepointe",
+      "platNames": [
+        "RIDGEPOINTE"
+      ],
+      "sourceIds": [
+        2252
+      ],
+      "bounds": [
+        44.254671,
+        -121.211984,
+        44.256448,
+        -121.209468
+      ]
+    },
+    {
+      "printed": "RIM ROCK AC",
+      "pdfPoint": [
+        854.23,
+        577.23
+      ],
+      "name": "Rim Rock Acres",
+      "slug": "rim-rock-acres",
+      "platNames": [
+        "RIM ROCK ACRES"
+      ],
+      "sourceIds": [
+        2156
+      ],
+      "bounds": [
+        44.280126,
+        -121.181239,
+        44.28374,
+        -121.17908
+      ]
+    },
+    {
+      "printed": "RIM VIEW SUBD",
+      "pdfPoint": [
+        738.97,
+        626.6
+      ],
+      "name": "Rim View Subdivision",
+      "slug": "rim-view-subdivision",
+      "platNames": [
+        "RIM VIEW SUBDIVISION"
+      ],
+      "sourceIds": [
+        2111
+      ],
+      "bounds": [
+        44.276586,
+        -121.186341,
+        44.280105,
+        -121.184156
+      ]
+    },
+    {
+      "printed": "RIMROCK ESTS",
+      "pdfPoint": [
+        786.57,
+        353.01
+      ],
+      "name": "Rimrock Estates",
+      "slug": "rimrock-estates",
+      "platNames": [
+        "RIMROCK ESTATES"
+      ],
+      "sourceIds": [
+        2000
+      ],
+      "bounds": [
+        44.290975,
+        -121.184103,
+        44.292864,
+        -121.182647
+      ]
+    },
+    {
+      "name": "Rimrock Park Place",
+      "slug": "rimrock-park-place",
+      "platNames": [
+        "RIMROCK PARK PLACE"
+      ],
+      "sourceIds": [
+        1683
+      ],
+      "bounds": [
+        44.261653,
+        -121.191674,
+        44.261933,
+        -121.189671
+      ]
+    },
+    {
+      "slug": "rimrock-west-estate",
+      "name": "Rimrock West Estate",
+      "platNames": [
+        "RIMROCK WEST ESTATES",
+        "RIMROCK WEST ESTATES REPLAT"
+      ],
+      "sourceIds": [
+        331,
+        332
+      ],
+      "bounds": [
+        44.30909,
+        -121.198951,
+        44.316328,
+        -121.189022
+      ]
+    },
+    {
+      "name": "Rimview Estates",
+      "slug": "rimview-estates",
+      "platNames": [
+        "RIMVIEW ESTATES"
+      ],
+      "sourceIds": [
+        3043
+      ],
+      "bounds": [
+        44.274662,
+        -121.186662,
+        44.275547,
+        -121.185188
+      ]
+    },
+    {
+      "printed": "ROBERTS ADTN",
+      "pdfPoint": [
+        879.73,
+        530.53
+      ],
+      "name": "Roberts Addition",
+      "slug": "roberts-addition",
+      "platNames": [
+        "ROBERTS ADDITION"
+      ],
+      "sourceIds": [
+        2010
+      ],
+      "bounds": [
+        44.28112,
+        -121.179081,
+        44.28375,
+        -121.175306
+      ]
+    },
+    {
+      "printed": "ROCK CRST",
+      "pdfPoint": [
+        828.58,
+        388.99
+      ],
+      "name": "Rock Crest",
+      "slug": "rock-crest",
+      "platNames": [
+        "ROCK CREST"
+      ],
+      "sourceIds": [
+        2087
+      ],
+      "bounds": [
+        44.287361,
+        -121.180496,
+        44.290988,
+        -121.179076
+      ]
+    },
+    {
+      "name": "Rooted at 19th Condominium",
+      "slug": "rooted-at-19th-condominium",
+      "platNames": [
+        "Rooted At 19th Condominium - Supplemental Plat No 1: Reclassification of Variable Property Tract A",
+        "Rooted At 19th Condominium Parcel 2 and a Portion of Parcel 1 Minor Land Partition MP-80-93"
+      ],
+      "sourceIds": [
+        3186,
+        3215
+      ],
+      "bounds": [
+        44.278788,
+        -121.191151,
+        44.279304,
+        -121.189391
+      ]
+    },
+    {
+      "name": "Sage Court",
+      "slug": "sage-court",
+      "platNames": [
+        "SAGE COURT PHASE 1"
+      ],
+      "sourceIds": [
+        2141
+      ],
+      "bounds": [
+        44.287678,
+        -121.186526,
+        44.288224,
+        -121.185682
+      ]
+    },
+    {
+      "printed": "SAGE TOWNHOMES CONDO",
+      "pdfPoint": [
+        750.18,
+        939.3
+      ],
+      "name": "Sage Townhomes Condo",
+      "slug": "sage-townhomes-condo",
+      "platNames": [
+        "SAGE TOWNHOMES CONDOMINIUM"
+      ],
+      "sourceIds": [
+        2190
+      ],
+      "bounds": [
+        44.262141,
+        -121.185188,
+        44.262707,
+        -121.184194
+      ]
+    },
+    {
+      "printed": "SALMON PARK",
+      "pdfPoint": [
+        744.66,
+        1081.44
+      ],
+      "name": "Salmon Park",
+      "slug": "salmon-park",
+      "platNames": [
+        "SALMON PARK"
+      ],
+      "sourceIds": [
+        2306
+      ],
+      "bounds": [
+        44.254867,
+        -121.186561,
+        44.255419,
+        -121.185208
+      ]
+    },
+    {
+      "printed": "SALMON RUN",
+      "pdfPoint": [
+        421.97,
+        1091.29
+      ],
+      "name": "Salmon Run",
+      "slug": "salmon-run",
+      "platNames": [
+        "SALMON RUN"
+      ],
+      "sourceIds": [
+        1705
+      ],
+      "bounds": [
+        44.253305,
+        -121.208382,
+        44.25467,
+        -121.206118
+      ]
+    },
+    {
+      "printed": "SARASODA CT",
+      "pdfPoint": [
+        641.95,
+        966.87
+      ],
+      "name": "Sarasoda Court",
+      "slug": "sarasoda-court",
+      "platNames": [
+        "SARASODA COURT"
+      ],
+      "sourceIds": [
+        1682
+      ],
+      "bounds": [
+        44.260268,
+        -121.193753,
+        44.261061,
+        -121.192708
+      ]
+    },
+    {
+      "printed": "SAVANNAH ESTS",
+      "pdfPoint": [
+        420.69,
+        1105.27
+      ],
+      "name": "Savannah Estates",
+      "slug": "savannah-estates",
+      "platNames": [
+        "SAVANNAH ESTATES PHASE 3",
+        "SAVANNAH ESTATES PHASES 1 & 2"
+      ],
+      "sourceIds": [
+        1758,
+        1760
+      ],
+      "bounds": [
+        44.252612,
+        -121.20728,
+        44.254614,
+        -121.204384
+      ]
+    },
+    {
+      "name": "Sego Estates",
+      "slug": "sego-estates",
+      "platNames": [
+        "SEGO ESTATES, PHASES 2 & 3 711-18-000117-SUB",
+        "Sego Estates, Phase 1 711-18-000117-SUB 711-20-000109-PLNG-E"
+      ],
+      "sourceIds": [
+        3020,
+        3092
+      ],
+      "bounds": [
+        44.27648,
+        -121.206141,
+        44.281047,
+        -121.203975
+      ]
+    },
+    {
+      "printed": "SHADOW GLN ESTS",
+      "pdfPoint": [
+        740.72,
+        647.46
+      ],
+      "name": "Shadow Glen Estates",
+      "slug": "shadow-glen-estates",
+      "platNames": [
+        "SHADOW GLEN ESTATES PHASE I",
+        "SHADOW GLEN ESTATES PHASE II"
+      ],
+      "sourceIds": [
+        2108,
+        2110
+      ],
+      "bounds": [
+        44.276586,
+        -121.187074,
+        44.280099,
+        -121.185805
+      ]
+    },
+    {
+      "printed": "SIERRA VISTA",
+      "pdfPoint": [
+        733.48,
+        392.07
+      ],
+      "name": "Sierra Vista",
+      "slug": "sierra-vista",
+      "platNames": [
+        "SIERRA VISTA PHASE 1",
+        "SIERRA VISTA PHASE 2"
+      ],
+      "sourceIds": [
+        1001,
+        1066
+      ],
+      "bounds": [
+        44.289203,
+        -121.18903,
+        44.290969,
+        -121.185361
+      ]
+    },
+    {
+      "printed": "SISTERS VIEW ESTS",
+      "pdfPoint": [
+        893.4,
+        390.29
+      ],
+      "name": "Sisters View Estates",
+      "slug": "sisters-view-estates",
+      "platNames": [
+        "SISTERS VIEW ESTATES",
+        "SISTERS VIEW ESTATES SUBDIVISION EXTENDED"
+      ],
+      "sourceIds": [
+        1537,
+        1538
+      ],
+      "bounds": [
+        44.289186,
+        -121.179079,
+        44.291009,
+        -121.176294
+      ]
+    },
+    {
+      "printed": "SIX PEAKS",
+      "pdfPoint": [
+        526.47,
+        854.13
+      ],
+      "name": "Six Peaks",
+      "slug": "six-peaks",
+      "platNames": [
+        "SIX PEAKS PHASE 4",
+        "SIX PEAKS PHASES 1, 2 AND 3"
+      ],
+      "sourceIds": [
+        2222,
+        2223
+      ],
+      "bounds": [
+        44.261986,
+        -121.204434,
+        44.266835,
+        -121.198894
+      ]
+    },
+    {
+      "printed": "SKIDMORE'S SUBD",
+      "pdfPoint": [
+        304.46,
+        1248.05
+      ],
+      "name": "Skidmore's Subdivision",
+      "slug": "skidmore-s-subdivision",
+      "platNames": [
+        "SKIDMORE'S SUBDIVISION"
+      ],
+      "sourceIds": [
+        1685
+      ],
+      "bounds": [
+        44.245673,
+        -121.219343,
+        44.247378,
+        -121.214512
+      ]
+    },
+    {
+      "printed": "SKYLINE RDG",
+      "pdfPoint": [
+        667.86,
+        539.21
+      ],
+      "name": "Skyline Ridge",
+      "slug": "skyline-ridge",
+      "platNames": [
+        "SKYLINE RIDGE",
+        "SKYLINE RIDGE PHASE II",
+        "SKYLINE RIDGE PHASE III"
+      ],
+      "sourceIds": [
+        2058,
+        2084,
+        2085
+      ],
+      "bounds": [
+        44.281295,
+        -121.194135,
+        44.283651,
+        -121.18932
+      ]
+    },
+    {
+      "name": "Smith Rock Industrial Park",
+      "slug": "smith-rock-industrial-park",
+      "platNames": [
+        "SMITH ROCK INDUSTRIAL PARK PHASES 1 AND 2"
+      ],
+      "sourceIds": [
+        1579
+      ],
+      "bounds": [
+        44.283923,
+        -121.156194,
+        44.286494,
+        -121.15144
+      ]
+    },
+    {
+      "printed": "SOTHMAN'S ADTN",
+      "pdfPoint": [
+        943.32,
+        623.58
+      ],
+      "name": "Sothman's Addition",
+      "slug": "sothman-s-addition",
+      "platNames": [
+        "SOTHMAN'S ADDITION",
+        "SOTHMAN'S ADDITION RESUBDIVISION OF TRACTS 46 & 47"
+      ],
+      "sourceIds": [
+        2119,
+        2120
+      ],
+      "bounds": [
+        44.277426,
+        -121.174187,
+        44.280147,
+        -121.169282
+      ]
+    },
+    {
+      "printed": "SOUTH GATE ESTS",
+      "pdfPoint": [
+        669.32,
+        1264.8
+      ],
+      "name": "South Gate Estates",
+      "slug": "south-gate-estates",
+      "platNames": [
+        "SOUTH GATE ESTATES"
+      ],
+      "sourceIds": [
+        379
+      ],
+      "bounds": [
+        44.243909,
+        -121.193054,
+        44.246849,
+        -121.189193
+      ]
+    },
+    {
+      "printed": "SOUTH HTS ADTN",
+      "pdfPoint": [
+        445.51,
+        1325.5
+      ],
+      "name": "South Heights Addition",
+      "slug": "south-heights-addition",
+      "platNames": [
+        "SOUTH HEIGHTS ADDITION"
+      ],
+      "sourceIds": [
+        2610
+      ],
+      "bounds": [
+        44.238503,
+        -121.211214,
+        44.246363,
+        -121.204194
+      ]
+    },
+    {
+      "printed": "SOUTH MORELAND AC",
+      "pdfPoint": [
+        737.52,
+        835.45
+      ],
+      "name": "South Moreland Acres",
+      "slug": "south-moreland-acres",
+      "platNames": [
+        "SOUTH MORELAND ACRES"
+      ],
+      "sourceIds": [
+        1811
+      ],
+      "bounds": [
+        44.265628,
+        -121.189263,
+        44.269509,
+        -121.184091
+      ]
+    },
+    {
+      "printed": "SOUTH-END ACREAGE",
+      "pdfPoint": [
+        821.03,
+        963.67
+      ],
+      "name": "South-End Acreage",
+      "slug": "south-end-acreage",
+      "platNames": [
+        "SOUTH-END ACREAGE"
+      ],
+      "sourceIds": [
+        2601
+      ],
+      "bounds": [
+        44.258518,
+        -121.18395,
+        44.262187,
+        -121.178895
+      ]
+    },
+    {
+      "name": "Starview",
+      "slug": "starview",
+      "platNames": [
+        "STARVIEW 711-23-000236-PLNG"
+      ],
+      "sourceIds": [
+        3168
+      ],
+      "bounds": [
+        44.2545,
+        -121.220836,
+        44.257307,
+        -121.21822
+      ]
+    },
+    {
+      "name": "Stearns Subdivision",
+      "slug": "stearns-subdivision",
+      "platNames": [
+        "STEARNS SUBDIVISION"
+      ],
+      "sourceIds": [
+        2519
+      ],
+      "bounds": [
+        44.251615,
+        -121.200496,
+        44.252006,
+        -121.199406
+      ]
+    },
+    {
+      "printed": "STEELHEAD ESTS",
+      "pdfPoint": [
+        639.94,
+        1004.47
+      ],
+      "name": "Steelhead Estates",
+      "slug": "steelhead-estates",
+      "platNames": [
+        "STEELHEAD ESTATES"
+      ],
+      "sourceIds": [
+        1736
+      ],
+      "bounds": [
+        44.258479,
+        -121.193181,
+        44.259342,
+        -121.191786
+      ]
+    },
+    {
+      "printed": "STERLING POINTE",
+      "pdfPoint": [
+        665.83,
+        186.8
+      ],
+      "name": "Sterling Pointe",
+      "slug": "sterling-pointe",
+      "platNames": [
+        "STERLING POINTE PHASE 1",
+        "STERLING POINTE PHASE 2"
+      ],
+      "sourceIds": [
+        917,
+        2032
+      ],
+      "bounds": [
+        44.299288,
+        -121.194037,
+        44.301817,
+        -121.189045
+      ]
+    },
+    {
+      "printed": "STONEHEDGE ON THE RIM",
+      "pdfPoint": [
+        658.7,
+        936.19
+      ],
+      "name": "Stonehedge on the Rim",
+      "slug": "stonehedge-on-the-rim",
+      "platNames": [
+        "STONEHEDGE ON THE RIM PHASE I",
+        "STONEHEDGE ON THE RIM PHASE II",
+        "STONEHEDGE ON THE RIM PHASE III",
+        "STONEHEDGE ON THE RIM PHASE IV"
+      ],
+      "sourceIds": [
+        1729,
+        2232,
+        2243,
+        2244
+      ],
+      "bounds": [
+        44.261966,
+        -121.194296,
+        44.267682,
+        -121.189664
+      ]
+    },
+    {
+      "printed": "STONEHEDGE SOUTH PHASE ONE",
+      "pdfPoint": [
+        703.26,
+        962.66
+      ],
+      "name": "Stonehedge South Phase One",
+      "slug": "stonehedge-south-phase-one",
+      "platNames": [
+        "STONEHEDGE SOUTH PHASE ONE"
+      ],
+      "sourceIds": [
+        1684
+      ],
+      "bounds": [
+        44.260293,
+        -121.191672,
+        44.261789,
+        -121.189741
+      ]
+    },
+    {
+      "printed": "STONEHEDGE WEST",
+      "pdfPoint": [
+        606.64,
+        821.0
+      ],
+      "name": "Stonehedge West",
+      "slug": "stonehedge-west",
+      "platNames": [
+        "STONEHEDGE WEST PHASE 2",
+        "STONEHEDGE WEST PHASE 3",
+        "STONEHEDGE WEST PHASE ONE"
+      ],
+      "sourceIds": [
+        1650,
+        1651,
+        2234
+      ],
+      "bounds": [
+        44.267203,
+        -121.199209,
+        44.269104,
+        -121.194441
+      ]
+    },
+    {
+      "printed": "SUMMER CRK",
+      "pdfPoint": [
+        508.21,
+        1327.8
+      ],
+      "name": "Summer Creek",
+      "slug": "summer-creek",
+      "platNames": [
+        "SUMMER CREEK PHASE 1",
+        "SUMMER CREEK PHASE 2"
+      ],
+      "sourceIds": [
+        896,
+        2346
+      ],
+      "bounds": [
+        44.240398,
+        -121.204281,
+        44.243723,
+        -121.202035
+      ]
+    },
+    {
+      "printed": "SUMMERFIELD",
+      "pdfPoint": [
+        518.39,
+        1047.75
+      ],
+      "name": "Summerfield",
+      "slug": "summerfield",
+      "platNames": [
+        "SUMMERFIELD PHASE I",
+        "SUMMERFIELD PHASE II",
+        "SUMMERFIELD PHASE III",
+        "SUMMERFIELD PHASE IV"
+      ],
+      "sourceIds": [
+        2282,
+        2283,
+        2284,
+        2285
+      ],
+      "bounds": [
+        44.254699,
+        -121.204424,
+        44.25831,
+        -121.199331
+      ]
+    },
+    {
+      "printed": "SUMMERHAVEN",
+      "pdfPoint": [
+        326.42,
+        1074.8
+      ],
+      "name": "Summerhaven",
+      "slug": "summerhaven",
+      "platNames": [
+        "SUMMERHAVEN PHASE 1",
+        "SummerHaven Phase 2 711-20-000076-SUB , 711-21-000150-PLNG",
+        "Summerhaven, Phase 3 711-20-000076-SUB"
+      ],
+      "sourceIds": [
+        1688,
+        3077,
+        3100
+      ],
+      "bounds": [
+        44.254772,
+        -121.217004,
+        44.258368,
+        -121.214473
+      ]
+    },
+    {
+      "printed": "SMT",
+      "pdfPoint": [
+        359.32,
+        1101.53
+      ],
+      "name": "Summit",
+      "slug": "summit",
+      "platNames": [
+        "SUMMIT (THE) PHASE ONE",
+        "SUMMIT (THE) PHASE TWO"
+      ],
+      "sourceIds": [
+        2254,
+        2256
+      ],
+      "bounds": [
+        44.251173,
+        -121.214452,
+        44.254645,
+        -121.211968
+      ]
+    },
+    {
+      "printed": "SMT CRST",
+      "pdfPoint": [
+        159.61,
+        1189.07
+      ],
+      "name": "Summit Crest",
+      "slug": "summit-crest",
+      "platNames": [
+        "SUMMIT CREST PHASE 1",
+        "SUMMIT CREST PHASE 2",
+        "SUMMIT CREST PHASE 3",
+        "SUMMIT CREST PHASE 4"
+      ],
+      "sourceIds": [
+        1962,
+        2698,
+        2736,
+        2775
+      ],
+      "bounds": [
+        44.247608,
+        -121.229294,
+        44.251411,
+        -121.219435
+      ]
+    },
+    {
+      "printed": "SUNNYSIDE ADTN",
+      "pdfPoint": [
+        872.44,
+        480.47
+      ],
+      "name": "Sunnyside Addition",
+      "slug": "sunnyside-addition",
+      "platNames": [
+        "SUNNYSIDE ADDITION",
+        "SUNNYSIDE ADDITION REPLAT BLOCKS 9 & 10"
+      ],
+      "sourceIds": [
+        393,
+        1425
+      ],
+      "bounds": [
+        44.28379,
+        -121.17908,
+        44.28647,
+        -121.174162
+      ]
+    },
+    {
+      "name": "Sunrise Condominiums",
+      "slug": "sunrise-condominiums",
+      "platNames": [
+        "SUNRISE CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        2109
+      ],
+      "bounds": [
+        44.279882,
+        -121.187074,
+        44.280096,
+        -121.186426
+      ]
+    },
+    {
+      "name": "Sunrise Meadows",
+      "slug": "sunrise-meadows",
+      "platNames": [
+        "SUNRISE MEADOWS, PHASE 1",
+        "Sunrise Meadows Phases 2 & 3"
+      ],
+      "sourceIds": [
+        2926,
+        3000
+      ],
+      "bounds": [
+        44.291107,
+        -121.166298,
+        44.294636,
+        -121.163889
+      ]
+    },
+    {
+      "printed": "SUNSCAPE",
+      "pdfPoint": [
+        554.24,
+        635.53
+      ],
+      "name": "Sunscape",
+      "slug": "sunscape",
+      "platNames": [
+        "SUNSCAPE"
+      ],
+      "sourceIds": [
+        1790
+      ],
+      "bounds": [
+        44.276506,
+        -121.201085,
+        44.278257,
+        -121.199544
+      ]
+    },
+    {
+      "printed": "SUNSET SMT",
+      "pdfPoint": [
+        311.61,
+        1142.01
+      ],
+      "name": "Sunset Summit",
+      "slug": "sunset-summit",
+      "platNames": [
+        "SUNSET SUMMIT"
+      ],
+      "sourceIds": [
+        1725
+      ],
+      "bounds": [
+        44.251187,
+        -121.21683,
+        44.252009,
+        -121.216062
+      ]
+    },
+    {
+      "printed": "SUNSHINE ADTN",
+      "pdfPoint": [
+        569.75,
+        1308.07
+      ],
+      "name": "Sunshine Addition",
+      "slug": "sunshine-addition",
+      "platNames": [
+        "SUNSHINE ADDITION",
+        "SUNSHINE ADDITION REPLAT BLOCK 3 LOTS 2-7"
+      ],
+      "sourceIds": [
+        373,
+        2344
+      ],
+      "bounds": [
+        44.239357,
+        -121.204293,
+        44.243905,
+        -121.19388
+      ]
+    },
+    {
+      "printed": "TAYLOR'S ADTN",
+      "pdfPoint": [
+        809.3,
+        833.34
+      ],
+      "name": "Taylor's Addition",
+      "slug": "taylor-s-addition",
+      "platNames": [
+        "TAYLOR'S ADDITION"
+      ],
+      "sourceIds": [
+        2188
+      ],
+      "bounds": [
+        44.265652,
+        -121.184152,
+        44.269512,
+        -121.179005
+      ]
+    },
+    {
+      "printed": "THE MDWS",
+      "pdfPoint": [
+        876.09,
+        336.32
+      ],
+      "name": "The Meadows",
+      "slug": "the-meadows",
+      "platNames": [
+        "MEADOWS (THE) PHASE 1",
+        "MEADOWS (THE) PHASE 2"
+      ],
+      "sourceIds": [
+        1536,
+        2031
+      ],
+      "bounds": [
+        44.29109,
+        -121.178911,
+        44.293683,
+        -121.174863
+      ]
+    },
+    {
+      "printed": "SAGE (THE)",
+      "pdfPoint": [
+        757.52,
+        932.17
+      ],
+      "name": "The Sage",
+      "slug": "the-sage",
+      "platNames": [
+        "SAGE (THE)"
+      ],
+      "sourceIds": [
+        2189
+      ],
+      "bounds": [
+        44.262141,
+        -121.185302,
+        44.262707,
+        -121.184034
+      ]
+    },
+    {
+      "printed": "TIMBER AC",
+      "pdfPoint": [
+        702.23,
+        1130.82
+      ],
+      "name": "Timber Acres",
+      "slug": "timber-acres",
+      "platNames": [
+        "TIMBER ACRES"
+      ],
+      "sourceIds": [
+        2521
+      ],
+      "bounds": [
+        44.251951,
+        -121.190529,
+        44.252833,
+        -121.188532
+      ]
+    },
+    {
+      "printed": "TIMBER ESTS",
+      "pdfPoint": [
+        500.36,
+        1103.1
+      ],
+      "name": "Timber Estates",
+      "slug": "timber-estates",
+      "platNames": [
+        "TIMBER ESTATES"
+      ],
+      "sourceIds": [
+        387
+      ],
+      "bounds": [
+        44.252979,
+        -121.204269,
+        44.254623,
+        -121.203204
+      ]
+    },
+    {
+      "printed": "TIMBER FLATS",
+      "pdfPoint": [
+        582.11,
+        1112.45
+      ],
+      "name": "Timber Flats",
+      "slug": "timber-flats",
+      "platNames": [
+        "TIMBER FLATS PHASE 1",
+        "TIMBER FLATS PHASES 2 AND 3"
+      ],
+      "sourceIds": [
+        1010,
+        1751
+      ],
+      "bounds": [
+        44.253004,
+        -121.199174,
+        44.25383,
+        -121.196837
+      ]
+    },
+    {
+      "name": "Timber Grove Villas",
+      "slug": "timber-grove-villas",
+      "platNames": [
+        "TIMBER GROVE VILLAS 711-18-000243-SUB"
+      ],
+      "sourceIds": [
+        3111
+      ],
+      "bounds": [
+        44.253836,
+        -121.196627,
+        44.254254,
+        -121.195475
+      ]
+    },
+    {
+      "printed": "TIMBER VIEW CONDOS",
+      "pdfPoint": [
+        643.12,
+        1146.0
+      ],
+      "name": "Timber View Condos",
+      "slug": "timber-view-condos",
+      "platNames": [
+        "TIMBER VIEW CONDOMINIUMS"
+      ],
+      "sourceIds": [
+        2290
+      ],
+      "bounds": [
+        44.251773,
+        -121.194043,
+        44.252533,
+        -121.192591
+      ]
+    },
+    {
+      "printed": "TIMBERS",
+      "pdfPoint": [
+        640.8,
+        1110.41
+      ],
+      "name": "Timbers",
+      "slug": "timbers",
+      "platNames": [
+        "TIMBERS"
+      ],
+      "sourceIds": [
+        1754
+      ],
+      "bounds": [
+        44.25305,
+        -121.194029,
+        44.253841,
+        -121.192542
+      ]
+    },
+    {
+      "printed": "TORRYN'S ADTN",
+      "pdfPoint": [
+        630.97,
+        1064.34
+      ],
+      "name": "Torryn's Addition",
+      "slug": "torryn-s-addition",
+      "platNames": [
+        "TORRYN'S ADDITION"
+      ],
+      "sourceIds": [
+        2269
+      ],
+      "bounds": [
+        44.254848,
+        -121.192325,
+        44.255954,
+        -121.19175
+      ]
+    },
+    {
+      "printed": "TOWNHOMES AT QUINCE VLG",
+      "pdfPoint": [
+        935.97,
+        227.69
+      ],
+      "name": "Townhomes at Quince Village",
+      "slug": "townhomes-at-quince-village",
+      "platNames": [
+        "TOWNHOMES AT QUINCE VILLAGE"
+      ],
+      "sourceIds": [
+        2887
+      ],
+      "bounds": [
+        44.297318,
+        -121.176426,
+        44.298143,
+        -121.174042
+      ]
+    },
+    {
+      "printed": "TRIPLE RDG",
+      "pdfPoint": [
+        375.53,
+        1467.94
+      ],
+      "name": "Triple Ridge",
+      "slug": "triple-ridge",
+      "platNames": [
+        "TRIPLE RIDGE PHASE 1",
+        "TRIPLE RIDGE, PHASE 2 (ALSO IN SECTION 29)",
+        "TRIPLE RIDGE, PHASE 3",
+        "Triple Ridge, Phase 4"
+      ],
+      "sourceIds": [
+        2774,
+        2911,
+        2956,
+        2964
+      ],
+      "bounds": [
+        44.232994,
+        -121.214401,
+        44.236637,
+        -121.207279
+      ]
+    },
+    {
+      "printed": "TWO BAR ESTS",
+      "pdfPoint": [
+        678.19,
+        400.12
+      ],
+      "name": "Two Bar Estates",
+      "slug": "two-bar-estates",
+      "platNames": [
+        "TWO BAR ESTATES"
+      ],
+      "sourceIds": [
+        2041
+      ],
+      "bounds": [
+        44.289142,
+        -121.192087,
+        44.290048,
+        -121.189141
+      ]
+    },
+    {
+      "printed": "UMATILLA HTS",
+      "pdfPoint": [
+        492.12,
+        1137.1
+      ],
+      "name": "Umatilla Heights",
+      "slug": "umatilla-heights",
+      "platNames": [
+        "UMATILLA HEIGHTS"
+      ],
+      "sourceIds": [
+        1757
+      ],
+      "bounds": [
+        44.251098,
+        -121.205958,
+        44.25277,
+        -121.204451
+      ]
+    },
+    {
+      "printed": "UMATILLA VILLA",
+      "pdfPoint": [
+        576.23,
+        1161.75
+      ],
+      "name": "Umatilla Villa",
+      "slug": "umatilla-villa",
+      "platNames": [
+        "UMATILLA VILLA"
+      ],
+      "sourceIds": [
+        1956
+      ],
+      "bounds": [
+        44.250213,
+        -121.199243,
+        44.25113,
+        -121.196679
+      ]
+    },
+    {
+      "printed": "VALLEYVIEW",
+      "pdfPoint": [
+        428.66,
+        1132.31
+      ],
+      "name": "Valleyview",
+      "slug": "valleyview",
+      "platNames": [
+        "VALLEYVIEW",
+        "VALLEYVIEW REPLAT LOTS 113, 114, 115, 116, 117 AND 118"
+      ],
+      "sourceIds": [
+        386,
+        1767
+      ],
+      "bounds": [
+        44.251072,
+        -121.212672,
+        44.254598,
+        -121.205619
+      ]
+    },
+    {
+      "printed": "VIEW AC",
+      "pdfPoint": [
+        585.91,
+        1124.53
+      ],
+      "name": "View Acres",
+      "slug": "view-acres",
+      "platNames": [
+        "VIEW ACRES"
+      ],
+      "sourceIds": [
+        1743
+      ],
+      "bounds": [
+        44.251126,
+        -121.199264,
+        44.254743,
+        -121.194153
+      ]
+    },
+    {
+      "slug": "village-at-ridgeview",
+      "name": "Village at Ridgeview",
+      "platNames": [
+        "VILLAGE AT RIDGEVIEW PHASE 1 (ALSO IN SECTION 29)",
+        "VILLAGE AT RIDGEVIEW PHASE 2 (ALSO IN SECTION 30)"
+      ],
+      "sourceIds": [
+        2942,
+        2953
+      ],
+      "bounds": [
+        44.236614,
+        -121.211701,
+        44.238697,
+        -121.205973
+      ]
+    },
+    {
+      "printed": "VLG POINTE",
+      "pdfPoint": [
+        493.46,
+        700.13
+      ],
+      "name": "Village Pointe",
+      "slug": "village-pointe",
+      "platNames": [
+        "VILLAGE POINTE PHASE 1",
+        "VILLAGE POINTE PHASE 8",
+        "VILLAGE POINTE PHASES 2 & 3",
+        "VILLAGE POINTE PHASES 4-7"
+      ],
+      "sourceIds": [
+        2209,
+        2211,
+        2212,
+        2213
+      ],
+      "bounds": [
+        44.27281,
+        -121.207475,
+        44.27637,
+        -121.199562
+      ]
+    },
+    {
+      "printed": "VLG SQ",
+      "pdfPoint": [
+        687.89,
+        1093.76
+      ],
+      "name": "Village Square",
+      "slug": "village-square",
+      "platNames": [
+        "VILLAGE SQUARE"
+      ],
+      "sourceIds": [
+        1749
+      ],
+      "bounds": [
+        44.253873,
+        -121.190082,
+        44.254701,
+        -121.189081
+      ]
+    },
+    {
+      "name": "Virginia Center",
+      "slug": "virginia-center",
+      "platNames": [
+        "Virginia Center"
+      ],
+      "sourceIds": [
+        2983
+      ],
+      "bounds": [
+        44.296401,
+        -121.173641,
+        44.29769,
+        -121.172009
+      ]
+    },
+    {
+      "printed": "VISTA DORADO",
+      "pdfPoint": [
+        1037.29,
+        197.9
+      ],
+      "name": "Vista Dorado",
+      "slug": "vista-dorado",
+      "platNames": [
+        "VISTA DORADO"
+      ],
+      "sourceIds": [
+        1117
+      ],
+      "bounds": [
+        44.29824,
+        -121.165541,
+        44.301746,
+        -121.163895
+      ]
+    },
+    {
+      "name": "Vista La Monte Industrial Park",
+      "slug": "vista-la-monte-industrial-park",
+      "platNames": [
+        "VISTA LA MONTE INDUSTRIAL PARK"
+      ],
+      "sourceIds": [
+        1601
+      ],
+      "bounds": [
+        44.276654,
+        -121.158672,
+        44.280138,
+        -121.15635
+      ]
+    },
+    {
+      "printed": "VISTA MDWS",
+      "pdfPoint": [
+        761.02,
+        113.04
+      ],
+      "name": "Vista Meadows",
+      "slug": "vista-meadows",
+      "platNames": [
+        "VISTA MEADOWS PHASE 1",
+        "VISTA MEADOWS PHASE 2",
+        "VISTA MEADOWS PHASE 3",
+        "VISTA MEADOWS PHASE 4"
+      ],
+      "sourceIds": [
+        909,
+        2019,
+        2020,
+        2747
+      ],
+      "bounds": [
+        44.301898,
+        -121.188911,
+        44.305475,
+        -121.182691
+      ]
+    },
+    {
+      "name": "Vista Point",
+      "slug": "vista-point",
+      "platNames": [
+        "Vista Point 711-21-000245-PLNG"
+      ],
+      "sourceIds": [
+        3219
+      ],
+      "bounds": [
+        44.280118,
+        -121.203976,
+        44.281023,
+        -121.20184
+      ]
+    },
+    {
+      "printed": "VOLCANO PL",
+      "pdfPoint": [
+        496.34,
+        1175.36
+      ],
+      "name": "Volcano Place",
+      "slug": "volcano-place",
+      "platNames": [
+        "VOLCANO PLACE",
+        "VOLCANO PLACE II"
+      ],
+      "sourceIds": [
+        2288,
+        2289
+      ],
+      "bounds": [
+        44.249366,
+        -121.205899,
+        44.250328,
+        -121.204424
+      ]
+    },
+    {
+      "printed": "VOLCANO SUBD",
+      "pdfPoint": [
+        589.21,
+        1177.47
+      ],
+      "name": "Volcano Subdivision",
+      "slug": "volcano-subdivision",
+      "platNames": [
+        "VOLCANO SUBDIVISION"
+      ],
+      "sourceIds": [
+        1957
+      ],
+      "bounds": [
+        44.249389,
+        -121.199116,
+        44.250217,
+        -121.196787
+      ]
+    },
+    {
+      "name": "Walter's Views",
+      "slug": "walter-s-views",
+      "platNames": [
+        "Walter's Views 711-21-000185-PLNG-SUB"
+      ],
+      "sourceIds": [
+        3083
+      ],
+      "bounds": [
+        44.277726,
+        -121.20753,
+        44.278312,
+        -121.206832
+      ]
+    },
+    {
+      "name": "Ward Commons",
+      "slug": "ward-commons",
+      "platNames": [
+        "WARD COMMONS"
+      ],
+      "sourceIds": [
+        3090
+      ],
+      "bounds": [
+        44.257307,
+        -121.220209,
+        44.25828,
+        -121.219173
+      ]
+    },
+    {
+      "printed": "WATERWAY ADTN TO REDMOND",
+      "pdfPoint": [
+        842.23,
+        992.4
+      ],
+      "name": "Waterway Addition to Redmond",
+      "slug": "waterway-addition-to-redmond",
+      "platNames": [
+        "WATERWAY ADDITION TO REDMOND"
+      ],
+      "sourceIds": [
+        2302
+      ],
+      "bounds": [
+        44.258432,
+        -121.181937,
+        44.261779,
+        -121.178979
+      ]
+    },
+    {
+      "printed": "WAVERLY",
+      "pdfPoint": [
+        513.22,
+        526.58
+      ],
+      "name": "Waverly",
+      "slug": "waverly",
+      "platNames": [
+        "WAVERLY"
+      ],
+      "sourceIds": [
+        2053
+      ],
+      "bounds": [
+        44.281968,
+        -121.203362,
+        44.283705,
+        -121.200731
+      ]
+    },
+    {
+      "printed": "WECKERLE HTS",
+      "pdfPoint": [
+        862.09,
+        351.37
+      ],
+      "name": "Weckerle Heights",
+      "slug": "weckerle-heights",
+      "platNames": [
+        "WECKERLE HEIGHTS"
+      ],
+      "sourceIds": [
+        2030
+      ],
+      "bounds": [
+        44.290988,
+        -121.179076,
+        44.292403,
+        -121.177627
+      ]
+    },
+    {
+      "printed": "WEST CYN ESTS",
+      "pdfPoint": [
+        672.2,
+        282.76
+      ],
+      "name": "West Canyon Estates",
+      "slug": "west-canyon-estates",
+      "platNames": [
+        "WEST CANYON ESTATES PHASE 1",
+        "WEST CANYON ESTATES PHASE 2",
+        "WEST CANYON ESTATES PHASE 3",
+        "WEST CANYON ESTATES PHASE 4"
+      ],
+      "sourceIds": [
+        2033,
+        2034,
+        2035,
+        2036
+      ],
+      "bounds": [
+        44.294577,
+        -121.194102,
+        44.296397,
+        -121.18902
+      ]
+    },
+    {
+      "name": "Westmount Condominium",
+      "slug": "westmount-condominium",
+      "platNames": [
+        "Westmount Condominium"
+      ],
+      "sourceIds": [
+        3130
+      ],
+      "bounds": [
+        44.236625,
+        -121.213278,
+        44.237314,
+        -121.211892
+      ]
+    },
+    {
+      "printed": "WHITEHORSE",
+      "pdfPoint": [
+        383.99,
+        1036.29
+      ],
+      "name": "Whitehorse",
+      "slug": "whitehorse",
+      "platNames": [
+        "WHITEHORSE PHASE 1",
+        "WHITEHORSE PHASE 8",
+        "WHITEHORSE PHASES 2, 3, 4 AND 5",
+        "WHITEHORSE PHASES 6 AND 7"
+      ],
+      "sourceIds": [
+        2248,
+        2249,
+        2250,
+        2251
+      ],
+      "bounds": [
+        44.255739,
+        -121.211997,
+        44.258321,
+        -121.209593
+      ]
+    },
+    {
+      "printed": "WILDFLOWER",
+      "pdfPoint": [
+        702.47,
+        357.03
+      ],
+      "name": "Wildflower",
+      "slug": "wildflower",
+      "platNames": [
+        "WILDFLOWER"
+      ],
+      "sourceIds": [
+        861
+      ],
+      "bounds": [
+        44.290962,
+        -121.191735,
+        44.292541,
+        -121.189103
+      ]
+    },
+    {
+      "printed": "WILLOW SPGS",
+      "pdfPoint": [
+        453.84,
+        841.57
+      ],
+      "name": "Willow Springs",
+      "slug": "willow-springs",
+      "platNames": [
+        "WILLOW SPRINGS PHASE 1",
+        "WILLOW SPRINGS PHASE 2",
+        "WILLOW SPRINGS PHASE 3"
+      ],
+      "sourceIds": [
+        2225,
+        2226,
+        2227
+      ],
+      "bounds": [
+        44.265829,
+        -121.209249,
+        44.267882,
+        -121.204536
+      ]
+    },
+    {
+      "printed": "WINDHAVEN PARK",
+      "pdfPoint": [
+        1011.2,
+        343.82
+      ],
+      "name": "Windhaven Park",
+      "slug": "windhaven-park",
+      "platNames": [
+        "WINDHAVEN PARK PHASE 1"
+      ],
+      "sourceIds": [
+        1856
+      ],
+      "bounds": [
+        44.29108,
+        -121.168888,
+        44.293584,
+        -121.16641
+      ]
+    },
+    {
+      "printed": "WINDROW AC",
+      "pdfPoint": [
+        635.94,
+        1241.32
+      ],
+      "name": "Windrow Acres",
+      "slug": "windrow-acres",
+      "platNames": [
+        "WINDROW ACRES",
+        "WINDROW ACRES BLOCK 3 LOTS 2 & 3 REPLAT"
+      ],
+      "sourceIds": [
+        1794,
+        1815
+      ],
+      "bounds": [
+        44.244034,
+        -121.198757,
+        44.249774,
+        -121.189942
+      ]
+    },
+    {
+      "printed": "WINDSONG",
+      "pdfPoint": [
+        687.63,
+        312.86
+      ],
+      "name": "Windsong",
+      "slug": "windsong",
+      "platNames": [
+        "WINDSONG"
+      ],
+      "sourceIds": [
+        2037
+      ],
+      "bounds": [
+        44.293385,
+        -121.191882,
+        44.294584,
+        -121.189066
+      ]
+    }
+  ]
+}

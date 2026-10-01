@@ -232,15 +232,16 @@ export const es: Dictionary = {
       searching: "Buscando…",
       addressPrivacy:
         "Las sugerencias aparecen después de tres caracteres y una pausa al escribir. Las direcciones se buscan en los datos del condado de Deschutes. Los lugares y las direcciones sin coincidencia se buscan con Photon (OpenStreetMap). Estos servicios reciben lo que escribes; Steppe no lo guarda ni solicita la ubicación de tu dispositivo.",
-      pickAddress: "Elige un resultado para abrir el mapa detallado (5 MB).",
+      pickAddress:
+        "Elige un resultado para abrir el mapa de contornos del condado.",
       noAddress:
         "No se encontró una dirección en el área de Redmond. Añade el nombre de la calle y Redmond, o usa Lista.",
       addressError:
         "La búsqueda de direcciones no está disponible. Puedes explorar el mapa o usar Lista.",
       addressLocated:
-        "Dirección seleccionada. En el mapa detallado, compara su marcador con los nombres de vecindarios impresos.",
+        "Dirección seleccionada. Revisa los contornos y los nombres del condado alrededor del marcador.",
       addressOutside:
-        "Esta dirección está fuera del mapa de 2019. Elige un vecindario en Lista o pide ayuda con «Ninguno encaja».",
+        "Esta dirección está fuera del área del mapa. Elige un vecindario en Lista o pide ayuda con «Ninguno encaja».",
       addressHint:
         "Un nombre cercano es una pista, no confirma los límites. Elige el vecindario que consideras tu hogar y guarda.",
       clearAddress: "Borrar dirección",
@@ -251,9 +252,9 @@ export const es: Dictionary = {
         "Explora los nombres de las subdivisiones de Redmond y las calles cercanas, luego elige tu vecindario abajo.",
       date: "Mapa aéreo de referencia · 3 de abril de 2019",
       coverage:
-        "Este mapa histórico no muestra todos los vecindarios. Sus nombres y contornos son una referencia, no límites verificados. Si tienes dudas, elige «Ninguno encaja» abajo.",
+        "Los contornos muestran planos de subdivisiones registrados en el área de crecimiento urbano de Redmond, consultados el 1 de octubre de 2026. Las fases y los planos revisados pueden superponerse y los nombres de vecindarios más amplios pueden diferir. La imagen aérea sigue siendo de 2019. Si tienes dudas, elige «Ninguno encaja» abajo.",
       alt: "Mapa aéreo de subdivisiones de Redmond de 2019, con nombres de vecindarios, calles y límites de la ciudad.",
-      explore: "Explorar mapa (5 MB)",
+      explore: "Explorar contornos del condado",
       loading: "Cargando mapa…",
       error:
         "No se pudo cargar el mapa interactivo. Usa la vista general o abre el mapa original abajo.",
@@ -271,11 +272,11 @@ export const es: Dictionary = {
       located:
         "Mostrando {name}. El marcador indica su nombre impreso, no sus límites.",
       missing:
-        "No podemos relacionar con certeza {name} con un nombre en este mapa de 2019. Aún puedes elegirlo en la lista de abajo.",
+        "No hay un contorno del condado ni un nombre en el mapa histórico para {name}. Aún puedes elegirlo abajo.",
       streetPrivacy:
         "El mapa de calles y Comparar cargan imágenes de OpenStreetMap. No se solicita la ubicación de tu dispositivo.",
       streetError:
-        "No se pudieron cargar algunas imágenes de calles. Prueba la vista aérea de 2019 o el PDF original.",
+        "No se pudieron cargar algunas imágenes de calles. Los contornos, la vista aérea de 2019 y Lista siguen disponibles.",
       region: "Mapa interactivo de referencia de los vecindarios de Redmond",
       navigation: "Navegación del mapa",
       zoomIn: "Acercar",
@@ -285,7 +286,28 @@ export const es: Dictionary = {
         "Vista aérea de 2019: Western Title / Fidelity National Title; Esri y colaboradores de imágenes.",
       contributors: "colaboradores",
       selectionHint:
-        "Buscar un nombre aquí no cambia tu vecindario guardado. Elígelo abajo y pulsa Guardar vecindario.",
+        "Elige un nombre para cambiar tu selección sin guardar y pulsa Guardar vecindario. Explorar el mapa o buscar una dirección no cambia tu perfil.",
+      countyDate:
+        "Contornos de subdivisiones del condado · consultados el {date}",
+      countyAlt:
+        "Contornos de subdivisiones de Redmond del condado de Deschutes, consultados el 1 de octubre de 2026.",
+      outlines: "Contornos del condado",
+      countyCredit: "Contornos: oficina del agrimensor del condado de Deschutes",
+      countyLocated:
+        "Mostrando {name} en los contornos de planos del condado. Revisa el mapa y elígelo si es tu vecindario.",
+      platCount:
+        "{count} contornos de planos registrados. Las fases y los planos revisados pueden superponerse.",
+      chooseFocused: "Elegir {name}",
+      choiceUnavailable:
+        "Este nombre aún no está en la lista seleccionable. Usa «Ninguno encaja» para pedir ayuda.",
+      outlineError:
+        "No se pudieron cargar los contornos. Usa Lista, la vista general o la vista aérea de 2019.",
+      aerialError:
+        "No se pudo cargar la imagen aérea de 2019. Los contornos y Lista siguen disponibles.",
+      atMarker:
+        "Planos del condado en este marcador: revisa un nombre para ver sus contornos:",
+      noOutlineAtMarker:
+        "Ningún contorno de este conjunto de datos cubre el marcador. Explora el mapa o usa Lista; un nombre cercano no confirma tu vecindario.",
     },
     title: "Tu vecindario",
     intro:

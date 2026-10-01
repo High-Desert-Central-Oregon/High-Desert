@@ -12,11 +12,18 @@ import mapData from "../../../public/maps/redmond-2019/map.json";
 import { NeighborhoodMap } from "./neighborhood-map";
 import { Button } from "@/components/ui/button";
 import { setNeighborhood, type NeighborhoodState } from "./actions";
+import { subdivisionCatalog } from "@/lib/subdivision-outlines";
 import { t, type Dictionary } from "@/lib/i18n";
 
 type Neighborhood = { id: string; name: string };
 
 const NONE = "none";
+const countyAliases = Object.fromEntries(
+  subdivisionCatalog.neighborhoods.map((row) => [
+    row.name,
+    row.platNames.join(" "),
+  ]),
+);
 
 /**
  * Neighborhood picker. Redmond neighborhoods as radio buttons (alphabetical,
@@ -48,7 +55,7 @@ export function NeighborhoodForm({
   const filterId = useId();
   const aliases: Record<string, string> = mapData.aliases;
   const matches = (name: string) =>
-    `${name} ${aliases[name] ?? ""}`
+    `${name} ${aliases[name] ?? ""} ${countyAliases[name] ?? ""}`
       .toLocaleLowerCase()
       .includes(filter.trim().toLocaleLowerCase());
   // Track the selection so the note field can appear only for "none fits".
@@ -136,6 +143,10 @@ export function NeighborhoodForm({
           dict={dict}
           names={neighborhoods.map((nb) => nb.name)}
           selectedName={neighborhoods.find((nb) => nb.id === selected)?.name}
+          onChooseName={(name) => {
+            const row = neighborhoods.find((nb) => nb.name === name);
+            if (row) setSelected(row.id);
+          }}
         />
       )}
       <div

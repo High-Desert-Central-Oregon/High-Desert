@@ -46,14 +46,14 @@ by the server action's read-back and the separately gated local Postgres suite.
 ## Redmond neighborhood map and address lookup
 
 Map opens first with the static overview; List searches full names and printed map
-aliases (try `GLN`). Both modes contain the complete 267-choice catalog and share
+aliases (try `GLN`). Both modes contain the complete 334-choice catalog and share
 one selection. Verify saves, failed saves and Reload saved profile in both modes.
 Map browsing and address searches must leave Successful writes unchanged.
 
 The address endpoint is a local fixture. Type any three-character query and pause;
 suggestions should appear without clicking Find address. Use arrows and Enter or
 click the fixed public-park suggestion; its label must fill the input without a
-second search, and load the raster and its marker. Enter
+second search, and load the county outlines and its marker. Enter
 must search without saving. The second result is outside the 2019 image and must
 explain that limitation without an edge marker. Clear address removes the query,
 results and marker. Check `&address-empty=1` and `&address-failure=1` messages.
@@ -74,3 +74,9 @@ Open `/?screen=neighborhoods&map-image-failure=1` and Explore to force a local
 503. The handler restores the overview with an alert, leaving List, the PDF link
 and chooser usable. This intentionally produces a failed-resource console entry.
 No database is contacted. OSM tiles load only after Street map / Compare.
+
+## County outline map
+
+Explore county outlines should load 551 paths without fetching street tiles or the historical raster. The native map name selector and polygon click inspect names; a name remains permanently labeled when focused. Choose 121 West must update the draft selection with Successful writes unchanged; only Save writes. Confirm retention after Map/List switching and Reload saved profile. Filter List by a county phase/replat alias and check that it finds the grouped choice. Address fixtures use synthetic points; check the containing-plat chips and no-match help without an automatic selection.
+
+`&outline-failure=1` forces geometry failure; the alert, static overview, List and 2019 aerial must remain usable. `&map-image-failure=1` fails only the optional historical raster: county geometry remains displayed. Repeat at 390px in Spanish, including controls, status, selection and save/reload.

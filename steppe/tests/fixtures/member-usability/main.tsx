@@ -15,6 +15,7 @@ import { setFailure } from "./actions";
 import { AuthNotice } from "../../../components/member-pipelines/auth-notice";
 import { NeighborhoodForm } from "../../../app/protected/neighborhoods/neighborhood-form";
 import catalog from "../../../scripts/maps/source-labels.json";
+import { subdivisionCatalog } from "../../../lib/subdivision-outlines";
 import { getSavedNeighborhood } from "./actions";
 import "../../../app/globals.css";
 function App() {
@@ -228,6 +229,18 @@ function NeighborhoodFixture({ dict }: { dict: typeof en }) {
             id: row.slug === "braydon-park" ? "braydon" : row.slug,
             name: row.name,
           })),
+          ...subdivisionCatalog.neighborhoods
+            .filter(
+              (row) =>
+                !catalog.some((old) => old.name === row.name) &&
+                ![
+                  "Cinder Butte Village",
+                  "Eagle Crest",
+                  "Rimrock West Estate",
+                  "Village at Ridgeview",
+                ].includes(row.name),
+            )
+            .map((row) => ({ id: row.slug, name: row.name })),
           { id: "cinder", name: "Cinder Butte Village" },
           { id: "eagle", name: "Eagle Crest" },
           { id: "rimrock-west", name: "Rimrock West Estate" },

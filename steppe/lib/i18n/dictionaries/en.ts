@@ -225,15 +225,15 @@ export const en = {
       searching: "Searching…",
       addressPrivacy:
         "Suggestions appear after three characters and a pause in typing. Street addresses are searched in Deschutes County’s address data. Places and unmatched addresses are searched with Photon (OpenStreetMap). These services receive what you type; Steppe does not save it or request your device location.",
-      pickAddress: "Choose a result to open the detailed map (5 MB).",
+      pickAddress: "Choose a result to open the county outline map.",
       noAddress:
         "No matching address found in the Redmond area. Try adding the street name and Redmond, or use List.",
       addressError:
         "Address search is unavailable. You can explore the map or use List.",
       addressLocated:
-        "Address selected. On the detailed map, compare its marker with the printed neighborhood names.",
+        "Address selected. Review the county outlines and names around its marker.",
       addressOutside:
-        "This address is outside the 2019 map’s coverage. Choose a neighborhood from List or ask for help with “None of these fit”.",
+        "This address is outside this map’s coverage. Choose a neighborhood from List or ask for help with “None of these fit”.",
       addressHint:
         "A nearby label is a clue, not a boundary match. Choose the neighborhood you call home, then save.",
       clearAddress: "Clear address",
@@ -244,9 +244,9 @@ export const en = {
         "Explore Redmond’s subdivision names and nearby streets, then choose your neighborhood below.",
       date: "Aerial reference map · April 3, 2019",
       coverage:
-        "This historical map does not show every neighborhood. Its labels and outlines are a reference, not verified boundaries. If you are unsure, choose “None of these fit” below.",
+        "County outlines show recorded subdivision plats in Redmond’s urban growth area, checked October 1, 2026. Phases and replats can overlap, and broader neighborhood names may differ. The aerial image remains from 2019. If you are unsure, choose “None of these fit” below.",
       alt: "2019 Redmond aerial subdivision map with labeled neighborhoods, roads, and city limits.",
-      explore: "Explore map (5 MB)",
+      explore: "Explore county outlines",
       loading: "Loading map…",
       error:
         "The interactive map could not load. Use the overview or open the original map below.",
@@ -264,11 +264,11 @@ export const en = {
       located:
         "Showing {name}. The marker locates its printed label, not its boundary.",
       missing:
-        "We cannot confidently match {name} to a label on this 2019 map. You can still choose it in the list below.",
+        "No county outline or historical map label is available for {name}. You can still choose it below.",
       streetPrivacy:
         "Street map and Compare load tiles from OpenStreetMap. Your device location is not requested.",
       streetError:
-        "Some street tiles could not load. Try the 2019 aerial view or the original PDF.",
+        "Some street tiles could not load. County outlines, the 2019 aerial view, and List remain available.",
       region: "Interactive Redmond neighborhood reference map",
       navigation: "Map navigation",
       zoomIn: "Zoom in",
@@ -278,7 +278,28 @@ export const en = {
         "2019 aerial: Western Title / Fidelity National Title; Esri and imagery contributors.",
       contributors: "contributors",
       selectionHint:
-        "Finding a name here does not change your saved neighborhood. Choose it below, then Save neighborhood.",
+        "Choose a name to update your unsaved selection, then press Save neighborhood. Exploring the map or finding an address makes no profile change.",
+      countyDate: "County subdivision outlines · checked {date}",
+      countyAlt:
+        "Redmond subdivision outlines from Deschutes County, checked October 1, 2026.",
+      outlines: "County outlines",
+      countyCredit:
+        "Subdivision outlines: Deschutes County Surveyor’s Office",
+      countyLocated:
+        "Showing {name} in the county plat outlines. Review the map, then choose it if this is your neighborhood.",
+      platCount:
+        "{count} recorded plat shapes. Phases and replats can overlap.",
+      chooseFocused: "Choose {name}",
+      choiceUnavailable:
+        "This name is not in the selectable list yet. Use “None of these fit” to ask for help.",
+      outlineError:
+        "County outlines could not load. Use List, the static overview, or the 2019 aerial view.",
+      aerialError:
+        "The 2019 aerial image could not load. County outlines and List remain available.",
+      atMarker:
+        "County plats at this marker. Review a name to see its outlines:",
+      noOutlineAtMarker:
+        "No county plat outline covers this marker in this snapshot. Browse the map or use List; a nearby name does not confirm your neighborhood.",
     },
     title: "Your neighborhood",
     intro:
