@@ -1,18 +1,25 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useState } from "react";
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useId,
+  useState,
+} from "react";
 import Link from "next/link";
+import mapData from "../../../public/maps/redmond-2019/map.json";
 import { NeighborhoodMap } from "./neighborhood-map";
 import { Button } from "@/components/ui/button";
 import { setNeighborhood, type NeighborhoodState } from "./actions";
-import type { Dictionary } from "@/lib/i18n";
+import { t, type Dictionary } from "@/lib/i18n";
 
 type Neighborhood = { id: string; name: string };
 
 const NONE = "none";
 
 /**
- * Neighborhood picker. 35 Redmond neighborhoods as radio buttons (alphabetical,
+ * Neighborhood picker. Redmond neighborhoods as radio buttons (alphabetical,
  * two-column on wider screens) plus a "None of these fit" option that reveals an
  * optional "where do you live?" note. Submits via server action; shows an inline
  * confirmation rather than redirecting, so the member can immediately change
@@ -31,10 +38,19 @@ export function NeighborhoodForm({
   currentId: string | null;
   dict: Dictionary;
 }) {
-  const [state, action, isPending] = useActionState<NeighborhoodState, FormData>(
-    setNeighborhood,
-    null,
-  );
+  const [state, action, isPending] = useActionState<
+    NeighborhoodState,
+    FormData
+  >(setNeighborhood, null);
+  const [view, setView] = useState<"map" | "list">("map");
+  const [filter, setFilter] = useState("");
+  const chooserId = useId();
+  const filterId = useId();
+  const aliases: Record<string, string> = mapData.aliases;
+  const matches = (name: string) =>
+    `${name} ${aliases[name] ?? ""}`
+      .toLocaleLowerCase()
+      .includes(filter.trim().toLocaleLowerCase());
   // Track the selection so the note field can appear only for "none fits".
   const [selected, setSelected] = useState<string>(currentId ?? NONE);
 
@@ -97,23 +113,89 @@ export function NeighborhoodForm({
         </p>
       )}
 
-      <NeighborhoodMap
-        dict={dict}
-        names={neighborhoods.map((nb) => nb.name)}
-        selectedName={neighborhoods.find((nb) => nb.id === selected)?.name}
-      />
-
-      <fieldset>
+      <div
+        role="group"
+        aria-label={dict.neighborhoods.pickerView}
+        className="flex gap-2"
+      >
+        {(["map", "list"] as const).map((value) => (
+          <Button
+            type="button"
+            key={value}
+            aria-pressed={view === value}
+            variant={view === value ? "default" : "outline"}
+            className="min-h-11"
+            onClick={() => setView(value)}
+          >
+            {dict.neighborhoods[value === "map" ? "mapOption" : "listOption"]}
+          </Button>
+        ))}
+      </div>
+      {view === "map" && (
+        <NeighborhoodMap
+          dict={dict}
+          names={neighborhoods.map((nb) => nb.name)}
+          selectedName={neighborhoods.find((nb) => nb.id === selected)?.name}
+        />
+      )}
+      <div
+        hidden={view !== "map"}
+        className={view === "map" ? "space-y-2" : "hidden"}
+      >
+        <label htmlFor={chooserId} className="text-sm font-medium">
+          {dict.neighborhoods.legend}
+        </label>
+        <select
+          id={chooserId}
+          name="neighborhood_id"
+          value={selected}
+          disabled={view !== "map"}
+          onChange={(event) => setSelected(event.target.value)}
+          className="min-h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
+        >
+          {neighborhoods.map((nb) => (
+            <option key={nb.id} value={nb.id}>
+              {nb.name}
+            </option>
+          ))}
+          <option value={NONE}>{dict.neighborhoods.noneOptionLabel}</option>
+        </select>
+      </div>
+      <fieldset
+        hidden={view !== "list"}
+        disabled={view !== "list"}
+        className={view === "list" ? "space-y-3" : "hidden"}
+      >
         <legend className="mb-3 text-sm font-medium">
           {dict.neighborhoods.legend}
         </legend>
-
+        <div className="space-y-1">
+          <label htmlFor={filterId} className="text-sm">
+            {dict.neighborhoods.filterLabel}
+          </label>
+          <input
+            id={filterId}
+            type="search"
+            maxLength={100}
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            className="min-h-11 w-full rounded-md border border-input bg-background px-3 text-sm"
+          />
+          <p role="status" className="text-sm text-muted-foreground">
+            {t(dict.neighborhoods.filterCount, {
+              count: String(
+                neighborhoods.filter((nb) => matches(nb.name)).length,
+              ),
+              total: String(neighborhoods.length),
+            })}
+          </p>
+        </div>
         {/* Two-column grid on sm+; single column on mobile */}
         <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
           {neighborhoods.map((nb) => (
             <label
               key={nb.id}
-              className="flex cursor-pointer items-center gap-2.5 rounded px-2 py-1.5 hover:bg-muted"
+              className={`${matches(nb.name) ? "flex" : "hidden"} min-h-11 cursor-pointer items-center gap-2.5 rounded px-2 py-1.5 hover:bg-muted`}
             >
               <input
                 type="radio"
@@ -149,6 +231,13 @@ export function NeighborhoodForm({
         </div>
       </fieldset>
 
+      <p role="status" className="text-sm font-medium">
+        {t(dict.neighborhoods.selectedChoice, {
+          name:
+            neighborhoods.find((nb) => nb.id === selected)?.name ??
+            dict.neighborhoods.noneOptionLabel,
+        })}
+      </p>
       {/* Optional note, only when "none fits" is chosen */}
       {selected === NONE && (
         <div className="flex flex-col gap-1.5">

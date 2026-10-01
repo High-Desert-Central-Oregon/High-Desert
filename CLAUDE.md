@@ -102,7 +102,7 @@ undermine them:
 3. Terms & Privacy read-confirm gate (seed from `documents`; record `consents`).
 4. **Verification + reviewer queue** (multi-path, human-reviewed, evidence purged on
    decision). *This is the substrate — build it before any participation screen.*
-5. Neighborhoods (self-assign from the 35 seeded; "none fits" → human).
+5. Neighborhoods (self-assign from the seeded catalog; "none fits" → human).
 6. Event primitive (create / list / detail / RSVP / bringing). No comment feed.
 7. Governance (proposal → tenure-weighted vote → result from `proposal_results` → audit).
 8. Moderation + appeal + transparency view (append-only; reuse governance for overrides).
@@ -208,7 +208,7 @@ chosen, in writing.
 ## Key files
 
 - `schema.sql` — the database: tables, RLS, triggers, the `proposal_results` view, seeds
-  (35 Redmond neighborhoods; placeholder Terms/Privacy rows). Run it first.
+  (267 neighborhood choices; placeholder Terms/Privacy rows). Run it first.
 - `SPEC.md` — the base build spec (scope, data model, RLS, per-feature implementation,
   sequence, locked decisions). For groups / calendar / the Exchange, the active companion
   is `docs/Steppe-Groups-Calendar-Exchange-Spec-v2.md` (see DECISIONS.md 2026-07-04).

@@ -218,11 +218,37 @@ export const es: Dictionary = {
   },
 
   neighborhoods: {
+    pickerView: "Elige Mapa o Lista",
+    mapOption: "Mapa",
+    listOption: "Lista",
+    filterLabel: "Buscar nombres o etiquetas del mapa",
+    filterCount: "Mostrando {count} de {total} nombres",
+    selectedChoice: "Seleccionado: {name}",
     map: {
+      searchLocale: "es",
+      addressLabel: "Encuentra tu dirección en el mapa",
+      addressPlaceholder: "Dirección o lugar cercano, Redmond",
+      searchAddress: "Buscar dirección",
+      searching: "Buscando…",
+      addressPrivacy:
+        "La búsqueda envía la dirección o el lugar que escribes a Photon (OpenStreetMap). Steppe no lo guarda. No se solicita la ubicación de tu dispositivo.",
+      pickAddress: "Elige un resultado para abrir el mapa detallado (5 MB).",
+      noAddress:
+        "No se encontró una dirección en el área de Redmond. Añade el nombre de la calle y Redmond, o usa Lista.",
+      addressError:
+        "La búsqueda de direcciones no está disponible. Puedes explorar el mapa o usar Lista.",
+      addressLocated:
+        "Dirección seleccionada. En el mapa detallado, compara su marcador con los nombres de vecindarios impresos.",
+      addressOutside:
+        "Esta dirección está fuera del mapa de 2019. Elige un vecindario en Lista o pide ayuda con «Ninguno encaja».",
+      addressHint:
+        "Un nombre cercano es una pista, no confirma los límites. Elige el vecindario que consideras tu hogar y guarda.",
+      clearAddress: "Borrar dirección",
+
       overview: "Volver a la vista general",
       title: "Encuentra tu vecindario en un mapa",
       intro:
-        "Explora los nombres de las subdivisiones de Redmond y las calles cercanas, luego elige tu vecindario en la lista de abajo.",
+        "Explora los nombres de las subdivisiones de Redmond y las calles cercanas, luego elige tu vecindario abajo.",
       date: "Mapa aéreo de referencia · 3 de abril de 2019",
       coverage:
         "Este mapa histórico no muestra todos los vecindarios. Sus nombres y contornos son una referencia, no límites verificados. Si tienes dudas, elige «Ninguno encaja» abajo.",
@@ -259,7 +285,7 @@ export const es: Dictionary = {
         "Vista aérea de 2019: Western Title / Fidelity National Title; Esri y colaboradores de imágenes.",
       contributors: "colaboradores",
       selectionHint:
-        "Buscar un nombre aquí no cambia tu vecindario guardado. Elígelo en la lista de abajo y pulsa Guardar vecindario.",
+        "Buscar un nombre aquí no cambia tu vecindario guardado. Elígelo abajo y pulsa Guardar vecindario.",
     },
     title: "Tu vecindario",
     intro:

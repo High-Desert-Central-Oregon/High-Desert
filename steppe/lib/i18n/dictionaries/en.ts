@@ -211,11 +211,37 @@ export const en = {
   },
 
   neighborhoods: {
+    pickerView: "Choose Map or List",
+    mapOption: "Map",
+    listOption: "List",
+    filterLabel: "Search names or map labels",
+    filterCount: "Showing {count} of {total} names",
+    selectedChoice: "Selected: {name}",
     map: {
+      searchLocale: "en",
+      addressLabel: "Find your address on the map",
+      addressPlaceholder: "Street address or a nearby place, Redmond",
+      searchAddress: "Find address",
+      searching: "Searching…",
+      addressPrivacy:
+        "Search sends the address or place you enter to Photon (OpenStreetMap). Steppe does not save it. Your device location is not requested.",
+      pickAddress: "Choose a result to open the detailed map (5 MB).",
+      noAddress:
+        "No matching address found in the Redmond area. Try adding the street name and Redmond, or use List.",
+      addressError:
+        "Address search is unavailable. You can explore the map or use List.",
+      addressLocated:
+        "Address selected. On the detailed map, compare its marker with the printed neighborhood names.",
+      addressOutside:
+        "This address is outside the 2019 map’s coverage. Choose a neighborhood from List or ask for help with “None of these fit”.",
+      addressHint:
+        "A nearby label is a clue, not a boundary match. Choose the neighborhood you call home, then save.",
+      clearAddress: "Clear address",
+
       overview: "Return to overview",
       title: "Find your neighborhood on a map",
       intro:
-        "Explore Redmond’s subdivision names and nearby streets, then choose your neighborhood from the list below.",
+        "Explore Redmond’s subdivision names and nearby streets, then choose your neighborhood below.",
       date: "Aerial reference map · April 3, 2019",
       coverage:
         "This historical map does not show every neighborhood. Its labels and outlines are a reference, not verified boundaries. If you are unsure, choose “None of these fit” below.",
@@ -252,7 +278,7 @@ export const en = {
         "2019 aerial: Western Title / Fidelity National Title; Esri and imagery contributors.",
       contributors: "contributors",
       selectionHint:
-        "Finding a name here does not change your saved neighborhood. Choose it in the list below, then Save neighborhood.",
+        "Finding a name here does not change your saved neighborhood. Choose it below, then Save neighborhood.",
     },
     title: "Your neighborhood",
     intro:

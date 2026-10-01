@@ -25,16 +25,16 @@ generic feedback and fragment cleanup. No raw description should appear.
 ## Neighborhood selection retention
 
 Open `http://127.0.0.1:8771/?screen=neighborhoods`. This renders the real picker
-with two synthetic neighborhoods and no database or email access. The local
+with the full map catalog and no database or email access. The local
 action deliberately leaves `currentId` unchanged until Reload saved profile, so
 the check also covers a delayed server refresh.
 
-- Starting at None of these fit, choose A and save. After the success message,
-  A must remain checked and the optional note must stay hidden. Before the fix,
+- Starting at None of these fit, choose Braydon Park and save. After the success message,
+  Braydon Park must remain selected and the optional note must stay hidden. Before the fix,
   the form's automatic native reset checked None while reporting success.
-- Save again without changing the choice, then choose B and save. B must stay
-  checked. Reload saved profile remounts with the last successful stored choice.
-- Turn on Fail saves, pick A and save. The error must restore the committed B
+- Save again without changing the choice, then choose Juniper Glen and save. It must stay
+  selected. Reload saved profile remounts with the last successful stored choice.
+- Turn on Fail saves, reload the saved profile, pick Braydon Park and save. The error must restore the committed Juniper Glen
   choice. A failed write must not increment Successful writes.
 - Turn off Fail saves and choose None. Saving must show the existing confirmation
   card. Reload saved profile must select None and show the optional note.
@@ -43,20 +43,25 @@ the check also covers a delayed server refresh.
 This proves browser form retention; hosted database persistence is still checked
 by the server action's read-back and the separately gated local Postgres suite.
 
-## Redmond neighborhood map
+## Redmond neighborhood map and address lookup
 
-The neighborhood fixture serves the real local map assets. Expand the native map
-disclosure to see the static overview, then Explore map to load the detailed
-GeoPDF-derived image and Leaflet. Check Braydon Park, Diamond Bar Ranch and Greens
-at Redmond label markers, Street map / Compare, named zoom controls, keyboard
-arrows and +/−, Show whole map, and Return to overview. Missing names such as
-Cinder Butte Village and Eagle Crest must display the no-confident-match message.
-Browsing must leave Successful writes unchanged and the radio choice unchanged.
-Selecting a radio can locate its label, but only Save neighborhood may write.
-Repeat at 390px in Spanish and check focus, wrapping and no horizontal overflow.
+Map opens first with the static overview; List searches full names and printed map
+aliases (try `GLN`). Both modes contain the complete 267-choice catalog and share
+one selection. Verify saves, failed saves and Reload saved profile in both modes.
+Map browsing and address searches must leave Successful writes unchanged.
+
+The address endpoint is a local fixture. Search any three-character query, then
+choose the fixed public-park result to load the raster and its marker. Enter
+must search without saving. The second result is outside the 2019 image and must
+explain that limitation without an edge marker. Clear address removes the query,
+results and marker. Check `&address-empty=1` and `&address-failure=1` messages.
+
+Explore map loads the GeoPDF-derived raster and Leaflet. Check the new Juniper
+labels, Braydon Park, Street map / Compare, zoom, arrows/+/- and Return to overview.
+Missing names such as Cinder Butte Village must remain selectable. Repeat at 390px
+in Spanish and inspect keyboard focus, wrapping and no horizontal overflow.
 
 Open `/?screen=neighborhoods&map-image-failure=1` and Explore to force a local
-503 for the detailed raster. The real error handler must restore the static
-overview, show an alert, and leave the PDF link and picker usable. This intentionally
-produces one failed-resource console entry. No database is contacted. Street tiles
-are external and load only on a deliberate Street map / Compare choice.
+503. The handler restores the overview with an alert, leaving List, the PDF link
+and chooser usable. This intentionally produces a failed-resource console entry.
+No database is contacted. OSM tiles load only after Street map / Compare.
