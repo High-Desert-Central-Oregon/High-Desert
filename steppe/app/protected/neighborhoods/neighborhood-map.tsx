@@ -239,16 +239,29 @@ export function NeighborhoodMap({
         )}
         {!!results.length && (
           <p className="text-xs text-muted-foreground">
-            ©{" "}
-            <a
-              href="https://www.openstreetmap.org/copyright"
-              target="_blank"
-              rel="noopener"
-              className="underline"
-            >
-              OpenStreetMap
-            </a>{" "}
-            {copy.contributors}
+            {results.some((result) => result.source === "county") ? (
+              <a
+                href="https://maps.deschutes.org/server/rest/services/Hosted/E911_Address_Points/FeatureServer"
+                target="_blank"
+                rel="noopener"
+                className="underline"
+              >
+                Deschutes County — E911
+              </a>
+            ) : (
+              <>
+                ©{" "}
+                <a
+                  href="https://www.openstreetmap.org/copyright"
+                  target="_blank"
+                  rel="noopener"
+                  className="underline"
+                >
+                  OpenStreetMap
+                </a>{" "}
+                {copy.contributors}
+              </>
+            )}
           </p>
         )}
         {address && (

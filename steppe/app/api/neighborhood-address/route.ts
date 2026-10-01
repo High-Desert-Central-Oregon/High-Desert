@@ -4,6 +4,8 @@ import { rateLimited } from "@/lib/rate-limit";
 import { readLimitedJson } from "@/lib/limited-json";
 import {
   photonAddresses,
+  countyAddressUrl,
+  countyAddresses,
   REDMOND_SEARCH_BOX,
 } from "@/lib/neighborhood-address";
 
@@ -31,6 +33,21 @@ export async function POST(request: Request) {
     return respond({ results: [] }, 400);
   }
   if (q.length < 3 || q.length > 200) return respond({ results: [] }, 400);
+  const countyUrl = countyAddressUrl(q);
+  if (countyUrl) {
+    try {
+      const response = await fetch(countyUrl, {
+        signal: AbortSignal.timeout(3000),
+        cache: "no-store",
+      });
+      if (response.ok) {
+        const results = countyAddresses(await response.json());
+        if (results.length) return respond({ results });
+      }
+    } catch {
+      // The accessible list/map and existing place search remain available.
+    }
+  }
   try {
     const url = new URL("https://photon.komoot.io/api/");
     url.search = new URLSearchParams({
@@ -48,7 +65,7 @@ export async function POST(request: Request) {
       cache: "no-store",
     });
     if (!response.ok) return respond({ results: [], unavailable: true }, 503);
-    return respond({ results: photonAddresses(await response.json()) });
+    return respond({ results: photonAddresses(await response.json(), q) });
   } catch {
     return respond({ results: [], unavailable: true }, 503);
   }
