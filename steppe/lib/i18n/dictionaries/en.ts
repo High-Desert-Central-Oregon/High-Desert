@@ -507,6 +507,8 @@ export const en = {
     starting: "Sending…",
     sent: "Message sent · stays inside Steppe",
     error: "We couldn't send that. Please try again.",
+    draftError: "We couldn't confirm your message was sent. Your draft is still here. Please try again.",
+    reportDraftError: "We couldn't confirm your report was sent. Your text is still here. Please try again.",
     reachError: "This neighbor can't be reached right now.",
     // Thread view.
     reAbout: "Re: {title}",

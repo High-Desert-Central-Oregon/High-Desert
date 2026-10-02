@@ -518,6 +518,8 @@ export const es: Dictionary = {
     starting: "Enviando…",
     sent: "Mensaje enviado · se queda en Steppe",
     error: "No pudimos enviarlo. Inténtalo de nuevo.",
+    draftError: "No pudimos confirmar el envío de tu mensaje. Tu borrador sigue aquí. Inténtalo de nuevo.",
+    reportDraftError: "No pudimos confirmar el envío de tu reporte. Tu texto sigue aquí. Inténtalo de nuevo.",
     reachError: "No se puede contactar a este vecino por ahora.",
     reAbout: "Sobre: {title}",
     reGone: "Sobre una publicación que ya no está",

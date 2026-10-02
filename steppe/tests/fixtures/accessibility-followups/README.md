@@ -52,10 +52,19 @@ focus must remain visible in both themes and forced colors.
   the launcher. Use exactly `Synthetic success` in Expected to test the focused
   success receipt. These responses never create a report or email anyone.
 
-Authentication subscriptions are inert. Starting or reporting a conversation
-uses no-op fixture actions; this does not test real messaging redirects, draft
-retention across navigation, or server permissions. Native Safari keyboard,
-browser zoom, installed PWA and screen-reader speech remain separate checks.
+Authentication subscriptions are inert. Message composer, reply and report
+actions return a generic failure, or throw a synthetic transport error when
+Result is `throw`. Submit repeatedly: the text remains, the error gets focus,
+and Tab returns to the text field. Pending disables editing and sending. These
+message views intentionally never succeed or create a real conversation/report.
+
+Server action tests separately check authenticated identity, input limits,
+generic database refusals, successful redirects, sign-in redirects and the
+JS-optional form fallback. The browser fixture does not prove hosted permissions
+or full Next navigation. Enhanced drafts remain only in the current form: they
+are not persisted across reloads, navigation or a JS-disabled form submission.
+Native Safari keyboard, browser zoom, installed PWA and screen-reader speech
+remain separate checks.
 
 Server read-failure branches are covered separately by `accessibility-load-failures.test.ts`.
 Public landmarks and skip navigation should be checked in the actual Next site, including

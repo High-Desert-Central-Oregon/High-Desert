@@ -1,4 +1,5 @@
-import { startThread } from "./actions";
+import { startThread, startThreadDraft } from "./actions";
+import { MessageForm } from "./message-form";
 import type { Dictionary } from "@/lib/i18n";
 
 /**
@@ -29,7 +30,15 @@ export function MessageComposer({
           authorName.split(/\s+/)[0] || authorName,
         )}
       </summary>
-      <form action={startThread} className="mt-3 flex flex-col gap-2 border bg-card p-4">
+      <MessageForm
+        action={startThreadDraft}
+        fallbackAction={startThread}
+        className="mt-3 flex flex-col gap-2 border bg-card p-4"
+        buttonClassName="inline-flex items-center self-start bg-primary px-5 py-[11px] font-mono text-[13px] font-bold uppercase tracking-[0.06em] text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
+        sendLabel={dict.messages.send}
+        sendingLabel={dict.messages.starting}
+        errorMessage={dict.messages.draftError}
+      >
         <input type="hidden" name="with_id" value={authorId} />
         <input type="hidden" name="about_post" value={postId} />
         <input type="hidden" name="back" value={back} />
@@ -57,13 +66,7 @@ export function MessageComposer({
           />
           {dict.messages.composePrivacy}
         </p>
-        <button
-          type="submit"
-          className="inline-flex items-center self-start bg-primary px-5 py-[11px] font-mono text-[13px] font-bold uppercase tracking-[0.06em] text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
-        >
-          {dict.messages.send}
-        </button>
-      </form>
+      </MessageForm>
     </details>
   );
 }
