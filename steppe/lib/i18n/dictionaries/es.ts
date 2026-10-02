@@ -341,6 +341,12 @@ export const es: Dictionary = {
     saved: "Cambios guardados.",
     tagsHint:
       "Elige una o más etiquetas. Los eventos tienen su propio formulario.",
+    allowMessages: "Permitir mensajes sobre esta publicación",
+    allowMessagesHelp:
+      "Los vecinos verificados que puedan ver esta publicación podrán contactarte en privado dentro de Steppe. Al desactivarlo, se impide el contacto a través de esta publicación; las conversaciones existentes siguen abiertas. Puedes bloquear o denunciar a alguien en Mensajes.",
+    messagesOn:
+      "Los mensajes están activados para esta publicación. Cámbialo en Editar publicación.",
+    messagesOff: "Los mensajes están desactivados para esta publicación.",
     descriptions: {
       need: "Pide algo que necesites, como ayuda, una habilidad o un artículo.",
       offer:

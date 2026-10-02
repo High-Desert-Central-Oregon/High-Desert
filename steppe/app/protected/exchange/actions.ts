@@ -70,6 +70,7 @@ export async function createPost(
     title,
     body,
     neighborhood_id: neighborhoodId,
+    allow_messages: formData.get("allow_messages") === "on",
   });
   if (error) return { error: "generic" };
 
@@ -101,6 +102,7 @@ export async function updatePost(
       tags,
       category: tags[0],
       neighborhood_id: String(fd.get("neighborhood_id") ?? "").trim() || null,
+      allow_messages: fd.get("allow_messages") === "on",
     })
     .eq("id", id)
     .eq("author_id", profile.id)

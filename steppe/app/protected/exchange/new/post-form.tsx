@@ -46,6 +46,7 @@ export function PostForm({
     tags: string[];
     category: string;
     neighborhood_id: string | null;
+    allow_messages: boolean;
   };
 }) {
   const [state, action, isPending] = useActionState<PostFormState, FormData>(
@@ -60,6 +61,7 @@ export function PostForm({
     body: initial?.body ?? "",
     tags: initial?.tags.length ? initial.tags : [initial?.category ?? "offer"],
     neighborhood: initial?.neighborhood_id ?? "",
+    allowMessages: initial?.allow_messages ?? false,
   });
 
   const chipClass =
@@ -196,6 +198,26 @@ export function PostForm({
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="flex flex-col gap-2 rounded-md border p-3">
+        <label className="flex min-h-11 cursor-pointer items-start gap-3 py-2">
+          <input
+            type="checkbox"
+            name="allow_messages"
+            value="on"
+            checked={draft.allowMessages}
+            onChange={(event) =>
+              setDraft({ ...draft, allowMessages: event.target.checked })
+            }
+            aria-describedby="post-messages-help"
+            className="focus-ring mt-0.5 size-5 shrink-0 accent-primary"
+          />
+          <span className="text-sm font-medium">{dict.exchange.allowMessages}</span>
+        </label>
+        <p id="post-messages-help" className="text-sm text-muted-foreground">
+          {dict.exchange.allowMessagesHelp}
+        </p>
       </div>
 
       <Button

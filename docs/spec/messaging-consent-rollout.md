@@ -44,7 +44,7 @@ their own support conversation. Support messages use existing account deletion;
 authored messages are included in account export. No message content or private
 relationship event is added to email, analytics, or the append-only audit log.
 
-## Owner release steps
+## Stage 1 owner release steps
 
 1. Apply migration 0042 in the SQL editor as owner after reviewing local test
    evidence. No matrix or fixture should run against production.
@@ -63,5 +63,73 @@ relationship event is added to email, analytics, or the append-only audit log.
    reply as the contact and inspect the member's inbox/unread indicator. Verify
    another admin cannot read it. This hosted acceptance is separate from local
    database and synthetic component results.
+
+## Stage 2 post permission
+
+`0043_post_messaging_opt_in.sql` adds `posts.allow_messages`, a required boolean
+that defaults to false for existing posts and older clients. The create/edit
+form has an unchecked native checkbox with bilingual sharing and safety copy.
+Editing initializes it from the saved value; returned save errors retain the
+draft choice. Only the author can change it. A change stamps `edited_at`.
+
+An eligible verified reader, including an admin/moderator participating as a
+member, sees Message neighbor only when the author allows it. Owners see their
+current permission and can change it in Edit post. Other readers see a clear
+messages-off explanation. Moderation authority grants no conversation access.
+
+`start_thread` enforces consent even for an existing pair: post author, active
+board membership, visible post, explicit opt-in, live verified participants and
+bidirectional blocks. Missing, unreadable, hidden, wrong-author and opted-out
+posts get the same refusal. A row lock serializes this check with a concurrent
+opt-out or deletion. Direct thread creation remains unavailable to members.
+No new account-level or roster contact path is added.
+
+Turning the option off stops contact through that post. Existing conversations
+remain available in Messages and may receive replies under the existing rules;
+Block stops both directions. The first post anchor/history and one-thread-per-
+pair rule are preserved. Deleting a post clears its anchor while preserving the
+private conversation. Contact Steppe, including pending-member support, is
+unchanged. Group consent and first-contact requests remain stage 3 work.
+
+### Stage 2 owner release steps
+
+1. Review and apply `0043_post_messaging_opt_in.sql` in the production SQL editor
+   as owner **before merging the app change**. It depends on 0039 and 0042.
+   Reapplying it preserves explicit author choices. Never run test fixtures or
+   the database matrix against production.
+2. Read-only checks, before any author opts in:
+
+   ```sql
+   select count(*) filter (where allow_messages) as opted_in_posts,
+          count(*) filter (where allow_messages is null) as null_permissions
+   from public.posts;
+   ```
+
+   Both should be zero on first apply. A retry can legitimately have opted-in
+   posts. No backfill may automatically opt an author in.
+3. Merge the app PR, then confirm the canonical commit reaches production.
+4. Using designated test posts/accounts, verify new default off; opt-in/edit/save/
+   reload; member and admin participant composer; failed-send draft retention;
+   opt-out preventing contact through the post while inbox replies remain open;
+   and Block stopping both directions. Remove test posts only with owner approval.
+
+### Local validation
+
+Use the empty loopback database `steppe_pipelines_test` created by
+`steppe/tests/fixtures/account-removal-database.mjs`, then apply 0039, 0042 and
+0043 locally. The guard prevents using a hosted URL or an existing database.
+Run the database suites sequentially because support tests use singleton routing:
+
+```sh
+POST_MESSAGING_TEST_DB_URL="$LOCAL_FIXTURE_URL" \
+CONTACT_STEPPE_TEST_DB_URL="$LOCAL_FIXTURE_URL" \
+npm run test:member-pipelines -- tests/member-pipelines-post-messaging-db.test.ts \
+  tests/member-pipelines-contact-db.test.ts --no-file-parallelism
+```
+
+The real Post form is mounted by the isolated member-usability browser fixture.
+Verify unchecked creation, `?screen=edit&post-messages=on` saved prefill, checkbox
+keyboard/label access, returned-error retention and EN/ES mobile wrapping.
+These local proofs do not substitute for the hosted owner acceptance above.
 
 This is an engineering implementation record, not a new governing instrument.

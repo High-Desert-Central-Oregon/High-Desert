@@ -38,6 +38,7 @@ type PostRowFull = {
   neighborhood_id: string | null;
   created_at: string;
   edited_at: string | null;
+  allow_messages: boolean;
 };
 
 type SearchParams = {
@@ -78,7 +79,7 @@ async function PostDetailContent({
   const { data: post } = await supabase
     .from("posts")
     .select(
-      "id, author_id, category, tags, title, body, neighborhood_id, created_at, edited_at",
+      "id, author_id, category, tags, title, body, neighborhood_id, created_at, edited_at, allow_messages",
     )
     .eq("id", id)
     .maybeSingle<PostRowFull>();
@@ -224,25 +225,39 @@ async function PostDetailContent({
         </p>
       )}
 
-      {/* Message the author (spec §5 door 1) + the member Report intake (the
-          X1 §8 action-row debt paid) — neither on your own post; moderators
-          use their own tools below. */}
-      {post.author_id !== profile.id && !isMod && (
+      {/* Contact requires the author's per-post permission. Moderation authority
+          does not change this member messaging gate or grant thread access. */}
+      {!isOwner && (
         <div className="flex flex-col gap-4">
-          <MessageComposer
-            authorId={post.author_id}
-            authorName={authorName}
-            postId={post.id}
-            back={`/protected/exchange/${post.id}`}
-            dict={dict}
-          />
-          <ReportCard
-            targetType="post"
-            targetId={post.id}
-            back={`/protected/exchange/${post.id}`}
-            dict={dict}
-          />
+          {post.allow_messages ? (
+            <MessageComposer
+              authorId={post.author_id}
+              authorName={authorName}
+              postId={post.id}
+              back={`/protected/exchange/${post.id}`}
+              dict={dict}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              {dict.exchange.messagesOff}
+            </p>
+          )}
+          {!isMod && (
+            <ReportCard
+              targetType="post"
+              targetId={post.id}
+              back={`/protected/exchange/${post.id}`}
+              dict={dict}
+            />
+          )}
         </div>
+      )}
+      {isOwner && (
+        <p className="text-sm text-muted-foreground">
+          {post.allow_messages
+            ? dict.exchange.messagesOn
+            : dict.exchange.messagesOff}
+        </p>
       )}
 
       {/* Moderators: the existing legible remove flow — reason required,
