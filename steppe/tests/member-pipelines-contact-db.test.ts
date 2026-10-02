@@ -116,10 +116,10 @@ describe.skipIf(!target)("Contact Steppe database boundaries", () => {
   });
   it("retains ordinary verified post messaging without opening cold DMs", async () => {
     const group = (await db.query("select id from public.groups where is_system=true limit 1")).rows[0].id;
-    const post = (await db.query("insert into public.posts(author_id,group_id,category,title,body) values($1,$2,'offer','Synthetic post','Synthetic body') returning id", [admin, group])).rows[0].id;
+    const post = (await db.query("insert into public.posts(author_id,group_id,category,title,body,allow_messages) values($1,$2,'offer','Synthetic post','Synthetic body',true) returning id", [admin, group])).rows[0].id;
     const id = (await act(outsider, "select public.start_thread($1,'Synthetic post message',$2) id", [admin, post])).rows[0].id;
     await reply(admin, id);
-    await expect(act(outsider, "select public.start_thread($1,'Cold message',null)", [mod])).rejects.toThrow(/posts/);
+    await expect(act(outsider, "select public.start_thread($1,'Cold message',null)", [mod])).rejects.toThrow(/post/);
     expect(await start(outsider)).toBe(id);
     expect((await db.query("select about_post_id from public.threads where id=$1", [id])).rows[0].about_post_id).toBe(post);
   });

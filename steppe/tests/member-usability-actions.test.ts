@@ -146,6 +146,30 @@ describe("member writes", () => {
       }),
     );
   });
+  it.each([undefined, "on", "true", "false"])(
+    "saves deliberate post messaging consent on create and edit: %s",
+    async (choice) => {
+      const fields = {
+        title: "Tools",
+        body: "Lend these",
+        category: ["offer", "goods"],
+        author_id: "someone-else",
+        ...(choice === undefined ? {} : { allow_messages: choice }),
+      };
+      await expect(createPost(null, form(fields))).rejects.toThrow("redirect:");
+      expect(chain.insert).toHaveBeenCalledWith(expect.objectContaining({
+        author_id: "member",
+        allow_messages: choice === "on",
+      }));
+      chain.eq.mockClear();
+      await expect(updatePost("post", null, form(fields))).rejects.toThrow("redirect:");
+      expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({
+        allow_messages: choice === "on",
+      }));
+      expect(chain.update.mock.calls[0][0]).not.toHaveProperty("author_id");
+      expect(chain.eq.mock.calls).toEqual([["id", "post"], ["author_id", "member"]]);
+    },
+  );
   it("author-scopes edits and never claims success on a missing or denied row", async () => {
     chain.single.mockResolvedValue({ data: null, error: null });
     expect(

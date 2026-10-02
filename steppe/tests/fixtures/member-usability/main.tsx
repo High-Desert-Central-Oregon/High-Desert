@@ -19,6 +19,12 @@ import { subdivisionCatalog } from "../../../lib/subdivision-outlines";
 import { getSavedNeighborhood } from "./actions";
 import "../../../app/globals.css";
 function App() {
+  useEffect(() => {
+    document.documentElement.classList.toggle(
+      "dark",
+      new URLSearchParams(location.search).get("theme") === "night",
+    );
+  }, []);
   const [screen, setScreen] = useState(
       new URLSearchParams(location.search).get("screen") ?? "events",
     ),
@@ -140,6 +146,8 @@ function App() {
                 category: "offer",
                 tags: ["offer", "goods"],
                 neighborhood_id: null,
+                allow_messages:
+                  new URLSearchParams(location.search).get("post-messages") === "on",
               }}
             />
             <DeletePost id="sample" dict={dict} />

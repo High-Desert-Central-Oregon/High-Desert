@@ -13,7 +13,7 @@ async function Edit({ params }: { params: Promise<{ id: string }> }) {
   const db = await createClient();
   const { data: post } = await db
     .from("posts")
-    .select("id,title,body,tags,category,neighborhood_id")
+    .select("id,title,body,tags,category,neighborhood_id,allow_messages")
     .eq("id", id)
     .eq("author_id", profile.id)
     .maybeSingle();

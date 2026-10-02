@@ -332,6 +332,11 @@ export const en = {
     deleted: "Post deleted.",
     saved: "Changes saved.",
     tagsHint: "Choose one or more tags. Events use a separate form.",
+    allowMessages: "Allow messages about this post",
+    allowMessagesHelp:
+      "Verified neighbors who can see this post may contact you privately in Steppe. Turning this off stops contact through this post; existing conversations stay open. Block or report someone in Messages.",
+    messagesOn: "Messages are on for this post. Change this in Edit post.",
+    messagesOff: "Messages are off for this post.",
     descriptions: {
       need: "Ask for something you need, such as help, a skill, or an item.",
       offer:

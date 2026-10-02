@@ -14,6 +14,15 @@ Local database proof uses a disposable loopback database named `steppe_pipelines
 
 ## Mobile form error and focus checks
 
+Post messaging permission starts unchecked on `?screen=posts`. Editing reads the
+saved fixture value: `?screen=edit&post-messages=on` starts checked; omitting the
+parameter starts unchecked. Toggle with the label and keyboard Space. With Fail
+saves enabled, submit valid text and verify the chosen permission, title/body and
+tags remain after the error; Successful writes must not increase. Check EN/ES
+at 320px/390px with no clipped label or helper text. Add `&theme=night` for the
+night palette. Database persistence and
+authorization use the separately gated post-messaging database suite.
+
 At 320px and 390px, test posts and edit-event with Fail saves enabled.
 After submitting, the error must receive focus and be visible without scrolling
 back to the top. Repeat the same failed submission: focus must return to the
