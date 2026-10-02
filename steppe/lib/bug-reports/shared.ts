@@ -58,6 +58,7 @@ const STATIC_PAGES = new Set([
   "/protected/governance/new",
   "/protected/governance/record",
   "/protected/messages",
+  "/protected/messages/contact",
   "/protected/neighborhoods",
   "/protected/support",
   "/protected/work",

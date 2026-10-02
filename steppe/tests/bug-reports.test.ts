@@ -14,6 +14,7 @@ describe("bug report privacy boundary", () => {
     expect(safePage("/protected/messages/private-thread")).toBe(
       "/protected/messages/[id]",
     );
+    expect(safePage("/protected/messages/contact?msgErr=1")).toBe("/protected/messages/contact");
     expect(safePage("/n/home-address/leave?token=secret")).toBe(
       "/n/[slug]/leave",
     );

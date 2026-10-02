@@ -26,6 +26,30 @@ async function requireSession() {
   return user;
 }
 
+/** A named support destination, selected by the database rather than a form. */
+export async function contactSteppeDraft(
+  _previous: MessageActionState,
+  formData: FormData,
+): Promise<MessageActionState> {
+  return attemptMessageAction(async () => {
+    await requireSession();
+    const body = String(formData.get("body") ?? "").trim();
+    if (!body) return { error: "send-failed" };
+    const db = await createClient();
+    const { data, error } = await db.rpc("start_support_thread", {
+      p_body: body.slice(0, 4000),
+    });
+    if (error || typeof data !== "string" || !UUID.test(data)) return { error: "send-failed" };
+    revalidatePath(BASE);
+    redirect(`${BASE}/${data}`);
+  });
+}
+
+export async function contactSteppe(formData: FormData) {
+  const result = await contactSteppeDraft(null, formData);
+  if (result?.error) redirect(`${BASE}/contact?msgErr=1`);
+}
+
 /** Post-anchored start: the "Message {FirstName}" composer on post detail. */
 export async function startThreadDraft(
   _previous: MessageActionState,
