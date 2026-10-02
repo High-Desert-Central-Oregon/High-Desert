@@ -5,7 +5,8 @@ import { PageSkeleton } from "@/components/page-skeleton";
 import { Masthead } from "@/components/broadsheet/masthead";
 import { Monogram, initialsFor } from "@/components/broadsheet/post-row";
 import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
-import { VerifiedGate } from "@/components/verified-gate";
+import { getSupportThreads } from "@/lib/messages/contact";
+import { contactCopy } from "@/lib/messages/contact-copy";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -32,25 +33,19 @@ async function InboxContent() {
   if (!profile) redirect("/auth/login");
   const { locale, dict } = await getServerDictionary();
 
-  if (!profile.verified)
-    return (
-      <VerifiedGate
-        title={dict.messages.title}
-        body={dict.messages.voice}
-        ctaLabel={dict.exchange.gateCta}
-        locale={locale}
-      />
-    );
-
   const supabase = await createClient();
   const me = profile.id;
+  const copy = contactCopy[locale];
   // The inbox and the layout's every-navigation unread dot share ONE set of
   // reads per request (perf-audit-v1 finding #5): getInboxSubstrate is React-
   // cache()d on my id, so landing on /messages doesn't re-run threads +
   // thread_state + messages that the nav already ran. Messages are scoped to my
   // threads inside the substrate — O(my messages), not O(all messages)
   // (finding #4).
-  const { threads, states, messages: msgs } = await getInboxSubstrate(me);
+  const [{ threads, states, messages: msgs }, supportRows] = await Promise.all([
+    getInboxSubstrate(me), getSupportThreads(),
+  ]);
+  const supportThreads = new Map(supportRows.map((s) => [s.thread_id, s]));
 
   // Newest message per thread (desc order → first seen).
   const last = new Map<string, InboxMessage>();
@@ -74,6 +69,7 @@ async function InboxContent() {
   // Build rows: hide archived threads with no activity since I left; newest
   // conversation first.
   const rows = threads
+    .filter((th) => profile.verified || supportThreads.has(th.id))
     .map((th) => {
       const lm = last.get(th.id);
       const st = state.get(th.id);
@@ -96,10 +92,14 @@ async function InboxContent() {
     <div lang={locale} className="flex flex-col gap-0">
       <Masthead
         title={dict.messages.title}
-        kicker={dict.messages.dateline}
-        voice={dict.messages.voice}
+        kicker={profile.verified ? dict.messages.dateline : copy.support}
+        voice={profile.verified ? dict.messages.voice : copy.waiting}
         flush
       />
+      <Link href="/protected/messages/contact" className="mt-4 inline-flex min-h-11 items-center self-start bg-primary px-5 py-3 font-semibold text-primary-foreground shadow-letterpress focus-ring">
+        {copy.title}
+      </Link>
+      {!profile.verified && <Link href="/protected/verify" className="mt-3 self-start underline focus-ring">{dict.exchange.gateCta}</Link>}
       {/* Privacy strip — the msgInside line on screen before any content. */}
       <p className="mt-4 flex items-center gap-[7px] border-b pb-3 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
         <span
@@ -110,13 +110,16 @@ async function InboxContent() {
       </p>
 
       {rows.length === 0 ? (
-        <QuietEmpty title={dict.messages.emptyTitle} sub={dict.messages.emptySub} />
+        <QuietEmpty title={profile.verified ? dict.messages.emptyTitle : copy.empty} sub={profile.verified ? dict.messages.emptySub : copy.emptySub} />
       ) : (
         <ul className="flex flex-col">
           {rows.map(({ th, lm, st }) => {
-            const name = names.get(th.member_a === me ? th.member_b : th.member_a) ?? dict.messages.formerMember;
+            const support = supportThreads.get(th.id);
+            const name = support
+              ? support.contact_id === me ? support.counterpart_name || dict.messages.formerMember : copy.support
+              : names.get(th.member_a === me ? th.member_b : th.member_a) ?? dict.messages.formerMember;
             const isUnread = unread(lm!, st);
-            const ctx = th.about_post_id
+            const ctx = support ? copy.context : th.about_post_id
               ? titles.has(th.about_post_id)
                 ? t(dict.messages.reAbout, { title: titles.get(th.about_post_id)! })
                 : dict.messages.reGone

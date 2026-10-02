@@ -12,6 +12,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
+import { getSupportThreads } from "@/lib/messages/contact";
+import { contactCopy } from "@/lib/messages/contact-copy";
 
 export const metadata = { title: "Conversation · Steppe" };
 
@@ -43,8 +45,10 @@ async function ThreadContent({
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
   const { locale, dict } = await getServerDictionary();
+  const copy = contactCopy[locale];
+  const support = (await getSupportThreads()).find((s) => s.thread_id === id);
 
-  if (!profile.verified)
+  if (!profile.verified && !support)
     return (
       <VerifiedGate
         title={dict.messages.title}
@@ -96,7 +100,9 @@ async function ThreadContent({
         .maybeSingle<{ muted_at: string | null }>(),
     ]);
 
-  const name = other?.display_name ?? dict.messages.formerMember;
+  const name = support
+    ? support.contact_id === me ? support.counterpart_name || dict.messages.formerMember : copy.support
+    : other?.display_name ?? dict.messages.formerMember;
   const messages = msgs ?? [];
 
   // Mark read: stamp my cursor to the newest message (own-row update; the
@@ -113,7 +119,7 @@ async function ThreadContent({
     });
   }
 
-  const ctx = thread.about_post_id
+  const ctx = support ? copy.context : thread.about_post_id
     ? post?.data
       ? t(dict.messages.reAbout, { title: post.data.title })
       : dict.messages.reGone
@@ -148,7 +154,7 @@ async function ThreadContent({
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-semibold text-foreground">{name}</p>
           {ctx &&
-            (thread.about_post_id && post?.data ? (
+            (!support && thread.about_post_id && post?.data ? (
               <Link
                 href={`/protected/exchange/${thread.about_post_id}`}
                 className="block truncate font-mono text-[9px] font-semibold uppercase tracking-[0.08em] text-accent hover:underline"
@@ -175,6 +181,7 @@ async function ThreadContent({
         <p className="mb-3 text-center font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
           {dict.messages.msgInside}
         </p>
+        {support && support.contact_id !== me && <p className="mb-3 text-sm text-muted-foreground">{copy.privacy.replace("{name}", support.counterpart_name ?? dict.messages.formerMember)}</p>}
         {sp.reported === "1" && (
           <p role="status" className="mb-2 text-center text-[13px] font-medium text-foreground">
             {dict.messages.reportThreadSent}
@@ -194,7 +201,7 @@ async function ThreadContent({
             return (
               <li key={m.id} className={`my-[7px] flex ${mine ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[78%] px-[13px] py-[10px] text-[14.5px] leading-[1.45] ${
+                  className={`max-w-[78%] whitespace-pre-wrap break-words px-[13px] py-[10px] text-[14.5px] leading-[1.45] ${
                     mine
                       ? "rounded-[14px_14px_4px_14px] bg-primary text-primary-foreground"
                       : "rounded-[14px_14px_14px_4px] bg-muted text-foreground"

@@ -57,7 +57,8 @@ async function NavBar() {
   const { locale, dict } = await getServerDictionary();
   // Poll-on-nav unread signal (messages-m1-spec §6): recomputed each server
   // navigation, RLS-scoped to the member, a boolean (never a count). A signed-
-  // out or unverified member simply has no threads → no dot.
+  // out member has no threads. Unverified members can have a Contact Steppe
+  // conversation; its replies use the same participant-only unread signal.
   let hasUnread = false;
   const user = await getCurrentUser();
   if (user) {
