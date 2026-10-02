@@ -6,7 +6,8 @@ import { PageSkeleton } from "@/components/page-skeleton";
 import { Monogram, initialsFor } from "@/components/broadsheet/post-row";
 import { VerifiedGate } from "@/components/verified-gate";
 import { ThreadMenu } from "./thread-menu";
-import { sendReply } from "../actions";
+import { sendReply, sendReplyDraft } from "../actions";
+import { MessageForm } from "../message-form";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
@@ -213,8 +214,17 @@ async function ThreadContent({
         </ul>
       </div>
 
-      {/* Composer — a plain form (JS-optional); can_send is the gate. */}
-      <form action={sendReply} className="flex items-center gap-[9px] border-t bg-muted px-[14px] py-[11px]">
+      {/* The server/DB still gates sending; failed drafts remain in the composer. */}
+      <MessageForm
+        action={sendReplyDraft}
+        fallbackAction={sendReply}
+        className="flex flex-wrap items-center gap-[9px] border-t bg-muted px-[14px] py-[11px]"
+        buttonClassName="flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
+        sendLabel={dict.messages.send}
+        sendingLabel={dict.messages.starting}
+        errorMessage={dict.messages.draftError}
+        iconOnly
+      >
         <input type="hidden" name="thread_id" value={thread.id} />
         <label htmlFor="reply" className="sr-only">
           {dict.messages.replyPlaceholder}
@@ -228,16 +238,7 @@ async function ThreadContent({
           placeholder={dict.messages.replyPlaceholder}
           className="field-control focus-ring min-w-0 flex-1 border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
         />
-        <button
-          type="submit"
-          aria-label={dict.messages.send}
-          className="flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M5 12h13M13 6l6 6-6 6" />
-          </svg>
-        </button>
-      </form>
+      </MessageForm>
     </div>
   );
 }

@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth";
+import {
+  attemptMessageAction,
+  type MessageActionState,
+} from "@/lib/messages/action-result";
 
 /**
  * Messaging server actions (messages-m1-spec §5–§6). The database is the gate
@@ -23,44 +27,53 @@ async function requireSession() {
 }
 
 /** Post-anchored start: the "Message {FirstName}" composer on post detail. */
-export async function startThread(formData: FormData) {
-  await requireSession();
-  const withId = String(formData.get("with_id") ?? "");
-  const aboutPost = String(formData.get("about_post") ?? "");
-  const body = String(formData.get("body") ?? "").trim();
-  const back = String(formData.get("back") ?? "");
-  const safeBack = back.startsWith("/protected") ? back : "/protected/exchange";
-  if (!UUID.test(withId) || !UUID.test(aboutPost) || !body) {
-    redirect(`${safeBack}?msgErr=1`);
-  }
+export async function startThreadDraft(
+  _previous: MessageActionState,
+  formData: FormData,
+): Promise<MessageActionState> {
+  return attemptMessageAction(async () => {
+    await requireSession();
+    const withId = String(formData.get("with_id") ?? "");
+    const aboutPost = String(formData.get("about_post") ?? "");
+    const body = String(formData.get("body") ?? "").trim();
+    if (!UUID.test(withId) || !UUID.test(aboutPost) || !body) {
+      return { error: "send-failed" };
+    }
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("start_thread", {
-    p_with: withId,
-    p_body: body.slice(0, 4000),
-    p_about_post: aboutPost,
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc("start_thread", {
+      p_with: withId,
+      p_body: body.slice(0, 4000),
+      p_about_post: aboutPost,
+    });
+    if (error || !data) return { error: "send-failed" };
+    revalidatePath(BASE);
+    redirect(`${BASE}/${data}`);
   });
-  if (error || !data) redirect(`${safeBack}?msgErr=1`);
-  revalidatePath(BASE);
-  redirect(`${BASE}/${data}`);
 }
 
 /** Reply into an existing thread — a plain RLS insert (msg_insert/can_send). */
-export async function sendReply(formData: FormData) {
-  const user = await requireSession();
-  const threadId = String(formData.get("thread_id") ?? "");
-  const body = String(formData.get("body") ?? "").trim();
-  if (!UUID.test(threadId) || !body) redirect(`${BASE}/${threadId}?msgErr=1`);
+export async function sendReplyDraft(
+  _previous: MessageActionState,
+  formData: FormData,
+): Promise<MessageActionState> {
+  return attemptMessageAction(async () => {
+    const user = await requireSession();
+    const threadId = String(formData.get("thread_id") ?? "");
+    const body = String(formData.get("body") ?? "").trim();
+    if (!UUID.test(threadId) || !body) return { error: "send-failed" };
 
-  const supabase = await createClient();
-  const { error } = await supabase.from("messages").insert({
-    thread_id: threadId,
-    sender_id: user.id,
-    body: body.slice(0, 4000),
+    const supabase = await createClient();
+    const { error } = await supabase.from("messages").insert({
+      thread_id: threadId,
+      sender_id: user.id,
+      body: body.slice(0, 4000),
+    });
+    if (error) return { error: "send-failed" };
+    revalidatePath(BASE);
+    revalidatePath(`${BASE}/${threadId}`);
+    redirect(`${BASE}/${threadId}`);
   });
-  revalidatePath(BASE);
-  revalidatePath(`${BASE}/${threadId}`);
-  redirect(`${BASE}/${threadId}${error ? "?msgErr=1" : ""}`);
 }
 
 /** Mute / unmute — own-row thread_state (dot suppression). */
@@ -114,20 +127,46 @@ export async function blockNeighbor(formData: FormData) {
  * attaches their OWN quoted view of the thread; moderators read the excerpt,
  * never the thread. rp_insert requires the reporter be a participant.
  */
-export async function reportThread(formData: FormData) {
-  const user = await requireSession();
-  const threadId = String(formData.get("thread_id") ?? "");
-  const body = String(formData.get("body") ?? "").trim();
-  const excerpt = String(formData.get("excerpt") ?? "");
-  if (!UUID.test(threadId) || !body) redirect(`${BASE}/${threadId}?msgErr=1`);
-  const supabase = await createClient();
-  const { error } = await supabase.from("reports").insert({
-    reporter_id: user.id,
-    target_type: "message_thread",
-    target_id: threadId,
-    body: body.slice(0, 2000),
-    quoted_excerpt: excerpt.slice(0, 4000),
+export async function reportThreadDraft(
+  _previous: MessageActionState,
+  formData: FormData,
+): Promise<MessageActionState> {
+  return attemptMessageAction(async () => {
+    const user = await requireSession();
+    const threadId = String(formData.get("thread_id") ?? "");
+    const body = String(formData.get("body") ?? "").trim();
+    const excerpt = String(formData.get("excerpt") ?? "");
+    if (!UUID.test(threadId) || !body) return { error: "send-failed" };
+    const supabase = await createClient();
+    const { error } = await supabase.from("reports").insert({
+      reporter_id: user.id,
+      target_type: "message_thread",
+      target_id: threadId,
+      body: body.slice(0, 2000),
+      quoted_excerpt: excerpt.slice(0, 4000),
+    });
+    if (error) return { error: "send-failed" };
+    revalidatePath(`${BASE}/${threadId}`);
+    redirect(`${BASE}/${threadId}?reported=1`);
   });
-  revalidatePath(`${BASE}/${threadId}`);
-  redirect(`${BASE}/${threadId}?${error ? "msgErr" : "reported"}=1`);
+}
+
+/** Keep the existing JS-optional form navigation as a progressive fallback. */
+export async function startThread(formData: FormData) {
+  const result = await startThreadDraft(null, formData);
+  if (result?.error) {
+    const back = String(formData.get("back") ?? "");
+    const safeBack = back.startsWith("/protected") ? back : "/protected/exchange";
+    redirect(`${safeBack}?msgErr=1`);
+  }
+}
+
+export async function sendReply(formData: FormData) {
+  const result = await sendReplyDraft(null, formData);
+  if (result?.error) redirect(`${BASE}/${String(formData.get("thread_id") ?? "")}?msgErr=1`);
+}
+
+export async function reportThread(formData: FormData) {
+  const result = await reportThreadDraft(null, formData);
+  if (result?.error) redirect(`${BASE}/${String(formData.get("thread_id") ?? "")}?msgErr=1`);
 }

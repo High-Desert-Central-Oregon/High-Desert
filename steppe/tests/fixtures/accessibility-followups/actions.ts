@@ -38,14 +38,22 @@ export const completeReview = async () => {
 export const createEvidenceSignedUrl = async () => ({ error: "failed" });
 export const blockNeighbor = async () => undefined;
 export const leaveThread = async () => undefined;
-export const reportThread = async () => undefined;
+export const reportThreadDraft = async () => {
+  await settle(null);
+  if (outcome === "throw") throw new Error("Synthetic transport failure");
+  return { error: "send-failed" as const };
+};
 export const toggleMute = async () => undefined;
 
 export const createPost = async () => ({ error: "body-required" });
 export const updatePost = createPost;
 export const updateEvent = createEvent;
 export const castVote = async () => settle({ error: "vote-failed" });
+export const startThreadDraft = reportThreadDraft;
+export const sendReplyDraft = reportThreadDraft;
 export const startThread = async () => undefined;
+export const sendReply = startThread;
+export const reportThread = startThread;
 export const fileAppeal = async () =>
   settle(outcome === "success" ? { ok: true as const } : { error: "appeal-failed" });
 export const updateReport = async () => {

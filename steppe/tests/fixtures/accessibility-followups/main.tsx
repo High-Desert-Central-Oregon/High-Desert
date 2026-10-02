@@ -13,6 +13,7 @@ import { VoteForm } from "../../../app/protected/governance/[id]/vote-form";
 import { ReviewControls } from "../../../app/protected/review/[id]/review-controls";
 import { ThreadMenu } from "../../../app/protected/messages/[id]/thread-menu";
 import { MessageComposer } from "../../../app/protected/messages/message-composer";
+import { MessageForm } from "../../../app/protected/messages/message-form";
 import { AppealForm } from "../../../app/protected/moderation/appeal-form";
 import { CaseControls } from "../../../app/protected/support/[id]/case-controls";
 import { BugReporter } from "../../../components/bug-reports/reporter";
@@ -20,7 +21,7 @@ import { MonthView } from "../../../components/broadsheet/month-view";
 import { PostRow } from "../../../components/broadsheet/post-row";
 import { en } from "../../../lib/i18n/dictionaries/en";
 import { es } from "../../../lib/i18n/dictionaries/es";
-import { setOutcome } from "./actions";
+import { setOutcome, sendReply, sendReplyDraft } from "./actions";
 import "../../../app/globals.css";
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
             "review",
             "messages",
             "composer",
+            "reply",
             "appeal",
             "support",
             "bug-report",
@@ -152,6 +154,24 @@ function App() {
         )}
         {mode === "composer" && (
           <MessageComposer authorId="synthetic" authorName="Sample Neighbor" postId="synthetic" back="#" dict={dict} />
+        )}
+        {mode === "reply" && (
+          <MessageForm
+            action={sendReplyDraft}
+            fallbackAction={sendReply}
+            className="flex flex-wrap items-center gap-[9px] border-t bg-muted px-[14px] py-[11px]"
+            buttonClassName="focus-ring flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground"
+            sendLabel={dict.messages.send}
+            sendingLabel={dict.messages.starting}
+            errorMessage={dict.messages.draftError}
+            iconOnly
+          >
+            <input type="hidden" name="thread_id" value="synthetic" />
+            <label htmlFor="fixture-reply" className="sr-only">{dict.messages.replyPlaceholder}</label>
+            <input id="fixture-reply" name="body" required maxLength={4000}
+              className="field-control focus-ring min-w-0 flex-1 border bg-card px-3 py-2 text-base"
+              placeholder={dict.messages.replyPlaceholder} />
+          </MessageForm>
         )}
         {mode === "appeal" && (
           <AppealForm actionId="synthetic" targetType="post" targetId="synthetic" dict={dict} />

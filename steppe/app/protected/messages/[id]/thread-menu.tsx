@@ -5,8 +5,10 @@ import {
   blockNeighbor,
   leaveThread,
   reportThread,
+  reportThreadDraft,
   toggleMute,
 } from "../actions";
+import { MessageForm } from "../message-form";
 import type { Dictionary } from "@/lib/i18n";
 
 /**
@@ -133,7 +135,15 @@ export function ThreadMenu({
               <p className="text-[13px] leading-[1.45] text-muted-foreground">
                 {dict.messages.reportThreadConfirm}
               </p>
-              <form action={reportThread} className="flex flex-col gap-2">
+              <MessageForm
+                action={reportThreadDraft}
+                fallbackAction={reportThread}
+                className="flex flex-col gap-2"
+                buttonClassName="inline-flex items-center self-start border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-muted focus-ring"
+                sendLabel={dict.messages.reportThreadCta}
+                sendingLabel={dict.messages.starting}
+                errorMessage={dict.messages.reportDraftError}
+              >
                 <input type="hidden" name="thread_id" value={threadId} />
                 <input type="hidden" name="excerpt" value={excerpt} />
                 <label htmlFor="report-body" className="sr-only">
@@ -148,13 +158,7 @@ export function ThreadMenu({
                   placeholder={dict.messages.reportThreadLabel}
                   className="field-control focus-ring w-full resize-none border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
                 />
-                <button
-                  type="submit"
-                  className="inline-flex items-center self-start border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-muted focus-ring"
-                >
-                  {dict.messages.reportThreadCta}
-                </button>
-              </form>
+              </MessageForm>
             </div>
           </details>
         </div>
