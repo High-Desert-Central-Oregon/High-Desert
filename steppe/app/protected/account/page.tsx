@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser, getMyProfile } from "@/lib/auth";
 import { getServerDictionary } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n";
+import { consentCopy } from "@/lib/messages/consent-copy";
 import { DeleteAccount } from "./delete-account";
 import { SignOutButton } from "./sign-out-button";
 import { InstallRow } from "./install-row";
@@ -119,6 +120,11 @@ async function AccountView() {
       href: "/protected/messages",
       label: dict.messages.title,
       sub: dict.messages.rowSub,
+    },
+    {
+      href: "/protected/account/messaging",
+      label: consentCopy[locale].title,
+      sub: consentCopy[locale].sub,
     },
     {
       href: "/protected/account/calendar",

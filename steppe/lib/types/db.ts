@@ -169,6 +169,8 @@ export type Category = {
 /** Full group row (base table) — readable for public groups, or members_only
  *  groups you're an active member of (grp_read). */
 export type GroupRow = {
+  messaging_rules: string | null;
+  messaging_rules_version: number;
   id: string;
   slug: string;
   name: string;

@@ -2,6 +2,11 @@ import "@fontsource/public-sans/400.css";
 import "@fontsource/public-sans/600.css";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import {
+  GroupContactForm,
+  GroupRulesForm,
+} from "../../../app/protected/account/messaging/consent-forms";
+import { RequestControls } from "../../../app/protected/messages/request-controls";
 import { ProfileForm } from "../../../app/protected/account/profile/profile-form";
 import { RsvpForm } from "../../../app/protected/events/[id]/rsvp-form";
 import { EventForm } from "../../../app/protected/events/new/event-form";
@@ -32,6 +37,7 @@ function App() {
     [writes, setWrites] = useState(0);
   const [visibility, setVisibility] = useState<"hidden" | "members">("hidden"),
     [rsvp, setRsvp] = useState<"going" | "maybe" | null>(null);
+  const [lastDecision, setLastDecision] = useState("");
   const [failCopy, setFailCopy] = useState(false);
   const [copiedText, setCopiedText] = useState("");
   useEffect(() => {
@@ -52,6 +58,7 @@ function App() {
     const listener = (e: Event) => {
       const d = (e as CustomEvent).detail;
       setWrites((n) => n + 1);
+      setLastDecision(d.response ?? (d.disable === "1" ? "disabled" : "saved"));
       if (d.kind === "visibility") setVisibility(d.visibility);
       if (d.kind === "rsvp") setRsvp(d.status);
       if (d.kind === "cancel") setRsvp(null);
@@ -67,6 +74,9 @@ function App() {
         Screen{" "}
         <select value={screen} onChange={(e) => setScreen(e.target.value)}>
           {[
+            "group-contact",
+            "group-rules",
+            "message-request",
             "events",
             "edit-event",
             "profile",
@@ -93,8 +103,41 @@ function App() {
         Fail saves
       </label>
       <p id="writes">Successful writes: {writes}</p>
+      {lastDecision &&
+        ["group-contact", "group-rules", "message-request"].includes(
+          screen,
+        ) && <p>Last successful action: {lastDecision}</p>}
       <hr className="my-5" />
       <div key={screen + lang}>
+        {screen === "group-contact" && (
+          <GroupContactForm
+            groupId="11111111-1111-4111-8111-111111111111"
+            rules={
+              new URLSearchParams(location.search).has("rules-off")
+                ? null
+                : "Contact members about this group, be respectful, and avoid unsolicited promotion."
+            }
+            version={2}
+            acknowledgedVersion={
+              new URLSearchParams(location.search).has("stale") ? 1 : null
+            }
+            allow={new URLSearchParams(location.search).has("stale")}
+            locale={lang === "es" ? "es" : "en"}
+          />
+        )}
+        {screen === "group-rules" && (
+          <GroupRulesForm
+            groupId="11111111-1111-4111-8111-111111111111"
+            rules={null}
+            locale={lang === "es" ? "es" : "en"}
+          />
+        )}
+        {screen === "message-request" && (
+          <RequestControls
+            threadId="11111111-1111-4111-8111-111111111111"
+            locale={lang === "es" ? "es" : "en"}
+          />
+        )}
         {screen === "neighborhoods" && <NeighborhoodFixture dict={dict} />}
         {screen === "auth-error" && (
           <AuthNotice
@@ -147,7 +190,8 @@ function App() {
                 tags: ["offer", "goods"],
                 neighborhood_id: null,
                 allow_messages:
-                  new URLSearchParams(location.search).get("post-messages") === "on",
+                  new URLSearchParams(location.search).get("post-messages") ===
+                  "on",
               }}
             />
             <DeletePost id="sample" dict={dict} />

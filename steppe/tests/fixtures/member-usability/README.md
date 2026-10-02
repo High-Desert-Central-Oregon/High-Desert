@@ -106,3 +106,23 @@ No database is contacted. OSM tiles load with the default interactive street vie
 The default map should load 551 paths over visible OpenStreetMap street tiles, without the historical raster. County outlines removes street tiles; Return to overview unmounts the interactive map. The native map name selector and polygon click inspect names; a name remains permanently labeled when focused. Choose 121 West must update the draft selection with Successful writes unchanged; only Save writes. Confirm retention after Map/List switching and Reload saved profile. Filter List by a county phase/replat alias and check that it finds the grouped choice. Address fixtures use synthetic points; check the containing-plat chips and no-match help without an automatic selection. At 320px and 390px, the search input must occupy its own row above the button, the short placeholder must fit, and the full selected label must wrap below the input in both languages.
 
 `&outline-failure=1` forces geometry failure; the alert, static overview, List and 2019 aerial must remain usable. `&map-image-failure=1` fails only the optional historical raster: county geometry remains displayed. Repeat at 390px in Spanish, including controls, status, selection and save/reload.
+
+## Group messaging and requests
+
+`?screen=group-contact` renders the real preferences form with receiving off and
+acknowledgment unchecked. Save cannot submit until acknowledgment is checked.
+Check it with keyboard Space, optionally allow requests, Save and verify choices
+stay selected. Fail saves must retain both choices and focus the error. The
+synthetic counter records only confirmed writes. `&stale=1` shows changed rules,
+receiving previously on, acknowledgment required again. Turn off requests must
+work without acknowledgment, retaining the unchecked acknowledgment and showing
+Last successful action: disabled. `&rules-off=1&stale=1` retains that off control.
+
+`?screen=group-rules` renders the actual 2,000-character rules editor. Save/error
+retention, clearing to disable and keyboard focus must work. `?screen=message-request`
+renders real Accept/Decline/Block controls. Each successful action must show its
+own name in Last successful action; failures must show the focused generic error
+without a successful write. Check EN and ES at 320px/390px, including night palette,
+without horizontal overflow. These isolated actions never contact a real member.
+Database state transitions, current rules/membership/blocks, privacy, pending cap,
+rate cap and concurrency use the separately guarded real local Postgres suite.

@@ -6,6 +6,7 @@ import { Masthead } from "@/components/broadsheet/masthead";
 import { Monogram, initialsFor } from "@/components/broadsheet/post-row";
 import { QuietEmpty } from "@/components/broadsheet/quiet-empty";
 import { getSupportThreads } from "@/lib/messages/contact";
+import { consentCopy } from "@/lib/messages/consent-copy";
 import { contactCopy } from "@/lib/messages/contact-copy";
 import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
@@ -43,7 +44,8 @@ async function InboxContent() {
   // threads inside the substrate — O(my messages), not O(all messages)
   // (finding #4).
   const [{ threads, states, messages: msgs }, supportRows] = await Promise.all([
-    getInboxSubstrate(me), getSupportThreads(),
+    getInboxSubstrate(me),
+    getSupportThreads(),
   ]);
   const supportThreads = new Map(supportRows.map((s) => [s.thread_id, s]));
 
@@ -53,11 +55,18 @@ async function InboxContent() {
   const state = new Map(states.map((s) => [s.thread_id, s]));
 
   // Resolve counterpart names + anchor titles.
-  const others = threads.map((th) => (th.member_a === me ? th.member_b : th.member_a));
-  const postIds = threads.flatMap((th) => (th.about_post_id ? [th.about_post_id] : []));
+  const others = threads.map((th) =>
+    th.member_a === me ? th.member_b : th.member_a,
+  );
+  const postIds = threads.flatMap((th) =>
+    th.about_post_id ? [th.about_post_id] : [],
+  );
   const [{ data: people }, { data: posts }] = await Promise.all([
     others.length
-      ? supabase.from("public_profiles").select("id, display_name").in("id", others)
+      ? supabase
+          .from("public_profiles")
+          .select("id, display_name")
+          .in("id", others)
       : Promise.resolve({ data: [] as { id: string; display_name: string }[] }),
     postIds.length
       ? supabase.from("posts").select("id, title").in("id", postIds)
@@ -77,16 +86,20 @@ async function InboxContent() {
     })
     .filter(({ lm, st }) => {
       if (!lm) return false;
-      if (st?.left_at && Date.parse(lm.created_at) <= Date.parse(st.left_at)) return false;
+      if (st?.left_at && Date.parse(lm.created_at) <= Date.parse(st.left_at))
+        return false;
       return true;
     })
-    .sort((a, b) => Date.parse(b.lm!.created_at) - Date.parse(a.lm!.created_at));
+    .sort(
+      (a, b) => Date.parse(b.lm!.created_at) - Date.parse(a.lm!.created_at),
+    );
 
   const unread = (lm: InboxMessage, st?: InboxState) =>
     !!lm &&
     lm.sender_id !== me &&
     !st?.muted_at &&
-    (!st?.last_read_at || Date.parse(lm.created_at) > Date.parse(st.last_read_at));
+    (!st?.last_read_at ||
+      Date.parse(lm.created_at) > Date.parse(st.last_read_at));
 
   return (
     <div lang={locale} className="flex flex-col gap-0">
@@ -96,10 +109,20 @@ async function InboxContent() {
         voice={profile.verified ? dict.messages.voice : copy.waiting}
         flush
       />
-      <Link href="/protected/messages/contact" className="mt-4 inline-flex min-h-11 items-center self-start bg-primary px-5 py-3 font-semibold text-primary-foreground shadow-letterpress focus-ring">
+      <Link
+        href="/protected/messages/contact"
+        className="mt-4 inline-flex min-h-11 items-center self-start bg-primary px-5 py-3 font-semibold text-primary-foreground shadow-letterpress focus-ring"
+      >
         {copy.title}
       </Link>
-      {!profile.verified && <Link href="/protected/verify" className="mt-3 self-start underline focus-ring">{dict.exchange.gateCta}</Link>}
+      {!profile.verified && (
+        <Link
+          href="/protected/verify"
+          className="mt-3 self-start underline focus-ring"
+        >
+          {dict.exchange.gateCta}
+        </Link>
+      )}
       {/* Privacy strip — the msgInside line on screen before any content. */}
       <p className="mt-4 flex items-center gap-[7px] border-b pb-3 font-mono text-[9.5px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
         <span
@@ -110,20 +133,30 @@ async function InboxContent() {
       </p>
 
       {rows.length === 0 ? (
-        <QuietEmpty title={profile.verified ? dict.messages.emptyTitle : copy.empty} sub={profile.verified ? dict.messages.emptySub : copy.emptySub} />
+        <QuietEmpty
+          title={profile.verified ? dict.messages.emptyTitle : copy.empty}
+          sub={profile.verified ? dict.messages.emptySub : copy.emptySub}
+        />
       ) : (
         <ul className="flex flex-col">
           {rows.map(({ th, lm, st }) => {
             const support = supportThreads.get(th.id);
             const name = support
-              ? support.contact_id === me ? support.counterpart_name || dict.messages.formerMember : copy.support
-              : names.get(th.member_a === me ? th.member_b : th.member_a) ?? dict.messages.formerMember;
+              ? support.contact_id === me
+                ? support.counterpart_name || dict.messages.formerMember
+                : copy.support
+              : (names.get(th.member_a === me ? th.member_b : th.member_a) ??
+                dict.messages.formerMember);
             const isUnread = unread(lm!, st);
-            const ctx = support ? copy.context : th.about_post_id
-              ? titles.has(th.about_post_id)
-                ? t(dict.messages.reAbout, { title: titles.get(th.about_post_id)! })
-                : dict.messages.reGone
-              : null;
+            const ctx = support
+              ? copy.context
+              : th.about_post_id
+                ? titles.has(th.about_post_id)
+                  ? t(dict.messages.reAbout, {
+                      title: titles.get(th.about_post_id)!,
+                    })
+                  : dict.messages.reGone
+                : null;
             return (
               <li key={th.id}>
                 <Link
@@ -134,7 +167,9 @@ async function InboxContent() {
                   <span className="min-w-0 flex-1">
                     {/* Unread as TEXT for AT (not color/weight alone; WCAG
                         1.4.1) — the dot below stays decorative. */}
-                    {isUnread && <span className="sr-only">{dict.messages.unread}. </span>}
+                    {isUnread && (
+                      <span className="sr-only">{dict.messages.unread}. </span>
+                    )}
                     <span className="flex items-center justify-between gap-2">
                       <span
                         className={`truncate text-[15px] text-foreground ${isUnread ? "font-bold" : "font-semibold"}`}
@@ -145,6 +180,13 @@ async function InboxContent() {
                         {formatRedmondDateTime(lm!.created_at, locale)}
                       </span>
                     </span>
+                    {!support && th.request_status !== "accepted" && (
+                      <span className="mt-1 block text-xs font-semibold">
+                        {th.request_status === "pending"
+                          ? consentCopy[locale].pending
+                          : consentCopy[locale].closed}
+                      </span>
+                    )}
                     {ctx && (
                       <span className="mt-1 block truncate font-mono text-[9.5px] font-semibold uppercase tracking-[0.1em] text-accent">
                         {ctx}

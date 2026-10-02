@@ -16,7 +16,8 @@ export async function setNeighborhood(_: unknown, fd: FormData) {
 }
 async function save(kind: string, fd: FormData) {
   await new Promise((r) => setTimeout(r, 150));
-  if (fail) return { error: kind === "edit-event" ? "update-failed" : "generic" };
+  if (fail)
+    return { error: kind === "edit-event" ? "update-failed" : "generic" };
   window.dispatchEvent(
     new CustomEvent("fixture-save", {
       detail: { kind, ...Object.fromEntries(fd) },
@@ -43,3 +44,16 @@ export const updateEvent = (_id: string, _: unknown, fd: FormData) =>
   save("edit-event", fd);
 export const deleteEvent = (_id: string, _: unknown, fd: FormData) =>
   save("delete-event", fd);
+
+export const saveGroupContact = (_: unknown, fd: FormData) =>
+  save("group-contact", fd).then((result) =>
+    result && "error" in result ? result : { saved: true },
+  );
+export const saveGroupRules = (_: unknown, fd: FormData) =>
+  save("group-rules", fd).then((result) =>
+    result && "error" in result ? result : { saved: true },
+  );
+export const respondToRequest = (_: unknown, fd: FormData) =>
+  save("message-request", fd).then((result) =>
+    result && "error" in result ? { error: "send-failed" } : null,
+  );

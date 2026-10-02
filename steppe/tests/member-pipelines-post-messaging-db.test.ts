@@ -33,7 +33,13 @@ describe.skipIf(!target)("Post messaging consent database boundaries", () => {
     return act(owner, "update public.posts set allow_messages=$1 where id=$2 returning allow_messages,edited_at", [allowed, post]);
   }
   async function start(uid = member, about: string | null = post, withId = owner, client = db) {
-    return (await act(uid, "select public.start_thread($1,'Synthetic post question',$2) id", [withId, about], client)).rows[0].id as string;
+    const id = (await act(uid, "select public.start_thread($1,'Synthetic post question',$2) id", [withId, about], client)).rows[0].id as string;
+    // This suite isolates post permissions/established replies. Stage 3's own
+    // suite proves pending requests; accept here when testing that newer schema.
+    if ((await db.query("select to_regprocedure('public.respond_message_request(uuid,text)') present")).rows[0].present &&
+        (await db.query("select request_status from public.threads where id=$1",[id])).rows[0].request_status==='pending')
+      await act(withId,"select public.respond_message_request($1,'accept')",[id],client);
+    return id;
   }
   async function reply(uid: string, thread: string) {
     return act(uid, "insert into public.messages(thread_id,sender_id,body) values($1,$2,'Synthetic reply')", [thread, uid]);
@@ -162,6 +168,9 @@ describe.skipIf(!target)("Post messaging consent database boundaries", () => {
     await consent(true);
     await act(owner, "update public.posts set category='need',tags=array['need','goods'] where id=$1", [post]);
     await db.query(readFileSync(new URL("../../migrations/0043_post_messaging_opt_in.sql", import.meta.url), "utf8"));
+    // Restore the newest function definitions after testing the older retry.
+    if ((await db.query("select to_regprocedure('public.respond_message_request(uuid,text)') present")).rows[0].present)
+      await db.query(readFileSync(new URL("../../migrations/0044_group_messaging_requests.sql",import.meta.url),"utf8"));
     expect((await act(owner, "select category,tags,allow_messages from public.posts where id=$1", [post])).rows[0])
       .toMatchObject({ category: "need", tags: ["need", "goods"], allow_messages: true });
     await act(owner, "update public.posts set category='offer' where id=$1", [post]);

@@ -13,6 +13,9 @@ export type InboxThread = {
   member_a: string;
   member_b: string;
   about_post_id: string | null;
+  about_group_id: string | null;
+  request_status: "pending" | "accepted" | "declined";
+  started_by: string;
 };
 export type InboxState = {
   thread_id: string;
@@ -52,7 +55,7 @@ export const getInboxSubstrate = cache(async function getInboxSubstrate(
   const [{ data: threads }, { data: states }] = await Promise.all([
     supabase
       .from("threads")
-      .select("id, member_a, member_b, about_post_id")
+      .select("id, member_a, member_b, about_post_id, about_group_id, request_status, started_by")
       .returns<InboxThread[]>(),
     supabase
       .from("thread_state")

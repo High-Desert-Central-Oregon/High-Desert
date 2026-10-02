@@ -23,6 +23,11 @@ import { createClient } from "@/lib/supabase/server";
 import { getMyProfile } from "@/lib/auth";
 import { getHiddenIds } from "@/lib/moderation";
 import { getServerDictionary } from "@/lib/i18n/server";
+import { GroupContactForm } from "@/app/protected/account/messaging/consent-forms";
+import {
+  consentCopy,
+  type GroupMessagePreference,
+} from "@/lib/messages/consent-copy";
 import { groupControl } from "@/lib/groups";
 import { categoryMarker, visibilityMarker } from "@/lib/markers";
 import { formatRedmondDateTime } from "@/lib/time";
@@ -98,9 +103,14 @@ async function GroupContent({
   // (grp_read). Its presence is what unlocks the description + member list.
   const { data: full } = await supabase
     .from("groups")
-    .select("id, description")
+    .select("id, description, messaging_rules, messaging_rules_version")
     .eq("id", dir.id)
-    .maybeSingle<Pick<GroupRow, "id" | "description">>();
+    .maybeSingle<
+      Pick<
+        GroupRow,
+        "id" | "description" | "messaging_rules" | "messaging_rules_version"
+      >
+    >();
 
   // My own membership (gm_read own-row read) → the control + content access.
   const { data: mem } = await supabase
@@ -121,13 +131,14 @@ async function GroupContent({
   // group) can see the description + roster. Mirrors the DB: if `full` came back,
   // you can read this group's content.
   const isActiveMember = mem?.status === "active";
-  const canSeeContent = dir.visibility === "public" || isActiveMember || dir.is_system;
+  const canSeeContent =
+    dir.visibility === "public" || isActiveMember || dir.is_system;
   const isPublic = dir.visibility === "public";
 
   // Roster — only meaningful when you can read it (gm_read returns the full set
   // only to active members). Active members shown here; pending requests live in
   // the maintainer console. Names via public_profiles (limited columns).
-  let roster: { name: string; role: RosterEntry["role"] }[] = [];
+  let roster: { id: string; name: string; role: RosterEntry["role"] }[] = [];
   if (canSeeContent) {
     const { data: members } = await supabase
       .from("group_members")
@@ -148,18 +159,37 @@ async function GroupContent({
       );
       roster = active
         .map((m) => ({
+          id: m.user_id,
           name: nameById.get(m.user_id) ?? "·",
           role: m.role,
         }))
         // Maintainers first, then alphabetical — legible, not ranked by activity.
         .sort(
           (a, b) =>
-            (a.role === "maintainer" ? 0 : 1) - (b.role === "maintainer" ? 0 : 1) ||
-            a.name.localeCompare(b.name),
+            (a.role === "maintainer" ? 0 : 1) -
+              (b.role === "maintainer" ? 0 : 1) || a.name.localeCompare(b.name),
         );
     }
   }
 
+  const copy = consentCopy[locale];
+  const [{ data: preference }, { data: contacts }] =
+    isActiveMember && !dir.is_system
+      ? await Promise.all([
+          supabase
+            .from("group_message_preferences")
+            .select("group_id,acknowledged_version,allow_requests")
+            .eq("group_id", dir.id)
+            .eq("member_id", profile.id)
+            .maybeSingle<GroupMessagePreference>(),
+          supabase.rpc("group_message_contacts", { p_group: dir.id }),
+        ])
+      : [{ data: null }, { data: [] }];
+  const contactIds = new Set(
+    ((contacts as { member_id: string }[] | null) ?? []).map(
+      (c) => c.member_id,
+    ),
+  );
   const showCount = isPublic || isActiveMember;
   const description = full?.description ?? null;
 
@@ -190,7 +220,12 @@ async function GroupContent({
   // independent — one round-trip, not sequential (perf-audit-v1 finding #7).
   const [{ data: upRows }, hiddenEvents, categoryRes] = await Promise.all([
     upQuery.returns<
-      { id: string; title: string; starts_at: string; location: string | null }[]
+      {
+        id: string;
+        title: string;
+        starts_at: string;
+        location: string | null;
+      }[]
     >(),
     getHiddenIds(supabase, "event"),
     dir.category_id
@@ -351,6 +386,27 @@ async function GroupContent({
         </section>
       )}
 
+      {isActiveMember && !dir.is_system && full && (
+        <section className="flex flex-col gap-4 border bg-card p-4">
+          <h2 className="text-lg font-semibold">{copy.rulesTitle}</h2>
+          <GroupContactForm
+            key={`${dir.id}-${full.messaging_rules_version}`}
+            groupId={dir.id}
+            rules={full.messaging_rules}
+            version={full.messaging_rules_version}
+            acknowledgedVersion={preference?.acknowledged_version ?? null}
+            allow={preference?.allow_requests ?? false}
+            locale={locale}
+          />
+          <Link
+            href="/protected/account/messaging"
+            className="self-start text-sm underline focus-ring"
+          >
+            {copy.manage}
+          </Link>
+        </section>
+      )}
+
       {/* Members */}
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{dict.groups.membersTitle}</h2>
@@ -364,14 +420,26 @@ async function GroupContent({
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
-            {roster.map((m, i) => (
+            {roster.map((m) => (
               <li
-                key={`${m.name}-${i}`}
-                className="flex items-center justify-between rounded-lg border bg-card px-4 py-2.5 text-sm"
+                key={m.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-card px-4 py-2.5 text-sm"
               >
-                <span className="font-medium">{m.name}</span>
+                <span className="min-w-0 break-words font-medium">
+                  {m.name}
+                </span>
+                {contactIds.has(m.id) && (
+                  <Link
+                    href={`/protected/groups/${slug}/message/${m.id}`}
+                    className="min-h-11 inline-flex items-center underline focus-ring"
+                  >
+                    {copy.message.replace("{name}", m.name)}
+                  </Link>
+                )}
                 {m.role === "maintainer" && (
-                  <Badge variant="secondary">{dict.groups.roleMaintainer}</Badge>
+                  <Badge variant="secondary">
+                    {dict.groups.roleMaintainer}
+                  </Badge>
                 )}
               </li>
             ))}
