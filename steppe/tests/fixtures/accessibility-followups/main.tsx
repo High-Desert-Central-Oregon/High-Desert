@@ -2,7 +2,7 @@
  * Copyright (C) 2026 Steppe
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { PostForm } from "../../../app/protected/exchange/new/post-form";
 import { EventForm } from "../../../app/protected/events/new/event-form";
@@ -12,6 +12,10 @@ import { ProposalForm } from "../../../app/protected/governance/new/proposal-for
 import { VoteForm } from "../../../app/protected/governance/[id]/vote-form";
 import { ReviewControls } from "../../../app/protected/review/[id]/review-controls";
 import { ThreadMenu } from "../../../app/protected/messages/[id]/thread-menu";
+import { MessageComposer } from "../../../app/protected/messages/message-composer";
+import { AppealForm } from "../../../app/protected/moderation/appeal-form";
+import { CaseControls } from "../../../app/protected/support/[id]/case-controls";
+import { BugReporter } from "../../../components/bug-reports/reporter";
 import { MonthView } from "../../../components/broadsheet/month-view";
 import { PostRow } from "../../../components/broadsheet/post-row";
 import { en } from "../../../lib/i18n/dictionaries/en";
@@ -22,6 +26,11 @@ import "../../../app/globals.css";
 function App() {
   const [mode, setMode] = useState("events");
   const [lang, setLang] = useState<"en" | "es">("en");
+  const [night, setNight] = useState(false);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", night);
+    return () => document.documentElement.classList.remove("dark");
+  }, [night]);
   const dict = lang === "en" ? en : es;
   return (
     <main
@@ -34,7 +43,7 @@ function App() {
       </p>
       <label>
         Screen{" "}
-        <select value={mode} onChange={(e) => setMode(e.target.value)}>
+        <select className="field-control focus-ring border bg-background text-foreground text-base" value={mode} onChange={(e) => setMode(e.target.value)}>
           {[
             "posts",
             "events",
@@ -44,6 +53,10 @@ function App() {
             "vote",
             "review",
             "messages",
+            "composer",
+            "appeal",
+            "support",
+            "bug-report",
             "calendar",
             "exchange",
           ].map((x) => (
@@ -54,6 +67,7 @@ function App() {
       <label>
         Language{" "}
         <select
+          className="field-control focus-ring border bg-background text-foreground text-base"
           value={lang}
           onChange={(e) => setLang(e.target.value as "en" | "es")}
         >
@@ -63,13 +77,16 @@ function App() {
       </label>{" "}
       <label>
         Result{" "}
-        <select onChange={(e) => setOutcome(e.target.value)}>
+        <select className="field-control focus-ring border bg-background text-foreground text-base" onChange={(e) => setOutcome(e.target.value)}>
           <option>validation</option>
           <option>server error</option>
           <option>success</option>
           <option>throw</option>
         </select>
       </label>
+      <button type="button" className="focus-ring ml-2 border p-2" onClick={() => setNight(!night)}>
+        {night ? "Switch to day" : "Switch to night"}
+      </button>
       <hr className="my-5" />
       <div key={mode + lang}>
         {mode === "posts" && (
@@ -132,6 +149,18 @@ function App() {
               dict={dict}
             />
           </div>
+        )}
+        {mode === "composer" && (
+          <MessageComposer authorId="synthetic" authorName="Sample Neighbor" postId="synthetic" back="#" dict={dict} />
+        )}
+        {mode === "appeal" && (
+          <AppealForm actionId="synthetic" targetType="post" targetId="synthetic" dict={dict} />
+        )}
+        {mode === "support" && (
+          <CaseControls id="synthetic" status="new" locale={lang} pendingEmail />
+        )}
+        {mode === "bug-report" && (
+          <BugReporter appLocale={lang} siteLocale={lang} release="local-fixture" />
         )}
         {mode === "calendar" && (
           <MonthView

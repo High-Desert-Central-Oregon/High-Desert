@@ -1,7 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { DraftForm } from "@/components/draft-form";
+import { FormError } from "@/components/form-error";
 import { fileAppeal, type AppealState } from "./actions";
 import type { ModeratableTarget } from "@/lib/moderation";
 import type { Dictionary } from "@/lib/i18n";
@@ -26,17 +28,26 @@ export function AppealForm({
     fileAppeal,
     null,
   );
+  const receipt = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (state && "ok" in state) receipt.current?.focus();
+  }, [state]);
 
   if (state && "ok" in state) {
     return (
-      <p role="status" className="text-sm text-muted-foreground">
+      <p
+        ref={receipt}
+        role="status"
+        tabIndex={-1}
+        className="focus-ring text-sm text-muted-foreground"
+      >
         {dict.moderation.appealStatusOpen}
       </p>
     );
   }
 
   return (
-    <form action={action} className="flex flex-col gap-2">
+    <DraftForm action={action} className="flex flex-col gap-2">
       <input type="hidden" name="moderation_action_id" value={actionId} />
       <input type="hidden" name="target_type" value={targetType} />
       <input type="hidden" name="target_id" value={targetId} />
@@ -49,17 +60,16 @@ export function AppealForm({
         rows={3}
         maxLength={2000}
         required
+        disabled={pending}
         placeholder={dict.moderation.appealPlaceholder}
-        className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="field-control focus-ring w-full rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-sm shadow-sm placeholder:text-muted-foreground"
       />
       {state && "error" in state && (
-        <p role="alert" className="text-sm text-red-700 dark:text-red-400">
-          {dict.moderation.appealError}
-        </p>
+        <FormError message={dict.moderation.appealError} pending={pending} />
       )}
       <Button type="submit" size="sm" disabled={pending} className="self-start">
         {pending ? dict.moderation.appealSubmitting : dict.moderation.appealSubmit}
       </Button>
-    </form>
+    </DraftForm>
   );
 }
