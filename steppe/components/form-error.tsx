@@ -6,9 +6,11 @@ import { useEffect, useRef } from "react";
 export function FormError({
   message,
   pending,
+  id,
 }: {
   message: string;
   pending: boolean;
+  id?: string;
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
@@ -19,6 +21,7 @@ export function FormError({
 
   return (
     <p
+      id={id}
       ref={ref}
       role="alert"
       tabIndex={-1}

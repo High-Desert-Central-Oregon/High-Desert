@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
+import { DraftForm } from "@/components/draft-form";
+import { FormError } from "@/components/form-error";
 import { castVote, type VoteState } from "../actions";
 import type { VoteChoice } from "@/lib/types/db";
 import type { Dictionary } from "@/lib/i18n";
@@ -44,13 +46,11 @@ export function VoteForm({
       </div>
 
       {error && (
-        <p
+        <FormError
           id="vote-error"
-          role="alert"
-          className="text-sm text-red-700 dark:text-red-400"
-        >
-          {error}
-        </p>
+          message={error}
+          pending={isPending}
+        />
       )}
       {saved && !error && (
         <div className="flex items-center gap-3">
@@ -69,10 +69,11 @@ export function VoteForm({
         </div>
       )}
 
-      <form action={action} className="flex flex-col gap-4">
+      <DraftForm action={action} className="flex flex-col gap-4">
         <input type="hidden" name="proposal_id" value={proposalId} />
 
         <fieldset
+          disabled={isPending}
           className="flex flex-col gap-2"
           aria-describedby={error ? "vote-error" : undefined}
         >
@@ -102,7 +103,7 @@ export function VoteForm({
               ? dict.governance.voteChange
               : dict.governance.voteSubmit}
         </Button>
-      </form>
+      </DraftForm>
     </section>
   );
 }

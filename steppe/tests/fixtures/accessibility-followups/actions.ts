@@ -7,19 +7,28 @@ let outcome = "validation";
 export const setOutcome = (next: string) => {
   outcome = next;
 };
-export const createEvent = async () => ({
-  error: outcome === "validation" ? "when-required" : "create-failed",
-});
-export const createGroup = async () => ({
-  error: outcome === "validation" ? "name-taken" : "create-failed",
-});
-export const createProposal = async () => ({
-  error: outcome === "validation" ? "window-order" : "create-failed",
-});
+async function settle<T>(result: T): Promise<T> {
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  return result;
+}
+export const createEvent = async () =>
+  settle({
+    error: outcome === "validation" ? "when-required" : "create-failed",
+  });
+export const createGroup = async () =>
+  settle({
+    error: outcome === "validation" ? "name-taken" : "create-failed",
+  });
+export const createProposal = async () =>
+  settle({
+    error: outcome === "validation" ? "window-order" : "create-failed",
+  });
 export const updateGroupSettings = async () =>
-  outcome === "success"
-    ? { ok: true }
-    : { error: outcome === "validation" ? "name-required" : "action-failed" };
+  settle(
+    outcome === "success"
+      ? { ok: true }
+      : { error: outcome === "validation" ? "name-required" : "action-failed" },
+  );
 export const suggestCategory = async () => ({ error: "suggest-failed" });
 export const requestInformation = async () => ({ ok: false });
 export const completeReview = async () => {
@@ -33,3 +42,6 @@ export const reportThread = async () => undefined;
 export const toggleMute = async () => undefined;
 
 export const createPost = async () => ({ error: "body-required" });
+export const updatePost = createPost;
+export const updateEvent = createEvent;
+export const castVote = async () => settle({ error: "vote-failed" });

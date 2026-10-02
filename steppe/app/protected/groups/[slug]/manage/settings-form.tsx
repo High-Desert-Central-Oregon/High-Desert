@@ -1,6 +1,7 @@
 "use client";
 
 import { DraftForm } from "@/components/draft-form";
+import { FormError } from "@/components/form-error";
 
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ import type {
 } from "@/lib/types/db";
 
 const SELECT_CLASS =
-  "h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+  "focus-ring h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base md:text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 function message(
   state: SettingsState,
@@ -55,11 +56,6 @@ export function SettingsForm({
   categories: Pick<Category, "id" | "name">[];
   dict: Dictionary;
 }) {
-  const [state, action, isPending] = useActionState<SettingsState, FormData>(
-    updateGroupSettings,
-    null,
-  );
-  const msg = message(state, dict);
   const [draft, setDraft] = useState({
     name,
     description: description ?? "",
@@ -67,24 +63,24 @@ export function SettingsForm({
     visibility,
     joinPolicy,
   });
+  const draftSignature = JSON.stringify(draft);
+  const [savedSignature, setSavedSignature] = useState<string | null>(null);
+  const [state, action, isPending] = useActionState<SettingsState, FormData>(
+    async (previous, data) => {
+      const result = await updateGroupSettings(previous, data);
+      if (result && "ok" in result) setSavedSignature(draftSignature);
+      return result;
+    },
+    null,
+  );
+  const msg = message(state, dict);
 
   return (
     <DraftForm action={action} className="flex flex-col gap-5">
       <input type="hidden" name="group_id" value={groupId} />
       <input type="hidden" name="slug" value={slug} />
 
-      {msg && (
-        <p
-          role="alert"
-          className={
-            msg.ok
-              ? "text-sm text-[hsl(var(--success))]"
-              : "text-sm text-red-700 dark:text-red-400"
-          }
-        >
-          {msg.text}
-        </p>
-      )}
+      {msg && !msg.ok && <FormError message={msg.text} pending={isPending} />}
 
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="name">{dict.groups.fieldName}</Label>
@@ -107,7 +103,7 @@ export function SettingsForm({
           maxLength={2000}
           value={draft.description}
           onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="focus-ring w-full rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
 
@@ -174,6 +170,11 @@ export function SettingsForm({
       <Button type="submit" disabled={isPending} className="self-start">
         {isPending ? dict.groups.saving : dict.groups.saveSettings}
       </Button>
+      {msg?.ok && !isPending && savedSignature === draftSignature && (
+        <p role="status" className="text-sm text-success">
+          {msg.text}
+        </p>
+      )}
     </DraftForm>
   );
 }
