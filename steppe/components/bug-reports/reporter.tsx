@@ -34,6 +34,8 @@ export function BugReporter({
     : siteLocale;
   const t = bugCopy[locale];
   const dialog = useRef<HTMLDialogElement>(null);
+  const errorNotice = useRef<HTMLParagraphElement>(null);
+  const receipt = useRef<HTMLElement>(null);
   const frozen = useRef<ReportInput | null>(null);
   const requestKey = useRef<string | null>(null);
   const generation = useRef(0);
@@ -151,6 +153,17 @@ export function BugReporter({
     if (open && !dialog.current?.open) dialog.current?.showModal();
     if (!open && dialog.current?.open) dialog.current?.close();
   }, [open]);
+  useEffect(() => {
+    if (!open) return;
+    const notice =
+      state === "saved"
+        ? receipt.current
+        : state === "invalid" || state === "failed" || state === "rate"
+          ? errorNotice.current
+          : null;
+    notice?.focus({ preventScroll: true });
+    notice?.scrollIntoView({ block: "nearest" });
+  }, [state, open]);
 
   const show = () => {
     if (!frozen.current)
@@ -295,7 +308,7 @@ export function BugReporter({
         </header>
         <p id="bug-intro">{t.intro}</p>
         {state === "saved" ? (
-          <section role="status">
+          <section ref={receipt} role="status" tabIndex={-1}>
             <h3>{t.success}</h3>
             <p>
               {t.reference}: <strong>{reportId.slice(0, 8)}</strong>
@@ -378,9 +391,13 @@ export function BugReporter({
               <pre>{JSON.stringify(details, null, 2)}</pre>
             </details>
             <p className="steppe-bug-hint">{t.privacy}</p>
-            {state === "invalid" && <p role="alert">{t.invalid}</p>}
+            {state === "invalid" && (
+              <p ref={errorNotice} role="alert" tabIndex={-1}>{t.invalid}</p>
+            )}
             {(state === "failed" || state === "rate") && (
-              <p role="alert">{state === "rate" ? t.rate : t.failed}</p>
+              <p ref={errorNotice} role="alert" tabIndex={-1}>
+                {state === "rate" ? t.rate : t.failed}
+              </p>
             )}
             <button
               type="submit"

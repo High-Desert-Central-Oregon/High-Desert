@@ -23,7 +23,7 @@ export function MessageComposer({
 }) {
   return (
     <details className="group">
-      <summary className="flex cursor-pointer list-none items-center justify-center bg-primary px-4 py-[15px] text-[15.5px] font-bold text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-center bg-primary px-4 py-[15px] text-[15.5px] font-bold text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring [&::-webkit-details-marker]:hidden">
         {dict.messages.messageAuthor.replace(
           "{name}",
           authorName.split(/\s+/)[0] || authorName,
@@ -46,7 +46,7 @@ export function MessageComposer({
           maxLength={4000}
           rows={3}
           placeholder={dict.messages.placeholder}
-          className="field-control w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+          className="field-control focus-ring w-full resize-none border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
         />
         {/* composePrivacy — un-reserved with M1 (X1 §8 reserved it for exactly
             this feature). Sage marker + the promise. */}
@@ -59,7 +59,7 @@ export function MessageComposer({
         </p>
         <button
           type="submit"
-          className="inline-flex items-center self-start bg-primary px-5 py-[11px] font-mono text-[13px] font-bold uppercase tracking-[0.06em] text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="inline-flex items-center self-start bg-primary px-5 py-[11px] font-mono text-[13px] font-bold uppercase tracking-[0.06em] text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
         >
           {dict.messages.send}
         </button>

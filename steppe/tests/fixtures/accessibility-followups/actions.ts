@@ -45,3 +45,11 @@ export const createPost = async () => ({ error: "body-required" });
 export const updatePost = createPost;
 export const updateEvent = createEvent;
 export const castVote = async () => settle({ error: "vote-failed" });
+export const startThread = async () => undefined;
+export const fileAppeal = async () =>
+  settle(outcome === "success" ? { ok: true as const } : { error: "appeal-failed" });
+export const updateReport = async () => {
+  if (outcome === "throw") throw new Error("Synthetic failure");
+  return settle({ ok: outcome === "success" });
+};
+export const retryReportNotification = updateReport;

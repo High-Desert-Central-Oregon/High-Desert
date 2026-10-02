@@ -137,9 +137,9 @@ async function ThreadContent({
         <Link
           href="/protected/messages"
           aria-label={dict.messages.backAria}
-          className="shrink-0 text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="shrink-0 text-primary focus-ring"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#36563D" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" />
           </svg>
         </Link>
@@ -226,12 +226,12 @@ async function ThreadContent({
           maxLength={4000}
           autoComplete="off"
           placeholder={dict.messages.replyPlaceholder}
-          className="field-control flex-1 border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+          className="field-control focus-ring min-w-0 flex-1 border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
         />
         <button
           type="submit"
           aria-label={dict.messages.send}
-          className="flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M5 12h13M13 6l6 6-6 6" />

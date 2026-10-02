@@ -71,7 +71,7 @@ export function ThreadMenu({
         aria-controls={panelId}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex size-8 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        className="flex size-8 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground focus-ring"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <circle cx="12" cy="5" r="1.7" />
@@ -116,7 +116,7 @@ export function ThreadMenu({
                 <input type="hidden" name="blocked_id" value={counterpartId} />
                 <button
                   type="submit"
-                  className="inline-flex items-center self-start border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-accent transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="inline-flex items-center self-start border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-accent transition-colors hover:bg-muted focus-ring"
                 >
                   {dict.messages.blockCta}
                 </button>
@@ -146,11 +146,11 @@ export function ThreadMenu({
                   maxLength={2000}
                   rows={2}
                   placeholder={dict.messages.reportThreadLabel}
-                  className="field-control w-full resize-none border bg-card px-3 py-2 text-[15px] text-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none"
+                  className="field-control focus-ring w-full resize-none border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
                 />
                 <button
                   type="submit"
-                  className="inline-flex items-center self-start border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  className="inline-flex items-center self-start border bg-card px-[14px] py-[9px] font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground transition-colors hover:bg-muted focus-ring"
                 >
                   {dict.messages.reportThreadCta}
                 </button>
