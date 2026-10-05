@@ -133,3 +133,86 @@ keyboard/label access, returned-error retention and EN/ES mobile wrapping.
 These local proofs do not substitute for the hosted owner acceptance above.
 
 This is an engineering implementation record, not a new governing instrument.
+
+## Stage 3 group contact and first-message requests
+
+`0044_group_messaging_requests.sql` adds maintainer-controlled group messaging
+rules, versioned acknowledgments and private, per-group receive preferences.
+Group contact starts disabled. A maintainer adds up to 2,000 characters of rules
+in Manage group; changing, disabling or re-enabling them advances the version.
+An unchanged save does not invalidate acknowledgment. New and existing members
+review the displayed rules and the bilingual privacy/request explanation, then
+Save. Receiving requests is an explicit unchecked choice. A member may acknowledge
+rules while keeping receiving off. Both participants must acknowledge the current
+version; the recipient must opt in. The implicit Everyone group provides a board,
+not a general member-directory messaging door.
+
+You → Messaging preferences and each group's page expose the same controls.
+Turning requests off works even before reviewing changed rules or while messaging
+is disabled. Membership loss clears preferences: leaving/rejoining or moving
+between active/pending/invited cannot restore an old acknowledgment. Account
+removal and self-deletion purge preferences; own preferences are included in data
+export. Preferences and decisions are not legal-document consents and are not
+written to the civic audit log. Group rule configuration changes are audited
+without rule text or individual relationship metadata. If the standard privacy/
+request explanation changes substantively, the accompanying migration must
+advance the affected group rule versions so members review it again.
+
+New ordinary post and group pairs start with **one** pending message. The recipient
+sees Accept, Decline, Block. Accept enables replies. Decline closes the request;
+Block closes it and silently blocks the pair. A sender cannot approve their own
+request, send a follow-up while pending, or retry a declined request through a
+second post/group. A direct message INSERT cannot bypass the gate. Concurrent
+starts share one pair and cannot create a second pending message. The provisional
+ten-new-pairs-per-day valve is serialized across post/group starts.
+
+Existing pairs are retained as accepted, with their original context and history.
+Only one private conversation exists per pair; an established conversation may be
+reused from a permitted group/post. Turning contact off, changing rules or leaving
+a group prevents using that group's contact door; existing conversations remain
+available in Messages, with the existing verified/alive/block gates. A received
+request may still be accepted after the original context changes. No third-party
+admin/moderator/maintainer gains access to message history. Contact Steppe remains
+immediately available to pending members, including an earlier pending pair with
+the configured contact. Its existing quota, privacy and contact-change freeze remain.
+
+### Stage 3 release and verification
+
+1. Apply `0044_group_messaging_requests.sql` BY HAND as owner after reviewing the
+   local tests, **before merging the app**. It requires 0038, 0042 and 0043.
+   No production fixture or matrix runs. A retry preserves rules/preferences and
+   pending/accepted/declined choices; it does not re-opt anyone in.
+2. Read-only catalog checks (no private bodies or relationships):
+
+   ```sql
+   select to_regclass('public.group_message_preferences') is not null as preferences,
+          to_regprocedure('public.start_group_thread(uuid,text,uuid)') is not null as group_contact,
+          to_regprocedure('public.respond_message_request(uuid,text)') is not null as request_decisions,
+          not has_table_privilege('authenticated','public.threads','UPDATE') as status_is_server_only,
+          not has_schema_privilege('authenticated','steppe_messaging_private','USAGE') as helpers_private;
+   ```
+
+3. Merge and confirm the canonical commit reaches production. With designated
+   test accounts/group, review rules, keep receiving off, explicitly opt in,
+   save/reload, and verify roster links and first-request acceptance/decline/block.
+   Check changed rules pause contact until both participants review them, and
+   that leaving/rejoining does not reuse acknowledgment. Preserve existing
+   support delivery; remove temporary content only with specific owner approval.
+   Local tests are separate from this hosted acceptance and physical-phone checks.
+
+The disposable loopback `steppe_pipelines_test` fixture uses the account-removal
+bootstrap plus migrations 0039, 0042 and 0043. Then run the group suite, which
+records an established pre-migration pair and applies 0044 locally. Post permission
+regressions explicitly accept new pairs when running on 0044; the group suite
+owns pending-request boundary assertions. All suites reject hosted database URLs.
+
+```sh
+GROUP_MESSAGING_TEST_DB_URL="$LOCAL_FIXTURE_URL" \
+npm run test:member-pipelines -- tests/member-pipelines-group-messaging-db.test.ts \
+  --no-file-parallelism --testTimeout=20000
+
+POST_MESSAGING_TEST_DB_URL="$LOCAL_FIXTURE_URL" \
+CONTACT_STEPPE_TEST_DB_URL="$LOCAL_FIXTURE_URL" \
+npm run test:member-pipelines -- tests/member-pipelines-post-messaging-db.test.ts \
+  tests/member-pipelines-contact-db.test.ts --no-file-parallelism
+```

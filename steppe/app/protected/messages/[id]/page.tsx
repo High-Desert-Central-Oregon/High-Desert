@@ -5,6 +5,8 @@ import { redirect, notFound } from "next/navigation";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { Monogram, initialsFor } from "@/components/broadsheet/post-row";
 import { VerifiedGate } from "@/components/verified-gate";
+import { RequestControls } from "../request-controls";
+import { consentCopy, type RequestStatus } from "@/lib/messages/consent-copy";
 import { ThreadMenu } from "./thread-menu";
 import { sendReply, sendReplyDraft } from "../actions";
 import { MessageForm } from "../message-form";
@@ -22,6 +24,9 @@ type Thread = {
   member_a: string;
   member_b: string;
   about_post_id: string | null;
+  about_group_id: string | null;
+  request_status: RequestStatus;
+  started_by: string;
 };
 type Msg = { id: string; sender_id: string; body: string; created_at: string };
 type SearchParams = { reported?: string; msgErr?: string };
@@ -64,7 +69,9 @@ async function ThreadContent({
   // RLS (th_read) returns the row only to participants — a missing row 404s.
   const { data: thread } = await supabase
     .from("threads")
-    .select("id, member_a, member_b, about_post_id")
+    .select(
+      "id, member_a, member_b, about_post_id, about_group_id, request_status, started_by",
+    )
     .eq("id", id)
     .maybeSingle<Thread>();
   if (!thread) notFound();
@@ -100,9 +107,23 @@ async function ThreadContent({
         .maybeSingle<{ muted_at: string | null }>(),
     ]);
 
+  const [{ data: maySend }, { data: anchorGroup }] = await Promise.all([
+    supabase.rpc("can_send", { p_thread: id }),
+    thread.about_group_id
+      ? supabase
+          .from("groups")
+          .select("name")
+          .eq("id", thread.about_group_id)
+          .maybeSingle<{ name: string }>()
+      : Promise.resolve({ data: null }),
+  ]);
+  const requestCopy = consentCopy[locale];
+  const requestPending = !support && thread.request_status === "pending";
   const name = support
-    ? support.contact_id === me ? support.counterpart_name || dict.messages.formerMember : copy.support
-    : other?.display_name ?? dict.messages.formerMember;
+    ? support.contact_id === me
+      ? support.counterpart_name || dict.messages.formerMember
+      : copy.support
+    : (other?.display_name ?? dict.messages.formerMember);
   const messages = msgs ?? [];
 
   // Mark read: stamp my cursor to the newest message (own-row update; the
@@ -119,11 +140,13 @@ async function ThreadContent({
     });
   }
 
-  const ctx = support ? copy.context : thread.about_post_id
-    ? post?.data
-      ? t(dict.messages.reAbout, { title: post.data.title })
-      : dict.messages.reGone
-    : null;
+  const ctx = support
+    ? copy.context
+    : thread.about_post_id
+      ? post?.data
+        ? t(dict.messages.reAbout, { title: post.data.title })
+        : dict.messages.reGone
+      : (anchorGroup?.name ?? null);
 
   // The reporter's own rendered view of the conversation (for a report's
   // consent-based excerpt — never a server read of the thread by a moderator).
@@ -133,12 +156,16 @@ async function ThreadContent({
     .slice(0, 4000);
 
   const lastMine = (() => {
-    for (let i = messages.length - 1; i >= 0; i--) if (messages[i].sender_id === me) return messages[i].id;
+    for (let i = messages.length - 1; i >= 0; i--)
+      if (messages[i].sender_id === me) return messages[i].id;
     return null;
   })();
 
   return (
-    <div lang={locale} className="-mx-[var(--pad-screen)] -my-[var(--row-rhythm)] flex min-h-[70svh] flex-col">
+    <div
+      lang={locale}
+      className="-mx-[var(--pad-screen)] -my-[var(--row-rhythm)] flex min-h-[70svh] flex-col"
+    >
       {/* Header (bone). The context line links to the post it's about. */}
       <div className="relative flex items-center gap-[10px] border-b bg-muted px-[14px] py-[9px]">
         <Link
@@ -146,13 +173,25 @@ async function ThreadContent({
           aria-label={dict.messages.backAria}
           className="shrink-0 text-primary focus-ring"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
             <path d="M15 5l-7 7 7 7" />
           </svg>
         </Link>
         <Monogram initials={initialsFor(name)} size={32} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] font-semibold text-foreground">{name}</p>
+          <p className="truncate text-[15px] font-semibold text-foreground">
+            {name}
+          </p>
           {ctx &&
             (!support && thread.about_post_id && post?.data ? (
               <Link
@@ -181,25 +220,45 @@ async function ThreadContent({
         <p className="mb-3 text-center font-mono text-[9px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
           {dict.messages.msgInside}
         </p>
-        {support && support.contact_id !== me && <p className="mb-3 text-sm text-muted-foreground">{copy.privacy.replace("{name}", support.counterpart_name ?? dict.messages.formerMember)}</p>}
+        {support && support.contact_id !== me && (
+          <p className="mb-3 text-sm text-muted-foreground">
+            {copy.privacy.replace(
+              "{name}",
+              support.counterpart_name ?? dict.messages.formerMember,
+            )}
+          </p>
+        )}
         {sp.reported === "1" && (
-          <p role="status" className="mb-2 text-center text-[13px] font-medium text-foreground">
+          <p
+            role="status"
+            className="mb-2 text-center text-[13px] font-medium text-foreground"
+          >
             {dict.messages.reportThreadSent}
           </p>
         )}
         {sp.msgErr === "1" && (
-          <p role="status" className="mb-2 text-center text-[13px] font-medium text-accent">
+          <p
+            role="status"
+            className="mb-2 text-center text-[13px] font-medium text-accent"
+          >
             {dict.messages.reachError}
           </p>
         )}
         {/* role="log": a running conversation. Each message is a list item
             with a programmatic sender label — mine/theirs is structure, not
             just paint (WCAG 1.3.1 / 1.4.1). */}
-        <ul role="log" aria-label={dict.messages.conversation} className="flex flex-col">
+        <ul
+          role="log"
+          aria-label={dict.messages.conversation}
+          className="flex flex-col"
+        >
           {messages.map((m) => {
             const mine = m.sender_id === me;
             return (
-              <li key={m.id} className={`my-[7px] flex ${mine ? "justify-end" : "justify-start"}`}>
+              <li
+                key={m.id}
+                className={`my-[7px] flex ${mine ? "justify-end" : "justify-start"}`}
+              >
                 <div
                   className={`max-w-[78%] whitespace-pre-wrap break-words px-[13px] py-[10px] text-[14.5px] leading-[1.45] ${
                     mine
@@ -207,7 +266,9 @@ async function ThreadContent({
                       : "rounded-[14px_14px_14px_4px] bg-muted text-foreground"
                   }`}
                 >
-                  <span className="sr-only">{mine ? dict.messages.youPrefix : name}: </span>
+                  <span className="sr-only">
+                    {mine ? dict.messages.youPrefix : name}:{" "}
+                  </span>
                   {m.body}
                   {mine && m.id === lastMine && (
                     <span className="mt-1 block text-right font-mono text-[8px] font-medium uppercase tracking-[0.1em] text-primary-foreground/70">
@@ -222,30 +283,46 @@ async function ThreadContent({
       </div>
 
       {/* The server/DB still gates sending; failed drafts remain in the composer. */}
-      <MessageForm
-        action={sendReplyDraft}
-        fallbackAction={sendReply}
-        className="flex flex-wrap items-center gap-[9px] border-t bg-muted px-[14px] py-[11px]"
-        buttonClassName="flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
-        sendLabel={dict.messages.send}
-        sendingLabel={dict.messages.starting}
-        errorMessage={dict.messages.draftError}
-        iconOnly
-      >
-        <input type="hidden" name="thread_id" value={thread.id} />
-        <label htmlFor="reply" className="sr-only">
-          {dict.messages.replyPlaceholder}
-        </label>
-        <input
-          id="reply"
-          name="body"
-          required
-          maxLength={4000}
-          autoComplete="off"
-          placeholder={dict.messages.replyPlaceholder}
-          className="field-control focus-ring min-w-0 flex-1 border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
-        />
-      </MessageForm>
+      {requestPending ? (
+        thread.started_by === me ? (
+          <p role="status" className="border-t bg-muted p-4 text-sm">
+            {requestCopy.waiting}
+          </p>
+        ) : (
+          <RequestControls threadId={id} locale={locale} />
+        )
+      ) : maySend ? (
+        <MessageForm
+          action={sendReplyDraft}
+          fallbackAction={sendReply}
+          className="flex flex-wrap items-center gap-[9px] border-t bg-muted px-[14px] py-[11px]"
+          buttonClassName="flex size-[42px] shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-letterpress transition-colors hover:bg-primary/90 focus-ring"
+          sendLabel={dict.messages.send}
+          sendingLabel={dict.messages.starting}
+          errorMessage={dict.messages.draftError}
+          iconOnly
+        >
+          <input type="hidden" name="thread_id" value={thread.id} />
+          <label htmlFor="reply" className="sr-only">
+            {dict.messages.replyPlaceholder}
+          </label>
+          <input
+            id="reply"
+            name="body"
+            required
+            maxLength={4000}
+            autoComplete="off"
+            placeholder={dict.messages.replyPlaceholder}
+            className="field-control focus-ring min-w-0 flex-1 border bg-card px-3 py-2 text-base md:text-[15px] text-foreground placeholder:text-muted-foreground"
+          />
+        </MessageForm>
+      ) : (
+        <p role="status" className="border-t bg-muted p-4 text-sm">
+          {thread.request_status === "declined"
+            ? requestCopy.closed
+            : requestCopy.unavailable}
+        </p>
+      )}
     </div>
   );
 }

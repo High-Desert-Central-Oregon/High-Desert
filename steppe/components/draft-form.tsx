@@ -17,7 +17,7 @@ export function DraftForm({ action, ...props }: Props) {
       action={action}
       onSubmit={(event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
+        const data = new FormData(event.currentTarget, (event.nativeEvent as SubmitEvent).submitter);
         // Dispatch in a transition so useActionState retains pending/error
         // behavior, without the form action's automatic native reset. That
         // reset also clears controlled selects. Success navigates away or

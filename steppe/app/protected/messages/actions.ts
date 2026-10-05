@@ -39,7 +39,8 @@ export async function contactSteppeDraft(
     const { data, error } = await db.rpc("start_support_thread", {
       p_body: body.slice(0, 4000),
     });
-    if (error || typeof data !== "string" || !UUID.test(data)) return { error: "send-failed" };
+    if (error || typeof data !== "string" || !UUID.test(data))
+      return { error: "send-failed" };
     revalidatePath(BASE);
     redirect(`${BASE}/${data}`);
   });
@@ -180,17 +181,82 @@ export async function startThread(formData: FormData) {
   const result = await startThreadDraft(null, formData);
   if (result?.error) {
     const back = String(formData.get("back") ?? "");
-    const safeBack = back.startsWith("/protected") ? back : "/protected/exchange";
+    const safeBack = back.startsWith("/protected")
+      ? back
+      : "/protected/exchange";
     redirect(`${safeBack}?msgErr=1`);
   }
 }
 
 export async function sendReply(formData: FormData) {
   const result = await sendReplyDraft(null, formData);
-  if (result?.error) redirect(`${BASE}/${String(formData.get("thread_id") ?? "")}?msgErr=1`);
+  if (result?.error)
+    redirect(`${BASE}/${String(formData.get("thread_id") ?? "")}?msgErr=1`);
 }
 
 export async function reportThread(formData: FormData) {
   const result = await reportThreadDraft(null, formData);
-  if (result?.error) redirect(`${BASE}/${String(formData.get("thread_id") ?? "")}?msgErr=1`);
+  if (result?.error)
+    redirect(`${BASE}/${String(formData.get("thread_id") ?? "")}?msgErr=1`);
+}
+
+/** Group-scoped start: live membership + both rule acknowledgments in DB. */
+export async function startGroupThreadDraft(
+  _previous: MessageActionState,
+  formData: FormData,
+): Promise<MessageActionState> {
+  return attemptMessageAction(async () => {
+    await requireSession();
+    const withId = String(formData.get("with_id") ?? "");
+    const groupId = String(formData.get("group_id") ?? "");
+    const body = String(formData.get("body") ?? "").trim();
+    if (!UUID.test(withId) || !UUID.test(groupId) || !body)
+      return { error: "send-failed" };
+    const db = await createClient();
+    const { data, error } = await db.rpc("start_group_thread", {
+      p_with: withId,
+      p_body: body.slice(0, 4000),
+      p_group: groupId,
+    });
+    if (error || typeof data !== "string" || !UUID.test(data))
+      return { error: "send-failed" };
+    revalidatePath(BASE);
+    redirect(`${BASE}/${data}`);
+  });
+}
+export async function startGroupThread(formData: FormData) {
+  const result = await startGroupThreadDraft(null, formData);
+  if (result?.error) {
+    const slug = String(formData.get("slug") ?? "");
+    const member = String(formData.get("with_id") ?? "");
+    redirect(
+      /^[a-z0-9-]+$/.test(slug) && UUID.test(member)
+        ? `/protected/groups/${slug}/message/${member}?msgErr=1`
+        : BASE,
+    );
+  }
+}
+export async function respondToRequest(
+  _previous: MessageActionState,
+  formData: FormData,
+): Promise<MessageActionState> {
+  return attemptMessageAction(async () => {
+    await requireSession();
+    const threadId = String(formData.get("thread_id") ?? "");
+    const response = String(formData.get("response") ?? "");
+    if (
+      !UUID.test(threadId) ||
+      !["accept", "decline", "block"].includes(response)
+    )
+      return { error: "send-failed" };
+    const db = await createClient();
+    const { error } = await db.rpc("respond_message_request", {
+      p_thread: threadId,
+      p_response: response,
+    });
+    if (error) return { error: "send-failed" };
+    revalidatePath(BASE);
+    revalidatePath(`${BASE}/${threadId}`);
+    return null;
+  });
 }

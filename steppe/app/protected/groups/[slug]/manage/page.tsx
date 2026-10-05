@@ -3,6 +3,8 @@ import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { VerifiedGate } from "@/components/verified-gate";
+import { GroupRulesForm } from "@/app/protected/account/messaging/consent-forms";
+import { consentCopy } from "@/lib/messages/consent-copy";
 import { SettingsForm } from "./settings-form";
 import { MemberManagement } from "./member-management";
 import { createClient } from "@/lib/supabase/server";
@@ -21,7 +23,11 @@ export const metadata = {
 
 type RosterRow = Pick<GroupMemberRow, "user_id" | "role" | "status">;
 
-async function ManageContent({ params }: { params: Promise<{ slug: string }> }) {
+async function ManageContent({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const profile = await getMyProfile();
   if (!profile) redirect("/auth/login");
@@ -62,10 +68,20 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
   // Full settings row (maintainer is an active member, so grp_read allows it).
   const { data: group } = await supabase
     .from("groups")
-    .select("id, description, category_id, visibility, join_policy")
+    .select(
+      "id, description, category_id, visibility, join_policy, messaging_rules",
+    )
     .eq("id", dir.id)
     .maybeSingle<
-      Pick<GroupRow, "id" | "description" | "category_id" | "visibility" | "join_policy">
+      Pick<
+        GroupRow,
+        | "id"
+        | "description"
+        | "category_id"
+        | "visibility"
+        | "join_policy"
+        | "messaging_rules"
+      >
     >();
   if (!group) notFound();
 
@@ -130,7 +146,9 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
         <h1 className="text-2xl font-semibold tracking-tight">
           {dict.groups.manageTitle}
         </h1>
-        <p className="text-sm text-muted-foreground">{dict.groups.manageIntro}</p>
+        <p className="text-sm text-muted-foreground">
+          {dict.groups.manageIntro}
+        </p>
       </div>
 
       <section className="flex flex-col gap-4">
@@ -145,6 +163,17 @@ async function ManageContent({ params }: { params: Promise<{ slug: string }> }) 
           joinPolicy={group.join_policy}
           categories={cats ?? []}
           dict={dict}
+        />
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold">
+          {consentCopy[locale].rulesTitle}
+        </h2>
+        <GroupRulesForm
+          groupId={group.id}
+          rules={group.messaging_rules}
+          locale={locale}
         />
       </section>
 
