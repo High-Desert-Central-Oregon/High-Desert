@@ -122,8 +122,10 @@ async function PostDetailContent({
     );
   }
 
-  // Author + neighborhood, resolved in parallel (public columns only).
-  const [{ data: author }, { data: nb }] = await Promise.all([
+  // Existing pair history is private to the acting member through threads RLS.
+  // Reopening it is independent of the author's permission for new contact.
+  const [memberA, memberB] = [profile.id, post.author_id].sort();
+  const [{ data: author }, { data: nb }, { data: thread, error: threadError }] = await Promise.all([
     supabase
       .from("public_profiles")
       .select("display_name")
@@ -136,7 +138,16 @@ async function PostDetailContent({
           .eq("id", post.neighborhood_id)
           .maybeSingle<{ name: string }>()
       : Promise.resolve({ data: null }),
+    !isOwner
+      ? supabase
+          .from("threads")
+          .select("id")
+          .eq("member_a", memberA)
+          .eq("member_b", memberB)
+          .maybeSingle<{ id: string }>()
+      : Promise.resolve({ data: null, error: null }),
   ]);
+  if (threadError) throw new Error("Unable to load existing conversation");
   const authorName = author?.display_name ?? "·";
   const hood = nb?.name ?? dict.events.allRedmond;
 
@@ -225,11 +236,18 @@ async function PostDetailContent({
         </p>
       )}
 
-      {/* Contact requires the author's per-post permission. Moderation authority
-          does not change this member messaging gate or grant thread access. */}
+      {/* New contact requires per-post permission; existing history retains its
+          own reply gates. Moderation authority grants no extra thread access. */}
       {!isOwner && (
         <div className="flex flex-col gap-4">
-          {post.allow_messages ? (
+          {thread ? (
+            <Link
+              href={`/protected/messages/${thread.id}`}
+              className="self-start min-h-11 bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground focus-ring"
+            >
+              {dict.messages.openConversation}
+            </Link>
+          ) : post.allow_messages ? (
             <MessageComposer
               authorId={post.author_id}
               authorName={authorName}
