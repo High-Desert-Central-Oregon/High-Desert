@@ -30,6 +30,18 @@ async function Content({
     .eq("slug", slug)
     .maybeSingle();
   if (!group) notFound();
+  // A pair has one conversation, even after a request closes or group contact
+  // is turned off. Reopen it before checking eligibility for a new request.
+  // The member's session client keeps this lookup scoped by threads RLS.
+  const [memberA, memberB] = [profile.id, member].sort();
+  const { data: thread, error: threadError } = await db
+    .from("threads")
+    .select("id")
+    .eq("member_a", memberA)
+    .eq("member_b", memberB)
+    .maybeSingle();
+  if (threadError) throw new Error("Unable to load existing conversation");
+  if (thread) redirect(`/protected/messages/${thread.id}`);
   const { data: contacts } = await db.rpc("group_message_contacts", {
     p_group: group.id,
   });
