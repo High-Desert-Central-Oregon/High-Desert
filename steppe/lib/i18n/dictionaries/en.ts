@@ -506,6 +506,7 @@ export const en = {
     emptySub: "Say hello from an opted-in post or a group with messaging enabled.",
     // The composer door on post detail.
     messageAuthor: "Message {name}",
+    openConversation: "Open conversation",
     composerHint: "For a new conversation, your first message is a request. Further messages wait for acceptance.",
     placeholder: "Write a message…",
     send: "Send",

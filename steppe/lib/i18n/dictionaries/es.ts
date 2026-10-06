@@ -518,6 +518,7 @@ export const es: Dictionary = {
     emptyTitle: "Aún no hay mensajes",
     emptySub: "Saluda desde una publicación que permita mensajes o un grupo con mensajes activados.",
     messageAuthor: "Mensaje a {name}",
+    openConversation: "Abrir conversación",
     composerHint: "En una conversación nueva, tu primer mensaje es una solicitud. Los siguientes esperan a que sea aceptada.",
     placeholder: "Escribe un mensaje…",
     send: "Enviar",
