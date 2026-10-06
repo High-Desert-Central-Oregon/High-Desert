@@ -111,6 +111,60 @@ describe.skipIf(!target)(
         await db.query("select * from public.messages where thread_id=$1", [t])
       ).rows;
     }
+    it("unblocking only removes the actor's row, preserves reverse blocks and accepted consent", async () => {
+      await ready();
+      const t = await start();
+      await respond(author, t);
+      await act(
+        author,
+        "insert into member_blocks(blocker_id,blocked_id) values($1,$2)",
+        [author, member],
+      );
+      await act(
+        member,
+        "insert into member_blocks(blocker_id,blocked_id) values($1,$2)",
+        [member, author],
+      );
+      expect(
+        (
+          await act(
+            outsider,
+            "delete from member_blocks where blocker_id=$1 and blocked_id=$2 returning blocked_id",
+            [author, member],
+          )
+        ).rowCount,
+      ).toBe(0);
+      expect(
+        (
+          await act(
+            member,
+            "delete from member_blocks where blocker_id=$1 and blocked_id=$2 returning blocked_id",
+            [author, member],
+          )
+        ).rowCount,
+      ).toBe(0);
+      expect(
+        (
+          await act(
+            author,
+            "delete from member_blocks where blocker_id=$1 and blocked_id=$2 returning blocked_id",
+            [author, member],
+          )
+        ).rowCount,
+      ).toBe(1);
+      await expect(reply(author, t)).rejects.toThrow();
+      expect(
+        (await db.query("select request_status from threads where id=$1", [t]))
+          .rows[0].request_status,
+      ).toBe("accepted");
+      await act(
+        member,
+        "delete from member_blocks where blocker_id=$1 and blocked_id=$2",
+        [member, author],
+      );
+      await reply(author, t);
+      expect((await messages(t)).length).toBe(2);
+    });
     beforeAll(async () => {
       await db.connect();
       oldAuthor = await person();
@@ -138,7 +192,11 @@ describe.skipIf(!target)(
             "select to_regprocedure('public.respond_message_request(uuid,text)') present",
           )
         ).rows[0].present &&
-        (await db.query("select request_status from threads where id=$1",[oldPair])).rows[0].request_status === "pending"
+        (
+          await db.query("select request_status from threads where id=$1", [
+            oldPair,
+          ])
+        ).rows[0].request_status === "pending"
       )
         await act(oldAuthor, "select respond_message_request($1,'accept')", [
           oldPair,
