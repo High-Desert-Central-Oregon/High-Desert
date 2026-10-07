@@ -1,4 +1,5 @@
 import { LoadFailure } from "@/components/load-failure";
+import { groupArchiveCopy } from "@/lib/group-archive-copy";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { redirect } from "next/navigation";
@@ -28,7 +29,12 @@ export const metadata = {
   title: "Groups · Steppe",
 };
 
-type SearchParams = { q?: string; category?: string; s?: string };
+type SearchParams = {
+  q?: string;
+  category?: string;
+  s?: string;
+  archived?: string;
+};
 
 async function DirectoryContent({
   searchParams,
@@ -123,6 +129,9 @@ async function DirectoryContent({
         voice={dict.groups.voice}
         flush
       />
+      {sp.archived === "1" && (
+        <p role="status">{groupArchiveCopy[locale].saved}</p>
+      )}
       {rows.length > 0 && (
         <Fab href="/protected/groups/new" label={dict.groups.create} />
       )}

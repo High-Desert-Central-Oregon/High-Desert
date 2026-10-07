@@ -158,3 +158,31 @@ export async function setMemberRole(
   revalidatePath(`/protected/groups/${slug}/manage`);
   return { ok: true };
 }
+
+/** The session RPC rechecks current maintainer rights under the archive lock. */
+export async function archiveGroup(
+  _prev: SettingsState,
+  data: FormData,
+): Promise<SettingsState> {
+  if (!(await requireVerified())) return { error: "forbidden" };
+  const groupId = String(data.get("group_id") ?? "");
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      groupId,
+    ) ||
+    data.get("confirm") !== "1"
+  )
+    return { error: "action-failed" };
+  try {
+    const db = await createClient();
+    const { error } = await db.rpc("archive_group", { p_group: groupId });
+    if (error) return { error: "action-failed" };
+  } catch {
+    return { error: "action-failed" };
+  }
+  revalidatePath("/protected/groups", "layout");
+  revalidatePath("/protected/account/messaging");
+  revalidatePath("/protected/account/calendar");
+  revalidatePath("/protected/exchange", "layout");
+  redirect("/protected/groups?archived=1");
+}

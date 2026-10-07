@@ -5,6 +5,8 @@ import { redirect, notFound } from "next/navigation";
 import { VerifiedGate } from "@/components/verified-gate";
 import { GroupRulesForm } from "@/app/protected/account/messaging/consent-forms";
 import { consentCopy } from "@/lib/messages/consent-copy";
+import { ArchivedGroup } from "@/components/archived-group";
+import { ArchiveGroupForm } from "./archive-form";
 import { SettingsForm } from "./settings-form";
 import { MemberManagement } from "./member-management";
 import { createClient } from "@/lib/supabase/server";
@@ -49,10 +51,16 @@ async function ManageContent({
   // Resolve the group (directory view always returns it for a verified member).
   const { data: dir } = await supabase
     .from("groups_directory")
-    .select("id, slug, name")
+    .select("id, slug, name, archived_at, is_system")
     .eq("slug", slug)
-    .maybeSingle<Pick<GroupDirectoryRow, "id" | "slug" | "name">>();
+    .maybeSingle<
+      Pick<
+        GroupDirectoryRow,
+        "id" | "slug" | "name" | "archived_at" | "is_system"
+      >
+    >();
   if (!dir) notFound();
+  if (dir.archived_at) return <ArchivedGroup name={dir.name} locale={locale} />;
 
   // Maintainer gate (friendly; the RPCs re-check is_group_maintainer). A
   // non-maintainer is sent back to the group page.
@@ -188,6 +196,9 @@ async function ManageContent({
           dict={dict}
         />
       </section>
+      {!dir.is_system && (
+        <ArchiveGroupForm groupId={group.id} locale={locale} />
+      )}
     </div>
   );
 }
