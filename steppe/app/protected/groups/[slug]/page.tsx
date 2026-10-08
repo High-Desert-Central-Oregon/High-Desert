@@ -1,3 +1,4 @@
+import { ArchivedGroup } from "@/components/archived-group";
 import { Suspense } from "react";
 import { PageSkeleton } from "@/components/page-skeleton";
 import Link from "next/link";
@@ -93,11 +94,12 @@ async function GroupContent({
   const { data: dir } = await supabase
     .from("groups_directory")
     .select(
-      "id, slug, name, category_id, visibility, join_policy, is_system, description, member_count",
+      "id, slug, name, category_id, visibility, join_policy, is_system, description, member_count, archived_at",
     )
     .eq("slug", slug)
     .maybeSingle<GroupDirectoryRow>();
   if (!dir) notFound();
+  if (dir.archived_at) return <ArchivedGroup name={dir.name} locale={locale} />;
 
   // The full base row — returns null for a members_only group you're not in
   // (grp_read). Its presence is what unlocks the description + member list.

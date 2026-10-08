@@ -212,6 +212,14 @@ describe.skipIf(!target)(
         ),
       );
     });
+    beforeAll(async () => {
+      await db.query(
+        readFileSync(
+          new URL("../../migrations/0045_group_archiving.sql", import.meta.url),
+          "utf8",
+        ),
+      );
+    });
     beforeEach(async () => {
       author = await person();
       member = await person();
@@ -246,6 +254,220 @@ describe.skipIf(!target)(
     });
     afterAll(async () => {
       await db.end();
+    });
+
+    it("archives only for verified maintainers, protects Everyone and audits once", async () => {
+      for (const uid of [member, outsider, admin, mod])
+        await expect(
+          act(uid, "select archive_group($1)", [group]),
+        ).rejects.toThrow();
+      await expect(
+        act(null, "select archive_group($1)", [group], db, "anon"),
+      ).rejects.toThrow();
+      await db.query("update profiles set verified=false where id=$1", [
+        author,
+      ]);
+      await expect(
+        act(author, "select archive_group($1)", [group]),
+      ).rejects.toThrow();
+      await db.query("update profiles set verified=true where id=$1", [author]);
+      const everyone = (
+        await db.query(
+          "select id from groups where is_system and slug='everyone'",
+        )
+      ).rows[0].id;
+      await expect(
+        act(author, "select archive_group($1)", [everyone]),
+      ).rejects.toThrow();
+      await expect(
+        act(author, "select archive_group($1)", [randomUUID()]),
+      ).rejects.toThrow();
+      await act(author, "select archive_group($1)", [group]);
+      await db.query(
+        readFileSync(
+          new URL("../../migrations/0045_group_archiving.sql", import.meta.url),
+          "utf8",
+        ),
+      );
+      await act(author, "select archive_group($1)", [group]);
+      expect(
+        (await db.query("select archived_at from groups where id=$1", [group]))
+          .rows[0].archived_at,
+      ).not.toBeNull();
+      expect(
+        (
+          await db.query(
+            "select count(*)::int n from audit_log where entity_id=$1 and action='group.archived'",
+            [group],
+          )
+        ).rows[0].n,
+      ).toBe(1);
+      expect(
+        (
+          await db.query("select archived_at from groups where id=$1", [
+            everyone,
+          ])
+        ).rows[0].archived_at,
+      ).toBeNull();
+    });
+    it("stops stale participation and settings but preserves history and leave", async () => {
+      await ready();
+      const t = await start();
+      // Local synthetic capabilities avoid depending on the hosted extensions schema.
+      const groupToken = randomUUID().replaceAll("-", "").repeat(2);
+      const personalToken = randomUUID().replaceAll("-", "").repeat(2);
+      await db.query(
+        "insert into calendar_feeds(member_id,group_id,token) values($1,$2,$3),($1,null,$4)",
+        [member, group, groupToken, personalToken],
+      );
+      const event = (
+        await act(
+          author,
+          "insert into events(group_id,creator_id,title,starts_at) values($1,$2,'Existing gathering',now()+interval '1 day') returning id",
+          [group, author],
+        )
+      ).rows[0].id;
+      await act(
+        member,
+        "insert into event_rsvps(event_id,user_id,status) values($1,$2,'going')",
+        [event, member],
+      );
+      const groupPost = (
+        await act(
+          author,
+          "insert into posts(group_id,author_id,category,title,body) values($1,$2,'offer','Existing post','Synthetic') returning id",
+          [group, author],
+        )
+      ).rows[0].id;
+      await db.query(
+        "insert into group_members(group_id,user_id,status) values($1,$2,'pending')",
+        [group, outsider],
+      );
+      expect(
+        (
+          await db.query("select calendar_feed_payload($1) payload", [
+            groupToken,
+          ])
+        ).rows[0].payload.ok,
+      ).toBe(true);
+      await act(author, "select archive_group($1)", [group]);
+      for (const [sql, args] of [
+        ["select join_group($1)", [group]],
+        ["select add_member($1,$2)", [group, outsider]],
+        ["select approve_member($1,$2)", [group, outsider]],
+        ["select set_member_role($1,$2,'maintainer')", [group, member]],
+        [
+          "select update_group_settings($1,'Changed',null,null,'public','open')",
+          [group],
+        ],
+        ["select set_group_messaging_rules($1,'Changed rules')", [group]],
+        ["select set_group_contact_preference($1,1,true)", [group]],
+        ["select start_group_thread($2,'Stale request',$1)", [group, outsider]],
+        ["select mint_calendar_feed($1)", [group]],
+        [
+          "insert into posts(group_id,author_id,category,title,body) values($1,$2,'offer','Stale','Synthetic')",
+          [group, author],
+        ],
+        [
+          "insert into events(group_id,creator_id,title,starts_at) values($1,$2,'Stale',now()+interval '1 day')",
+          [group, author],
+        ],
+      ] as [string, unknown[]][])
+        await expect(act(author, sql, args)).rejects.toThrow();
+      expect(
+        (await act(member, "select * from group_message_contacts($1)", [group]))
+          .rows,
+      ).toEqual([]);
+      expect(
+        (
+          await db.query("select calendar_feed_payload($1) payload", [
+            groupToken,
+          ])
+        ).rows[0].payload,
+      ).toEqual({ ok: false });
+      const personal = (
+        await db.query("select calendar_feed_payload($1) payload", [
+          personalToken,
+        ])
+      ).rows[0].payload;
+      expect(personal.ok).toBe(true);
+      expect(personal.events.map((e: { id: string }) => e.id)).toContain(event);
+      expect(
+        (await act(member, "select * from posts where id=$1", [groupPost]))
+          .rowCount,
+      ).toBe(1);
+      expect(
+        (await act(member, "select * from events where id=$1", [event]))
+          .rowCount,
+      ).toBe(1);
+      expect(
+        (
+          await act(member, "select * from event_rsvps where event_id=$1", [
+            event,
+          ])
+        ).rowCount,
+      ).toBe(1);
+      await expect(
+        act(outsider, "select join_group($1)", [group]),
+      ).rejects.toThrow(/archived/);
+      expect((await messages(t)).length).toBe(1);
+      expect(
+        (await db.query("select request_status from threads where id=$1", [t]))
+          .rows[0].request_status,
+      ).toBe("pending");
+      await act(member, "select leave_group($1)", [group]);
+      expect(
+        (
+          await db.query(
+            "select count(*)::int n from group_message_preferences where group_id=$1 and member_id=$2",
+            [group, member],
+          )
+        ).rows[0].n,
+      ).toBe(0);
+    });
+    it("preserves accepted conversations and blocks after archival", async () => {
+      await ready();
+      const t = await start();
+      await respond(author, t);
+      await act(author, "select archive_group($1)", [group]);
+      await reply(member, t);
+      await act(
+        author,
+        "insert into member_blocks(blocker_id,blocked_id) values($1,$2)",
+        [author, member],
+      );
+      await expect(reply(member, t)).rejects.toThrow();
+      expect((await messages(t)).length).toBe(2);
+    });
+    it("serializes archival with a concurrent stale join", async () => {
+      const concurrent = new pg.Client({ connectionString: target });
+      await concurrent.connect();
+      try {
+        await concurrent.query("set lock_timeout='150ms'");
+        await db.query("begin");
+        await db.query("select set_config('request.jwt.claims',$1,true)", [
+          JSON.stringify({ sub: author }),
+        ]);
+        await db.query("select archive_group($1)", [group]);
+        await expect(
+          act(outsider, "select join_group($1)", [group], concurrent),
+        ).rejects.toThrow(/lock timeout/);
+        await db.query("commit");
+        await expect(
+          act(outsider, "select join_group($1)", [group], concurrent),
+        ).rejects.toThrow(/archived/);
+        expect(
+          (
+            await db.query(
+              "select count(*)::int n from group_members where group_id=$1 and user_id=$2",
+              [group, outsider],
+            )
+          ).rows[0].n,
+        ).toBe(0);
+      } finally {
+        await db.query("rollback");
+        await concurrent.end();
+      }
     });
     it("preserves established pairs and history through migration and rerun", async () => {
       expect(
