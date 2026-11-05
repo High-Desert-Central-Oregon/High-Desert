@@ -1,3 +1,4 @@
+import { safeReturnPath } from "@/lib/member-pipelines/shared";
 import { createClient } from "@/lib/supabase/server";
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
@@ -7,18 +8,9 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  // Default landing after a verified magic link. The protected area then routes
-  // members who haven't accepted the current Terms to the consent gate.
-  //
-  // Only ever forward to an INTERNAL path: an attacker-supplied absolute
-  // ("https://evil.com") or protocol-relative ("//evil.com") `next` would turn
-  // this confirm route into an open redirect, so anything that isn't a plain
-  // "/path" falls back to /protected. (The app itself always sends next=/protected.)
-  const nextParam = searchParams.get("next") ?? "/protected";
-  const next =
-    nextParam.startsWith("/") && !nextParam.startsWith("//")
-      ? nextParam
-      : "/protected";
+  // Use the same protected-route allowlist as OAuth return links, including
+  // URL normalization and backslash/control-character rejection.
+  const next = safeReturnPath(searchParams.get("next"));
 
   if (token_hash && type) {
     const supabase = await createClient();
