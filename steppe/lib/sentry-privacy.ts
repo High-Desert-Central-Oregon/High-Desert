@@ -20,16 +20,21 @@ export function sanitizeError(event: ErrorEvent): ErrorEvent | null {
     release: event.release,
     environment: event.environment,
     sdk: event.sdk,
-    exception: { values: event.exception.values.map((exception) => ({
-      type: /^(?:Error|TypeError|RangeError|ReferenceError|SyntaxError|URIError|EvalError)$/.test(exception.type || "")
-        ? exception.type : "Error",
-      value: "Application error (message withheld)",
-      mechanism: { type: "generic", handled: exception.mechanism?.handled !== false },
-      stacktrace: { frames: (exception.stacktrace?.frames || []).flatMap((frame) => {
+    exception: { values: event.exception.values.map((exception) => {
+      const frames = (exception.stacktrace?.frames || []).flatMap((frame) => {
         const filename = assetUrl(frame.filename);
         return filename ? [{ filename, lineno: frame.lineno, colno: frame.colno, in_app: true }] : [];
-      }) },
-    })) },
+      });
+      return {
+        type: /^(?:Error|TypeError|RangeError|ReferenceError|SyntaxError|URIError|EvalError)$/.test(exception.type || "")
+          ? exception.type : "Error",
+        value: "Application error (message withheld)",
+        mechanism: { type: "generic", handled: exception.mechanism?.handled !== false },
+        // Sentry rejects an empty frames array. Stackless errors still retain
+        // their sanitized type and crash accounting, without fabricated frames.
+        ...(frames.length ? { stacktrace: { frames } } : {}),
+      };
+    }) },
     debug_meta: event.debug_meta ? { images: event.debug_meta.images?.flatMap((image) => {
       const code_file = assetUrl(image.code_file);
       return code_file && image.type === "sourcemap" ? [{ type: "sourcemap" as const, code_file, debug_id: image.debug_id }] : [];

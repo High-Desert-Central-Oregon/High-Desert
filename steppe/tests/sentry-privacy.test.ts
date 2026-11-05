@@ -71,6 +71,15 @@ describe("anonymous browser health", () => {
     ]);
     expect(event?.release).toBe("commit");
   });
+  it.each([
+    undefined,
+    { frames: [] },
+    { frames: [{ filename: "https://steppe.community/protected/private?secret=1" }] },
+  ])("omits invalid empty stack traces after filtering (%j)", (stacktrace) => {
+    const event = sanitizeError({ exception: { values: [{ type: "TypeError", value: "private", stacktrace }] } });
+    expect(event?.exception?.values?.[0]).not.toHaveProperty("stacktrace");
+    expect(event?.exception?.values?.[0]?.value).toBe("Application error (message withheld)");
+  });
   it("does not send arbitrary message events", () =>
     expect(sanitizeError({ message: "private" })).toBeNull());
   it("serializes health without a user identifier, IP or user agent", () => {
@@ -89,7 +98,7 @@ describe("anonymous browser health", () => {
     expect(payload.did).toBeUndefined();
     expect(payload.status).toBe("ok");
   });
-  it("keeps crash accounting through the real SDK transport without sending identity", async () => {
+  it.each([true, false])("keeps crash accounting through the real SDK transport, with frames=%s", async (withFrames) => {
     sentryReferences.clear();
     const envelopes: unknown[] = [];
     const client = new BrowserClient({
@@ -128,14 +137,14 @@ describe("anonymous browser health", () => {
               value: "private form content",
               mechanism: { type: "onerror", handled: false },
               stacktrace: {
-                frames: [
+                frames: withFrames ? [
                   {
                     filename:
                       "https://www.steppe.community/_next/static/chunks/example.js",
                     lineno: 10,
                     colno: 2,
                   },
-                ],
+                ] : [],
               },
             },
           ],
@@ -153,6 +162,8 @@ describe("anonymous browser health", () => {
     expect(payload).toContain('"type":"event"');
     expect(payload).toContain('"status":"crashed"');
     expect(payload).not.toContain("private");
+    expect(payload).not.toContain('"frames":[]');
+    if (!withFrames) expect(payload).not.toContain('"stacktrace"');
     const references = sentryReferences.snapshot();
     expect(references).toHaveLength(1);
     expect(payload).toContain(references[0].eventId);
