@@ -524,6 +524,7 @@ export const en = {
     formerMember: "Former member",
     backToMessages: "← Messages",
     backAria: "Back to messages",
+    unavailable: "Messages are temporarily unavailable. Open your inbox to try again.",
     unread: "Unread",
     youPrefix: "You",
     conversation: "Conversation",

@@ -59,7 +59,7 @@ async function NavBar() {
   // navigation, RLS-scoped to the member, a boolean (never a count). A signed-
   // out member has no threads. Unverified members can have a Contact Steppe
   // conversation; its replies use the same participant-only unread signal.
-  let hasUnread = false;
+  let hasUnread: boolean | null = false;
   const user = await getCurrentUser();
   if (user) {
     // Shares its reads with the inbox page via a request-cached substrate, so
@@ -78,6 +78,7 @@ async function NavBar() {
       searchLabel={dict.nav.searchLabel}
       messagesLabel={dict.nav.messagesLabel}
       unreadLabel={dict.messages.unread}
+      unavailableLabel={dict.messages.unavailable}
       hasUnread={hasUnread}
     />
   );

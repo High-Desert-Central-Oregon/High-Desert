@@ -535,6 +535,7 @@ export const es: Dictionary = {
     formerMember: "Miembro anterior",
     backToMessages: "← Mensajes",
     backAria: "Volver a mensajes",
+    unavailable: "Los mensajes no están disponibles temporalmente. Abre tu bandeja para volver a intentarlo.",
     unread: "Sin leer",
     youPrefix: "Tú",
     conversation: "Conversación",

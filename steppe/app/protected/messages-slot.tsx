@@ -11,17 +11,20 @@ import { IconSlot } from "@/components/broadsheet/chips";
 export function MessagesSlot({
   label,
   unreadLabel,
+  unavailableLabel,
   hasUnread,
 }: {
   label: string;
   /** Appended to the accessible name when unread, so the dot isn't color-only. */
   unreadLabel: string;
-  hasUnread: boolean;
+  unavailableLabel: string;
+  hasUnread: boolean | null;
 }) {
   return (
     <Link
       href="/protected/messages"
-      aria-label={hasUnread ? `${label}. ${unreadLabel}` : label}
+      aria-label={hasUnread === null ? `${label}. ${unavailableLabel}` : hasUnread ? `${label}. ${unreadLabel}` : label}
+      title={hasUnread === null ? unavailableLabel : undefined}
       className="relative shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <IconSlot>
@@ -39,6 +42,9 @@ export function MessagesSlot({
           <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.4 9.4 0 0 1-2.8-.4L4 21l1.3-3.9A8.2 8.2 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3z" />
         </svg>
       </IconSlot>
+      {hasUnread === null && (
+        <span aria-hidden="true" className="absolute -right-1 -top-1 rounded-full bg-background px-1 text-xs font-bold">?</span>
+      )}
       {hasUnread && (
         <span
           aria-hidden="true"

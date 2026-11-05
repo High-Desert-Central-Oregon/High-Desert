@@ -30,6 +30,7 @@ export function AppNav({
   searchLabel,
   messagesLabel,
   unreadLabel,
+  unavailableLabel,
   hasUnread,
 }: {
   items: Destination[];
@@ -38,7 +39,8 @@ export function AppNav({
   searchLabel: string;
   messagesLabel: string;
   unreadLabel: string;
-  hasUnread: boolean;
+  unavailableLabel: string;
+  hasUnread: boolean | null;
 }) {
   const linkClass =
     "py-1 text-muted-foreground hover:text-foreground hover:underline focus-visible:text-foreground focus-visible:underline focus-visible:outline-none";
@@ -85,6 +87,7 @@ export function AppNav({
           <MessagesSlot
             label={messagesLabel}
             unreadLabel={unreadLabel}
+            unavailableLabel={unavailableLabel}
             hasUnread={hasUnread}
           />
         </div>
