@@ -283,8 +283,7 @@ export const en = {
       countyAlt:
         "Redmond subdivision outlines from Deschutes County, checked October 1, 2026.",
       outlines: "County outlines",
-      countyCredit:
-        "Subdivision outlines: Deschutes County Surveyor’s Office",
+      countyCredit: "Subdivision outlines: Deschutes County Surveyor’s Office",
       countyLocated:
         "Showing {name} in the county plat outlines. Review the map, then choose it if this is your neighborhood.",
       platCount:
@@ -503,18 +502,22 @@ export const en = {
       "Your contact stays inside Steppe. Neighbors reach you here, never by SMS or email.",
     rowSub: "Your conversations",
     emptyTitle: "No messages yet",
-    emptySub: "Say hello from an opted-in post or a group with messaging enabled.",
+    emptySub:
+      "Say hello from an opted-in post or a group with messaging enabled.",
     // The composer door on post detail.
     messageAuthor: "Message {name}",
     openConversation: "Open conversation",
-    composerHint: "For a new conversation, your first message is a request. Further messages wait for acceptance.",
+    composerHint:
+      "For a new conversation, your first message is a request. Further messages wait for acceptance.",
     placeholder: "Write a message…",
     send: "Send",
     starting: "Sending…",
     sent: "Message sent · stays inside Steppe",
     error: "We couldn't send that. Please try again.",
-    draftError: "We couldn't confirm your message was sent. Your draft is still here. Please try again.",
-    reportDraftError: "We couldn't confirm your report was sent. Your text is still here. Please try again.",
+    draftError:
+      "We couldn't confirm your message was sent. Your draft is still here. Please try again.",
+    reportDraftError:
+      "We couldn't confirm your report was sent. Your text is still here. Please try again.",
     reachError: "This neighbor can't be reached right now.",
     // Thread view.
     reAbout: "Re: {title}",
@@ -524,7 +527,8 @@ export const en = {
     formerMember: "Former member",
     backToMessages: "← Messages",
     backAria: "Back to messages",
-    unavailable: "Messages are temporarily unavailable. Open your inbox to try again.",
+    unavailable:
+      "Messages are temporarily unavailable. Open your inbox to try again.",
     unread: "Unread",
     youPrefix: "You",
     conversation: "Conversation",
@@ -1015,6 +1019,8 @@ export const en = {
     deleteConfirmWord: "DELETE",
     deleteButton: "Delete my account",
     deleting: "Deleting…",
+    deletePending:
+      "Your account is deactivated. Document and sign-in cleanup is still pending. Try again to finish; an administrator can also retry it.",
     deleteError: "We couldn't delete your account. Please try again.",
     // Profile editor (Y1) — the "You" surface's name + per-field visibility.
     profileRow: "Edit profile",

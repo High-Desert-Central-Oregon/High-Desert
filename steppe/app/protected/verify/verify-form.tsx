@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ChoiceCard } from "@/components/ui/choice-card";
-import { hasPendingVerification, submitVerification } from "./actions";
+import {
+  hasPendingVerification,
+  prepareVerificationUpload,
+  submitVerification,
+} from "./actions";
 import {
   ALL_METHODS,
   ALLOWED_EVIDENCE_TYPES,
@@ -29,13 +33,7 @@ import type { Dictionary } from "@/lib/i18n";
  * `uid` is passed only to name the upload path; the storage policy — not this
  * value — is what actually restricts where a member can write.
  */
-export function VerifyForm({
-  dict,
-  uid,
-}: {
-  dict: Dictionary;
-  uid: string;
-}) {
+export function VerifyForm({ dict, uid }: { dict: Dictionary; uid: string }) {
   const router = useRouter();
   const [method, setMethod] = useState<VerificationMethod | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -76,7 +74,18 @@ export function VerifyForm({
         }
 
         const supabase = createClient();
-        evidencePath = `${uid}/${crypto.randomUUID()}.${evidenceExtension(file.type)}`;
+        const slot = await prepareVerificationUpload(
+          evidenceExtension(file.type),
+        );
+        if (
+          slot.error ||
+          typeof slot.data !== "string" ||
+          !slot.data.startsWith(`${uid}/`)
+        ) {
+          setError(dict.verify.errorGeneric);
+          return;
+        }
+        evidencePath = slot.data;
         recordDiagnostic("verification.upload");
         const { error: uploadError } = await supabase.storage
           .from(EVIDENCE_BUCKET)

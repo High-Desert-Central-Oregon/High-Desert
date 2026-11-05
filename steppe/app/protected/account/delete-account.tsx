@@ -28,7 +28,9 @@ export function DeleteAccount({ dict }: { dict: Dictionary }) {
     <section className="flex flex-col gap-3 rounded-lg border border-destructive/40 p-4">
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold">{dict.account.deleteHeading}</h2>
-        <p className="text-sm text-muted-foreground">{dict.account.deleteBody}</p>
+        <p className="text-sm text-muted-foreground">
+          {dict.account.deleteBody}
+        </p>
       </div>
 
       <ul className="flex list-disc flex-col gap-1 pl-5 text-sm text-muted-foreground">
@@ -73,7 +75,12 @@ export function DeleteAccount({ dict }: { dict: Dictionary }) {
             // Success redirects server-side; reaching here means it failed.
             clearDiagnostics();
             const result = await deleteMyAccount();
-            if (result?.error) setError(dict.account.deleteError);
+            if (result?.error)
+              setError(
+                result.error === "cleanup-pending"
+                  ? dict.account.deletePending
+                  : dict.account.deleteError,
+              );
           });
         }}
       >

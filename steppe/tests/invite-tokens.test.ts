@@ -1,7 +1,15 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import pg from "pg";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { dbReachable, makeClient, impersonate, RANDO, DB_URL } from "./helpers/pg-impersonation";
+import {
+  dbReachable,
+  makeClient,
+  impersonate,
+  RANDO,
+  DB_URL,
+} from "./helpers/pg-impersonation";
 
 /**
  * Migration 0027 — bearer invite tokens.
@@ -29,16 +37,16 @@ import { dbReachable, makeClient, impersonate, RANDO, DB_URL } from "./helpers/p
  * row it creates carries the TAG prefix below.
  */
 
-// Rotated by migration 0029, which pinned this function's search_path to
-// (public, pg_temp) along with the other 46 pre-0026 definer functions.
-// ALTER FUNCTION ... SET changes pg_get_functiondef output, so the hash moved
-// deliberately. The pre-0029 value was
-// 8f2f632e92d2eab9900fd11b9a0bd9156c2f867bedff33d211f322086366532e — historical.
-// 0027 left the search_path alone on purpose: byte-identity of the gate was
-// that build's regression criterion, and hardening it there would have
-// destroyed the check that made the build trustworthy.
-const BASELINE_SHA =
-  "4a88b18c388fa8c78a4766892774069d562b887e0df9751db0cc288991c29a07";
+// The current signup gate was deliberately extended in 0036. Compare its
+// executable body to that migration, independent of PostgreSQL pretty-printing.
+const gateSource = readFileSync(
+  resolve(process.cwd(), "../migrations/0036_individual_invitations.sql"),
+  "utf8",
+)
+  .split("create or replace function public.enforce_invited_signup()")[1]
+  .split("as $$")[1]
+  .split("$$;")[0]
+  .trim();
 
 /** Everything this suite writes is prefixed so cleanup is exact. */
 const TAG = "zz-invite-test";
@@ -62,7 +70,11 @@ async function authAdminReachable(): Promise<boolean> {
   } catch {
     return false;
   } finally {
-    try { await c.end(); } catch { /* ignore */ }
+    try {
+      await c.end();
+    } catch {
+      /* ignore */
+    }
   }
 }
 
@@ -91,32 +103,41 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
   afterAll(async () => {
     // Only the concurrency + gate tests commit; clear anything they left.
     try {
-      await owner.query(`delete from invite_tokens where label like $1`, [`${TAG}%`]);
-      await owner.query(`delete from invited_emails where email like $1`, [`%@${TAG}.test`]);
-      await owner.query(`delete from auth.users where email like $1`, [`%@${TAG}.test`]);
-    } catch { /* best effort */ }
+      await owner.query(`delete from invite_tokens where label like $1`, [
+        `${TAG}%`,
+      ]);
+      await owner.query(`delete from invited_emails where email like $1`, [
+        `%@${TAG}.test`,
+      ]);
+      await owner.query(`delete from auth.users where email like $1`, [
+        `%@${TAG}.test`,
+      ]);
+    } catch {
+      /* best effort */
+    }
     await owner?.end();
   });
 
   // ---- 2. the gate function itself is untouched ---------------------------
 
-  it("enforce_invited_signup is byte-identical to its pre-build state", async () => {
+  it("enforce_invited_signup retains the current invitation gate body", async () => {
     const { rows } = await owner.query(
-      `select encode(sha256(pg_get_functiondef(p.oid)::bytea), 'hex') as sha
+      `select p.prosrc as body
          from pg_proc p join pg_namespace n on n.oid = p.pronamespace
         where n.nspname = 'public' and p.proname = 'enforce_invited_signup'`,
     );
-    expect(rows[0].sha).toBe(BASELINE_SHA);
+    expect(rows[0].body.trim()).toBe(gateSource);
   });
 
-  it("the gate still reads only invited_emails, and still keys on session_user", async () => {
+  it("the gate checks both authorized invitation sources under the Auth service identity", async () => {
     const { rows } = await owner.query(
       `select pg_get_functiondef(p.oid) as src from pg_proc p
          join pg_namespace n on n.oid = p.pronamespace
         where n.nspname='public' and p.proname='enforce_invited_signup'`,
     );
     const src = rows[0].src as string;
-    expect(src).toContain("session_user = 'supabase_auth_admin'");
+    expect(src).toMatch(/session_user\s*=\s*'supabase_auth_admin'/);
+    expect(src).toContain("public.individual_invitations");
     expect(src).toContain("public.invited_emails");
     // The whole point of 0027: the gate learned nothing about tokens.
     expect(src).not.toMatch(/invite_tokens|invite_redemptions|redeem_invite/);
@@ -141,10 +162,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
       );
       const tok = t[0].token as string;
 
-      const { rows: r } = await c.query(`select public.redeem_invite($1,$2) as ok`, [
-        tok,
-        `  Neighbor@${TAG}.TEST `,
-      ]);
+      const { rows: r } = await c.query(
+        `select public.redeem_invite($1,$2) as ok`,
+        [tok, `  Neighbor@${TAG}.TEST `],
+      );
       expect(r[0].ok).toBe(true);
 
       // normalized on the way in, so casing cannot make a second person
@@ -156,7 +177,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
       expect(allow[0].invited_by).toBe("2b2b2b2b-0027-4000-8000-00000000da1a");
       expect(allow[0].note).toBe("invite token");
 
-      const { rows: used } = await c.query(`select uses_count from invite_tokens where token=$1`, [tok]);
+      const { rows: used } = await c.query(
+        `select uses_count from invite_tokens where token=$1`,
+        [tok],
+      );
       expect(used[0].uses_count).toBe(1);
     });
   });
@@ -170,8 +194,14 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
       );
       const tok = t[0].token as string;
 
-      const a = await c.query(`select public.redeem_invite($1,$2) as ok`, [tok, `dup@${TAG}.test`]);
-      const b = await c.query(`select public.redeem_invite($1,$2) as ok`, [tok, `DUP@${TAG}.test`]);
+      const a = await c.query(`select public.redeem_invite($1,$2) as ok`, [
+        tok,
+        `dup@${TAG}.test`,
+      ]);
+      const b = await c.query(`select public.redeem_invite($1,$2) as ok`, [
+        tok,
+        `DUP@${TAG}.test`,
+      ]);
       // Both succeed — a double-tap is not an error to the person tapping.
       expect([a.rows[0].ok, b.rows[0].ok]).toEqual([true, true]);
 
@@ -189,19 +219,31 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
 
   it("exhausted, expired, and revoked tokens each admit nobody", async () => {
     for (const [name, sql] of [
-      ["exhausted", `insert into invite_tokens (max_uses, uses_count, expires_at, label)
-                     values (1, 1, now() + interval '7 days', $1) returning token`],
-      ["expired", `insert into invite_tokens (max_uses, expires_at, label)
-                   values (5, now() - interval '1 minute', $1) returning token`],
-      ["revoked", `insert into invite_tokens (max_uses, expires_at, revoked_at, label)
-                   values (5, now() + interval '7 days', now(), $1) returning token`],
+      [
+        "exhausted",
+        `insert into invite_tokens (max_uses, uses_count, expires_at, label)
+                     values (1, 1, now() + interval '7 days', $1) returning token`,
+      ],
+      [
+        "expired",
+        `insert into invite_tokens (max_uses, expires_at, label)
+                   values (5, now() - interval '1 minute', $1) returning token`,
+      ],
+      [
+        "revoked",
+        `insert into invite_tokens (max_uses, expires_at, revoked_at, label)
+                   values (5, now() + interval '7 days', now(), $1) returning token`,
+      ],
     ] as const) {
       await h.inTxn(async (c) => {
         const { rows: t } = await c.query(sql, [`${TAG}-${name}`]);
         const tok = t[0].token as string;
         const email = `${name}@${TAG}.test`;
 
-        const { rows: r } = await c.query(`select public.redeem_invite($1,$2) as ok`, [tok, email]);
+        const { rows: r } = await c.query(
+          `select public.redeem_invite($1,$2) as ok`,
+          [tok, email],
+        );
         expect(r[0].ok, `${name} token must be refused`).toBe(false);
 
         const { rows } = await c.query(
@@ -212,7 +254,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
         );
         // No allowlist row, and no orphan redemption row left behind by the
         // rolled-back claim.
-        expect(rows[0], `${name} must write nothing`).toEqual({ allow_rows: 0, redemptions: 0 });
+        expect(rows[0], `${name} must write nothing`).toEqual({
+          allow_rows: 0,
+          redemptions: 0,
+        });
       });
     }
   });
@@ -236,9 +281,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
       await owner.query("set local role anon");
       for (const t of ["invite_tokens", "invite_redemptions"]) {
         await owner.query("savepoint p");
-        await expect(owner.query(`select * from public.${t}`), t).rejects.toThrow(
-          /permission denied for table/,
-        );
+        await expect(
+          owner.query(`select * from public.${t}`),
+          t,
+        ).rejects.toThrow(/permission denied for table/);
         await owner.query("rollback to savepoint p");
       }
     } finally {
@@ -248,7 +294,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
 
   it("a plain authenticated member cannot read the tokens or the graph", async () => {
     for (const t of ["invite_tokens", "invite_redemptions"]) {
-      const res = await h.runAs(RANDO, `select count(*)::int as n from public.${t}`);
+      const res = await h.runAs(
+        RANDO,
+        `select count(*)::int as n from public.${t}`,
+      );
       // RLS is moderator-only, so a non-moderator sees an empty set.
       expect(res.rows[0].n, t).toBe(0);
     }
@@ -268,9 +317,9 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
              has_function_privilege('public','public.purge_stale_invites(interval)','EXECUTE') as purge_public,
              has_function_privilege('service_role','public.purge_stale_invites(interval)','EXECUTE') as purge_svc`);
     expect(rows[0]).toEqual({
-      redeem_anon: false,   // reversed — see the GRANT-site note in 0027
+      redeem_anon: false, // reversed — see the GRANT-site note in 0027
       redeem_public: false, // default EXECUTE-to-PUBLIC revoked
-      redeem_svc: true,     // the route handler's role, and the only door
+      redeem_svc: true, // the route handler's role, and the only door
       purge_anon: false,
       purge_public: false,
       purge_svc: true,
@@ -365,10 +414,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
         [tokenId, `hood@${TAG}.test`],
       );
       expect(after[0]).toEqual({
-        tokens: 1,        // not cascade-deleted
-        hood: null,       // reverted to general-purpose
-        redemptions: 1,   // the invite graph survived the campaign
-        allow_rows: 1,    // and so did the allowlist row it wrote
+        tokens: 1, // not cascade-deleted
+        hood: null, // reverted to general-purpose
+        redemptions: 1, // the invite graph survived the campaign
+        allow_rows: 1, // and so did the allowlist row it wrote
       });
     });
   });
@@ -471,9 +520,10 @@ describe.skipIf(!dbUp)("0027 invite tokens", () => {
         where n.nspname='public' and p.proname in ('redeem_invite','purge_stale_invites')`,
     );
     for (const row of rows) {
-      expect(row.src, `${row.proname} must not read neighborhood_id`).not.toContain(
-        "neighborhood_id",
-      );
+      expect(
+        row.src,
+        `${row.proname} must not read neighborhood_id`,
+      ).not.toContain("neighborhood_id");
     }
   });
 });
@@ -492,9 +542,15 @@ describe.skipIf(!dbUp)("0027 redeem_invite is race-safe", () => {
 
   afterAll(async () => {
     try {
-      await owner.query(`delete from invite_tokens where label like $1`, [`${TAG}%`]);
-      await owner.query(`delete from invited_emails where email like $1`, [`%@${TAG}.test`]);
-    } catch { /* best effort */ }
+      await owner.query(`delete from invite_tokens where label like $1`, [
+        `${TAG}%`,
+      ]);
+      await owner.query(`delete from invited_emails where email like $1`, [
+        `%@${TAG}.test`,
+      ]);
+    } catch {
+      /* best effort */
+    }
     await owner?.end();
   });
 
@@ -550,8 +606,14 @@ describe.skipIf(!dbUp)("0027 redeem_invite is race-safe", () => {
       await a.query("begin");
       await b.query("begin");
       // Both read the counter before either writes — a plain SELECT takes no lock.
-      const ra = await a.query(`select uses_count, max_uses from invite_tokens where token=$1`, [tok]);
-      const rb = await b.query(`select uses_count, max_uses from invite_tokens where token=$1`, [tok]);
+      const ra = await a.query(
+        `select uses_count, max_uses from invite_tokens where token=$1`,
+        [tok],
+      );
+      const rb = await b.query(
+        `select uses_count, max_uses from invite_tokens where token=$1`,
+        [tok],
+      );
 
       const aWouldProceed = ra.rows[0].uses_count < ra.rows[0].max_uses;
       const bWouldProceed = rb.rows[0].uses_count < rb.rows[0].max_uses;
@@ -599,7 +661,9 @@ describe.skipIf(!dbUp)("0027 redeem_invite is race-safe", () => {
       const resB = await pendingB;
       await b.query("commit");
 
-      const successes = [resA.rows[0].ok, resB.rows[0].ok].filter(Boolean).length;
+      const successes = [resA.rows[0].ok, resB.rows[0].ok].filter(
+        Boolean,
+      ).length;
       expect(successes).toBe(1);
 
       const { rows } = await owner.query(
@@ -641,10 +705,18 @@ describe.skipIf(!dbUp || !authAdminUp)(
 
     afterAll(async () => {
       try {
-        await owner.query(`delete from auth.users where email like $1`, [`%@${TAG}.test`]);
-        await owner.query(`delete from invite_tokens where label like $1`, [`${TAG}%`]);
-        await owner.query(`delete from invited_emails where email like $1`, [`%@${TAG}.test`]);
-      } catch { /* best effort */ }
+        await owner.query(`delete from auth.users where email like $1`, [
+          `%@${TAG}.test`,
+        ]);
+        await owner.query(`delete from invite_tokens where label like $1`, [
+          `${TAG}%`,
+        ]);
+        await owner.query(`delete from invited_emails where email like $1`, [
+          `%@${TAG}.test`,
+        ]);
+      } catch {
+        /* best effort */
+      }
       await auth?.end();
       await owner?.end();
     });
@@ -696,10 +768,10 @@ describe.skipIf(!dbUp || !authAdminUp)(
          values (3, now() + interval '7 days', $1) returning token`,
         [`${TAG}-admits`],
       );
-      const { rows: r } = await owner.query(`select public.redeem_invite($1,$2) as ok`, [
-        t[0].token,
-        email,
-      ]);
+      const { rows: r } = await owner.query(
+        `select public.redeem_invite($1,$2) as ok`,
+        [t[0].token, email],
+      );
       expect(r[0].ok).toBe(true);
 
       await auth.query("begin");
@@ -718,37 +790,40 @@ describe.skipIf(!dbUp || !authAdminUp)(
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-describe.skipIf(!(url && anonKey))("0027 invite tables via the anon API", () => {
-  let supa: SupabaseClient;
-  beforeAll(() => {
-    supa = createClient(url as string, anonKey as string, {
-      auth: { persistSession: false, autoRefreshToken: false },
+describe.skipIf(!(url && anonKey))(
+  "0027 invite tables via the anon API",
+  () => {
+    let supa: SupabaseClient;
+    beforeAll(() => {
+      supa = createClient(url as string, anonKey as string, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
     });
-  });
 
-  it("anon cannot read invite_tokens or invite_redemptions", async () => {
-    for (const t of ["invite_tokens", "invite_redemptions"]) {
-      const { data, error } = await supa.from(t).select("*").limit(5);
-      expect(Boolean(error) || (data ?? []).length === 0, t).toBe(true);
-    }
-  });
-
-  it("anon CANNOT call redeem_invite through the public API", async () => {
-    // The end-to-end form of the reversal: not just "the catalog says no grant",
-    // but PostgREST actually refusing the call with the publishable key. This is
-    // the surface that mattered — a printed token is meant to be photographed,
-    // and an exposed RPC would let a holder burn a 25-use cap on garbage
-    // addresses before a real neighbor arrived.
-    const { error } = await supa.rpc("redeem_invite", {
-      p_token: "deadbeefdeadbeefdeadbeefdeadbeef",
-      p_email: `probe@${TAG}.test`,
+    it("anon cannot read invite_tokens or invite_redemptions", async () => {
+      for (const t of ["invite_tokens", "invite_redemptions"]) {
+        const { data, error } = await supa.from(t).select("*").limit(5);
+        expect(Boolean(error) || (data ?? []).length === 0, t).toBe(true);
+      }
     });
-    expect(error).toBeTruthy();
-    expect(error?.message ?? "").toMatch(/permission denied/i);
-  });
 
-  it("anon cannot reach purge_stale_invites either", async () => {
-    const { error } = await supa.rpc("purge_stale_invites", {});
-    expect(error).toBeTruthy();
-  });
-});
+    it("anon CANNOT call redeem_invite through the public API", async () => {
+      // The end-to-end form of the reversal: not just "the catalog says no grant",
+      // but PostgREST actually refusing the call with the publishable key. This is
+      // the surface that mattered — a printed token is meant to be photographed,
+      // and an exposed RPC would let a holder burn a 25-use cap on garbage
+      // addresses before a real neighbor arrived.
+      const { error } = await supa.rpc("redeem_invite", {
+        p_token: "deadbeefdeadbeefdeadbeefdeadbeef",
+        p_email: `probe@${TAG}.test`,
+      });
+      expect(error).toBeTruthy();
+      expect(error?.message ?? "").toMatch(/permission denied/i);
+    });
+
+    it("anon cannot reach purge_stale_invites either", async () => {
+      const { error } = await supa.rpc("purge_stale_invites", {});
+      expect(error).toBeTruthy();
+    });
+  },
+);

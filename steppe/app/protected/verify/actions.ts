@@ -47,54 +47,68 @@ export async function hasPendingVerification(): Promise<boolean> {
   return (count ?? 0) > 0;
 }
 
-/**
- * Best-effort removal of an evidence object the browser already uploaded, on the
- * paths where submitVerification decides NOT to record a row (a duplicate, a
- * save failure, a tampered method). Verify-then-forget: an uploaded file must
- * not outlive the request it was meant for (audit O3 — the cleanup half; the
- * pre-upload check in verify-form.tsx handles the common resubmit case).
- *
- * SCOPED TO THE CALLER'S OWN FOLDER. The delete runs through the service-role
- * admin client because members hold no DELETE on the bucket (migration 0016) —
- * the same deleter decideVerification uses. Because that client bypasses RLS, a
- * raw client-supplied path would be an arbitrary-object delete; guarding on the
- * `<userId>/…` prefix — the same boundary the upload policy enforces — means a
- * caller can only ever remove its own upload.
- *
- * BEST-EFFORT. A failed delete is logged server-side (never the evidence itself)
- * and swallowed, so the branch's own return/redirect is never blocked: worst
- * case the object stays orphaned, exactly as before this fix — never a stuck
- * member.
- */
+/** Revoke an unattached slot before Storage deletion; retry failures visibly. */
+async function releaseOwnUpload(
+  userId: string,
+  path: string | null,
+): Promise<boolean> {
+  const session = await createClient();
+  const released = await session.rpc("release_unused_verification_upload", {
+    p_path: path,
+  });
+  if (released.error) return false;
+  if (released.data === null) return true;
+  if (
+    typeof released.data !== "string" ||
+    !released.data.startsWith(`${userId}/`)
+  )
+    return false;
+  const { error } = await createAdminClient()
+    .storage.from(EVIDENCE_BUCKET)
+    .remove([released.data]);
+  return !error;
+}
+
+export async function prepareVerificationUpload(
+  extension: string,
+): Promise<{ data: string | null; error: boolean }> {
+  try {
+    const session = await createClient();
+    const { data, error } = await session.auth.getClaims();
+    const uid = data?.claims?.sub;
+    if (
+      error ||
+      !uid ||
+      !["jpg", "png", "webp", "heic", "pdf"].includes(extension)
+    )
+      return { data: null, error: true };
+    if (!(await releaseOwnUpload(uid, null)))
+      return { data: null, error: true };
+    const slot = await session.rpc("reserve_verification_upload", {
+      p_extension: extension,
+    });
+    if (
+      slot.error ||
+      typeof slot.data !== "string" ||
+      !slot.data.startsWith(`${uid}/`)
+    )
+      return { data: null, error: true };
+    return { data: slot.data, error: false };
+  } catch {
+    return { data: null, error: true };
+  }
+}
+
 async function discardOwnUpload(
   userId: string,
   path: string | null,
 ): Promise<void> {
   if (!path || !path.startsWith(`${userId}/`)) return;
   try {
-    // A duplicate submit may resend the path already attached to the pending
-    // request. Never delete referenced evidence while cleaning a failed upload.
-    const session = await createClient();
-    const referenced = await session
-      .from("verifications")
-      .select("id")
-      .eq("evidence_path", path)
-      .limit(1);
-    if (referenced.error || referenced.data?.length) return;
-    const { error } = await createAdminClient()
-      .storage.from(EVIDENCE_BUCKET)
-      .remove([path]);
-    if (error) {
-      console.error(
-        "submitVerification: evidence cleanup failed; object may be orphaned",
-        { storageError: error.message },
-      );
-    }
-  } catch (e) {
-    console.error(
-      "submitVerification: evidence cleanup threw; object may be orphaned",
-      e,
-    );
+    if (!(await releaseOwnUpload(userId, path)))
+      console.error("verification evidence cleanup pending");
+  } catch {
+    console.error("verification evidence cleanup pending");
   }
 }
 

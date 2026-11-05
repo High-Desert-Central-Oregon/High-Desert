@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import pg from "pg";
-import { dbReachable, makeClient, impersonate, RANDO } from "./helpers/pg-impersonation";
+import {
+  dbReachable,
+  makeClient,
+  impersonate,
+  RANDO,
+} from "./helpers/pg-impersonation";
 
 // Automated port of the dry-run runbook's CORE REFUSALS (docs/dry-run-runbook.md §C/§D):
 // the "assume the client is hostile" guarantees. Uses the shared impersonation harness
@@ -11,108 +16,135 @@ import { dbReachable, makeClient, impersonate, RANDO } from "./helpers/pg-impers
 
 const dbUp = await dbReachable();
 
-describe.skipIf(!dbUp)("RLS core refusals (impersonated, owner connection)", () => {
-  let client: pg.Client;
-  let h: ReturnType<typeof impersonate>;
+describe.skipIf(!dbUp)(
+  "RLS core refusals (impersonated, owner connection)",
+  () => {
+    let client: pg.Client;
+    let h: ReturnType<typeof impersonate>;
 
-  beforeAll(async () => {
-    client = makeClient();
-    await client.connect();
-    h = impersonate(client);
-  });
-  afterAll(async () => {
-    await client?.end();
-  });
-
-  // ---- Structural refusals (data-independent: grant / function-guard level) ----
-
-  it("G2: authenticated cannot EXECUTE log_audit (no forged audit entries)", async () => {
-    await expect(
-      h.runAs(RANDO, "select public.log_audit('moderation.remove','event', gen_random_uuid(), '{}'::jsonb)"),
-    ).rejects.toThrow(/permission denied for function log_audit/);
-  });
-
-  it("G2: authenticated cannot EXECUTE vote_weight_for (no weight leak)", async () => {
-    await expect(h.runAs(RANDO, "select public.vote_weight_for($1)", [RANDO])).rejects.toThrow(
-      /permission denied for function vote_weight_for/,
-    );
-  });
-
-  it("D-forge: authenticated cannot INSERT into group_members (writes are RPC-only)", async () => {
-    await expect(
-      h.runAs(
-        RANDO,
-        "insert into group_members (group_id,user_id,role,status) values (gen_random_uuid(), $1, 'maintainer','active')",
-        [RANDO],
-      ),
-    ).rejects.toThrow(/permission denied for table group_members/);
-  });
-
-  it("G3: a non-moderator cannot decide a verification", async () => {
-    await expect(h.runAs(RANDO, "select public.decide_verification(gen_random_uuid(), true)")).rejects.toThrow(
-      /only moderators may decide verifications/,
-    );
-  });
-
-  // ---- Fixture-backed refusals (row-level policies; RLS silently filters → assert 0 rows) ----
-
-  it("G3: a member cannot UPDATE their own verification to approved (no update policy)", async () => {
-    await h.inTxn(async (c) => {
-      const uid = "a1a10000-0000-0000-0000-000000000001";
-      const vid = "0d0a0000-0000-0000-0000-000000000001";
-      await h.createMember(uid, "selfverify@rls.test");
-      await c.query(
-        "insert into verifications (id,user_id,method,evidence_path) values ($1,$2,'utility_bill','x/y.jpg')",
-        [vid, uid],
-      );
-      await h.actAs(uid);
-      const res = await c.query("update verifications set status='approved' where id=$1", [vid]);
-      expect(res.rowCount).toBe(0); // RLS permits no row — the half-state path is closed
+    beforeAll(async () => {
+      client = makeClient();
+      await client.connect();
+      h = impersonate(client);
     });
-  });
+    afterAll(async () => {
+      await client?.end();
+    });
 
-  it("G4: a moderator cannot hard-delete another member's event (creator-only)", async () => {
-    await h.inTxn(async (c) => {
-      const creator = "cc010000-0000-0000-0000-000000000001";
-      const mod = "cc020000-0000-0000-0000-000000000001";
-      const eid = "0ecc0000-0000-0000-0000-000000000001";
-      await h.createMember(creator, "creator@rls.test", { verified: true });
-      await h.createMember(mod, "mod@rls.test", { verified: true, role: "moderator" });
-      await c.query(
-        `insert into events (id, creator_id, neighborhood_id, title, body, starts_at, location)
+    // ---- Structural refusals (data-independent: grant / function-guard level) ----
+
+    it("G2: authenticated cannot EXECUTE log_audit (no forged audit entries)", async () => {
+      await expect(
+        h.runAs(
+          RANDO,
+          "select public.log_audit('moderation.remove','event', gen_random_uuid(), '{}'::jsonb)",
+        ),
+      ).rejects.toThrow(/permission denied for function log_audit/);
+    });
+
+    it("G2: authenticated cannot EXECUTE vote_weight_for (no weight leak)", async () => {
+      await expect(
+        h.runAs(RANDO, "select public.vote_weight_for($1)", [RANDO]),
+      ).rejects.toThrow(/permission denied for function vote_weight_for/);
+    });
+
+    it("D-forge: authenticated cannot INSERT into group_members (writes are RPC-only)", async () => {
+      await expect(
+        h.runAs(
+          RANDO,
+          "insert into group_members (group_id,user_id,role,status) values (gen_random_uuid(), $1, 'maintainer','active')",
+          [RANDO],
+        ),
+      ).rejects.toThrow(/permission denied for table group_members/);
+    });
+
+    it("G3: a non-moderator cannot decide a verification", async () => {
+      await expect(
+        h.runAs(
+          RANDO,
+          "select public.decide_verification(gen_random_uuid(), true)",
+        ),
+      ).rejects.toThrow(/forbidden/);
+    });
+
+    // ---- Fixture-backed refusals (row-level policies; RLS silently filters → assert 0 rows) ----
+
+    it("G3: a member cannot UPDATE their own verification to approved (no update policy)", async () => {
+      await h.inTxn(async (c) => {
+        const uid = "a1a10000-0000-0000-0000-000000000001";
+        const vid = "0d0a0000-0000-0000-0000-000000000001";
+        await h.createMember(uid, "selfverify@rls.test");
+        await c.query(
+          "insert into verifications (id,user_id,method,evidence_path) values ($1,$2,'utility_bill','x/y.jpg')",
+          [vid, uid],
+        );
+        await h.actAs(uid);
+        const res = await c.query(
+          "update verifications set status='approved' where id=$1",
+          [vid],
+        );
+        expect(res.rowCount).toBe(0); // RLS permits no row — the half-state path is closed
+      });
+    });
+
+    it("G4: a moderator cannot hard-delete another member's event (creator-only)", async () => {
+      await h.inTxn(async (c) => {
+        const creator = "cc010000-0000-0000-0000-000000000001";
+        const mod = "cc020000-0000-0000-0000-000000000001";
+        const eid = "0ecc0000-0000-0000-0000-000000000001";
+        await h.createMember(creator, "creator@rls.test", { verified: true });
+        await h.createMember(mod, "mod@rls.test", {
+          verified: true,
+          role: "moderator",
+        });
+        await c.query(
+          `insert into events (id, creator_id, neighborhood_id, title, body, starts_at, location)
          values ($1,$2,(select id from neighborhoods limit 1),'probe','body', now()+interval '1 day','loc')`,
-        [eid, creator],
-      );
-      await h.actAs(mod);
-      const res = await c.query("delete from events where id=$1", [eid]);
-      expect(res.rowCount).toBe(0); // a moderator's only takedown is the legible, appealable remove
+          [eid, creator],
+        );
+        await h.actAs(mod);
+        const res = await c.query("delete from events where id=$1", [eid]);
+        expect(res.rowCount).toBe(0); // a moderator's only takedown is the legible, appealable remove
+      });
     });
-  });
 
-  it("invariant 4: a member cannot read another member's ballot (secret ballot)", async () => {
-    await h.inTxn(async (c) => {
-      const a = "d1d10000-0000-0000-0000-000000000001";
-      const b = "d2d20000-0000-0000-0000-000000000001";
-      const pid = "0b0d0000-0000-0000-0000-000000000001";
-      await h.createMember(a, "voter-a@rls.test", { verified: true, tenure: "2020-01-01" });
-      await h.createMember(b, "voter-b@rls.test", { verified: true, tenure: "2020-01-01" });
-      await c.query(
-        `insert into proposals (id, author_id, title, kind, opens_at, closes_at)
+    it("invariant 4: a member cannot read another member's ballot (secret ballot)", async () => {
+      await h.inTxn(async (c) => {
+        const a = "d1d10000-0000-0000-0000-000000000001";
+        const b = "d2d20000-0000-0000-0000-000000000001";
+        const pid = "0b0d0000-0000-0000-0000-000000000001";
+        await h.createMember(a, "voter-a@rls.test", {
+          verified: true,
+          tenure: "2020-01-01",
+        });
+        await h.createMember(b, "voter-b@rls.test", {
+          verified: true,
+          tenure: "2020-01-01",
+        });
+        await c.query(
+          `insert into proposals (id, author_id, title, kind, opens_at, closes_at)
          values ($1,$2,'secret ballot probe','minor', now()-interval '1 minute', now()+interval '1 hour')`,
-        [pid, a],
-      );
-      // A casts a ballot; the trigger stamps user_id/weight from auth.uid().
-      await h.actAs(a);
-      await c.query("insert into votes (proposal_id, choice) values ($1,'yes')", [pid]);
-      // B can see neither a tally nor A's row.
-      await h.actAs(b);
-      const visible = await c.query("select count(*)::int as n from votes");
-      const aRows = await c.query("select count(*)::int as n from votes where user_id=$1", [a]);
-      expect(visible.rows[0].n).toBe(0); // B has cast none
-      expect(aRows.rows[0].n).toBe(0); // and cannot read A's ballot
+          [pid, a],
+        );
+        // A casts a ballot; the trigger stamps user_id/weight from auth.uid().
+        await h.actAs(a);
+        await c.query(
+          "insert into votes (proposal_id, choice) values ($1,'yes')",
+          [pid],
+        );
+        // B can see neither a tally nor A's row.
+        await h.actAs(b);
+        const visible = await c.query("select count(*)::int as n from votes");
+        const aRows = await c.query(
+          "select count(*)::int as n from votes where user_id=$1",
+          [a],
+        );
+        expect(visible.rows[0].n).toBe(0); // B has cast none
+        expect(aRows.rows[0].n).toBe(0); // and cannot read A's ballot
+      });
     });
-  });
-});
+  },
+);
 
 describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
   let client: pg.Client;
@@ -130,9 +162,9 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
   // ---- Structural (privilege-level: the trust columns are not grantable) ----
 
   it("pin: a client cannot UPDATE posts.pinned_at by any path (column privilege)", async () => {
-    await expect(h.runAs(RANDO, "update posts set pinned_at = now()")).rejects.toThrow(
-      /permission denied for table posts/,
-    );
+    await expect(
+      h.runAs(RANDO, "update posts set pinned_at = now()"),
+    ).rejects.toThrow(/permission denied for table posts/);
   });
 
   it("pin: a client cannot INSERT a born-pinned post", async () => {
@@ -156,15 +188,19 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
   });
 
   it("G12: a client cannot UPDATE events.group_id (re-homing is not grantable)", async () => {
-    await expect(h.runAs(RANDO, "update events set group_id = gen_random_uuid()")).rejects.toThrow(
-      /permission denied for table events/,
-    );
+    await expect(
+      h.runAs(RANDO, "update events set group_id = gen_random_uuid()"),
+    ).rejects.toThrow(/permission denied for table events/);
   });
 
   // ---- Fixture-backed (row policies + the self-guarding pin RPC) ----
 
   /** A members-only group with one active member, built as owner. */
-  async function makeMembersOnlyGroup(c: pg.Client, gid: string, member: string) {
+  async function makeMembersOnlyGroup(
+    c: pg.Client,
+    gid: string,
+    member: string,
+  ) {
     await c.query(
       "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'rls-x1-' || substr($2, 1, 8), 'X1 probe group', 'members_only', 'request')",
       [gid, gid],
@@ -181,7 +217,9 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
       const b = "e2e20000-0000-0000-0000-000000000001";
       await h.createMember(a, "author-a@rls.test", { verified: true });
       await h.createMember(b, "author-b@rls.test", { verified: true });
-      const { rows } = await c.query("select id from groups where slug='everyone'");
+      const { rows } = await c.query(
+        "select id from groups where slug='everyone'",
+      );
       await h.actAs(a);
       await expect(
         c.query(
@@ -205,7 +243,10 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
         [gid, insider],
       );
       await h.actAs(outsider);
-      const read = await c.query("select count(*)::int as n from posts where group_id=$1", [gid]);
+      const read = await c.query(
+        "select count(*)::int as n from posts where group_id=$1",
+        [gid],
+      );
       expect(read.rows[0].n).toBe(0);
       await expect(
         c.query(
@@ -233,7 +274,10 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
         [gid, insider],
       );
       await h.actAs(pending);
-      const read = await c.query("select count(*)::int as n from posts where group_id=$1", [gid]);
+      const read = await c.query(
+        "select count(*)::int as n from posts where group_id=$1",
+        [gid],
+      );
       expect(read.rows[0].n).toBe(0);
       await expect(
         c.query(
@@ -249,8 +293,12 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
       const author = "e7e70000-0000-0000-0000-000000000001";
       const unverified = "e8e80000-0000-0000-0000-000000000001";
       await h.createMember(author, "vauthor@rls.test", { verified: true });
-      await h.createMember(unverified, "unverified@rls.test", { verified: false });
-      const { rows } = await c.query("select id from groups where slug='everyone'");
+      await h.createMember(unverified, "unverified@rls.test", {
+        verified: false,
+      });
+      const { rows } = await c.query(
+        "select id from groups where slug='everyone'",
+      );
       await c.query(
         "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'public-ish', 'x')",
         [rows[0].id, author],
@@ -265,15 +313,17 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
     await h.inTxn(async (c) => {
       const author = "e9e90000-0000-0000-0000-000000000001";
       await h.createMember(author, "pinless@rls.test", { verified: true });
-      const { rows } = await c.query("select id from groups where slug='everyone'");
+      const { rows } = await c.query(
+        "select id from groups where slug='everyone'",
+      );
       const post = await c.query(
         "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'pin probe', 'x') returning id",
         [rows[0].id, author],
       );
       await h.actAs(author);
-      await expect(c.query("select set_post_pin($1, true)", [post.rows[0].id])).rejects.toThrow(
-        /only a moderator/,
-      );
+      await expect(
+        c.query("select set_post_pin($1, true)", [post.rows[0].id]),
+      ).rejects.toThrow(/only a moderator/);
     });
   });
 
@@ -282,10 +332,17 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
       const author = "eaea0000-0000-0000-0000-000000000001";
       const other = "ebeb0000-0000-0000-0000-000000000001";
       const mod = "ecec0000-0000-0000-0000-000000000001";
-      await h.createMember(author, "removed-author@rls.test", { verified: true });
+      await h.createMember(author, "removed-author@rls.test", {
+        verified: true,
+      });
       await h.createMember(other, "bystander@rls.test", { verified: true });
-      await h.createMember(mod, "mod-x1@rls.test", { verified: true, role: "moderator" });
-      const { rows } = await c.query("select id from groups where slug='everyone'");
+      await h.createMember(mod, "mod-x1@rls.test", {
+        verified: true,
+        role: "moderator",
+      });
+      const { rows } = await c.query(
+        "select id from groups where slug='everyone'",
+      );
       const post = await c.query(
         "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'to remove', 'x') returning id",
         [rows[0].id, author],
@@ -295,10 +352,16 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
         [post.rows[0].id, mod],
       );
       await h.actAs(other);
-      const hiddenRead = await c.query("select count(*)::int as n from posts where id=$1", [post.rows[0].id]);
+      const hiddenRead = await c.query(
+        "select count(*)::int as n from posts where id=$1",
+        [post.rows[0].id],
+      );
       expect(hiddenRead.rows[0].n).toBe(0);
       await h.actAs(author);
-      const ownRead = await c.query("select count(*)::int as n from posts where id=$1", [post.rows[0].id]);
+      const ownRead = await c.query(
+        "select count(*)::int as n from posts where id=$1",
+        [post.rows[0].id],
+      );
       expect(ownRead.rows[0].n).toBe(1);
     });
   });
@@ -310,8 +373,13 @@ describe.skipIf(!dbUp)("X1 Exchange refusals (0018/0019, spec §5.3)", () => {
       const mod = "f0f00000-0000-0000-0000-000000000001";
       await h.createMember(author, "appellant@rls.test", { verified: true });
       await h.createMember(stranger, "stranger@rls.test", { verified: true });
-      await h.createMember(mod, "mod-x2@rls.test", { verified: true, role: "moderator" });
-      const { rows } = await c.query("select id from groups where slug='everyone'");
+      await h.createMember(mod, "mod-x2@rls.test", {
+        verified: true,
+        role: "moderator",
+      });
+      const { rows } = await c.query(
+        "select id from groups where slug='everyone'",
+      );
       const post = await c.query(
         "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'appealable', 'x') returning id",
         [rows[0].id, author],
@@ -344,9 +412,9 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
   // ---- Structural refusals (grant / function-guard level) ----
 
   it("a stranger cannot mint — verification is the floor", async () => {
-    await expect(h.runAs(RANDO, "select * from public.mint_calendar_feed()")).rejects.toThrow(
-      /verified members/,
-    );
+    await expect(
+      h.runAs(RANDO, "select * from public.mint_calendar_feed()"),
+    ).rejects.toThrow(/verified members/);
   });
 
   it("the serving RPC is service_role-only — even a signed-in caller is refused", async () => {
@@ -369,9 +437,9 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
   });
 
   it("member_id is not even selectable (spec §5.3)", async () => {
-    await expect(h.runAs(RANDO, "select member_id from calendar_feeds")).rejects.toThrow(
-      /permission denied for table calendar_feeds/,
-    );
+    await expect(
+      h.runAs(RANDO, "select member_id from calendar_feeds"),
+    ).rejects.toThrow(/permission denied for table calendar_feeds/);
   });
 
   // ---- Fixture-backed (standing gates + cross-member walls) ----
@@ -379,11 +447,13 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
   it("an unverified member cannot mint; PENDING membership cannot mint a group feed", async () => {
     await h.inTxn(async (c) => {
       const unverified = "c1c10000-0000-0000-0000-000000000001";
-      await h.createMember(unverified, "c1-unverified@rls.test", { verified: false });
+      await h.createMember(unverified, "c1-unverified@rls.test", {
+        verified: false,
+      });
       await h.actAs(unverified);
-      await expect(c.query("select * from public.mint_calendar_feed()")).rejects.toThrow(
-        /verified members/,
-      );
+      await expect(
+        c.query("select * from public.mint_calendar_feed()"),
+      ).rejects.toThrow(/verified members/);
     });
     await h.inTxn(async (c) => {
       const insider = "c1c10000-0000-0000-0000-000000000002";
@@ -413,14 +483,18 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
       await h.createMember(a, "c1-owner@rls.test", { verified: true });
       await h.createMember(b, "c1-other@rls.test", { verified: true });
       await h.actAs(a);
-      const minted = (await c.query("select * from public.mint_calendar_feed()")).rows[0];
+      const minted = (
+        await c.query("select * from public.mint_calendar_feed()")
+      ).rows[0];
       await h.actAs(b);
       const probe = await c.query(
         "select count(id)::int as n from calendar_feeds where token = $1 or id = $2",
         [minted.feed_token, minted.feed_id],
       );
       expect(probe.rows[0].n).toBe(0);
-      const del = await c.query("delete from calendar_feeds where id = $1", [minted.feed_id]);
+      const del = await c.query("delete from calendar_feeds where id = $1", [
+        minted.feed_id,
+      ]);
       expect(del.rowCount).toBe(0);
       await expect(
         c.query("select public.rotate_calendar_feed($1)", [minted.feed_id]),
@@ -442,7 +516,9 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
         [gid, m],
       );
       await h.actAs(m);
-      const personal = (await c.query("select * from public.mint_calendar_feed()")).rows[0];
+      const personal = (
+        await c.query("select * from public.mint_calendar_feed()")
+      ).rows[0];
       const group = (
         await c.query("select * from public.mint_calendar_feed($1)", [gid])
       ).rows[0];
@@ -453,10 +529,15 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
       await c.query("reset role");
 
       // LEFT GROUP → the group feed dies whole, indistinguishable from absent.
-      await c.query("delete from group_members where group_id = $1 and user_id = $2", [gid, m]);
+      await c.query(
+        "delete from group_members where group_id = $1 and user_id = $2",
+        [gid, m],
+      );
       await c.query("set local role service_role");
       const leftPayload = (
-        await c.query("select public.calendar_feed_payload($1) as p", [group.feed_token])
+        await c.query("select public.calendar_feed_payload($1) as p", [
+          group.feed_token,
+        ])
       ).rows[0].p;
       expect(leftPayload).toEqual({ ok: false });
       await c.query("reset role");
@@ -465,17 +546,23 @@ describe.skipIf(!dbUp)("C1 calendar-feed refusals (0020, spec §5.4)", () => {
       await c.query("update profiles set verified = false where id = $1", [m]);
       await c.query("set local role service_role");
       const demotedPayload = (
-        await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token])
+        await c.query("select public.calendar_feed_payload($1) as p", [
+          personal.feed_token,
+        ])
       ).rows[0].p;
       expect(demotedPayload).toEqual({ ok: false });
       await c.query("reset role");
 
       // REVOKED (row deleted) → dead even with standing restored.
       await c.query("update profiles set verified = true where id = $1", [m]);
-      await c.query("delete from calendar_feeds where id = $1", [personal.feed_id]);
+      await c.query("delete from calendar_feeds where id = $1", [
+        personal.feed_id,
+      ]);
       await c.query("set local role service_role");
       const revokedPayload = (
-        await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token])
+        await c.query("select public.calendar_feed_payload($1) as p", [
+          personal.feed_token,
+        ])
       ).rows[0].p;
       expect(revokedPayload).toEqual({ ok: false });
       await c.query("reset role");
@@ -512,23 +599,34 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
 
   // Build a thread A↔B anchored on B's Everyone post; returns { threadId }.
   async function makeThread(c: pg.Client, a: string, b: string) {
-    const everyone = (await c.query("select id from groups where slug='everyone'")).rows[0].id;
+    const everyone = (
+      await c.query("select id from groups where slug='everyone'")
+    ).rows[0].id;
     const post = (
       await c.query(
-        "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'msg ctx', 'body') returning id",
+        "insert into posts (group_id, author_id, category, title, body, allow_messages) values ($1, $2, 'offer', 'msg ctx', 'body', true) returning id",
         [everyone, b],
       )
     ).rows[0].id;
     await h.actAs(a);
     const tid = (
-      await c.query("select public.start_thread($1, 'hello', $2) as id", [b, post])
+      await c.query("select public.start_thread($1, 'hello', $2) as id", [
+        b,
+        post,
+      ])
     ).rows[0].id;
+    await h.actAs(b);
+    await c.query("select public.respond_message_request($1,'accept')", [tid]);
+    await h.actAs(a);
     return tid as string;
   }
 
   it("structural: only verified members can start; anon/unverified refused", async () => {
     await expect(
-      h.runAs(RANDO, "select public.start_thread(gen_random_uuid(), 'x', gen_random_uuid())"),
+      h.runAs(
+        RANDO,
+        "select public.start_thread(gen_random_uuid(), 'x', gen_random_uuid())",
+      ),
     ).rejects.toThrow(/verified members/);
   });
 
@@ -539,12 +637,35 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
       const mod = "cc110000-0000-0000-0000-000000000001";
       await h.createMember(a, "m1-a@rls.test", { verified: true });
       await h.createMember(b, "m1-b@rls.test", { verified: true });
-      await h.createMember(mod, "m1-mod@rls.test", { verified: true, role: "moderator" });
+      await h.createMember(mod, "m1-mod@rls.test", {
+        verified: true,
+        role: "moderator",
+      });
       const tid = await makeThread(c, a, b);
       await h.actAs(mod);
-      expect((await c.query("select count(*)::int n from threads where id=$1", [tid])).rows[0].n).toBe(0);
-      expect((await c.query("select count(*)::int n from messages where thread_id=$1", [tid])).rows[0].n).toBe(0);
-      expect((await c.query("select count(*)::int n from thread_state where thread_id=$1", [tid])).rows[0].n).toBe(0);
+      expect(
+        (
+          await c.query("select count(*)::int n from threads where id=$1", [
+            tid,
+          ])
+        ).rows[0].n,
+      ).toBe(0);
+      expect(
+        (
+          await c.query(
+            "select count(*)::int n from messages where thread_id=$1",
+            [tid],
+          )
+        ).rows[0].n,
+      ).toBe(0);
+      expect(
+        (
+          await c.query(
+            "select count(*)::int n from thread_state where thread_id=$1",
+            [tid],
+          )
+        ).rows[0].n,
+      ).toBe(0);
     });
   });
 
@@ -558,10 +679,22 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
       await h.createMember(out, "m1-out@rls.test", { verified: true });
       const tid = await makeThread(c, a, b);
       await h.actAs(out);
-      expect((await c.query("select count(*)::int n from messages where thread_id=$1", [tid])).rows[0].n).toBe(0);
+      expect(
+        (
+          await c.query(
+            "select count(*)::int n from messages where thread_id=$1",
+            [tid],
+          )
+        ).rows[0].n,
+      ).toBe(0);
       await expect(
-        c.query("insert into messages (thread_id, sender_id, body) values ($1, $2, 'intrude')", [tid, out]),
-      ).rejects.toThrow(/row-level security|permission denied/);
+        c.query(
+          "insert into messages (thread_id, sender_id, body) values ($1, $2, 'intrude')",
+          [tid, out],
+        ),
+      ).rejects.toThrow(
+        /row-level security|permission denied|This conversation is not available for messaging/,
+      );
     });
   });
 
@@ -573,9 +706,15 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
       await h.createMember(b, "m1-b3@rls.test", { verified: true });
       const tid = await makeThread(c, a, b);
       // still acting as a (the participant)
-      await refuses(c, "update messages set body='rewritten' where thread_id=$1", [tid]);
+      await refuses(
+        c,
+        "update messages set body='rewritten' where thread_id=$1",
+        [tid],
+      );
       await refuses(c, "delete from messages where thread_id=$1", [tid]);
-      await refuses(c, "update threads set about_post_id=null where id=$1", [tid]);
+      await refuses(c, "update threads set about_post_id=null where id=$1", [
+        tid,
+      ]);
     });
   });
 
@@ -588,13 +727,26 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
       const tid = await makeThread(c, a, b);
       // b blocks a
       await h.actAs(b);
-      await c.query("insert into member_blocks (blocker_id, blocked_id) values ($1, $2)", [b, a]);
+      await c.query(
+        "insert into member_blocks (blocker_id, blocked_id) values ($1, $2)",
+        [b, a],
+      );
       // blocker frozen too (symmetric)
-      await refuses(c, "insert into messages (thread_id, sender_id, body) values ($1, $2, 'x')", [tid, b]);
+      await refuses(
+        c,
+        "insert into messages (thread_id, sender_id, body) values ($1, $2, 'x')",
+        [tid, b],
+      );
       // blocked party is frozen AND cannot see the block row (silent)
       await h.actAs(a);
-      await refuses(c, "insert into messages (thread_id, sender_id, body) values ($1, $2, 'x')", [tid, a]);
-      expect((await c.query("select count(*)::int n from member_blocks")).rows[0].n).toBe(0);
+      await refuses(
+        c,
+        "insert into messages (thread_id, sender_id, body) values ($1, $2, 'x')",
+        [tid, a],
+      );
+      expect(
+        (await c.query("select count(*)::int n from member_blocks")).rows[0].n,
+      ).toBe(0);
     });
   });
 
@@ -607,107 +759,110 @@ describe.skipIf(!dbUp)("M1 messaging refusals (0022, spec §3)", () => {
       await h.actAs(a);
       await expect(
         c.query("select public.start_thread($1, 'cold open')", [b]),
-      ).rejects.toThrow(/one of their posts/);
+      ).rejects.toThrow(/This post is not available for messaging/);
     });
   });
 });
 
-describe.skipIf(!dbUp)("Y1 profile-visibility refusals (0023, spec §6 lens 1 / G-Y1a)", () => {
-  let client: pg.Client;
-  let h: ReturnType<typeof impersonate>;
+describe.skipIf(!dbUp)(
+  "Y1 profile-visibility refusals (0023, spec §6 lens 1 / G-Y1a)",
+  () => {
+    let client: pg.Client;
+    let h: ReturnType<typeof impersonate>;
 
-  beforeAll(async () => {
-    client = makeClient();
-    await client.connect();
-    h = impersonate(client);
-  });
-  afterAll(async () => {
-    await client?.end();
-  });
-
-  it("a member cannot read another member's HIDDEN neighborhood (view NULLs it; base gives no row)", async () => {
-    await h.inTxn(async (c) => {
-      const owner = "f1f10000-0000-0000-0000-000000000001";
-      const other = "f2f20000-0000-0000-0000-000000000001";
-      await h.createMember(owner, "y1-owner@rls.test", { verified: true });
-      await h.createMember(other, "y1-other@rls.test", { verified: true });
-      // owner has an area; neighborhood_visibility defaults to 'hidden'
-      await c.query(
-        "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
-        [owner],
-      );
-      await h.actAs(other);
-      // through the owner-rights view: the row is present, the value withheld
-      const view = await c.query(
-        "select neighborhood_id from public_profiles where id=$1",
-        [owner],
-      );
-      expect(view.rows[0]?.neighborhood_id ?? null).toBeNull();
-      // through the base table: no row at all (pf_read is owner-only)
-      const base = await c.query(
-        "select count(*)::int as n from profiles where id=$1",
-        [owner],
-      );
-      expect(base.rows[0].n).toBe(0);
+    beforeAll(async () => {
+      client = makeClient();
+      await client.connect();
+      h = impersonate(client);
     });
-  });
+    afterAll(async () => {
+      await client?.end();
+    });
 
-  it("G-Y1a: a MODERATOR cannot read a HIDDEN neighborhood either — but keeps the verified/role carve-out", async () => {
-    await h.inTxn(async (c) => {
-      const owner = "f3f30000-0000-0000-0000-000000000001";
-      const mod = "f4f40000-0000-0000-0000-000000000001";
-      await h.createMember(owner, "y1a-owner@rls.test", { verified: true });
-      await h.createMember(mod, "y1a-mod@rls.test", {
-        verified: true,
-        role: "moderator",
+    it("a member cannot read another member's HIDDEN neighborhood (view NULLs it; base gives no row)", async () => {
+      await h.inTxn(async (c) => {
+        const owner = "f1f10000-0000-0000-0000-000000000001";
+        const other = "f2f20000-0000-0000-0000-000000000001";
+        await h.createMember(owner, "y1-owner@rls.test", { verified: true });
+        await h.createMember(other, "y1-other@rls.test", { verified: true });
+        // owner has an area; neighborhood_visibility defaults to 'hidden'
+        await c.query(
+          "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
+          [owner],
+        );
+        await h.actAs(other);
+        // through the owner-rights view: the row is present, the value withheld
+        const view = await c.query(
+          "select neighborhood_id from public_profiles where id=$1",
+          [owner],
+        );
+        expect(view.rows[0]?.neighborhood_id ?? null).toBeNull();
+        // through the base table: no row at all (pf_read is owner-only)
+        const base = await c.query(
+          "select count(*)::int as n from profiles where id=$1",
+          [owner],
+        );
+        expect(base.rows[0].n).toBe(0);
       });
-      await c.query(
-        "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
-        [owner],
-      );
-      await h.actAs(mod);
-      const view = await c.query(
-        "select neighborhood_id, verified, role from public_profiles where id=$1",
-        [owner],
-      );
-      expect(view.rows[0]?.neighborhood_id ?? null).toBeNull(); // hidden binds moderators too
-      expect(view.rows[0]?.verified).toBe(true); // G-Y1c: trust attribute stays visible
-      expect(view.rows[0]?.role).toBe("member"); // G-Y1c: role stays visible
-      const base = await c.query(
-        "select count(*)::int as n from profiles where id=$1",
-        [owner],
-      );
-      expect(base.rows[0].n).toBe(0); // moderator no longer reads the base row
     });
-  });
 
-  it("walkthrough: revealing to members lets any member read it (positive control)", async () => {
-    await h.inTxn(async (c) => {
-      const owner = "f5f50000-0000-0000-0000-000000000001";
-      const other = "f6f60000-0000-0000-0000-000000000001";
-      await h.createMember(owner, "y1r-owner@rls.test", { verified: true });
-      await h.createMember(other, "y1r-other@rls.test", { verified: true });
-      await c.query(
-        "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
-        [owner],
-      );
-      // owner reveals their area to members (own-row write via pf_update)
-      await h.actAs(owner);
-      const upd = await c.query(
-        "update profiles set neighborhood_visibility='members' where id=$1",
-        [owner],
-      );
-      expect(upd.rowCount).toBe(1);
-      // another member now reads the value through the view
-      await h.actAs(other);
-      const view = await c.query(
-        "select neighborhood_id from public_profiles where id=$1",
-        [owner],
-      );
-      expect(view.rows[0]?.neighborhood_id ?? null).not.toBeNull();
+    it("G-Y1a: a MODERATOR cannot read a HIDDEN neighborhood either — but keeps the verified/role carve-out", async () => {
+      await h.inTxn(async (c) => {
+        const owner = "f3f30000-0000-0000-0000-000000000001";
+        const mod = "f4f40000-0000-0000-0000-000000000001";
+        await h.createMember(owner, "y1a-owner@rls.test", { verified: true });
+        await h.createMember(mod, "y1a-mod@rls.test", {
+          verified: true,
+          role: "moderator",
+        });
+        await c.query(
+          "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
+          [owner],
+        );
+        await h.actAs(mod);
+        const view = await c.query(
+          "select neighborhood_id, verified, role from public_profiles where id=$1",
+          [owner],
+        );
+        expect(view.rows[0]?.neighborhood_id ?? null).toBeNull(); // hidden binds moderators too
+        expect(view.rows[0]?.verified).toBe(true); // G-Y1c: trust attribute stays visible
+        expect(view.rows[0]?.role).toBe("member"); // G-Y1c: role stays visible
+        const base = await c.query(
+          "select count(*)::int as n from profiles where id=$1",
+          [owner],
+        );
+        expect(base.rows[0].n).toBe(0); // moderator no longer reads the base row
+      });
     });
-  });
-});
+
+    it("walkthrough: revealing to members lets any member read it (positive control)", async () => {
+      await h.inTxn(async (c) => {
+        const owner = "f5f50000-0000-0000-0000-000000000001";
+        const other = "f6f60000-0000-0000-0000-000000000001";
+        await h.createMember(owner, "y1r-owner@rls.test", { verified: true });
+        await h.createMember(other, "y1r-other@rls.test", { verified: true });
+        await c.query(
+          "update profiles set neighborhood_id=(select id from neighborhoods limit 1) where id=$1",
+          [owner],
+        );
+        // owner reveals their area to members (own-row write via pf_update)
+        await h.actAs(owner);
+        const upd = await c.query(
+          "update profiles set neighborhood_visibility='members' where id=$1",
+          [owner],
+        );
+        expect(upd.rowCount).toBe(1);
+        // another member now reads the value through the view
+        await h.actAs(other);
+        const view = await c.query(
+          "select neighborhood_id from public_profiles where id=$1",
+          [owner],
+        );
+        expect(view.rows[0]?.neighborhood_id ?? null).not.toBeNull();
+      });
+    });
+  },
+);
 
 // Invite-only signup gate (migration 0024). The roster is moderator-only: no
 // member or anon may read "who is invited" (no enumeration oracle at the DB),
@@ -736,7 +891,9 @@ describe.skipIf(!dbUp)("Invite allowlist refusals (migration 0024)", () => {
         "insert into invited_emails(email, note) values ('secret-invite@rls.test','test') on conflict do nothing",
       );
       await h.actAs(uid);
-      const res = await c.query("select count(*)::int as n from invited_emails");
+      const res = await c.query(
+        "select count(*)::int as n from invited_emails",
+      );
       expect(res.rows[0].n).toBe(0); // RLS hides the whole roster from a member
     });
   });
@@ -747,7 +904,9 @@ describe.skipIf(!dbUp)("Invite allowlist refusals (migration 0024)", () => {
       await h.createMember(uid, "inv-writer@rls.test", { verified: true });
       await h.actAs(uid);
       await expect(
-        c.query("insert into invited_emails(email) values ('self-invite@rls.test')"),
+        c.query(
+          "insert into invited_emails(email) values ('self-invite@rls.test')",
+        ),
       ).rejects.toThrow(/row-level security|permission denied/i);
     });
   });
@@ -755,7 +914,10 @@ describe.skipIf(!dbUp)("Invite allowlist refusals (migration 0024)", () => {
   it("INV-3: a moderator CAN read the roster (positive control)", async () => {
     await h.inTxn(async (c) => {
       const mod = "1c1c0000-0000-0000-0000-000000000001";
-      await h.createMember(mod, "inv-mod@rls.test", { verified: true, role: "moderator" });
+      await h.createMember(mod, "inv-mod@rls.test", {
+        verified: true,
+        role: "moderator",
+      });
       await c.query(
         "insert into invited_emails(email, note) values ('mod-visible@rls.test','test') on conflict do nothing",
       );

@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import pg from "pg";
-import { dbReachable, makeClient, impersonate } from "./helpers/pg-impersonation";
+import {
+  dbReachable,
+  makeClient,
+  impersonate,
+} from "./helpers/pg-impersonation";
 
 const dbUp = await dbReachable();
 
@@ -31,335 +35,453 @@ const dbUp = await dbReachable();
 
 describe("Walkthrough positive paths (SCAFFOLD — see header)", () => {
   // Walkthrough A — the first conflict
-  it.todo("A2: moderator approves a verification → verified + tenure set, evidence pointer purged, audit written");
-  it.todo("A3–A4: a verified member posts an event; a moderator removes it with a reason → hidden + legible");
-  it.todo("A5–A7: creator appeals → a DIFFERENT moderator overturns → the event is restored (chain remove→restore)");
-  it.todo("A8: transparency view lists the acting moderator only, never the moderated member");
+  it.todo(
+    "A2: moderator approves a verification → verified + tenure set, evidence pointer purged, audit written",
+  );
+  it.todo(
+    "A3–A4: a verified member posts an event; a moderator removes it with a reason → hidden + legible",
+  );
+  it.todo(
+    "A5–A7: creator appeals → a DIFFERENT moderator overturns → the event is restored (chain remove→restore)",
+  );
+  it.todo(
+    "A8: transparency view lists the acting moderator only, never the moderated member",
+  );
 
   // Walkthrough B — the first vote
-  it.todo("B2/B4: five tenure-weighted ballots aggregate to yes 4.5 / no 1.0 / abstain 3.0 after the window closes");
-  it.todo("B3: a member may revise their ballot while the proposal is open (coercion-resistance); one row per member");
-  it.todo("B4: the close audit records the aggregate only — no user_id, no per-ballot choice");
+  it.todo(
+    "B2/B4: five tenure-weighted ballots aggregate to yes 4.5 / no 1.0 / abstain 3.0 after the window closes",
+  );
+  it.todo(
+    "B3: a member may revise their ballot while the proposal is open (coercion-resistance); one row per member",
+  );
+  it.todo(
+    "B4: the close audit records the aggregate only — no user_id, no per-ballot choice",
+  );
 });
 
 // Walkthrough X1 — the Exchange happy path (IMPLEMENTED; spec §10 step 5).
 // post → author edit → moderator pin/unpin → remove → author appeal → a
 // DIFFERENT moderator overturns → restored. Everything through the same
 // grants/policies/RPCs the app uses; rolled back, nothing persists.
-describe.skipIf(!dbUp)("Walkthrough X1: post → pin → remove → appeal → overturn", () => {
-  let client: pg.Client;
-  let h: ReturnType<typeof impersonate>;
+describe.skipIf(!dbUp)(
+  "Walkthrough X1: post → pin → remove → appeal → overturn",
+  () => {
+    let client: pg.Client;
+    let h: ReturnType<typeof impersonate>;
 
-  beforeAll(async () => {
-    client = makeClient();
-    await client.connect();
-    h = impersonate(client);
-  });
-  afterAll(async () => {
-    await client?.end();
-  });
-
-  it("carries a post through the full moderation chain with the audit trail intact", async () => {
-    await h.inTxn(async (c) => {
-      const author = "0x100000-0000-0000-0000-000000000001".replace("x", "a");
-      const mod1 = "0b100000-0000-0000-0000-000000000002";
-      const mod2 = "0c100000-0000-0000-0000-000000000003";
-      await h.createMember(author, "x1-author@walk.test", { verified: true });
-      await h.createMember(mod1, "x1-mod1@walk.test", { verified: true, role: "moderator" });
-      await h.createMember(mod2, "x1-mod2@walk.test", { verified: true, role: "moderator" });
-      const everyone = (await c.query("select id from groups where slug='everyone'")).rows[0].id;
-
-      // 1 · The member posts to the community board (the app's exact payload).
-      await h.actAs(author);
-      const post = (
-        await c.query(
-          "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'Free tomato starts', 'Heirloom seedlings, more than I can plant.') returning id",
-          [everyone, author],
-        )
-      ).rows[0].id;
-
-      // 2 · Author edits — edited_at is server-stamped; identity frozen.
-      await c.query("update posts set title = 'Free tomato starts (updated)' where id=$1", [post]);
-      await c.query("reset role");
-      const afterEdit = (
-        await c.query("select edited_at, group_id, pinned_at from posts where id=$1", [post])
-      ).rows[0];
-      expect(afterEdit.edited_at).not.toBeNull();
-      expect(afterEdit.group_id).toBe(everyone);
-      expect(afterEdit.pinned_at).toBeNull();
-
-      // 3 · A moderator pins — pinned_by recorded, audit row written (G13).
-      await h.actAs(mod1);
-      await c.query("select set_post_pin($1, true)", [post]);
-      await c.query("reset role");
-      const pinned = (await c.query("select pinned_by, edited_at from posts where id=$1", [post])).rows[0];
-      expect(pinned.pinned_by).toBe(mod1);
-      const pinAudit = await c.query(
-        "select count(*)::int as n from audit_log where action='post.pinned' and entity_id=$1",
-        [post],
-      );
-      expect(pinAudit.rows[0].n).toBe(1);
-
-      // 4 · Unpin (audited), then remove with a written reason (P7 — legible).
-      // The remove row is backdated 1s: inside this single test transaction
-      // now() is frozen, so remove and the later restore would otherwise tie
-      // on created_at and is_content_hidden's id-desc tiebreak becomes a
-      // random-UUID coin flip. Production never ties — the two actions are
-      // separate requests; the backdate restores the real ordering.
-      await h.actAs(mod1);
-      await c.query("select set_post_pin($1, false)", [post]);
-      const action = (
-        await c.query(
-          "insert into moderation_actions (target_type, target_id, action, reason, actor_id, created_at) values ('post', $1, 'remove', 'walkthrough probe', $2, now() - interval '1 second') returning id",
-          [post, mod1],
-        )
-      ).rows[0].id;
-      await c.query("reset role");
-      const hidden = await c.query("select is_content_hidden('post', $1) as h", [post]);
-      expect(hidden.rows[0].h).toBe(true);
-
-      // 5 · The author appeals (0019 taught file_appeal posts ownership).
-      await h.actAs(author);
-      const appeal = (await c.query("select file_appeal($1, 'These were free seedlings.') as id", [action]))
-        .rows[0].id;
-      expect(appeal).toBeTruthy();
-
-      // 6 · A DIFFERENT moderator overturns → a restore action un-hides it.
-      await h.actAs(mod2);
-      await c.query("select resolve_appeal($1, false, 'Removal was overbroad.')", [appeal]);
-      await c.query("reset role");
-      const restored = await c.query("select is_content_hidden('post', $1) as h", [post]);
-      expect(restored.rows[0].h).toBe(false);
-      const trail = await c.query(
-        "select count(*)::int as n from moderation_actions where target_type='post' and target_id=$1",
-        [post],
-      );
-      expect(trail.rows[0].n).toBe(2); // remove + restore — the append-only record
+    beforeAll(async () => {
+      client = makeClient();
+      await client.connect();
+      h = impersonate(client);
     });
-  });
-});
-
-describe.skipIf(!dbUp)("Walkthrough C1: mint → fetch → rotate → leave → dead feed", () => {
-  let client: pg.Client;
-  let h: ReturnType<typeof impersonate>;
-
-  beforeAll(async () => {
-    client = makeClient();
-    await client.connect();
-    h = impersonate(client);
-  });
-  afterAll(async () => {
-    await client?.end();
-  });
-
-  it("carries a feed through its whole life under the owner's standing", async () => {
-    await h.inTxn(async (c) => {
-      const alice = "c1a10000-0000-0000-0000-00000000000a";
-      const gid = "c1a10000-0000-0000-0000-00000000000b";
-      await h.createMember(alice, "alice-c1@rls.test", { verified: true });
-      await c.query(
-        "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'c1-wt-' || substr($2, 1, 8), 'C1 walkthrough group', 'members_only', 'request')",
-        [gid, gid],
-      );
-      await c.query(
-        "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'active')",
-        [gid, alice],
-      );
-      // One group event (with an end → DTEND source), one Everyone event
-      // alice RSVP'd (the only door Everyone events have into My Calendar).
-      const ev1 = (
-        await c.query(
-          "insert into events (creator_id, group_id, title, starts_at, ends_at, location) values ($1, $2, 'Group hall night', now() + interval '3 days', now() + interval '3 days 2 hours', 'Grange Hall') returning id",
-          [alice, gid],
-        )
-      ).rows[0].id;
-      const everyone = (await c.query("select id from groups where slug = 'everyone'"))
-        .rows[0].id;
-      const ev2 = (
-        await c.query(
-          "insert into events (creator_id, group_id, title, starts_at, location) values ($1, $2, 'Town picnic', now() + interval '5 days', 'Sam Johnson Park') returning id",
-          [alice, everyone],
-        )
-      ).rows[0].id;
-      await c.query(
-        "insert into event_rsvps (event_id, user_id, status) values ($1, $2, 'going')",
-        [ev2, alice],
-      );
-
-      // MINT (as alice) — the server makes the secrets; 256-bit hex.
-      await h.actAs(alice);
-      const personal = (await c.query("select * from public.mint_calendar_feed()")).rows[0];
-      const group = (
-        await c.query("select * from public.mint_calendar_feed($1)", [gid])
-      ).rows[0];
-      expect(personal.feed_token).toMatch(/^[0-9a-f]{64}$/);
-      expect(group.feed_token).toMatch(/^[0-9a-f]{64}$/);
-
-      // FETCH (as the route does: service_role). Clear the sub first — every
-      // owner-context write below must see auth.uid() = null.
-      await c.query("select set_config('request.jwt.claims', '', true)");
-      await c.query("reset role");
-      await c.query("set local role service_role");
-      const pay = (
-        await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token])
-      ).rows[0].p;
-      expect(pay.ok).toBe(true);
-      expect(pay.cal_name).toBe("Steppe — My calendar · Mi calendario");
-      // Both scopes, one clock, ascending (+3d before +5d).
-      expect(pay.events.map((e: { id: string }) => e.id)).toEqual([ev1, ev2]);
-      // Minimized payload: exactly the seven keys, nothing more (spec §6.2).
-      expect(Object.keys(pay.events[0]).sort()).toEqual([
-        "created_at",
-        "ends_at",
-        "id",
-        "location",
-        "starts_at",
-        "status",
-        "title",
-      ]);
-      expect(pay.events[0].ends_at).not.toBeNull(); // DTEND source carried
-      await c.query("reset role");
-
-      // The member-visible leak detector stamped (C-G3).
-      const stamped = await c.query(
-        "select last_fetched_at from calendar_feeds where id = $1",
-        [personal.feed_id],
-      );
-      expect(stamped.rows[0].last_fetched_at).not.toBeNull();
-
-      // ROTATE (as alice) — the old token dies the instant the new one exists.
-      await h.actAs(alice);
-      const fresh = (
-        await c.query("select public.rotate_calendar_feed($1) as t", [personal.feed_id])
-      ).rows[0].t;
-      expect(fresh).not.toBe(personal.feed_token);
-      await c.query("select set_config('request.jwt.claims', '', true)");
-      await c.query("reset role");
-      await c.query("set local role service_role");
-      expect(
-        (await c.query("select public.calendar_feed_payload($1) as p", [personal.feed_token]))
-          .rows[0].p,
-      ).toEqual({ ok: false });
-      expect(
-        (await c.query("select public.calendar_feed_payload($1) as p", [fresh])).rows[0].p.ok,
-      ).toBe(true);
-      await c.query("reset role");
-
-      // LEAVE — the group's rows fall out of the personal feed (RSVP'd or
-      // not); the group feed dies whole. Fail closed, no cleanup job.
-      await c.query("delete from group_members where group_id = $1 and user_id = $2", [
-        gid,
-        alice,
-      ]);
-      await c.query("set local role service_role");
-      const after = (
-        await c.query("select public.calendar_feed_payload($1) as p", [fresh])
-      ).rows[0].p;
-      expect(after.ok).toBe(true);
-      expect(after.events.map((e: { id: string }) => e.id)).toEqual([ev2]);
-      expect(
-        (await c.query("select public.calendar_feed_payload($1) as p", [group.feed_token]))
-          .rows[0].p,
-      ).toEqual({ ok: false });
-      await c.query("reset role");
-
-      // REVOKE (as alice) — delete = the feed is gone for good.
-      await h.actAs(alice);
-      const del = await c.query("delete from calendar_feeds where id = $1", [personal.feed_id]);
-      expect(del.rowCount).toBe(1);
-      await c.query("select set_config('request.jwt.claims', '', true)");
-      await c.query("reset role");
-      await c.query("set local role service_role");
-      expect(
-        (await c.query("select public.calendar_feed_payload($1) as p", [fresh])).rows[0].p,
-      ).toEqual({ ok: false });
-      await c.query("reset role");
+    afterAll(async () => {
+      await client?.end();
     });
-  });
-});
 
-describe.skipIf(!dbUp)("Walkthrough M1: message → reply → block → report(excerpt) → moderator sees excerpt only", () => {
-  let client: pg.Client;
-  let h: ReturnType<typeof impersonate>;
+    it("carries a post through the full moderation chain with the audit trail intact", async () => {
+      await h.inTxn(async (c) => {
+        const author = "0x100000-0000-0000-0000-000000000001".replace("x", "a");
+        const mod1 = "0b100000-0000-0000-0000-000000000002";
+        const mod2 = "0c100000-0000-0000-0000-000000000003";
+        await h.createMember(author, "x1-author@walk.test", { verified: true });
+        await h.createMember(mod1, "x1-mod1@walk.test", {
+          verified: true,
+          role: "moderator",
+        });
+        await h.createMember(mod2, "x1-mod2@walk.test", {
+          verified: true,
+          role: "moderator",
+        });
+        const everyone = (
+          await c.query("select id from groups where slug='everyone'")
+        ).rows[0].id;
 
-  beforeAll(async () => {
-    client = makeClient();
-    await client.connect();
-    h = impersonate(client);
-  });
-  afterAll(async () => {
-    await client?.end();
-  });
+        // 1 · The member posts to the community board (the app's exact payload).
+        await h.actAs(author);
+        const post = (
+          await c.query(
+            "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'Free tomato starts', 'Heirloom seedlings, more than I can plant.') returning id",
+            [everyone, author],
+          )
+        ).rows[0].id;
 
-  it("carries a conversation through its life, and the report shows only the quoted excerpt", async () => {
-    await h.inTxn(async (c) => {
-      const aida = "a11d0000-0000-0000-0000-00000000000a";
-      const ben = "be110000-0000-0000-0000-00000000000b";
-      const mod = "eec70000-0000-0000-0000-00000000000e";
-      await h.createMember(aida, "wt-aida@msg.test", { verified: true });
-      await h.createMember(ben, "wt-ben@msg.test", { verified: true });
-      await h.createMember(mod, "wt-mod@msg.test", { verified: true, role: "moderator" });
-      const everyone = (await c.query("select id from groups where slug='everyone'")).rows[0].id;
-      const post = (
+        // 2 · Author edits — edited_at is server-stamped; identity frozen.
         await c.query(
-          "insert into posts (group_id, author_id, category, title, body) values ($1, $2, 'offer', 'Free tomato starts', 'body') returning id",
-          [everyone, ben],
-        )
-      ).rows[0].id;
+          "update posts set title = 'Free tomato starts (updated)' where id=$1",
+          [post],
+        );
+        await c.query("reset role");
+        const afterEdit = (
+          await c.query(
+            "select edited_at, group_id, pinned_at from posts where id=$1",
+            [post],
+          )
+        ).rows[0];
+        expect(afterEdit.edited_at).not.toBeNull();
+        expect(afterEdit.group_id).toBe(everyone);
+        expect(afterEdit.pinned_at).toBeNull();
 
-      // 1 · aida starts a thread from ben's post; 2 · ben replies.
-      await h.actAs(aida);
-      const tid = (
-        await c.query("select public.start_thread($1, 'Are these still free?', $2) as id", [ben, post])
-      ).rows[0].id;
-      await h.actAs(ben);
-      await c.query("insert into messages (thread_id, sender_id, body) values ($1, $2, 'Yes — porch pickup.')", [tid, ben]);
-      await c.query("reset role");
-      const msgs = await c.query("select count(*)::int n from messages where thread_id=$1", [tid]);
-      expect(msgs.rows[0].n).toBe(2);
+        // 3 · A moderator pins — pinned_by recorded, audit row written (G13).
+        await h.actAs(mod1);
+        await c.query("select set_post_pin($1, true)", [post]);
+        await c.query("reset role");
+        const pinned = (
+          await c.query("select pinned_by, edited_at from posts where id=$1", [
+            post,
+          ])
+        ).rows[0];
+        expect(pinned.pinned_by).toBe(mod1);
+        const pinAudit = await c.query(
+          "select count(*)::int as n from audit_log where action='post.pinned' and entity_id=$1",
+          [post],
+        );
+        expect(pinAudit.rows[0].n).toBe(1);
 
-      // 3 · aida reports the conversation with HER OWN quoted excerpt.
-      const excerpt = "aida: Are these still free? / ben: Yes — porch pickup.";
-      await h.actAs(aida);
-      const report = (
+        // 4 · Unpin (audited), then remove with a written reason (P7 — legible).
+        // The remove row is backdated 1s: inside this single test transaction
+        // now() is frozen, so remove and the later restore would otherwise tie
+        // on created_at and is_content_hidden's id-desc tiebreak becomes a
+        // random-UUID coin flip. Production never ties — the two actions are
+        // separate requests; the backdate restores the real ordering.
+        await h.actAs(mod1);
+        await c.query("select set_post_pin($1, false)", [post]);
+        const action = (
+          await c.query(
+            "insert into moderation_actions (target_type, target_id, action, reason, actor_id, created_at) values ('post', $1, 'remove', 'walkthrough probe', $2, now() - interval '1 second') returning id",
+            [post, mod1],
+          )
+        ).rows[0].id;
+        await c.query("reset role");
+        const hidden = await c.query(
+          "select is_content_hidden('post', $1) as h",
+          [post],
+        );
+        expect(hidden.rows[0].h).toBe(true);
+
+        // 5 · The author appeals (0019 taught file_appeal posts ownership).
+        await h.actAs(author);
+        const appeal = (
+          await c.query(
+            "select file_appeal($1, 'These were free seedlings.') as id",
+            [action],
+          )
+        ).rows[0].id;
+        expect(appeal).toBeTruthy();
+
+        // 6 · A DIFFERENT moderator overturns → a restore action un-hides it.
+        await h.actAs(mod2);
         await c.query(
-          "insert into reports (reporter_id, target_type, target_id, body, quoted_excerpt) values ($1, 'message_thread', $2, 'This felt off', $3) returning id",
-          [aida, tid, excerpt],
-        )
-      ).rows[0].id;
-
-      // 4 · aida blocks ben — silent, symmetric. Sending is now frozen.
-      // (Savepoint: the refused insert aborts the txn; recover so the
-      // moderator reads below still run in the same inTxn.)
-      await c.query("insert into member_blocks (blocker_id, blocked_id) values ($1, $2)", [aida, ben]);
-      await c.query("savepoint sp_block");
-      let frozen = false;
-      try {
-        await c.query("insert into messages (thread_id, sender_id, body) values ($1, $2, 'more')", [tid, aida]);
-      } catch {
-        frozen = true;
-      }
-      await c.query("rollback to savepoint sp_block");
-      expect(frozen).toBe(true);
-      await c.query("reset role");
-
-      // 5 · the moderator sees the REPORT and its excerpt — but NOT the thread.
-      await h.actAs(mod);
-      const seen = (
-        await c.query("select quoted_excerpt from reports where id=$1", [report])
-      ).rows[0];
-      expect(seen.quoted_excerpt).toBe(excerpt);
-      // the zero-read pin holds: the moderator cannot open the thread itself.
-      expect((await c.query("select count(*)::int n from messages where thread_id=$1", [tid])).rows[0].n).toBe(0);
-      expect((await c.query("select count(*)::int n from threads where id=$1", [tid])).rows[0].n).toBe(0);
-      // 6 · resolve the report (moderator close-out; audited).
-      await c.query("select public.resolve_report($1, 'dismissed')", [report]);
-      await c.query("reset role");
-      const audited = await c.query(
-        "select count(*)::int n from audit_log where action='report.resolved' and entity_id=$1",
-        [report],
-      );
-      expect(audited.rows[0].n).toBe(1);
+          "select resolve_appeal($1, false, 'Removal was overbroad.')",
+          [appeal],
+        );
+        await c.query("reset role");
+        const restored = await c.query(
+          "select is_content_hidden('post', $1) as h",
+          [post],
+        );
+        expect(restored.rows[0].h).toBe(false);
+        const trail = await c.query(
+          "select count(*)::int as n from moderation_actions where target_type='post' and target_id=$1",
+          [post],
+        );
+        expect(trail.rows[0].n).toBe(2); // remove + restore — the append-only record
+      });
     });
-  });
-});
+  },
+);
+
+describe.skipIf(!dbUp)(
+  "Walkthrough C1: mint → fetch → rotate → leave → dead feed",
+  () => {
+    let client: pg.Client;
+    let h: ReturnType<typeof impersonate>;
+
+    beforeAll(async () => {
+      client = makeClient();
+      await client.connect();
+      h = impersonate(client);
+    });
+    afterAll(async () => {
+      await client?.end();
+    });
+
+    it("carries a feed through its whole life under the owner's standing", async () => {
+      await h.inTxn(async (c) => {
+        const alice = "c1a10000-0000-0000-0000-00000000000a";
+        const gid = "c1a10000-0000-0000-0000-00000000000b";
+        await h.createMember(alice, "alice-c1@rls.test", { verified: true });
+        await c.query(
+          "insert into groups (id, slug, name, visibility, join_policy) values ($1::uuid, 'c1-wt-' || substr($2, 1, 8), 'C1 walkthrough group', 'members_only', 'request')",
+          [gid, gid],
+        );
+        await c.query(
+          "insert into group_members (group_id, user_id, role, status) values ($1, $2, 'member', 'active')",
+          [gid, alice],
+        );
+        // One group event (with an end → DTEND source), one Everyone event
+        // alice RSVP'd (the only door Everyone events have into My Calendar).
+        const ev1 = (
+          await c.query(
+            "insert into events (creator_id, group_id, title, starts_at, ends_at, location) values ($1, $2, 'Group hall night', now() + interval '3 days', now() + interval '3 days 2 hours', 'Grange Hall') returning id",
+            [alice, gid],
+          )
+        ).rows[0].id;
+        const everyone = (
+          await c.query("select id from groups where slug = 'everyone'")
+        ).rows[0].id;
+        const ev2 = (
+          await c.query(
+            "insert into events (creator_id, group_id, title, starts_at, location) values ($1, $2, 'Town picnic', now() + interval '5 days', 'Sam Johnson Park') returning id",
+            [alice, everyone],
+          )
+        ).rows[0].id;
+        await c.query(
+          "insert into event_rsvps (event_id, user_id, status) values ($1, $2, 'going')",
+          [ev2, alice],
+        );
+
+        // MINT (as alice) — the server makes the secrets; 256-bit hex.
+        await h.actAs(alice);
+        const personal = (
+          await c.query("select * from public.mint_calendar_feed()")
+        ).rows[0];
+        const group = (
+          await c.query("select * from public.mint_calendar_feed($1)", [gid])
+        ).rows[0];
+        expect(personal.feed_token).toMatch(/^[0-9a-f]{64}$/);
+        expect(group.feed_token).toMatch(/^[0-9a-f]{64}$/);
+
+        // FETCH (as the route does: service_role). Clear the sub first — every
+        // owner-context write below must see auth.uid() = null.
+        await c.query("select set_config('request.jwt.claims', '', true)");
+        await c.query("reset role");
+        await c.query("set local role service_role");
+        const pay = (
+          await c.query("select public.calendar_feed_payload($1) as p", [
+            personal.feed_token,
+          ])
+        ).rows[0].p;
+        expect(pay.ok).toBe(true);
+        expect(pay.cal_name).toBe("Steppe — My calendar · Mi calendario");
+        // Both scopes, one clock, ascending (+3d before +5d).
+        expect(pay.events.map((e: { id: string }) => e.id)).toEqual([ev1, ev2]);
+        // Minimized payload: exactly the seven keys, nothing more (spec §6.2).
+        expect(Object.keys(pay.events[0]).sort()).toEqual([
+          "created_at",
+          "ends_at",
+          "id",
+          "location",
+          "starts_at",
+          "status",
+          "title",
+        ]);
+        expect(pay.events[0].ends_at).not.toBeNull(); // DTEND source carried
+        await c.query("reset role");
+
+        // The member-visible leak detector stamped (C-G3).
+        const stamped = await c.query(
+          "select last_fetched_at from calendar_feeds where id = $1",
+          [personal.feed_id],
+        );
+        expect(stamped.rows[0].last_fetched_at).not.toBeNull();
+
+        // ROTATE (as alice) — the old token dies the instant the new one exists.
+        await h.actAs(alice);
+        const fresh = (
+          await c.query("select public.rotate_calendar_feed($1) as t", [
+            personal.feed_id,
+          ])
+        ).rows[0].t;
+        expect(fresh).not.toBe(personal.feed_token);
+        await c.query("select set_config('request.jwt.claims', '', true)");
+        await c.query("reset role");
+        await c.query("set local role service_role");
+        expect(
+          (
+            await c.query("select public.calendar_feed_payload($1) as p", [
+              personal.feed_token,
+            ])
+          ).rows[0].p,
+        ).toEqual({ ok: false });
+        expect(
+          (
+            await c.query("select public.calendar_feed_payload($1) as p", [
+              fresh,
+            ])
+          ).rows[0].p.ok,
+        ).toBe(true);
+        await c.query("reset role");
+
+        // LEAVE — the group's rows fall out of the personal feed (RSVP'd or
+        // not); the group feed dies whole. Fail closed, no cleanup job.
+        await c.query(
+          "delete from group_members where group_id = $1 and user_id = $2",
+          [gid, alice],
+        );
+        await c.query("set local role service_role");
+        const after = (
+          await c.query("select public.calendar_feed_payload($1) as p", [fresh])
+        ).rows[0].p;
+        expect(after.ok).toBe(true);
+        expect(after.events.map((e: { id: string }) => e.id)).toEqual([ev2]);
+        expect(
+          (
+            await c.query("select public.calendar_feed_payload($1) as p", [
+              group.feed_token,
+            ])
+          ).rows[0].p,
+        ).toEqual({ ok: false });
+        await c.query("reset role");
+
+        // REVOKE (as alice) — delete = the feed is gone for good.
+        await h.actAs(alice);
+        const del = await c.query("delete from calendar_feeds where id = $1", [
+          personal.feed_id,
+        ]);
+        expect(del.rowCount).toBe(1);
+        await c.query("select set_config('request.jwt.claims', '', true)");
+        await c.query("reset role");
+        await c.query("set local role service_role");
+        expect(
+          (
+            await c.query("select public.calendar_feed_payload($1) as p", [
+              fresh,
+            ])
+          ).rows[0].p,
+        ).toEqual({ ok: false });
+        await c.query("reset role");
+      });
+    });
+  },
+);
+
+describe.skipIf(!dbUp)(
+  "Walkthrough M1: message → reply → block → report(excerpt) → moderator sees excerpt only",
+  () => {
+    let client: pg.Client;
+    let h: ReturnType<typeof impersonate>;
+
+    beforeAll(async () => {
+      client = makeClient();
+      await client.connect();
+      h = impersonate(client);
+    });
+    afterAll(async () => {
+      await client?.end();
+    });
+
+    it("carries a conversation through its life, and the report shows only the quoted excerpt", async () => {
+      await h.inTxn(async (c) => {
+        const aida = "a11d0000-0000-0000-0000-00000000000a";
+        const ben = "be110000-0000-0000-0000-00000000000b";
+        const mod = "eec70000-0000-0000-0000-00000000000e";
+        await h.createMember(aida, "wt-aida@msg.test", { verified: true });
+        await h.createMember(ben, "wt-ben@msg.test", { verified: true });
+        await h.createMember(mod, "wt-mod@msg.test", {
+          verified: true,
+          role: "moderator",
+        });
+        const everyone = (
+          await c.query("select id from groups where slug='everyone'")
+        ).rows[0].id;
+        const post = (
+          await c.query(
+            "insert into posts (group_id, author_id, category, title, body, allow_messages) values ($1, $2, 'offer', 'Free tomato starts', 'body', true) returning id",
+            [everyone, ben],
+          )
+        ).rows[0].id;
+
+        // 1 · aida starts a thread from ben's post; 2 · ben replies.
+        await h.actAs(aida);
+        const tid = (
+          await c.query(
+            "select public.start_thread($1, 'Are these still free?', $2) as id",
+            [ben, post],
+          )
+        ).rows[0].id;
+        await h.actAs(ben);
+        await c.query("select public.respond_message_request($1,'accept')", [
+          tid,
+        ]);
+        await c.query(
+          "insert into messages (thread_id, sender_id, body) values ($1, $2, 'Yes — porch pickup.')",
+          [tid, ben],
+        );
+        await c.query("reset role");
+        const msgs = await c.query(
+          "select count(*)::int n from messages where thread_id=$1",
+          [tid],
+        );
+        expect(msgs.rows[0].n).toBe(2);
+
+        // 3 · aida reports the conversation with HER OWN quoted excerpt.
+        const excerpt =
+          "aida: Are these still free? / ben: Yes — porch pickup.";
+        await h.actAs(aida);
+        const report = (
+          await c.query(
+            "insert into reports (reporter_id, target_type, target_id, body, quoted_excerpt) values ($1, 'message_thread', $2, 'This felt off', $3) returning id",
+            [aida, tid, excerpt],
+          )
+        ).rows[0].id;
+
+        // 4 · aida blocks ben — silent, symmetric. Sending is now frozen.
+        // (Savepoint: the refused insert aborts the txn; recover so the
+        // moderator reads below still run in the same inTxn.)
+        await c.query(
+          "insert into member_blocks (blocker_id, blocked_id) values ($1, $2)",
+          [aida, ben],
+        );
+        await c.query("savepoint sp_block");
+        let frozen = false;
+        try {
+          await c.query(
+            "insert into messages (thread_id, sender_id, body) values ($1, $2, 'more')",
+            [tid, aida],
+          );
+        } catch {
+          frozen = true;
+        }
+        await c.query("rollback to savepoint sp_block");
+        expect(frozen).toBe(true);
+        await c.query("reset role");
+
+        // 5 · the moderator sees the REPORT and its excerpt — but NOT the thread.
+        await h.actAs(mod);
+        const seen = (
+          await c.query("select quoted_excerpt from reports where id=$1", [
+            report,
+          ])
+        ).rows[0];
+        expect(seen.quoted_excerpt).toBe(excerpt);
+        // the zero-read pin holds: the moderator cannot open the thread itself.
+        expect(
+          (
+            await c.query(
+              "select count(*)::int n from messages where thread_id=$1",
+              [tid],
+            )
+          ).rows[0].n,
+        ).toBe(0);
+        expect(
+          (
+            await c.query("select count(*)::int n from threads where id=$1", [
+              tid,
+            ])
+          ).rows[0].n,
+        ).toBe(0);
+        // 6 · resolve the report (moderator close-out; audited).
+        await c.query("select public.resolve_report($1, 'dismissed')", [
+          report,
+        ]);
+        await c.query("reset role");
+        const audited = await c.query(
+          "select count(*)::int n from audit_log where action='report.resolved' and entity_id=$1",
+          [report],
+        );
+        expect(audited.rows[0].n).toBe(1);
+      });
+    });
+  },
+);

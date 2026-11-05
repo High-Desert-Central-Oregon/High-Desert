@@ -16,6 +16,7 @@ export async function updateSession(request: NextRequest) {
     pathname === "/partners" ||
     pathname === "/preview" ||
     pathname === "/join" ||
+    pathname === "/enrollment/confirm" ||
     pathname === "/privacy" ||
     pathname === "/legal/privacy" ||
     pathname === "/legal/terms" ||
@@ -51,6 +52,7 @@ export async function updateSession(request: NextRequest) {
   // rules server-side.
   const isPublicApi =
     pathname === "/api/interest" ||
+    pathname === "/api/enrollment/confirm" ||
     pathname === "/api/contact" ||
     pathname === "/api/bug-reports" ||
     pathname === "/api/support/maintenance" ||
@@ -112,7 +114,9 @@ export async function updateSession(request: NextRequest) {
       // null means "could not determine" — fail open (see lib/campaign-slugs).
       const known = await isCampaignSlug(n[2]);
       if (known === false) {
-        return NextResponse.rewrite(new URL("/n-not-found", request.url), { status: 404 });
+        return NextResponse.rewrite(new URL("/n-not-found", request.url), {
+          status: 404,
+        });
       }
     }
     return NextResponse.next({ request });

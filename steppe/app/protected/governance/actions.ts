@@ -51,7 +51,10 @@ export async function createProposal(
     return { error: "window-order" };
   }
   if (Date.parse(closesIso) <= Date.now()) return { error: "closes-past" };
-  if (kind === "immutable" && !hasFoundationalNotice(Date.parse(opensIso), Date.now())) {
+  if (
+    kind === "immutable" &&
+    !hasFoundationalNotice(Date.parse(opensIso), Date.now())
+  ) {
     return { error: "foundational-notice" };
   }
 
@@ -103,14 +106,12 @@ export async function castVote(
   }
 
   const supabase = await createClient();
-  // The hard gates are RLS: verified, own row, proposal still open. The trigger
-  // pins user_id and weight. No .select() back — nothing to read, nothing to leak.
-  const { error } = await supabase
-    .from("votes")
-    .upsert(
-      { proposal_id: proposalId, choice },
-      { onConflict: "proposal_id,user_id" },
-    );
+  // Invoker RPC preserves RLS and exposes only a choice revision. Proposal
+  // identity cannot change through direct table updates or conflict writes.
+  const { error } = await supabase.rpc("cast_ballot", {
+    p_proposal: proposalId,
+    p_choice: choice,
+  });
 
   if (error) return { error: "vote-failed" };
 
@@ -146,7 +147,10 @@ export async function recordProposalClose(
   if (!proposal) return { error: "not-found" };
   if (proposal.status === "closed") {
     revalidatePath(`/protected/governance/${proposalId}`);
-    return null; // already officially closed — the trigger fired once, on the transition
+    const finalized = await supabase.rpc("finalize_proposal_outcome", {
+      p_id: proposalId,
+    });
+    return finalized.error ? { error: "close-failed" } : null;
   }
   if (Date.parse(proposal.closes_at) > Date.now()) {
     return { error: "not-yet-closed" }; // window still open; no early close here

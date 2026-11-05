@@ -197,9 +197,9 @@
     "consentLabel": "Envíame un correo cuando la beta fundadora esté lista. Acepto los <link>compromisos de privacidad</link>.",
     "submit": "Apúntate a la lista",
     "submitting": "Enviando…",
-    "formnote": "Usaremos tu correo para el único aviso sobre la beta que solicitas, y para nada más. Nuestros <link>compromisos de privacidad</link> explican el resto.",
-    "successH": "Estás en la lista.",
-    "successP": "Te enviaremos un solo correo cuando la beta fundadora esté lista en Redmond.",
+    "formnote": "Enviaremos un enlace de confirmación y luego el único aviso sobre la beta que solicitas. Las solicitudes sin confirmar vencen en 48 horas. Nuestros <link>compromisos de privacidad</link> explican el resto.",
+    "successH": "Revisa tu correo.",
+    "successP": "Si podemos entregar tu solicitud, recibirás un enlace de confirmación. Solo te agregamos después de que confirmes.",
     "dupH": "Ya estás en la lista.",
     "dupP": "Ya tenemos tu correo, así que enviaremos el único aviso cuando la beta fundadora esté lista.",
     "errGeneric": "Algo salió mal. Inténtalo de nuevo.",
@@ -235,22 +235,22 @@
   },
   "pledge": {
     "metaTitle": "Steppe · {neighborhood}",
-    "metaDescForming": "Steppe abre en {neighborhood} cuando {threshold} hogares digan que sí. Van {count}. Nadie verifica una dirección ni paga nada hasta entonces.",
+    "metaDescForming": "Steppe abre en {neighborhood} cuando se comprometen {threshold} hogares. El total público diario es {count}, redondeado hacia abajo a grupos de cinco. Nadie paga antes de eso.",
     "metaDescOpen": "Steppe ya funciona en {neighborhood}. Una red vecinal que es de tus vecinos: $4 al mes, sin anuncios, y no se puede vender.",
     "stateForming": "En formación",
     "stateReached": "Meta alcanzada",
     "stateOpen": "Abierto",
     "countOf": "de {threshold} hogares",
     "countOpen": "hogares · abrió en {threshold}",
-    "legend": "Una capa = un hogar",
-    "leadForming": "Steppe abre en {neighborhood} cuando {threshold} vecinos digan que sí. Nadie verifica una dirección ni paga nada hasta entonces: <b>faltan {remaining}</b>.",
+    "legend": "Compromisos confirmados · redondeados diariamente",
+    "leadForming": "Steppe abre en {neighborhood} cuando {threshold} vecinos se comprometen. Nadie verifica su dirección postal ni paga nada antes de eso.",
     "leadReached": "{neighborhood} llegó a {threshold}. Todas las personas que se anotaron reciben un correo cuando abra, y el vecindario empieza junto.",
     "leadOpen": "Steppe ya funciona en {neighborhood}. Verifica tu dirección para participar.",
     "labelEmail": "Tu correo",
     "submit": "Anótame",
     "submitting": "Anotando…",
     "ctaVerify": "Verifica tu dirección",
-    "privacy": "Tu correo se usa una sola vez, para avisarte cuando {neighborhood} abra. Nunca se vende, nunca se comparte, y puedes quitarlo cuando quieras.",
+    "privacy": "Primero confirma tu correo. Luego te avisaremos cuando abra {neighborhood}. Tu página de confirmación tiene un enlace para eliminar tu compromiso. Las solicitudes sin confirmar vencen en 48 horas.",
     "doneLayer": "Eres la capa {count}",
     "doneAlready": "Ya estabas dentro",
     "doneRemaining": "Faltan {remaining} y {neighborhood} abre.",
@@ -268,7 +268,10 @@
     "leaveDone": "Listo. Tu correo ya no está en la lista de {neighborhood}.",
     "leaveDoneNote": "No se guardó nada. Si cambias de opinión puedes anotarte otra vez cuando quieras, y no recordaremos que te fuiste.",
     "leaveBack": "Ver {neighborhood}",
-    "leaveNoToken": "A este enlace le falta su código. Usa el enlace que está al final del correo que te enviamos y funcionará."
+    "leaveNoToken": "A este enlace le falta su código. Usa el enlace que está al final del correo que te enviamos y funcionará.",
+    "checkEmail": "Revisa tu correo.",
+    "confirmFirst": "Confirma el enlace de tu correo para registrar tu compromiso.",
+    "countNote": "Los totales públicos se actualizan cada día y se redondean hacia abajo a grupos de cinco."
   },
   "privacy": {
     "googleSignInTitle": "Inicio de sesión opcional con Google",
@@ -337,9 +340,7 @@
     "fullPolicy": "Política completa:",
     "questions": "Preguntas:",
     "contactUs": "Contáctanos",
-    "legalGoverns": "La política legal completa está disponible en inglés, y la versión en inglés es la que prevalece.",
-    "bugReportsTitle": "Informes opcionales de errores de la beta",
-    "bugReportsDescription": "Tú eliges si quieres registrar pasos técnicos para informar de un error. Hasta 100 eventos de los últimos 10 minutos permanecen en esta sesión de página hasta que decidas enviarlos. Describen páginas, acciones y errores sin texto escrito, mensajes privados, códigos de acceso ni grabaciones de pantalla. Puedes revisar u omitir los diagnósticos. Los informes enviados son privados para el equipo designado de soporte de Steppe, caducan a los 30 días y se eliminan mediante una limpieza programada. Los informes enviados con la sesión iniciada se incluyen en la exportación y eliminación de la cuenta. Los avisos por correo contienen una referencia y un enlace para iniciar sesión, sin el contenido del informe. Las copias descargadas y las copias de seguridad del proveedor tienen sus propios plazos de conservación."
+    "legalGoverns": "La política legal completa está disponible en inglés, y la versión en inglés es la que prevalece."
   },
   "contact": {
     "heroEyebrow": "Contacto",
@@ -474,5 +475,20 @@
     "capYouH": "Elige qué pueden ver los demás miembros.",
     "capYouP": "Los campos del perfil empiezan ocultos. Tú decides cuáles se muestran. El estado de verificación y, cuando corresponda, el rol de moderador permanecen visibles.",
     "capYouM": "Tu nombre visible siempre se muestra · todo lo demás es tu decisión"
+  },
+  "enrollment": {
+    "subject": "Confirma tu solicitud de Steppe",
+    "heading": "Confirma tu correo electrónico",
+    "interestBody": "Alguien pidió agregar esta dirección a la lista de interés de Steppe. Confirma abajo para recibir un correo cuando se abra la membresía.",
+    "pledgeBody": "Alguien pidió registrar esta dirección en una campaña vecinal de Steppe. Confirma abajo para registrar tu compromiso.",
+    "ignore": "Si no hiciste esta solicitud, ignora este correo. No se agrega nada hasta que confirmes. El enlace vence en 48 horas.",
+    "button": "Confirmar mi solicitud",
+    "pageBody": "Confirma que quieres que Steppe registre la solicitud enviada a tu correo. Abrir esta página no la confirma.",
+    "pending": "Confirmando…",
+    "confirmed": "Tu solicitud está confirmada.",
+    "confirmedBody": "Tu solicitud está registrada. Los totales públicos se actualizan cada día en grupos de cinco. Guarda esta página para volver al enlace de eliminación.",
+    "remove": "Eliminar mi compromiso",
+    "error": "No pudimos confirmar este enlace. Puede haber vencido. Inténtalo de nuevo o envía otra solicitud.",
+    "confirmedInterestBody": "Estás en la lista de interés. Te avisaremos cuando esté lista la beta inicial."
   }
 }
