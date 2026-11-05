@@ -119,6 +119,27 @@ let ipSeq = 0;
 const freshIp = () => `198.51.100.${++ipSeq % 250}`;
 
 describe("POST /api/pledge", () => {
+  it.each(["x".repeat(81), "bad/slug", "bad\\slug"])("rejects malformed campaign keys before database work: %s", async (slug) => {
+    const res = await POST(post("http://localhost/api/pledge", { slug, email: "a@example.com" }, freshIp()));
+    expect(res.status).toBe(400);
+    expect(mocks.submitPledge).not.toHaveBeenCalled();
+  });
+  it("bounds actual request bytes with absent or dishonest length", async () => {
+    for (const declared of [undefined, "1", "99999"]) {
+      const request = post("http://localhost/api/pledge", { slug: "canyon-rim", email: "x".repeat(5000) }, freshIp());
+      if (declared) request.headers.set("content-length", declared);
+      expect((await POST(request)).status).toBe(413);
+    }
+    expect(mocks.submitPledge).not.toHaveBeenCalled();
+  });
+  it("changing valid campaign names cannot reset the caller budget", async () => {
+    const ip = freshIp();
+    for (let n = 0; n < 60; n++) {
+      expect((await POST(post("http://localhost/api/pledge", { slug: `campaign-${n}`, email: "a@example.com" }, ip))).status).toBe(200);
+    }
+    expect((await POST(post("http://localhost/api/pledge", { slug: "new-campaign", email: "a@example.com" }, ip))).status).toBe(429);
+    expect(mocks.submitPledge).toHaveBeenCalledTimes(60);
+  });
   it("records a pledge and returns only the four public facts", async () => {
     const res = await POST(post("http://localhost/api/pledge", {
       slug: "canyon-rim", email: "  Neighbor@Example.COM ",

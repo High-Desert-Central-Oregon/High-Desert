@@ -10,6 +10,7 @@ import {
   pledgeRemovalUrl,
   type PledgeOutcome,
 } from "@/lib/pledge";
+import { readLimitedJson } from "@/lib/limited-json";
 import { clientIp, rateLimited } from "@/lib/rate-limit";
 import { sendPledgeConfirmation } from "@/lib/pledge-email";
 
@@ -43,9 +44,10 @@ function bad(error: string, status = 400) {
 export async function POST(request: Request) {
   let body: unknown;
   try {
-    body = await request.json();
-  } catch {
-    return bad("Invalid request.");
+    body = await readLimitedJson(request, 4096);
+  } catch (error) {
+    const oversized = error instanceof Error && error.message === "too large";
+    return bad(oversized ? "Request too large." : "Invalid request.", oversized ? 413 : 400);
   }
   const d = (body ?? {}) as Record<string, unknown>;
 
@@ -57,12 +59,12 @@ export async function POST(request: Request) {
   }
 
   const slug = normalizeSlug(d.slug);
-  if (!slug) return bad("Missing neighborhood.");
+  if (!slug || slug.length > 80 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return bad("Invalid neighborhood.");
 
-  // Keyed per (IP, neighborhood): pledging to one neighborhood must not spend
-  // the budget for another, and a household adding two or three people to the
-  // same list is the good case, not the abuse case.
-  if (rateLimited(`${clientIp(request)}:${slug}`)) {
+  // A changing campaign cannot reset the caller or process budget. Keep a
+  // separate generous caller allowance for households pledging across campaigns.
+  const ip = clientIp(request);
+  if (rateLimited("pledge:global", 600) || rateLimited(`pledge:ip:${ip}`, 60) || rateLimited(`pledge:${ip}:${slug}`)) {
     return bad(
       "Too many pledges from this connection just now. Please try again in a little while.",
       429,
