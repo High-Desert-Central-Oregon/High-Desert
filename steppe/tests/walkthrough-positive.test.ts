@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import pg from "pg";
+import { randomUUID } from "node:crypto";
+import { securityDb, target } from "./helpers/security-db";
 import {
   dbReachable,
   makeClient,
@@ -8,57 +10,459 @@ import {
 
 const dbUp = await dbReachable();
 
-// ┌─────────────────────────────────────────────────────────────────────────────┐
-// │ SCAFFOLD — NOT YET IMPLEMENTED. Automates the dry-run runbook's POSITIVE       │
-// │ paths (docs/dry-run-runbook.md Walkthroughs A & B). The negative paths are     │
-// │ already automated in rls-refusals.test.ts; the full A→B flows remain in the    │
-// │ manual runbook. These it.todo() markers surface in every `npm run test` run as │
-// │ a standing reminder of the planned work — they never fail.                     │
-// │                                                                                │
-// │ To implement: wire the shared harness exactly like rls-refusals.test.ts —      │
-// │   const dbUp = await dbReachable();                                            │
-// │   describe.skipIf(!dbUp)(..., () => {                                          │
-// │     let client; let h;                                                         │
-// │     beforeAll(async () => { client = makeClient(); await client.connect();     │
-// │                             h = impersonate(client); });                       │
-// │     afterAll(async () => { await client?.end(); });                           │
-// │     it("A2 ...", async () => { await h.inTxn(async (c) => { /* fixtures as     │
-// │        owner → h.actAs(moderator) → call RPC → assert committed-state reads */ │
-// │     }); });                                                                    │
-// │   });                                                                          │
-// │ Build fixtures with h.createMember(...) and drive actions via the same RPCs    │
-// │ the app calls (decide_verification, file_appeal, resolve_appeal, castVote /    │
-// │ the votes upsert, the manual close). Assert on the resulting rows the way the  │
-// │ runbook's confirm-blocks do. Everything rolls back — no seed, nothing persists.│
-// │ See tests/helpers/pg-impersonation.ts and docs/dry-run-runbook.md.             │
-// └─────────────────────────────────────────────────────────────────────────────┘
+// A/B exercise the current application RPCs on the explicit disposable fixture.
+// Separate committed requests let the voting window genuinely expire: now() is
+// frozen inside a rollback-only transaction. Random synthetic records remain in
+// the disposable database; no triggers, clocks, or append-only guards are disabled.
+// Initialize an empty fixture with tests/fixtures/security-remediation-database.mjs
+// and set MEMBER_PIPELINE_TEST_DB_URL (validated loopback + exact database name).
+describe.skipIf(!target)(
+  "Walkthroughs A/B: verification, appeals, and voting",
+  () => {
+    const { db, act } = securityDb();
+    beforeAll(async () => {
+      await db.connect();
+    });
+    afterAll(async () => {
+      await db.end();
+    });
 
-describe("Walkthrough positive paths (SCAFFOLD — see header)", () => {
-  // Walkthrough A — the first conflict
-  it.todo(
-    "A2: moderator approves a verification → verified + tenure set, evidence pointer purged, audit written",
-  );
-  it.todo(
-    "A3–A4: a verified member posts an event; a moderator removes it with a reason → hidden + legible",
-  );
-  it.todo(
-    "A5–A7: creator appeals → a DIFFERENT moderator overturns → the event is restored (chain remove→restore)",
-  );
-  it.todo(
-    "A8: transparency view lists the acting moderator only, never the moderated member",
-  );
+    async function person(verified = true, role = "member", months = 0) {
+      const id = randomUUID();
+      await db.query("insert into auth.users(id,email) values($1,$2)", [
+        id,
+        `${id}@example.test`,
+      ]);
+      await db.query(
+        "update profiles set display_name=$2,verified=$3,role=$4::member_role,tenure_start=(current_date-$5::int*interval '1 month')::date where id=$1",
+        [id, `Walkthrough ${id}`, verified, role, months],
+      );
+      if (!verified)
+        await db.query("update profiles set tenure_start=null where id=$1", [
+          id,
+        ]);
+      return id;
+    }
 
-  // Walkthrough B — the first vote
-  it.todo(
-    "B2/B4: five tenure-weighted ballots aggregate to yes 4.5 / no 1.0 / abstain 3.0 after the window closes",
-  );
-  it.todo(
-    "B3: a member may revise their ballot while the proposal is open (coercion-resistance); one row per member",
-  );
-  it.todo(
-    "B4: the close audit records the aggregate only — no user_id, no per-ballot choice",
-  );
-});
+    async function removedEvent() {
+      const author = await person(),
+        peer = await person();
+      const moderator = await person(true, "moderator"),
+        reviewer = await person(true, "moderator");
+      const event = (
+        await act(
+          author,
+          "insert into events(group_id,creator_id,title,starts_at) select id,$1,'Walkthrough gathering',now()+interval '1 day' from groups where slug='everyone' returning id",
+          [author],
+        )
+      ).rows[0].id;
+      expect(
+        (await act(peer, "select title from events where id=$1", [event])).rows,
+      ).toEqual([{ title: "Walkthrough gathering" }]);
+      const removal = (
+        await act(
+          moderator,
+          "insert into moderation_actions(target_type,target_id,actor_id,action,reason) values('event',$1,$2,'remove','Venue permission needs clarification') returning id",
+          [event, moderator],
+        )
+      ).rows[0].id;
+      return { author, peer, moderator, reviewer, event, removal };
+    }
+
+    async function overturn(f: Awaited<ReturnType<typeof removedEvent>>) {
+      const appeal = (
+        await act(
+          f.author,
+          "select file_appeal($1,'The venue has confirmed permission.') id",
+          [f.removal],
+        )
+      ).rows[0].id;
+      await expect(
+        act(
+          f.moderator,
+          "select resolve_appeal($1,false,'Permission confirmed')",
+          [appeal],
+        ),
+      ).rejects.toThrow(/separation of duties/);
+      await act(
+        f.reviewer,
+        "select resolve_appeal($1,false,'Permission confirmed')",
+        [appeal],
+      );
+      return appeal;
+    }
+
+    it("A2: approval sets verified status and tenure only after cleanup, purges the pointer, and audits once", async () => {
+      const applicant = await person(false),
+        moderator = await person(true, "moderator");
+      const path = (
+        await act(applicant, "select reserve_verification_upload('pdf') path")
+      ).rows[0].path;
+      // Storage schema fixture represents an uploaded object, not real document bytes.
+      await act(
+        applicant,
+        "insert into storage.objects(bucket_id,name) values('verification-evidence',$1)",
+        [path],
+      );
+      const request = (
+        await act(
+          applicant,
+          "insert into verifications(user_id,method,evidence_path) values($1,'utility_bill',$2) returning id",
+          [applicant, path],
+        )
+      ).rows[0].id;
+      const decision = (
+        await act(
+          moderator,
+          "select * from begin_verification_decision($1,true,'')",
+          [request],
+        )
+      ).rows[0];
+      expect(decision).toMatchObject({ evidence_path: path, completed: false });
+      expect(decision.token).toBeTruthy();
+      await expect(
+        act(moderator, "select decide_verification($1,true)", [request]),
+      ).rejects.toThrow(/cleanup/);
+      expect(
+        (
+          await act(
+            applicant,
+            "select verified,tenure_start from profiles where id=$1",
+            [applicant],
+          )
+        ).rows[0],
+      ).toEqual({ verified: false, tenure_start: null });
+      // Simulate successful Storage API removal in this metadata-only local fixture.
+      // External API success/failure handling is covered by the review-worker tests.
+      await db.query(
+        "delete from storage.objects where bucket_id='verification-evidence' and name=$1",
+        [path],
+      );
+      await act(
+        null,
+        "select confirm_verification_purge($1,$2)",
+        [request, decision.token],
+        "service_role",
+      );
+      await act(moderator, "select decide_verification($1,true)", [request]);
+      await act(moderator, "select decide_verification($1,true)", [request]);
+      expect(
+        (
+          await act(
+            applicant,
+            "select verified,tenure_start=current_date as tenure_today from profiles where id=$1",
+            [applicant],
+          )
+        ).rows[0],
+      ).toEqual({ verified: true, tenure_today: true });
+      expect(
+        (
+          await act(
+            moderator,
+            "select status,review_state,evidence_path,reviewed_by,reviewed_at is not null as reviewed from verifications where id=$1",
+            [request],
+          )
+        ).rows[0],
+      ).toEqual({
+        status: "approved",
+        review_state: "complete",
+        evidence_path: null,
+        reviewed_by: moderator,
+        reviewed: true,
+      });
+      expect(
+        (
+          await act(
+            moderator,
+            "select action,actor_id,metadata from audit_log where entity_id=$1 and action='verification.approved'",
+            [request],
+          )
+        ).rows,
+      ).toEqual([
+        { action: "verification.approved", actor_id: moderator, metadata: {} },
+      ]);
+    });
+
+    it("A3–A4: a member creates an event and a moderator removes it with a legible reason", async () => {
+      const f = await removedEvent();
+      expect(
+        (await act(f.peer, "select id from events where id=$1", [f.event]))
+          .rowCount,
+      ).toBe(0);
+      expect(
+        (await act(f.author, "select id from events where id=$1", [f.event]))
+          .rowCount,
+      ).toBe(1);
+      expect(
+        (
+          await act(f.peer, "select is_content_hidden('event',$1) hidden", [
+            f.event,
+          ])
+        ).rows[0].hidden,
+      ).toBe(true);
+      expect(
+        (
+          await act(
+            f.peer,
+            "select actor_id,metadata from audit_log where entity_id=$1 and action='moderation.remove'",
+            [f.event],
+          )
+        ).rows,
+      ).toEqual([
+        {
+          actor_id: f.moderator,
+          metadata: { reason: "Venue permission needs clarification" },
+        },
+      ]);
+    });
+
+    it("A5–A7: the creator appeals and a different moderator restores the event with its history intact", async () => {
+      const f = await removedEvent();
+      const appeal = await overturn(f);
+      expect(
+        (
+          await act(f.author, "select status from appeals where id=$1", [
+            appeal,
+          ])
+        ).rows[0].status,
+      ).toBe("overturned");
+      expect(
+        (await act(f.peer, "select id from events where id=$1", [f.event]))
+          .rows,
+      ).toEqual([{ id: f.event }]);
+      expect(
+        (
+          await act(f.peer, "select is_content_hidden('event',$1) hidden", [
+            f.event,
+          ])
+        ).rows[0].hidden,
+      ).toBe(false);
+      const history = (
+        await act(
+          f.peer,
+          "select action,actor_id from moderation_actions where target_type='event' and target_id=$1 order by created_at,id",
+          [f.event],
+        )
+      ).rows;
+      expect(history).toEqual([
+        { action: "remove", actor_id: f.moderator },
+        { action: "restore", actor_id: f.reviewer },
+      ]);
+      expect(
+        (
+          await act(
+            f.peer,
+            "select actor_id,metadata from audit_log where action='appeal.overturned' and entity_id=$1",
+            [appeal],
+          )
+        ).rows,
+      ).toEqual([
+        {
+          actor_id: f.reviewer,
+          metadata: {
+            moderation_action_id: f.removal,
+            reason: "Permission confirmed",
+          },
+        },
+      ]);
+    });
+
+    it("A8: the Record projection names acting moderators without including the affected member", async () => {
+      const f = await removedEvent();
+      const appeal = await overturn(f);
+      // Same public columns and actor-name lookup as governance/record/page.tsx.
+      const rows = (
+        await act(
+          f.peer,
+          "select action,entity,entity_id,metadata,actor_id,created_at from audit_log where (action like 'moderation.%' or action like 'appeal.%') and entity_id=any($1::uuid[])",
+          [[f.event, appeal]],
+        )
+      ).rows;
+      expect(rows).toHaveLength(3);
+      expect(new Set(rows.map((row) => row.actor_id))).toEqual(
+        new Set([f.moderator, f.reviewer]),
+      );
+      const names = (
+        await act(
+          f.peer,
+          "select id,display_name from public_profiles where id=any($1::uuid[])",
+          [rows.map((row) => row.actor_id)],
+        )
+      ).rows;
+      expect(new Set(names.map((row) => row.display_name))).toEqual(
+        new Set([`Walkthrough ${f.moderator}`, `Walkthrough ${f.reviewer}`]),
+      );
+      expect(JSON.stringify({ rows, names })).not.toContain(f.author);
+      expect(
+        rows.every((row) => !("user_id" in row) && !("creator_id" in row)),
+      ).toBe(true);
+    });
+
+    async function voteFixture(seconds = 2) {
+      const moderator = await person(true, "moderator");
+      const voters: string[] = [];
+      // Three yes ballots weigh 1 + 1.5 + 2; no weighs 1; abstain weighs 3.
+      for (const months of [0, 18, 36, 6, 60])
+        voters.push(await person(true, "member", months));
+      const proposal = (
+        await act(
+          moderator,
+          "insert into proposals(author_id,title,kind,opens_at,closes_at) values($1,'Walkthrough vote','minor',now()-interval '1 day',clock_timestamp()+$2::int*interval '1 second') returning id",
+          [moderator, seconds],
+        )
+      ).rows[0].id;
+      return { moderator, voters, proposal };
+    }
+
+    async function castFive(f: Awaited<ReturnType<typeof voteFixture>>) {
+      const choices = ["yes", "yes", "yes", "no", "abstain"];
+      for (let i = 0; i < f.voters.length; i++)
+        await act(f.voters[i], "select cast_ballot($1,$2::vote_choice)", [
+          f.proposal,
+          choices[i],
+        ]);
+    }
+
+    async function closeAfterDeadline(
+      f: Awaited<ReturnType<typeof voteFixture>>,
+    ) {
+      // Let real database time pass; never rewrite a frozen proposal deadline or seed ballots past it.
+      await db.query(
+        "select pg_sleep(greatest(0,extract(epoch from closes_at-clock_timestamp()))::double precision+0.02) from proposals where id=$1",
+        [f.proposal],
+      );
+      await act(
+        f.moderator,
+        "update proposals set status='closed' where id=$1",
+        [f.proposal],
+      );
+    }
+
+    it("B2/B4: five weighted ballots reveal yes 4.5 / no 1.0 / abstain 3.0 only after the window closes", async () => {
+      const f = await voteFixture();
+      await castFive(f);
+      expect(
+        (
+          await act(
+            f.voters[0],
+            "select * from proposal_results where proposal_id=$1",
+            [f.proposal],
+          )
+        ).rows,
+      ).toEqual([]);
+      await closeAfterDeadline(f);
+      const result = (
+        await act(
+          f.voters[0],
+          "select * from proposal_results where proposal_id=$1",
+          [f.proposal],
+        )
+      ).rows[0];
+      expect(result).toMatchObject({
+        status: "closed",
+        revealed: true,
+        quorum_met: true,
+        outcome: "passed",
+      });
+      expect(Number(result.ballots)).toBe(5);
+      expect(
+        [result.yes_weight, result.no_weight, result.abstain_weight].map(
+          Number,
+        ),
+      ).toEqual([4.5, 1, 3]);
+      await expect(
+        act(f.voters[0], "select cast_ballot($1,'no')", [f.proposal]),
+      ).rejects.toThrow(/closed/);
+    }, 10000);
+
+    it("B3: an open ballot can be revised while retaining exactly one server-weighted row", async () => {
+      const f = await voteFixture(60);
+      const voter = f.voters[1];
+      await act(voter, "select cast_ballot($1,'yes')", [f.proposal]);
+      const original = (
+        await act(
+          voter,
+          "select id,user_id,choice,weight from votes where proposal_id=$1",
+          [f.proposal],
+        )
+      ).rows[0];
+      await act(voter, "select cast_ballot($1,'abstain')", [f.proposal]);
+      const revised = (
+        await act(
+          voter,
+          "select id,user_id,choice,weight from votes where proposal_id=$1",
+          [f.proposal],
+        )
+      ).rows;
+      expect(revised).toEqual([{ ...original, choice: "abstain" }]);
+      expect(original.user_id).toBe(voter);
+      expect(Number(original.weight)).toBe(1.5);
+      expect(
+        (
+          await db.query(
+            "select count(*)::int n from votes where proposal_id=$1 and user_id=$2",
+            [f.proposal, voter],
+          )
+        ).rows[0].n,
+      ).toBe(1);
+      expect(
+        (
+          await act(f.voters[0], "select id from votes where proposal_id=$1", [
+            f.proposal,
+          ])
+        ).rows,
+      ).toEqual([]);
+    });
+
+    it("B4: closing records only aggregate results, never voter identities or individual choices", async () => {
+      const f = await voteFixture();
+      await castFive(f);
+      await closeAfterDeadline(f);
+      await act(f.moderator, "select finalize_proposal_outcome($1)", [
+        f.proposal,
+      ]);
+      const rows = (
+        await act(
+          f.voters[0],
+          "select actor_id,metadata from audit_log where action='proposal.closed' and entity_id=$1",
+          [f.proposal],
+        )
+      ).rows;
+      expect(rows).toHaveLength(1);
+      expect(rows[0].actor_id).toBe(f.moderator);
+      const meta = rows[0].metadata;
+      expect(Object.keys(meta).sort()).toEqual(
+        [
+          "ballots",
+          "revealed",
+          "electorate_size",
+          "required_ballots",
+          "quorum_met",
+          "approval_fraction",
+          "rules_version",
+          "outcome",
+          "yes_weight",
+          "no_weight",
+          "abstain_weight",
+          "approval_ratio",
+        ].sort(),
+      );
+      expect(meta).toMatchObject({
+        ballots: 5,
+        revealed: true,
+        required_ballots: 5,
+        quorum_met: true,
+        outcome: "passed",
+        yes_weight: 4.5,
+        no_weight: 1,
+        abstain_weight: 3,
+      });
+      expect(meta.approval_ratio).toBeCloseTo(4.5 / 5.5);
+      for (const voter of f.voters)
+        expect(JSON.stringify(rows)).not.toContain(voter);
+    }, 10000);
+  },
+);
 
 // Walkthrough X1 — the Exchange happy path (IMPLEMENTED; spec §10 step 5).
 // post → author edit → moderator pin/unpin → remove → author appeal → a
