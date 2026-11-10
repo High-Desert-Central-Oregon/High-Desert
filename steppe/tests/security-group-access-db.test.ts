@@ -46,6 +46,49 @@ describe.skipIf(!target)(
     afterAll(async () => {
       await db.end();
     });
+    it("pins helper grants despite hosted function defaults", async () => {
+      const result = await db.query(`select p.proname,
+        has_function_privilege('anon',p.oid,'execute') as anon_execute,
+        has_function_privilege('authenticated',p.oid,'execute') as member_execute,
+        has_function_privilege('service_role',p.oid,'execute') as service_execute
+        from pg_proc p where p.oid in (
+          'public.can_read_group_audit(text,uuid,jsonb)'::regprocedure,
+          'public.can_rsvp_event(uuid)'::regprocedure,
+          'public.guard_rsvp_identity()'::regprocedure) order by p.proname`);
+      expect(result.rows).toEqual([
+        {
+          proname: "can_read_group_audit",
+          anon_execute: false,
+          member_execute: true,
+          service_execute: false,
+        },
+        {
+          proname: "can_rsvp_event",
+          anon_execute: false,
+          member_execute: true,
+          service_execute: false,
+        },
+        {
+          proname: "guard_rsvp_identity",
+          anon_execute: false,
+          member_execute: false,
+          service_execute: false,
+        },
+      ]);
+      for (const role of ["anon", "service_role"]) {
+        await expect(
+          act(null, "select public.can_rsvp_event($1)", [event], role),
+        ).rejects.toThrow(/permission denied/);
+        await expect(
+          act(
+            null,
+            "select public.can_read_group_audit('event',$1,'{}')",
+            [event],
+            role,
+          ),
+        ).rejects.toThrow(/permission denied/);
+      }
+    });
     it("scopes old audit rows but keeps own history and community governance", async () => {
       expect(
         (

@@ -40,6 +40,9 @@ grant usage on schema storage to authenticated,service_role;
 grant all on storage.objects to authenticated,service_role;
 `);
   const root = fileURLToPath(new URL("../../../", import.meta.url));
+  // Hosted defaults grant these roles EXECUTE directly, independently of PUBLIC.
+  await db.query(`alter default privileges in schema public
+    grant execute on functions to anon,authenticated,service_role;`);
   await db.query(fs.readFileSync(root + "schema.sql", "utf8"));
   await db.query(`create schema extensions;
 create function extensions.gen_random_bytes(integer) returns bytea language sql volatile as $$ select public.gen_random_bytes($1) $$;`);
