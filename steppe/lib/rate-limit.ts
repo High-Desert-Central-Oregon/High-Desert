@@ -1,42 +1,33 @@
-/**
- * Best-effort in-memory rate limiting for public POST endpoints.
- *
- * Per serverless instance, resetting on cold start, and deliberately without a
- * new dependency — a durable limiter would need shared storage this project
- * does not run. It is the same shape already in app/api/contact/route.ts,
- * lifted here so the pledge routes can share it and so it can be tested without
- * dragging a database client along.
- *
- * Be honest about what this stops. It handles casual noise, a double-tapped
- * submit button, and a naive script from one address. It does not stop a
- * determined actor with many IPs, and it is not pretending to.
- */
-
+/** Best-effort per-process limits. Shared durable mail admission is separate. */
 const WINDOW_MS = 10 * 60_000;
 const DEFAULT_MAX = 6;
-
+const MAX_KEYS = 4096;
+const MAX_KEY_LENGTH = 256;
+const MAX_HITS = 1000;
 const hits = new Map<string, number[]>();
+let nextSweep = 0;
 
-/**
- * Records a hit for `key` and reports whether it has now exceeded `max` within
- * the window. Key it as narrowly as the abuse you are limiting — the pledge
- * route uses (ip, neighborhood) so that pledging to one neighborhood cannot
- * spend the allowance for another.
- */
+/** Sliding window; rejected hits never allocate another timestamp or key. */
 export function rateLimited(key: string, max: number = DEFAULT_MAX): boolean {
+  if (!key || key.length > MAX_KEY_LENGTH || !Number.isInteger(max) || max < 1 || max > MAX_HITS) return true;
   const now = Date.now();
+  if (now >= nextSweep || hits.size >= MAX_KEYS) {
+    for (const [storedKey, times] of hits) {
+      if (now - times[times.length - 1] >= WINDOW_MS) hits.delete(storedKey);
+    }
+    nextSweep = now + 60_000;
+  }
   const recent = (hits.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
+  if (recent.length >= max) return true;
+  // Never evict live budgets to admit new attackers: fail closed at capacity.
+  if (!hits.has(key) && hits.size >= MAX_KEYS) return true;
   recent.push(now);
   hits.set(key, recent);
-  return recent.length > max;
+  return false;
 }
 
-/**
- * First hop of X-Forwarded-For, or "unknown". Used ONLY as a rate-limit key —
- * never stored, never logged, never associated with an address.
- */
+/** First forwarded hop; bounded, ephemeral, never logged or persisted. */
 export function clientIp(request: Request): string {
-  return (
-    (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown"
-  );
+  const value = (request.headers.get("x-forwarded-for") ?? "").split(",", 1)[0].trim();
+  return value.length <= 64 && /^[0-9a-fA-F:.]+$/.test(value) ? value : "unknown";
 }

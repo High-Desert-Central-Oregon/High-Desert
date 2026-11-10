@@ -39,17 +39,16 @@ async function InboxContent() {
   const copy = contactCopy[locale];
   // The inbox and the layout's every-navigation unread dot share ONE set of
   // reads per request (perf-audit-v1 finding #5): getInboxSubstrate is React-
-  // cache()d on my id, so landing on /messages doesn't re-run threads +
-  // thread_state + messages that the nav already ran. Messages are scoped to my
-  // threads inside the substrate — O(my messages), not O(all messages)
-  // (finding #4).
-  const [{ threads, states, messages: msgs }, supportRows] = await Promise.all([
+  // cache()d on my id, so landing on /messages reuses the nav's RLS-scoped
+  // reads. Each thread contributes at most one latest and one incoming message,
+  // independently of traffic in the other conversations.
+  const [{ threads, states, messages: msgs, incomingMessages }, supportRows] = await Promise.all([
     getInboxSubstrate(me),
     getSupportThreads(),
   ]);
   const supportThreads = new Map(supportRows.map((s) => [s.thread_id, s]));
 
-  // Newest message per thread (desc order → first seen).
+  // The substrate returns one latest visible message per thread.
   const last = new Map<string, InboxMessage>();
   for (const m of msgs) if (!last.has(m.thread_id)) last.set(m.thread_id, m);
   const state = new Map(states.map((s) => [s.thread_id, s]));
@@ -94,12 +93,13 @@ async function InboxContent() {
       (a, b) => Date.parse(b.lm!.created_at) - Date.parse(a.lm!.created_at),
     );
 
-  const unread = (lm: InboxMessage, st?: InboxState) =>
-    !!lm &&
-    lm.sender_id !== me &&
-    !st?.muted_at &&
-    (!st?.last_read_at ||
-      Date.parse(lm.created_at) > Date.parse(st.last_read_at));
+  const incoming = new Map(incomingMessages.map((message) => [message.thread_id, message]));
+  const unread = (lm: InboxMessage, st?: InboxState) => {
+    const reply = incoming.get(lm.thread_id);
+    return !!reply && !!st && !st.muted_at &&
+      (!st.left_at || Date.parse(reply.created_at) > Date.parse(st.left_at)) &&
+      (!st.last_read_at || Date.parse(reply.created_at) > Date.parse(st.last_read_at));
+  };
 
   return (
     <div lang={locale} className="flex flex-col gap-0">

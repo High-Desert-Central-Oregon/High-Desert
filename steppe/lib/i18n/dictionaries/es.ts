@@ -292,7 +292,8 @@ export const es: Dictionary = {
       countyAlt:
         "Contornos de subdivisiones de Redmond del condado de Deschutes, consultados el 1 de octubre de 2026.",
       outlines: "Contornos del condado",
-      countyCredit: "Contornos: oficina del agrimensor del condado de Deschutes",
+      countyCredit:
+        "Contornos: oficina del agrimensor del condado de Deschutes",
       countyLocated:
         "Mostrando {name} en los contornos de planos del condado. Revisa el mapa y elígelo si es tu vecindario.",
       platCount:
@@ -516,17 +517,21 @@ export const es: Dictionary = {
       "Tu contacto se queda en Steppe. Los vecinos te encuentran aquí, nunca por SMS ni por correo.",
     rowSub: "Tus conversaciones",
     emptyTitle: "Aún no hay mensajes",
-    emptySub: "Saluda desde una publicación que permita mensajes o un grupo con mensajes activados.",
+    emptySub:
+      "Saluda desde una publicación que permita mensajes o un grupo con mensajes activados.",
     messageAuthor: "Mensaje a {name}",
     openConversation: "Abrir conversación",
-    composerHint: "En una conversación nueva, tu primer mensaje es una solicitud. Los siguientes esperan a que sea aceptada.",
+    composerHint:
+      "En una conversación nueva, tu primer mensaje es una solicitud. Los siguientes esperan a que sea aceptada.",
     placeholder: "Escribe un mensaje…",
     send: "Enviar",
     starting: "Enviando…",
     sent: "Mensaje enviado · se queda en Steppe",
     error: "No pudimos enviarlo. Inténtalo de nuevo.",
-    draftError: "No pudimos confirmar el envío de tu mensaje. Tu borrador sigue aquí. Inténtalo de nuevo.",
-    reportDraftError: "No pudimos confirmar el envío de tu reporte. Tu texto sigue aquí. Inténtalo de nuevo.",
+    draftError:
+      "No pudimos confirmar el envío de tu mensaje. Tu borrador sigue aquí. Inténtalo de nuevo.",
+    reportDraftError:
+      "No pudimos confirmar el envío de tu reporte. Tu texto sigue aquí. Inténtalo de nuevo.",
     reachError: "No se puede contactar a este vecino por ahora.",
     reAbout: "Sobre: {title}",
     reGone: "Sobre una publicación que ya no está",
@@ -535,6 +540,8 @@ export const es: Dictionary = {
     formerMember: "Miembro anterior",
     backToMessages: "← Mensajes",
     backAria: "Volver a mensajes",
+    unavailable:
+      "Los mensajes no están disponibles temporalmente. Abre tu bandeja para volver a intentarlo.",
     unread: "Sin leer",
     youPrefix: "Tú",
     conversation: "Conversación",
@@ -1022,6 +1029,8 @@ export const es: Dictionary = {
     deleteConfirmWord: "ELIMINAR",
     deleteButton: "Eliminar mi cuenta",
     deleting: "Eliminando…",
+    deletePending:
+      "Tu cuenta está desactivada. La eliminación de documentos y del acceso sigue pendiente. Inténtalo de nuevo para terminar; un administrador también puede reintentarlo.",
     deleteError: "No pudimos eliminar tu cuenta. Inténtalo de nuevo.",
     // Editor de perfil (Y1) — el nombre y la visibilidad por campo en "Tú".
     profileRow: "Editar perfil",

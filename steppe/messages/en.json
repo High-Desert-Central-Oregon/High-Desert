@@ -195,9 +195,9 @@
     "consentLabel": "Email me once when the founding beta is ready. I agree to the <link>privacy commitments</link>.",
     "submit": "Join the list",
     "submitting": "Joining…",
-    "formnote": "We'll use your email for the one beta-readiness notice you request, and for nothing else. Our <link>privacy commitments</link> explain the rest.",
-    "successH": "You're on the list.",
-    "successP": "We'll email you once when the founding beta is ready in Redmond.",
+    "formnote": "We'll send a confirmation link, then the one beta-readiness notice you request. Unconfirmed requests expire after 48 hours. Our <link>privacy commitments</link> explain the rest.",
+    "successH": "Check your email.",
+    "successP": "If your request can be delivered, you will receive a confirmation link. You are added only after you confirm.",
     "dupH": "You're already on the list.",
     "dupP": "We already have your email, so we'll send the one notice when the founding beta is ready.",
     "errGeneric": "Something went wrong. Please try again.",
@@ -233,22 +233,22 @@
   },
   "pledge": {
     "metaTitle": "Steppe · {neighborhood}",
-    "metaDescForming": "Steppe opens in {neighborhood} when {threshold} households say they are in. {count} so far. Nobody verifies an address and nobody pays anything until then.",
+    "metaDescForming": "Steppe opens in {neighborhood} when {threshold} households pledge. The daily public total is {count}, rounded down to groups of five. Nobody pays anything until then.",
     "metaDescOpen": "Steppe is running in {neighborhood}. Your neighbors own the network. It costs $4 a month, has no ads, and cannot be sold.",
     "stateForming": "Forming",
     "stateReached": "Threshold reached",
     "stateOpen": "Open",
     "countOf": "of {threshold} households",
     "countOpen": "households · opened at {threshold}",
-    "legend": "One layer = one household",
-    "leadForming": "Steppe opens in {neighborhood} when {threshold} neighbors say they are in. Nobody verifies an address or pays anything before then. <b>{remaining} to go</b>.",
+    "legend": "Confirmed pledges · rounded daily",
+    "leadForming": "Steppe opens in {neighborhood} when {threshold} neighbors say they are in. Nobody verifies a street address or pays anything before then.",
     "leadReached": "{neighborhood} reached {threshold}. Everyone who pledged gets an email when it opens, and the neighborhood starts together.",
     "leadOpen": "Steppe is running in {neighborhood}. Verify your address to take part.",
     "labelEmail": "Your email",
     "submit": "Add me",
     "submitting": "Adding…",
     "ctaVerify": "Verify your address",
-    "privacy": "Your email is used once, to tell you when {neighborhood} opens. It is never sold, never shared, and you can remove it at any time.",
+    "privacy": "Confirm your email first. We will then tell you when {neighborhood} opens. Your confirmation page has a removal link. Unconfirmed requests expire after 48 hours.",
     "doneLayer": "You are layer {count}",
     "doneAlready": "You were already in",
     "doneRemaining": "{remaining} more and {neighborhood} opens.",
@@ -266,7 +266,10 @@
     "leaveDone": "Done. Your email is no longer on the {neighborhood} list.",
     "leaveDoneNote": "Nothing was kept. If you change your mind you can pledge again any time, and we will not remember that you left.",
     "leaveBack": "See {neighborhood}",
-    "leaveNoToken": "This removal link is missing its code. Use the link at the bottom of the email we sent you, and it will work."
+    "leaveNoToken": "This removal link is missing its code. Use the link at the bottom of the email we sent you, and it will work.",
+    "checkEmail": "Check your email.",
+    "confirmFirst": "Confirm the link in your email to record your pledge.",
+    "countNote": "Public totals update daily and are rounded down to groups of five."
   },
   "privacy": {
     "googleSignInTitle": "Optional Google sign-in",
@@ -335,9 +338,7 @@
     "fullPolicy": "Full policy:",
     "questions": "Questions:",
     "contactUs": "Contact us",
-    "legalGoverns": "The full legal policy is available in English, and the English version governs.",
-    "bugReportsTitle": "Optional beta bug reports",
-    "bugReportsDescription": "You choose whether to record technical steps for a bug report. Up to 100 events from the last 10 minutes stay in this page session until you choose to send them. These describe pages, actions, and errors without typed text, private messages, sign-in codes, or screen recordings. You can review or omit diagnostics. Submitted reports are private to designated Steppe support, expire after 30 days, and are deleted by scheduled cleanup. Reports sent while signed in are included in account export and deletion. Support email alerts contain a reference and sign-in link, without the report content. Downloaded copies and provider backups follow their own retention settings."
+    "legalGoverns": "The full legal policy is available in English, and the English version governs."
   },
   "contact": {
     "heroEyebrow": "Contact",
@@ -472,5 +473,20 @@
     "capYouH": "Choose what other members can see.",
     "capYouP": "Profile fields start hidden. You decide which ones become visible. Verification status and a moderator role, when applicable, remain public.",
     "capYouM": "Your display name is always shown · everything else your choice"
+  },
+  "enrollment": {
+    "subject": "Confirm your Steppe request",
+    "heading": "Confirm your email",
+    "interestBody": "Someone asked to add this address to the Steppe interest list. Confirm below to receive an email when membership opens.",
+    "pledgeBody": "Someone asked to pledge this email address to a Steppe neighborhood campaign. Confirm below to add your pledge.",
+    "ignore": "If you did not make this request, ignore this email. Nothing is added until you confirm. This link expires in 48 hours.",
+    "button": "Confirm my request",
+    "pageBody": "Confirm that you want Steppe to record the request sent to your email address. Opening this page alone does not confirm it.",
+    "pending": "Confirming…",
+    "confirmed": "Your request is confirmed.",
+    "confirmedBody": "Your request is recorded. Public pledge totals update daily in groups of five. Save this page if you want to return to your removal link.",
+    "remove": "Remove my pledge",
+    "error": "This link could not be confirmed. It may have expired. Try again or submit a new request.",
+    "confirmedInterestBody": "You're on the interest list. We'll email you when the founding beta is ready."
   }
 }

@@ -30,79 +30,82 @@ export type InboxMessage = {
   created_at: string;
 };
 
-/**
- * The messaging substrate — my threads, my per-thread state, and the recent
- * messages in those threads — fetched ONCE per request. Both the every-
- * navigation unread dot (getUnreadState, in the layout) and the inbox page
- * derive from this, so landing on /messages no longer runs threads +
- * thread_state + messages twice (perf-audit-v1 finding #5): React `cache()`
- * keys on my uid, so the two callers in a single render share one set of reads.
- *
- * Messages are scoped to MY threads (`.in(thread_id, …)`) so they ride
- * `messages_thread_idx` instead of scanning the whole messages table — the cost
- * is O(my messages), not O(all platform messages) (finding #4). Threads are the
- * authoritative membership list; the unread pass below still ignores any thread
- * I hold no state row for, so the boolean is unchanged.
+type ThreadSummary = InboxThread & { latest: InboxMessage[]; incoming: InboxMessage[] };
+const PAGE_SIZE = 200;
+
+/** Read every RLS-visible thread page, with a per-thread message limit. The
+ * database caps embedded messages independently, so a busy thread cannot hide
+ * a quiet one. Incoming summaries preserve unread replies after a self-send.
  */
-export const getInboxSubstrate = cache(async function getInboxSubstrate(
-  uid: string,
-): Promise<{
+export const getInboxSubstrate = cache(async function getInboxSubstrate(uid: string): Promise<{
   threads: InboxThread[];
   states: InboxState[];
   messages: InboxMessage[];
+  incomingMessages: InboxMessage[];
 }> {
   const supabase = await createClient();
-  const [{ data: threads }, { data: states }] = await Promise.all([
-    supabase
-      .from("threads")
-      .select("id, member_a, member_b, about_post_id, about_group_id, request_status, started_by")
-      .returns<InboxThread[]>(),
-    supabase
-      .from("thread_state")
-      .select("thread_id, last_read_at, muted_at, left_at")
-      .returns<InboxState[]>(),
+  const summaries: ThreadSummary[] = [];
+  const states: InboxState[] = [];
+  // Keyset pagination avoids the platform's default row cap. No member content
+  // or raw provider errors are copied into an exception or monitoring payload.
+  await Promise.all([
+    (async () => {
+      let cursor: string | undefined;
+      while (true) {
+        let query = supabase.from("threads")
+          .select("id, member_a, member_b, about_post_id, about_group_id, request_status, started_by, latest:messages(thread_id, sender_id, body, created_at), incoming:messages(thread_id, sender_id, body, created_at)")
+          .order("id")
+          .order("created_at", { referencedTable: "latest", ascending: false })
+          .order("id", { referencedTable: "latest", ascending: false })
+          .limit(1, { referencedTable: "latest" })
+          .neq("incoming.sender_id", uid)
+          .order("created_at", { referencedTable: "incoming", ascending: false })
+          .order("id", { referencedTable: "incoming", ascending: false })
+          .limit(1, { referencedTable: "incoming" })
+          .limit(PAGE_SIZE);
+        if (cursor) query = query.gt("id", cursor);
+        const { data, error } = await query.returns<ThreadSummary[]>();
+        if (error || !data) throw new Error("Messages temporarily unavailable");
+        summaries.push(...data);
+        if (data.length < PAGE_SIZE) break;
+        cursor = data[data.length - 1].id;
+      }
+    })(),
+    (async () => {
+      let cursor: string | undefined;
+      while (true) {
+        let query = supabase.from("thread_state")
+          .select("thread_id, last_read_at, muted_at, left_at")
+          .order("thread_id").limit(PAGE_SIZE);
+        if (cursor) query = query.gt("thread_id", cursor);
+        const { data, error } = await query.returns<InboxState[]>();
+        if (error || !data) throw new Error("Messages temporarily unavailable");
+        states.push(...data);
+        if (data.length < PAGE_SIZE) break;
+        cursor = data[data.length - 1].thread_id;
+      }
+    })(),
   ]);
-  const threadRows = threads ?? [];
-  const threadIds = threadRows.map((t) => t.id);
-  const { data: msgs } = threadIds.length
-    ? await supabase
-        .from("messages")
-        .select("thread_id, sender_id, body, created_at")
-        .in("thread_id", threadIds)
-        .order("created_at", { ascending: false })
-        .limit(400)
-        .returns<InboxMessage[]>()
-    : { data: [] as InboxMessage[] };
-  // `uid` is part of the cache key (and asserts the reads were RLS-scoped to the
-  // caller we think they were); it is not otherwise used here.
-  void uid;
-  return { threads: threadRows, states: states ?? [], messages: msgs ?? [] };
+  return {
+    threads: summaries.map(({ latest, incoming, ...thread }) => { void latest; void incoming; return thread; }),
+    states,
+    messages: summaries.flatMap((thread) => thread.latest),
+    incomingMessages: summaries.flatMap((thread) => thread.incoming),
+  };
 });
 
-/**
- * True iff any unmuted thread has a message newer than my read cursor that
- * isn't mine — the boolean the unread dot shows (never a count; :1518). Derived
- * from the shared substrate, so it costs nothing beyond the substrate's reads
- * (which the inbox reuses on /messages).
- */
-export async function getUnreadState(uid: string): Promise<boolean> {
-  const { states, messages } = await getInboxSubstrate(uid);
-  const state = new Map(states.map((s) => [s.thread_id, s]));
-  const seen = new Set<string>();
-  for (const m of messages) {
-    // The newest message per thread decides that thread (desc order → first
-    // seen is newest); later (older) rows for the same thread don't matter.
-    if (seen.has(m.thread_id)) continue;
-    seen.add(m.thread_id);
-    const s = state.get(m.thread_id);
-    if (!s || s.muted_at) continue;
-    // Left (archived) threads don't dot unless a NEW message arrived after I
-    // left — mirrors the inbox filter, per spec §3.4's "unleft" clause.
-    if (s.left_at && Date.parse(m.created_at) <= Date.parse(s.left_at)) continue;
-    if (m.sender_id === uid) continue;
-    if (!s.last_read_at || Date.parse(m.created_at) > Date.parse(s.last_read_at)) {
-      return true;
-    }
+/** Null means unavailable, never a claim that the inbox has no unread mail. */
+export async function getUnreadState(uid: string): Promise<boolean | null> {
+  try {
+    const { states, incomingMessages } = await getInboxSubstrate(uid);
+    const state = new Map(states.map((s) => [s.thread_id, s]));
+    return incomingMessages.some((m) => {
+      const s = state.get(m.thread_id);
+      return !!s && !s.muted_at && m.sender_id !== uid &&
+        (!s.left_at || Date.parse(m.created_at) > Date.parse(s.left_at)) &&
+        (!s.last_read_at || Date.parse(m.created_at) > Date.parse(s.last_read_at));
+    });
+  } catch {
+    return null;
   }
-  return false;
 }

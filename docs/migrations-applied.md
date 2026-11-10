@@ -5,6 +5,186 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0053 — anonymous ballot grants (owner catalog verified)
+
+The owner supplied all six corrective postchecks as PASS on November 9, 2026
+(Pacific). Anonymous table/column privileges are denied, member and service
+grants are preserved, choice-only member updates remain intact, and RLS and
+anonymous role protections remain intact. Combined with the preceding complete
+boundary results and 41 function checks, the database release gates pass.
+Exact database commit time was not captured; application cutover is pending.
+
+Source packet SHA-256:
+`224643f9d8e60b72fb2b32f789563c9629434fd059acda3f512beeab5dd4ca1a`.
+
+The owner's grant diagnostic confirms direct anonymous ballot-table grants from
+`postgres`, consistent with hosted public-schema defaults. No PUBLIC/inherited
+alternative or anonymous column grant was present; `anon` has neither superuser
+nor BYPASSRLS. Row security remains enabled with authenticated-only ballot
+policies, so the grant mismatch is not evidence of anonymous ballot disclosure.
+
+`0053_security_ballot_anon_grants.sql` revokes all privileges on only
+`public.votes` from only `anon`. It preserves member own-ballot SELECT, INSERT,
+UPDATE(choice), service grants, policies, triggers, defaults, and ballot records.
+Applied migrations 0046–0052 remain unchanged. Apply 0053 manually once, then
+verify effective anonymous table and column denials, unchanged member/service
+grants, choice-only member updates, and enabled RLS. Include MAINTAIN in the
+live PostgreSQL 17 privilege enumeration.
+
+The hosted-ACL regression failed three anonymous checks before the correction;
+all 52 focused tests passed afterward. Column-grant and repeat-application
+controls passed without changing other ACLs, policies, triggers, defaults or
+row count. Independent read-only review found no actionable issues. Local
+PostgreSQL 16.14 cannot prove production PostgreSQL 17.6 catalog state; owner
+postchecks passed as recorded above; application cutover remains pending.
+
+## Final release boundary check — initial mismatch, resolved by 0053
+
+Owner-supplied final catalog results on November 9, 2026 (Pacific) match the
+six expected policies and complete 19-policy inventory, private schema/table
+denials, ballot column restrictions, six enabled RLS tables, eight enabled
+triggers and their definitions, and zero moderation rows missing ordering.
+Public enrollment is disabled (configured limits: 20/hour, 100/day); these limits
+are not an activation approval.
+
+One expected denial failed: `anon` has effective table-level SELECT on
+`public.votes`. The authenticated own-ballot SELECT grant matches. Supplied
+ballot policies target only `authenticated`; the grant mismatch alone does not
+establish anonymous row disclosure. Catalog-only diagnosis of the granting role,
+column ACLs, and role attributes is pending. No corrective production mutation
+or application cutover has occurred. The initial database hold was resolved by the six post-0053 checks above; application release remains pending.
+
+## 0051 — public enrollment (owner function catalog verified)
+
+The owner supplied all eleven 0051 function checks as PASS on November 9, 2026
+(Pacific), following 0050. Exact function bodies/configuration and effective
+role grants match the tested expectations. Exact database commit time and the
+complete applied-file hash were not captured.
+
+Source packet SHA-256:
+`be882934124e6b0ce6f6f4ac74c8a17643025a86b8a33033014a1a318bdb77f7`.
+
+All release migrations have now passed their owner-supplied function checks in
+this order: 0046, 0052, 0047, 0048, 0049, 0050, 0051. The 0049 and 0050 bodies
+have verified leading-indentation differences recorded below. The owner then
+supplied all 41 combined function checks as PASS: 28 canonical bodies and 13
+verified indentation variants, with all configurations and effective role grants
+matching. Complete live policies/grants/triggers and moderation backfill checks,
+the disabled-enrollment check, and matching application cutover remain pending. These function checks do not authorize public enrollment
+activation or prove the application is released.
+
+## 0050 — moderation and inviter attribution (owner function catalog verified)
+
+The owner supplied all five full stored-body comparisons as PASS on November 9,
+2026 (Pacific), following 0049. Each body differs from the tested source only in
+leading ASCII spaces/tabs; security mode, volatility, settings, and effective
+role grants match. Exact database commit time was not captured.
+
+Source packet SHA-256 (not the unknown actual applied-file hash):
+`0ee71b50d9c47d46e072e6d81ebdc1eabc612d71ba5c298a46cb04f75be01b5a`.
+Original raw-body failures are retained; no function was rewritten for formatting.
+
+| Function | Observed body MD5 |
+| --- | --- |
+| `public.is_content_hidden(text, uuid)` | `af0e009ee2bd9f04bcbe8bcb475194c9` |
+| `public.moderation_position(uuid)` | `6d8971d892e95584b29cd703087d3957` |
+| `steppe_security_private.guard_inviter()` | `e8b09ae1552ddada979488d1488d8d96` |
+| `steppe_security_private.order_moderation()` | `0b2acceaa31ac6899416a0868a44b117` |
+| `steppe_security_private.stamp_moderation()` | `799223d4ad90510c8dbda5953518e4aa` |
+
+The private release packet's final function verifier accepts these exact observed
+hashes or canonical hashes, retaining the original configuration and privilege
+requirements. Migration 0051, complete live boundary checks, and matching
+application cutover remain pending. Function checks alone do not verify the
+moderation backfill, views, or triggers.
+
+## 0049 — governance integrity (owner function catalog verified)
+
+The owner supplied all eight full stored-body comparisons as PASS on November 9,
+2026 (Pacific), after 0048. Each body differs from the tested source only in
+leading ASCII spaces/tabs; security mode, volatility, settings, and effective
+role grants match. The scheduler preflight also passed: exactly one active
+`close-due-proposals` job runs as `postgres`, matching the function owner.
+Exact database commit time was not captured.
+
+Source packet SHA-256 (not a claim about the actual applied file bytes):
+`e93dbbcf37d3cab79accfab722a39a4fafbbb9a0dd5e929ee716ddcce9169119`.
+The complete applied-file hash is unknown. Original raw-body comparison failures
+are retained. No function was rewritten to remove formatting differences.
+
+Observed stored-body MD5 values after the full indentation-only comparison:
+
+| Function | Observed body MD5 |
+| --- | --- |
+| `public.cast_ballot(uuid, vote_choice)` | `a949699f6e64e6974eaaa341126a99e2` |
+| `public.close_due_proposals()` | `68694374d19aa190d5e0779a8d75a09c` |
+| `public.finalize_proposal_outcome(uuid)` | `f08bd9db599b2bc2b64f35ca09a9ad99` |
+| `public.guard_proposal_columns()` | `2a008b6c6dfe83009d8284d1978444c1` |
+| `public.guard_votes_immutable()` | `96b67fd938e50d028bbeec3d507b9d6b` |
+| `public.log_proposal_closed()` | `68dddf33f634548186a0e5e8f0c62e6f` |
+| `public.snapshot_proposal_rules()` | `ddd21f20e556631b9a4a04bb6b139d50` |
+| `steppe_security_private.write_proposal_outcome(uuid)` | `fe4ae87b66cc5475c15af1a6ef439e4e` |
+
+The private release packet's `VERIFY-ALL-LIVE-FUNCTIONS.sql` accepts these exact
+observed hashes or the canonical hashes, with the original configuration and
+privilege requirements. It does not accept arbitrary whitespace normalization.
+Its 41 canonical checks passed locally; final live verification, policy/trigger
+checks, remaining migrations, and application cutover are pending.
+
+## 0048 — evidence slots (owner function catalog verified)
+
+The owner supplied all eight 0048 function checks as PASS on November 9, 2026
+(Pacific), following 0047. Definition/configuration and effective role grants
+match for the upload helpers, cleanup workers, and private slot functions.
+Exact database commit time was not captured.
+
+Applied revised file SHA-256:
+`0ec343970cc05d0ebee6bab06f1f89493a6074f56cb2aee57a56315de51eb1d4`.
+Full live policy/trigger verification and matching application cutover remain
+pending. Check the live scheduled-close job's execution role before 0049.
+
+## 0047 — account lifecycle (owner function catalog verified)
+
+After applying 0046 and its 0052 correction, the owner supplied all four 0047
+function checks as PASS on November 9, 2026 (Pacific): `delete_my_account()`,
+`guard_profile_columns()`, `guard_removed_account_write()`, and
+`my_account_removal()`. Both definition/configuration and effective role grants
+match the tested expectations. Exact database commit time was not captured.
+
+Applied revised file SHA-256:
+`581c4c52c8d1b52f3d9df2edcf89b85be6cc2a93295f2d03a2e988e9890f1273`.
+The original, unapplied packet version is superseded. Full release boundary
+verification and matching application cutover remain pending.
+
+## 0052 — hosted group-function grants (owner catalog verified)
+
+`0052_security_hosted_group_function_grants.sql` corrects three direct
+`service_role` EXECUTE grants left by hosted public-schema function defaults.
+It preserves 0046's applied bytes, function definitions, owner permissions, and
+authenticated audit/RSVP access. It does not alter default privileges.
+
+Owner-reported application order: **0046, then 0052**. The owner supplied the
+post-correction catalog results on 2026-11-10 UTC: all five 0046 functions passed
+both definition/configuration and effective role-privilege comparisons. Exact
+database commit timestamps were not captured. The broader policy/trigger checks
+and remaining release migrations are still pending.
+
+Applied file hashes: 0046
+`27163744ec2aed9cdc734f3ec0d183b9f6d74687d7a40f2fad62bdc857a71641`;
+0052 `c002963e67cc57f18632e44db91fb610580318b8f7d0f55c978a72050c9cfa5f`.
+
+This correction depends only on 0046. During the security release, apply it at
+the 0046 stop-gate **before continuing to 0047**; fresh installations can apply
+it in numeric order after 0051. The correction is safe to repeat. Record actual
+application order rather than inferring it from migration numbers.
+
+After owner execution, inspect `has_function_privilege` for `anon`,
+`authenticated`, and `service_role`. `can_read_group_audit(text,uuid,jsonb)` and
+`can_rsvp_event(uuid)` must return `false,true,false` for those roles;
+`guard_rsvp_identity()` must return `false,false,false`. The existing 0046
+definition checks must still match. Do not mark this correction applied from a
+local test or an execution-success message alone.
+
 ## Convention (applies to every migration from here on)
 
 1. **One migration, one commit.** A migration gets its **own** commit — never buried inside a

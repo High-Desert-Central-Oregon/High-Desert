@@ -90,9 +90,15 @@ describe.skipIf(!target)("administrator account removal", () => {
         [a, b],
       )
     ).rows[0].id;
-    await db.query(
-      "insert into public.messages(thread_id,sender_id,body) values($1,$2,'Remove this'),($1,$3,'Keep counterpart')",
-      [thread, member, other],
+    await act(
+      member,
+      "insert into public.messages(thread_id,sender_id,body) values($1,$2,'Remove this')",
+      [thread, member],
+    );
+    await act(
+      other,
+      "insert into public.messages(thread_id,sender_id,body) values($1,$2,'Keep counterpart')",
+      [thread, other],
     );
     await db.query(
       "insert into storage.objects(bucket_id,name) values('verification-evidence',$1),('verification-evidence',$2)",
@@ -243,9 +249,15 @@ describe.skipIf(!target)("administrator account removal", () => {
     await expect(
       act(member, "select public.log_audit('forged','profile',$1)", [member]),
     ).rejects.toThrow(/permission denied/);
-    await expect(
-      act(member, "select public.delete_my_account()"),
-    ).rejects.toThrow(/account removed/);
+    // Retired members may retry their own cleanup job, but gain no other write authority.
+    await act(member, "select public.delete_my_account()");
+    expect(
+      (
+        await db.query("select id from account_removals where target_id=$1", [
+          member,
+        ])
+      ).rows,
+    ).toEqual([{ id: job }]);
     await expect(
       act(member, "update public.profiles set deleted_at=null where id=$1", [
         member,

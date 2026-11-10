@@ -1,187 +1,102 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-
-// Smoke test for the Gate 0 interest funnel: POST /api/interest. Hermetic — the
-// route's three collaborators (the service-role DB client, the confirmation
-// sender, and the i18n translator) are mocked, so this runs anywhere with no DB
-// or network. It pins the contract the launch depends on: what writes a row, what
-// sends a confirmation, and — critically — what must NEVER do either.
-
-const mocks = vi.hoisted(() => {
-  // Mutable result the fake upsert resolves to; flipped per test.
-  const state = {
-    data: [{ id: "row-1" }] as { id: string }[] | null,
-    error: null as unknown,
-  };
-  const selectMock = vi.fn(async () => ({
-    data: state.data,
-    error: state.error,
-  }));
-  const upsertMock = vi.fn(() => ({ select: selectMock }));
-  const fromMock = vi.fn(() => ({ upsert: upsertMock }));
-  const createAdminClient = vi.fn(() => ({ from: fromMock }));
-  const sendInterestConfirmation = vi.fn(async () => ({ ok: true }));
-  return {
-    state,
-    selectMock,
-    upsertMock,
-    fromMock,
-    createAdminClient,
-    sendInterestConfirmation,
-  };
-});
-
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: mocks.createAdminClient,
+const m = vi.hoisted(() => ({
+  queue: vi.fn(),
+  deliver: vi.fn(),
+  callbacks: [] as Array<() => unknown>,
 }));
-vi.mock("@/lib/interest-email", () => ({
-  sendInterestConfirmation: mocks.sendInterestConfirmation,
+vi.mock("@/lib/public-enrollment", () => ({
+  queuePublicEnrollment: m.queue,
+  deliverPublicEnrollment: m.deliver,
 }));
-// Return the message key (and interpolate {name}) so the assembled body is stable.
-vi.mock("next-intl/server", () => ({
-  getTranslations: async () => (key: string, vars?: Record<string, unknown>) =>
-    vars ? `${key}:${vars.name ?? ""}` : key,
+vi.mock("next-intl/server", () => ({ getLocale: async () => "es" }));
+vi.mock("next/server", async () => ({
+  ...(await vi.importActual("next/server")),
+  after: (cb: () => unknown) => m.callbacks.push(cb),
 }));
-// Keep NextResponse.json working as a plain web Response outside the Next runtime.
-vi.mock("next/server", () => ({
-  NextResponse: {
-    json: (body: unknown, init?: { status?: number }) =>
-      new Response(JSON.stringify(body), {
-        status: init?.status ?? 200,
-        headers: { "content-type": "application/json" },
-      }),
-  },
-}));
-
 import { POST } from "@/app/api/interest/route";
-
-function post(body: unknown): Request {
+let nextIp = 0;
+function post(body: unknown) {
   return new Request("http://localhost/api/interest", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: { "x-forwarded-for": `203.0.113.${++nextIp}` },
     body: typeof body === "string" ? body : JSON.stringify(body),
   });
 }
-
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.stubEnv("MEMBER_PIPELINES_ENABLED", "false");
-  mocks.state.data = [{ id: "row-1" }];
-  mocks.state.error = null;
+  m.callbacks.length = 0;
+  m.queue.mockResolvedValue("queued");
+  m.deliver.mockResolvedValue(true);
 });
-
-describe("POST /api/interest — Gate 0 funnel", () => {
-  it.each(["true", "false"])("preserves neighborhood with member workflows %s without inferring residency", async (enabled) => {
-    vi.stubEnv("MEMBER_PIPELINES_ENABLED", enabled);
-    await POST(
-      post({
-        email: "person@example.test",
-        neighborhood: "  Dry Canyon  ",
-        consent: true,
-      }),
-    );
-    expect(mocks.upsertMock).toHaveBeenCalledWith(
-      expect.objectContaining({ neighborhood: "Dry Canyon", in_area: null }),
-      expect.anything(),
-    );
-  });
-  it("stores an omitted or whitespace-only neighborhood as null", async () => {
-    for (const neighborhood of [undefined, "   "]) {
-      await POST(post({ email: "person@example.test", neighborhood, consent: true }));
-      expect(mocks.upsertMock).toHaveBeenLastCalledWith(
-        expect.objectContaining({ neighborhood: null }),
-        expect.anything(),
+describe("interest ownership-confirmation intake", () => {
+  it("queues a normalized request without exposing prior enrollment or claiming it is confirmed", async () => {
+    for (let i = 0; i < 2; i++) {
+      const r = await POST(
+        post({
+          email: " Neighbor@Example.COM ",
+          consent: true,
+          first_name: " Pat ",
+          source: "bc",
+        }),
       );
+      expect(r.status).toBe(202);
+      expect(await r.json()).toEqual({ ok: true });
     }
-  });
-
-  it("bounds neighborhood text to the database limit", async () => {
-    await POST(post({ email: "person@example.test", neighborhood: "x".repeat(121), consent: true }));
-    expect(mocks.upsertMock).toHaveBeenCalledWith(
-      expect.objectContaining({ neighborhood: "x".repeat(120) }),
-      expect.anything(),
-    );
-  });
-
-  it("accepts a valid new signup: normalizes input, writes the row, sends ONE confirmation", async () => {
-    const res = await POST(
-      post({
-        email: "Neighbor@Example.com ",
-        first_name: "  Ada ",
-        in_area: true,
+    expect(m.queue).toHaveBeenCalledWith(expect.any(Request), {
+      email: "neighbor@example.com",
+      purpose: "interest",
+      slug: "",
+      locale: "es",
+      payload: {
+        first_name: "Pat",
+        source: "bc",
         consent: true,
-      }),
-    );
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true });
-
-    // Email lowercased + trimmed; on-conflict-do-nothing on email.
-    expect(mocks.upsertMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        email: "neighbor@example.com",
-        first_name: "Ada",
-        in_area: true,
-        consent: true,
-      }),
-      expect.objectContaining({ onConflict: "email", ignoreDuplicates: true }),
-    );
-    // Confirmation sent to the normalized address, exactly once.
-    expect(mocks.sendInterestConfirmation).toHaveBeenCalledTimes(1);
-    expect(mocks.sendInterestConfirmation).toHaveBeenCalledWith(
-      expect.objectContaining({ to: "neighbor@example.com" }),
-    );
+        neighborhood: null,
+        in_area: null,
+      },
+    });
+    expect(m.deliver).not.toHaveBeenCalled();
+    await m.callbacks[0]();
+    expect(m.deliver).toHaveBeenCalledOnce();
   });
-
-  it("does NOT re-confirm a duplicate — no second email", async () => {
-    mocks.state.data = []; // on-conflict-do-nothing returns no row
-    const res = await POST(post({ email: "dupe@example.com", consent: true }));
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true, duplicate: true });
-    expect(mocks.sendInterestConfirmation).not.toHaveBeenCalled();
+  it.each([
+    { email: "bad", consent: true },
+    { email: "a@example.test", consent: false },
+    { email: "a@example.test" },
+    { email: "x".repeat(321) + "@a.test", consent: true },
+  ])("rejects invalid input %j", async (body) => {
+    expect((await POST(post(body))).status).toBe(400);
+    expect(m.queue).not.toHaveBeenCalled();
   });
-
-  it("drops a honeypot submission silently: no DB write, no email", async () => {
-    const res = await POST(
-      post({ email: "bot@example.com", consent: true, company: "Acme" }),
-    );
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true });
-    expect(mocks.fromMock).not.toHaveBeenCalled();
-    expect(mocks.sendInterestConfirmation).not.toHaveBeenCalled();
+  it("bounds actual bytes and malformed JSON", async () => {
+    const r = post({ email: "x".repeat(5000), consent: true });
+    r.headers.set("content-length", "1");
+    expect((await POST(r)).status).toBe(413);
+    expect((await POST(post("{bad"))).status).toBe(400);
+    expect(m.queue).not.toHaveBeenCalled();
   });
-
-  it("rejects an invalid email with 400 and writes nothing", async () => {
-    const res = await POST(post({ email: "not-an-email", consent: true }));
-    expect(res.status).toBe(400);
-    expect(mocks.fromMock).not.toHaveBeenCalled();
-    expect(mocks.sendInterestConfirmation).not.toHaveBeenCalled();
+  it("drops a honeypot with the same neutral response", async () => {
+    const r = await POST(post({ company: "Bot" }));
+    expect(r.status).toBe(202);
+    expect(await r.json()).toEqual({ ok: true });
+    expect(m.queue).not.toHaveBeenCalled();
   });
-
-  it("requires explicit consent (400)", async () => {
-    const res = await POST(post({ email: "x@example.com", consent: false }));
-    expect(res.status).toBe(400);
-    expect(mocks.fromMock).not.toHaveBeenCalled();
+  it.each([
+    ["limited", 429],
+    ["error", 503],
+  ])("keeps %s visible", async (result, status) => {
+    m.queue.mockResolvedValue(result);
+    const r = await POST(post({ email: "a@example.test", consent: true }));
+    expect(r.status).toBe(status);
+    expect((await r.json()).ok).toBe(false);
   });
-
-  it("a throwing confirmation sender can NEVER fail a signup that's already written", async () => {
-    mocks.sendInterestConfirmation.mockRejectedValueOnce(
-      new Error("provider down"),
-    );
-    const res = await POST(
-      post({ email: "resilient@example.com", consent: true }),
-    );
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true });
-  });
-
-  it("a DB error surfaces as 500 and sends no email", async () => {
-    mocks.state.error = { message: "db down" };
-    const res = await POST(post({ email: "y@example.com", consent: true }));
-    expect(res.status).toBe(500);
-    expect(mocks.sendInterestConfirmation).not.toHaveBeenCalled();
-  });
-
-  it("returns 400 on malformed JSON", async () => {
-    const res = await POST(post("{not valid json"));
-    expect(res.status).toBe(400);
+  it("does not change the accepted response when deferred delivery fails", async () => {
+    m.deliver.mockResolvedValue(false);
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const r = await POST(post({ email: "a@example.test", consent: true }));
+    await m.callbacks[0]();
+    expect(r.status).toBe(202);
+    expect(log).toHaveBeenCalledWith("Public enrollment delivery pending");
+    log.mockRestore();
   });
 });

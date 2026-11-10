@@ -16,7 +16,7 @@ import { isSignupSourceCode } from "@/lib/signup-source";
  * email-notice checkbox; company → honeypot; source →
  * which printed piece (?r=bc|pc|bm) produced the visit, or null (migration 0031).
  */
-type Status = "idle" | "submitting" | "success" | "duplicate" | "error";
+type Status = "idle" | "submitting" | "success" | "error";
 
 // QR counter (first-party, zero-PII; see /api/qr). Printed QR codes carry a known
 // ?utm_content variant. We count an aggregate scan on arrival and an aggregate join
@@ -110,12 +110,11 @@ export function JoinForm() {
       });
       const data = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
-        duplicate?: boolean;
         error?: string;
       };
 
       if (res.ok && data.ok) {
-        setStatus(data.duplicate ? "duplicate" : "success");
+        setStatus("success");
         // QR conversion — same session as the scan; aggregate only, and
         // wrapped so an analytics failure can never break the join.
         try {
@@ -134,7 +133,7 @@ export function JoinForm() {
     }
   }
 
-  if (status === "success" || status === "duplicate") {
+  if (status === "success") {
     return (
       <div className="formcard" id="join-form">
         <div className="success" role="status">
@@ -147,8 +146,8 @@ export function JoinForm() {
             height={168}
             className="seal"
           />
-          <h2>{status === "duplicate" ? t("dupH") : t("successH")}</h2>
-          <p>{status === "duplicate" ? t("dupP") : t("successP")}</p>
+          <h2>{t("successH")}</h2>
+          <p>{t("successP")}</p>
         </div>
       </div>
     );

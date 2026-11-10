@@ -33,9 +33,8 @@ type Status = "idle" | "submitting" | "done" | "error";
 export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
   const t = useTranslations("pledge");
 
-  const [count, setCount] = useState(status.pledgeCount);
+  const count = status.pledgeCount;
   const [stage, setStage] = useState<Status>("idle");
-  const [alreadyPledged, setAlreadyPledged] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -73,14 +72,10 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
       });
       const data = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
-        pledgeCount?: number;
-        alreadyPledged?: boolean;
         error?: string;
       };
 
       if (res.ok && data.ok) {
-        if (typeof data.pledgeCount === "number") setCount(data.pledgeCount);
-        setAlreadyPledged(Boolean(data.alreadyPledged));
         setStage("done");
       } else {
         setError(data.error || t("errGeneric"));
@@ -134,6 +129,7 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
               </span>
             </p>
 
+            <p className="text-sm">{t("countNote")}</p>
             <p className="pledge-lead">
               {isOpen
                 ? t("leadOpen", { neighborhood: name })
@@ -150,19 +146,8 @@ export function PledgePanel({ status }: { status: NeighborhoodStatus }) {
             <div className="pledge-action">
               {stage === "done" ? (
                 <div className="pledge-done" role="status">
-                  <p className="pledge-done-kicker">
-                    {alreadyPledged
-                      ? t("doneAlready")
-                      : t("doneLayer", { count })}
-                  </p>
-                  <p className="pledge-done-h">
-                    {left > 0
-                      ? t("doneRemaining", {
-                          remaining: left,
-                          neighborhood: name,
-                        })
-                      : t("doneReached", { neighborhood: name })}
-                  </p>
+                  <p className="pledge-done-kicker">{t("checkEmail")}</p>
+                  <p className="pledge-done-h">{t("confirmFirst")}</p>
                   <p className="pledge-done-p">{t("doneThreeDoors")}</p>
 
                   <div className="pledge-share">

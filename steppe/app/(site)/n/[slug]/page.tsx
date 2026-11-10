@@ -7,10 +7,8 @@
 //
 // THREE THINGS THIS PAGE HAS TO GET RIGHT:
 //
-//  1. The number must be correct at scan time. It is read per request and
-//     server-rendered — never baked at build, never fetched by the browser
-//     after paint. A stale number on a yard sign's landing page is worse than
-//     no number.
+//  1. Publish the database's delayed, rounded count. Unconfirmed requests
+//     never change enrollment; daily groups of five protect individual changes.
 //
 //  2. It must be readable with no account and no session. Nothing here is
 //     gated: neighborhood_status() is granted to anon, and /n/ is on the
@@ -74,8 +72,7 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function NeighborhoodPledgePage({ params }: Params) {
-  // Render at request time, every time. Without this the count could be served
-  // from a build-time render, and the number on the page is the whole mechanic.
+  // Read the current public snapshot at request time.
   await connection();
 
   const { slug } = await params;
