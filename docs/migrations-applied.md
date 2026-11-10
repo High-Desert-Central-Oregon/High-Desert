@@ -5,6 +5,24 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0051 — public enrollment (owner function catalog verified)
+
+The owner supplied all eleven 0051 function checks as PASS on November 9, 2026
+(Pacific), following 0050. Exact function bodies/configuration and effective
+role grants match the tested expectations. Exact database commit time and the
+complete applied-file hash were not captured.
+
+Source packet SHA-256:
+`be882934124e6b0ce6f6f4ac74c8a17643025a86b8a33033014a1a318bdb77f7`.
+
+All release migrations have now passed their owner-supplied function checks in
+this order: 0046, 0052, 0047, 0048, 0049, 0050, 0051. The 0049 and 0050 bodies
+have verified leading-indentation differences recorded below. The combined
+41-function check, complete live policies/grants/triggers and moderation
+backfill checks, disabled-enrollment check, and matching application cutover
+remain pending. These function checks do not authorize public enrollment
+activation or prove the application is released.
+
 ## 0050 — moderation and inviter attribution (owner function catalog verified)
 
 The owner supplied all five full stored-body comparisons as PASS on November 9,
