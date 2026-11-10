@@ -124,5 +124,7 @@ language sql stable security definer set search_path=public,pg_temp as $$
 $$;
 revoke all on function public.claim_orphan_evidence_cleanup(),public.finish_orphan_evidence_cleanup(text,uuid,boolean),public.orphan_evidence_cleanup_pending() from public,anon,authenticated;
 grant execute on function public.claim_orphan_evidence_cleanup(),public.finish_orphan_evidence_cleanup(text,uuid,boolean),public.orphan_evidence_cleanup_pending() to service_role;
+-- Member upload helpers must not inherit the hosted service-role creation grant.
+revoke execute on function public.reserve_verification_upload(text),public.release_unused_verification_upload(text),public.can_upload_verification_evidence(text) from service_role;
 notify pgrst,'reload schema';
 commit;
