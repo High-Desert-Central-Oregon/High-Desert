@@ -5,6 +5,29 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0053 — anonymous ballot grants (prepared; owner application pending)
+
+The owner's grant diagnostic confirms direct anonymous ballot-table grants from
+`postgres`, consistent with hosted public-schema defaults. No PUBLIC/inherited
+alternative or anonymous column grant was present; `anon` has neither superuser
+nor BYPASSRLS. Row security remains enabled with authenticated-only ballot
+policies, so the grant mismatch is not evidence of anonymous ballot disclosure.
+
+`0053_security_ballot_anon_grants.sql` revokes all privileges on only
+`public.votes` from only `anon`. It preserves member own-ballot SELECT, INSERT,
+UPDATE(choice), service grants, policies, triggers, defaults, and ballot records.
+Applied migrations 0046–0052 remain unchanged. Apply 0053 manually once, then
+verify effective anonymous table and column denials, unchanged member/service
+grants, choice-only member updates, and enabled RLS. Include MAINTAIN in the
+live PostgreSQL 17 privilege enumeration.
+
+The hosted-ACL regression failed three anonymous checks before the correction;
+all 52 focused tests passed afterward. Column-grant and repeat-application
+controls passed without changing other ACLs, policies, triggers, defaults or
+row count. Independent read-only review found no actionable issues. Local
+PostgreSQL 16.14 cannot prove production PostgreSQL 17.6 catalog state; owner
+postchecks and application cutover remain pending.
+
 ## Final release boundary check — held for ballot grant diagnosis
 
 Owner-supplied final catalog results on November 9, 2026 (Pacific) match the
