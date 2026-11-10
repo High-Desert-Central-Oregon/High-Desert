@@ -44,6 +44,11 @@ grant all on storage.objects to authenticated,service_role;
   await db.query(`alter default privileges in schema public
     grant execute on functions to anon,authenticated,service_role;`);
   await db.query(fs.readFileSync(root + "schema.sql", "utf8"));
+  // Observed hosted votes ACLs: broad direct grants survive the base schema,
+  // except TRUNCATE, which the append-only boundary already revokes.
+  // Target this table only; do not invent hosted defaults for unrelated tables.
+  await db.query(`grant all privileges on public.votes to anon,authenticated,service_role;
+    revoke truncate on public.votes from anon,authenticated,service_role;`);
   await db.query(`create schema extensions;
 create function extensions.gen_random_bytes(integer) returns bytea language sql volatile as $$ select public.gen_random_bytes($1) $$;`);
   for (const name of fs.readdirSync(root + "migrations").sort()) {
