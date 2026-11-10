@@ -177,5 +177,7 @@ language sql security invoker set search_path=public,pg_temp as $$
 $$;
 revoke all on function public.cast_ballot(uuid,public.vote_choice) from public,anon;
 grant execute on function public.cast_ballot(uuid,public.vote_choice) to authenticated;
+-- Keep member RPCs and owner-only cron/trigger functions outside service-role RPC access.
+revoke execute on function public.cast_ballot(uuid,public.vote_choice),public.finalize_proposal_outcome(uuid),public.close_due_proposals(),public.log_proposal_closed(),public.snapshot_proposal_rules() from service_role;
 notify pgrst,'reload schema';
 commit;
