@@ -5,6 +5,31 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0050 — moderation and inviter attribution (owner function catalog verified)
+
+The owner supplied all five full stored-body comparisons as PASS on November 9,
+2026 (Pacific), following 0049. Each body differs from the tested source only in
+leading ASCII spaces/tabs; security mode, volatility, settings, and effective
+role grants match. Exact database commit time was not captured.
+
+Source packet SHA-256 (not the unknown actual applied-file hash):
+`0ee71b50d9c47d46e072e6d81ebdc1eabc612d71ba5c298a46cb04f75be01b5a`.
+Original raw-body failures are retained; no function was rewritten for formatting.
+
+| Function | Observed body MD5 |
+| --- | --- |
+| `public.is_content_hidden(text, uuid)` | `af0e009ee2bd9f04bcbe8bcb475194c9` |
+| `public.moderation_position(uuid)` | `6d8971d892e95584b29cd703087d3957` |
+| `steppe_security_private.guard_inviter()` | `e8b09ae1552ddada979488d1488d8d96` |
+| `steppe_security_private.order_moderation()` | `0b2acceaa31ac6899416a0868a44b117` |
+| `steppe_security_private.stamp_moderation()` | `799223d4ad90510c8dbda5953518e4aa` |
+
+The private release packet's final function verifier accepts these exact observed
+hashes or canonical hashes, retaining the original configuration and privilege
+requirements. Migration 0051, complete live boundary checks, and matching
+application cutover remain pending. Function checks alone do not verify the
+moderation backfill, views, or triggers.
+
 ## 0049 — governance integrity (owner function catalog verified)
 
 The owner supplied all eight full stored-body comparisons as PASS on November 9,
