@@ -5,6 +5,25 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0052 — hosted group-function grants (pending owner verification)
+
+`0052_security_hosted_group_function_grants.sql` corrects three direct
+`service_role` EXECUTE grants left by hosted public-schema function defaults.
+It preserves 0046's applied bytes, function definitions, owner permissions, and
+authenticated audit/RSVP access. It does not alter default privileges.
+
+This correction depends only on 0046. During the security release, apply it at
+the 0046 stop-gate **before continuing to 0047**; fresh installations can apply
+it in numeric order after 0051. The correction is safe to repeat. Record actual
+application order rather than inferring it from migration numbers.
+
+After owner execution, inspect `has_function_privilege` for `anon`,
+`authenticated`, and `service_role`. `can_read_group_audit(text,uuid,jsonb)` and
+`can_rsvp_event(uuid)` must return `false,true,false` for those roles;
+`guard_rsvp_identity()` must return `false,false,false`. The existing 0046
+definition checks must still match. Do not mark this correction applied from a
+local test or an execution-success message alone.
+
 ## Convention (applies to every migration from here on)
 
 1. **One migration, one commit.** A migration gets its **own** commit — never buried inside a
