@@ -5,6 +5,22 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## Final release boundary check — held for ballot grant diagnosis
+
+Owner-supplied final catalog results on November 9, 2026 (Pacific) match the
+six expected policies and complete 19-policy inventory, private schema/table
+denials, ballot column restrictions, six enabled RLS tables, eight enabled
+triggers and their definitions, and zero moderation rows missing ordering.
+Public enrollment is disabled (configured limits: 20/hour, 100/day); these limits
+are not an activation approval.
+
+One expected denial failed: `anon` has effective table-level SELECT on
+`public.votes`. The authenticated own-ballot SELECT grant matches. Supplied
+ballot policies target only `authenticated`; the grant mismatch alone does not
+establish anonymous row disclosure. Catalog-only diagnosis of the granting role,
+column ACLs, and role attributes is pending. No corrective production mutation
+or application cutover has occurred. The release remains on hold.
+
 ## 0051 — public enrollment (owner function catalog verified)
 
 The owner supplied all eleven 0051 function checks as PASS on November 9, 2026
