@@ -17,10 +17,11 @@ Source packet SHA-256:
 
 All release migrations have now passed their owner-supplied function checks in
 this order: 0046, 0052, 0047, 0048, 0049, 0050, 0051. The 0049 and 0050 bodies
-have verified leading-indentation differences recorded below. The combined
-41-function check, complete live policies/grants/triggers and moderation
-backfill checks, disabled-enrollment check, and matching application cutover
-remain pending. These function checks do not authorize public enrollment
+have verified leading-indentation differences recorded below. The owner then
+supplied all 41 combined function checks as PASS: 28 canonical bodies and 13
+verified indentation variants, with all configurations and effective role grants
+matching. Complete live policies/grants/triggers and moderation backfill checks,
+the disabled-enrollment check, and matching application cutover remain pending. These function checks do not authorize public enrollment
 activation or prove the application is released.
 
 ## 0050 — moderation and inviter attribution (owner function catalog verified)
