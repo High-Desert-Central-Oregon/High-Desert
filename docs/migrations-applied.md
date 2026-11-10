@@ -5,6 +5,39 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0049 — governance integrity (owner function catalog verified)
+
+The owner supplied all eight full stored-body comparisons as PASS on November 9,
+2026 (Pacific), after 0048. Each body differs from the tested source only in
+leading ASCII spaces/tabs; security mode, volatility, settings, and effective
+role grants match. The scheduler preflight also passed: exactly one active
+`close-due-proposals` job runs as `postgres`, matching the function owner.
+Exact database commit time was not captured.
+
+Source packet SHA-256 (not a claim about the actual applied file bytes):
+`e93dbbcf37d3cab79accfab722a39a4fafbbb9a0dd5e929ee716ddcce9169119`.
+The complete applied-file hash is unknown. Original raw-body comparison failures
+are retained. No function was rewritten to remove formatting differences.
+
+Observed stored-body MD5 values after the full indentation-only comparison:
+
+| Function | Observed body MD5 |
+| --- | --- |
+| `public.cast_ballot(uuid, vote_choice)` | `a949699f6e64e6974eaaa341126a99e2` |
+| `public.close_due_proposals()` | `68694374d19aa190d5e0779a8d75a09c` |
+| `public.finalize_proposal_outcome(uuid)` | `f08bd9db599b2bc2b64f35ca09a9ad99` |
+| `public.guard_proposal_columns()` | `2a008b6c6dfe83009d8284d1978444c1` |
+| `public.guard_votes_immutable()` | `96b67fd938e50d028bbeec3d507b9d6b` |
+| `public.log_proposal_closed()` | `68dddf33f634548186a0e5e8f0c62e6f` |
+| `public.snapshot_proposal_rules()` | `ddd21f20e556631b9a4a04bb6b139d50` |
+| `steppe_security_private.write_proposal_outcome(uuid)` | `fe4ae87b66cc5475c15af1a6ef439e4e` |
+
+The private release packet's `VERIFY-ALL-LIVE-FUNCTIONS.sql` accepts these exact
+observed hashes or the canonical hashes, with the original configuration and
+privilege requirements. It does not accept arbitrary whitespace normalization.
+Its 41 canonical checks passed locally; final live verification, policy/trigger
+checks, remaining migrations, and application cutover are pending.
+
 ## 0048 — evidence slots (owner function catalog verified)
 
 The owner supplied all eight 0048 function checks as PASS on November 9, 2026
