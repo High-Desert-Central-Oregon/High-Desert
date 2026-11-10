@@ -73,5 +73,7 @@ end; $$;
 revoke all on function steppe_security_private.guard_inviter() from public,anon,authenticated;
 create trigger inviter_attribution before insert or update on public.invite_tokens for each row execute function steppe_security_private.guard_inviter();
 create trigger inviter_attribution before insert or update on public.invited_emails for each row execute function steppe_security_private.guard_inviter();
+-- The invoker view uses the member grant, not a hosted service-role default grant.
+revoke execute on function public.moderation_position(uuid) from service_role;
 notify pgrst,'reload schema';
 commit;
