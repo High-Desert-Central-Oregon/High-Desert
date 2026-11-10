@@ -5,6 +5,19 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0047 — account lifecycle (owner function catalog verified)
+
+After applying 0046 and its 0052 correction, the owner supplied all four 0047
+function checks as PASS on November 9, 2026 (Pacific): `delete_my_account()`,
+`guard_profile_columns()`, `guard_removed_account_write()`, and
+`my_account_removal()`. Both definition/configuration and effective role grants
+match the tested expectations. Exact database commit time was not captured.
+
+Applied revised file SHA-256:
+`581c4c52c8d1b52f3d9df2edcf89b85be6cc2a93295f2d03a2e988e9890f1273`.
+The original, unapplied packet version is superseded. Full release boundary
+verification and matching application cutover remain pending.
+
 ## 0052 — hosted group-function grants (owner catalog verified)
 
 `0052_security_hosted_group_function_grants.sql` corrects three direct
