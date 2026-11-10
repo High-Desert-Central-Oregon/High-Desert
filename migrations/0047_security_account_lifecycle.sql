@@ -93,5 +93,7 @@ language sql stable security definer set search_path=public,pg_temp as $$
 $$;
 revoke all on function public.my_account_removal() from public,anon;
 grant execute on function public.my_account_removal() to authenticated;
+-- Hosted creation defaults and replaced functions can retain direct service grants.
+revoke execute on function public.delete_my_account(),public.guard_removed_account_write(),public.my_account_removal() from service_role;
 notify pgrst,'reload schema';
 commit;
