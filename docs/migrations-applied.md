@@ -5,7 +5,17 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
-## 0053 — anonymous ballot grants (prepared; owner application pending)
+## 0053 — anonymous ballot grants (owner catalog verified)
+
+The owner supplied all six corrective postchecks as PASS on November 9, 2026
+(Pacific). Anonymous table/column privileges are denied, member and service
+grants are preserved, choice-only member updates remain intact, and RLS and
+anonymous role protections remain intact. Combined with the preceding complete
+boundary results and 41 function checks, the database release gates pass.
+Exact database commit time was not captured; application cutover is pending.
+
+Source packet SHA-256:
+`224643f9d8e60b72fb2b32f789563c9629434fd059acda3f512beeab5dd4ca1a`.
 
 The owner's grant diagnostic confirms direct anonymous ballot-table grants from
 `postgres`, consistent with hosted public-schema defaults. No PUBLIC/inherited
@@ -26,9 +36,9 @@ all 52 focused tests passed afterward. Column-grant and repeat-application
 controls passed without changing other ACLs, policies, triggers, defaults or
 row count. Independent read-only review found no actionable issues. Local
 PostgreSQL 16.14 cannot prove production PostgreSQL 17.6 catalog state; owner
-postchecks and application cutover remain pending.
+postchecks passed as recorded above; application cutover remains pending.
 
-## Final release boundary check — held for ballot grant diagnosis
+## Final release boundary check — initial mismatch, resolved by 0053
 
 Owner-supplied final catalog results on November 9, 2026 (Pacific) match the
 six expected policies and complete 19-policy inventory, private schema/table
@@ -42,7 +52,7 @@ One expected denial failed: `anon` has effective table-level SELECT on
 ballot policies target only `authenticated`; the grant mismatch alone does not
 establish anonymous row disclosure. Catalog-only diagnosis of the granting role,
 column ACLs, and role attributes is pending. No corrective production mutation
-or application cutover has occurred. The release remains on hold.
+or application cutover has occurred. The initial database hold was resolved by the six post-0053 checks above; application release remains pending.
 
 ## 0051 — public enrollment (owner function catalog verified)
 
