@@ -5,6 +5,18 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
+## 0048 — evidence slots (owner function catalog verified)
+
+The owner supplied all eight 0048 function checks as PASS on November 9, 2026
+(Pacific), following 0047. Definition/configuration and effective role grants
+match for the upload helpers, cleanup workers, and private slot functions.
+Exact database commit time was not captured.
+
+Applied revised file SHA-256:
+`0ec343970cc05d0ebee6bab06f1f89493a6074f56cb2aee57a56315de51eb1d4`.
+Full live policy/trigger verification and matching application cutover remain
+pending. Check the live scheduled-close job's execution role before 0049.
+
 ## 0047 — account lifecycle (owner function catalog verified)
 
 After applying 0046 and its 0052 correction, the owner supplied all four 0047
