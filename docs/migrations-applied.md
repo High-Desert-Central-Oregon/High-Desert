@@ -5,12 +5,22 @@ commit log. This file records the applied status of each migration and — more 
 **the canonical query that answers "is migration N applied?"** against production. Any future
 status question resolves by running that query against prod, never by recalling a confirmation.
 
-## 0052 — hosted group-function grants (pending owner verification)
+## 0052 — hosted group-function grants (owner catalog verified)
 
 `0052_security_hosted_group_function_grants.sql` corrects three direct
 `service_role` EXECUTE grants left by hosted public-schema function defaults.
 It preserves 0046's applied bytes, function definitions, owner permissions, and
 authenticated audit/RSVP access. It does not alter default privileges.
+
+Owner-reported application order: **0046, then 0052**. The owner supplied the
+post-correction catalog results on 2026-11-10 UTC: all five 0046 functions passed
+both definition/configuration and effective role-privilege comparisons. Exact
+database commit timestamps were not captured. The broader policy/trigger checks
+and remaining release migrations are still pending.
+
+Applied file hashes: 0046
+`27163744ec2aed9cdc734f3ec0d183b9f6d74687d7a40f2fad62bdc857a71641`;
+0052 `c002963e67cc57f18632e44db91fb610580318b8f7d0f55c978a72050c9cfa5f`.
 
 This correction depends only on 0046. During the security release, apply it at
 the 0046 stop-gate **before continuing to 0047**; fresh installations can apply

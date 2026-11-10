@@ -1,0 +1,248 @@
+[
+  {
+    "signature": "public.is_group_member(uuid)",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": true
+  },
+  {
+    "signature": "public.is_group_maintainer(uuid)",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": true
+  },
+  {
+    "signature": "public.can_read_group_audit(text, uuid, jsonb)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.can_rsvp_event(uuid)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.guard_rsvp_identity()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.guard_removed_account_write()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.guard_profile_columns()",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": true
+  },
+  {
+    "signature": "public.delete_my_account()",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.my_account_removal()",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.reserve_verification_upload(text)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.release_unused_verification_upload(text)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.can_upload_verification_evidence(text)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.lock_evidence_upload()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.bind_evidence_slot()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.claim_orphan_evidence_cleanup()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.finish_orphan_evidence_cleanup(text, uuid, boolean)",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.orphan_evidence_cleanup_pending()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.snapshot_proposal_rules()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.guard_proposal_columns()",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": true
+  },
+  {
+    "signature": "steppe_security_private.write_proposal_outcome(uuid)",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.log_proposal_closed()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.close_due_proposals()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.finalize_proposal_outcome(uuid)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "public.guard_votes_immutable()",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": true
+  },
+  {
+    "signature": "public.cast_ballot(uuid, vote_choice)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.stamp_moderation()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.order_moderation()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.is_content_hidden(text, uuid)",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": true
+  },
+  {
+    "signature": "public.moderation_position(uuid)",
+    "anon_execute": false,
+    "member_execute": true,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.guard_inviter()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.clear_account_enrollment()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "steppe_security_private.reset_enrollment_budget()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": false
+  },
+  {
+    "signature": "public.purge_public_enrollment()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.queue_public_enrollment(text, text, text, jsonb, text, text)",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.claim_public_enrollment_mail()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.finish_public_enrollment_mail(uuid, uuid, boolean)",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.public_enrollment_healthy()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.confirm_public_enrollment(text)",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.remove_pledge(uuid)",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.refresh_public_pledge_counts()",
+    "anon_execute": false,
+    "member_execute": false,
+    "service_execute": true
+  },
+  {
+    "signature": "public.neighborhood_status(text)",
+    "anon_execute": true,
+    "member_execute": true,
+    "service_execute": false
+  }
+]
